@@ -1,0 +1,27 @@
+{
+  "name": "classroom-pull",
+  "main": "dist/index.js",
+  "version": "1.0.0",
+  "description": "Google Classroom pull",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "publishConfig": {
+    "registry": "https://www.myget.org/F/ed-fi/npm/"
+  },
+  "files": [
+    "/dist",
+    "/CHANGELOG.md",
+    "/LICENSE.md",
+    "/package.json"
+  ],
+  "dependencies": {
+    "googleapis": "39",
+    "yargs": "^8.0.2"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "yarn build:clean && yarn build:copy-non-ts && yarn build:dist",
+    "build:clean": "rimraf dist",
+    "build:dist": "tsc",
+    "build:copy-non-ts": "copyfiles -u 1 -e \"**/*.ts\" \"src/**/*\" dist --verbose"
+  }
+}
