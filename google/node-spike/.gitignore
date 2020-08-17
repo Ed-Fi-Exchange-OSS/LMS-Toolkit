@@ -1,0 +1,23 @@
+!.gitkeep
+.DS_Store
+bower_components/
+coverage/
+jspm_packages/
+lerna-debug.log
+logs/*
+node_modules/
+npm-debug.log
+tmp
+
+## Google Classroom client credentials
+credentials.json
+token.json
+
+## VSCode:
+.vscode/
+
+## Babel target directory
+dist/
+
+## Generated documentation
+docs/
