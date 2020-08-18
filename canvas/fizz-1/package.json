@@ -1,0 +1,20 @@
+{
+  "name": "spike-fizz-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "cc": "node client-credentials.js",
+    "ac": "node authorization-code.js"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "jose": "^1.28.0",
+    "uuid": "^8.3.0",
+    "yarn": "^1.22.4"
+  }
+}
