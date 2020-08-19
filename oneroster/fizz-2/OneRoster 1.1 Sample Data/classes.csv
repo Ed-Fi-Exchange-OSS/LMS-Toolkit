@@ -1,0 +1,3 @@
+sourcedId,status,dateLastModified,title,grades,courseSourcedId,classCode,classType,location,schoolSourcedId,termSourcedIds,subjects,subjectCodes,periods
+25590100101Trad120ENG112011,,,ENG-1,09,ENG-1,English I,scheduled,120,255901001,"255901001_2021_2020-2021_Fall,255901001_2021_2020-2021_Spring",English/Language Arts I (9th grade),01001,1
+25590100102Trad220ALG112011,,,ALG-1,09,03100500,Algebra I,scheduled,220,255901001,"255901001_2021_2020-2021_Fall,255901001_2021_2020-2021_Spring",Algebra I,02052,2

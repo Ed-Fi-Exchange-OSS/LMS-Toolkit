@@ -1,0 +1,11 @@
+sourcedId,status,dateLastModified,enabledUser,orgSourcedIds,role,username,userIds,givenName,familyName,middleName,identifier,email,sms,phone,agentSourcedIds,grades,password
+604863,,,true,255901001,student,Mary Archer,{Local:863},Mary,Archer,,,mqlqmrqb76@example.com,,(950) 336 6601,,09,
+604874,,,true,255901001,student,Kyle Hughes,{Local:874},Kyle,Hughes,,,sqgnjfvq8@example.com,,(950) 413 3235,,09,
+604918,,,true,255901001,student,Peter Ivan Nash,{Local:918},Peter,Nash,Ivan,,ultnacia.vogjlgd@example.com,,(950) 434 7904,,09,
+604927,,,true,255901001,student,Larry Mahoney,{Local:927},Larry,Mahoney,,,iyzfj76@example.com,,(950) 064 8122,,09,
+604938,,,true,255901001,student,Roland Phillips,{Local:938},Roland,Phillips,,,iogw17@example.com,,(950) 678 8343,,09,
+604969,,,true,255901001,student,Stephen Caldwell,{Local:969},Stephen,Caldwell,,,jgmgp.cnljedcey@example.com,,(950) 321 0140,,09,
+604974,,,true,255901001,student,Olivia Doris Hardy,{Local:974},Olivia,Hardy,Doris,,rlccvnlp.qufmu@example.com,,(950) 269 9777,,09,
+605015,,,true,255901001,student,Micheal Turner,{Local:015},Micheal,Turner,,,orlu.azxgtbda@example.com,,(950) 017 9898,,09,
+207270,,,true,255901001,teacher,Kelley Heidi Christian,,Kelley,Christian,Heidi,,,,,,,,
+207268,,,true,255901001,teacher,Sara Stacy Preston,,Sara,Preston,Stacy,,SaraPreston@edfi.org,,,,,,
