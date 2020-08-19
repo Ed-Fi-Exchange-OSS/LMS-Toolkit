@@ -1,0 +1,3 @@
+sourcedId,status,dateLastModified,name,type,identifier,metadata.classification,metadata.gender,metadata.boarding,parentSourcedId
+255901,,,Grand Bend ISD,district,,public,,,
+255901001,,,Grand Bend High School,school,,public,,,255901
