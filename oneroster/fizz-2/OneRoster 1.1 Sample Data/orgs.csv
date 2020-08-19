@@ -1,0 +1,3 @@
+sourcedId,status,dateLastModified,name,type,identifier,parentSourcedId,metadata.address1,metadata.address2,metadata.city,metadata.postCode,metadata.state
+255901,,,Grand Bend ISD,district,,,,,,,
+255901001,,,Grand Bend High School,school,,255901,,,,,

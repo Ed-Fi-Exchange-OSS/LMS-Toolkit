@@ -1,0 +1,9 @@
+sourcedId,status,dateLastModified,birthDate,sex,americanIndianOrAlaskaNative,asian,blackOrAfricanAmerican,nativeHawaiianOrOtherPacificIslander,white,demographicRaceTwoOrMoreRaces,hispanicOrLatinoEthnicity,countryOfBirthCode,stateOfBirthAbbreviation,cityOfBirth,publicSchoolResidenceStatus
+604863,,,1997-05-30,female,false,true,false,false,false,false,true,,,,
+604874,,,1997-07-31,male,true,false,false,false,false,false,false,,,,
+604918,,,1997-01-18,male,false,true,false,false,false,false,true,,,,
+604927,,,1997-03-30,male,false,false,true,false,false,false,false,,,,
+604938,,,1997-10-30,male,false,true,false,false,false,false,false,,,,
+604969,,,1997-12-22,male,false,false,false,false,true,false,false,,,,
+604974,,,1997-08-28,female,false,false,true,false,false,false,false,,,,
+605015,,,1997-04-06,male,true,false,false,false,false,false,true,,,,

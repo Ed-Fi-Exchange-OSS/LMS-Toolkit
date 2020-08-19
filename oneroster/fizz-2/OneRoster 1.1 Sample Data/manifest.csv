@@ -1,0 +1,18 @@
+propertyName,value
+manifest.version,1
+oneroster.version,1.1
+source.systemName,ClassLink OneRoster
+source.systemCode,ClassLink
+file.academicSessions,bulk
+file.orgs,bulk
+file.courses,bulk
+file.classes,bulk
+file.users,bulk
+file.enrollments,bulk
+file.demographics,bulk
+file.resources,absent
+file.classResources,absent
+file.courseResources,absent
+file.categories,absent
+file.lineItems,absent
+file.results,absent

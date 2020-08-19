@@ -1,0 +1,4 @@
+sourcedId,status,dateLastModified,title,type,startDate,endDate,parentSourcedId,schoolYear
+255901001_2021_2020-2021_SchoolYear,,,2020-2021 School Year,schoolYear,2020-08-17,2021-05-28,,2021
+255901001_2021_2020-2021_Fall,,,2020-2021 Fall Semester,semester,2020-08-17,2020-12-18,,2021
+255901001_2021_2020-2021_Spring,,,2020-2021 Spring Semester,semester,2021-01-04,2021-05-28,,2021
