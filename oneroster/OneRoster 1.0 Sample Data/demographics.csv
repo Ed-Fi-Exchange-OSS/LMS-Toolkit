@@ -1,0 +1,9 @@
+userSourcedId,status,dateLastModified,birthdate,sex,americanIndianOrAlaskaNative,asian,blackOrAfricanAmerican,nativeHawaiianOrOtherPacificIslander,white,demographicRaceTwoOrMoreRaces,hispanicOrLatinoEthnicity,countryOfBirthCode,stateOfBirthAbbreviation,cityOfBirth,publicSchoolResidenceStatus
+604863,,,1997-05-30,Female,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,US,TX,Grand Bend,1652
+604874,,,1997-07-31,Male,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,US,TX,Grand Bend,1652
+604918,,,1997-01-18,Male,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,TRUE,US,TX,Grand Bend,1652
+604927,,,1997-03-30,Male,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,US,LA,New Orleans,1652
+604938,,,1997-10-30,Male,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,US,NM,Las Cruces,1652
+604969,,,1997-12-22,Male,FALSE,FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,US,TX,Grand Bend,1652
+604974,,,1997-08-28,Female,FALSE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,US,TX,Grand Bend,1652
+605015,,,1997-04-06,Male,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,US,FL,Tampa,1652
