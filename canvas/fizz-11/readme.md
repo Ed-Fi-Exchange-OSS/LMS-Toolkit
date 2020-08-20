@@ -24,4 +24,4 @@ CANVAS_ADMIN_ID=[ADMIN_USER_ID]
 > A numeric value. At this point we will just provide it manually
 
 YEAR_TO_REPORT=2020
-> The csv considers assignments from courses wich have a staet_at <= YEAR_TO_REPORT or end_at >= YEAR_TO_REPORT
+> The csv considers assignments from courses wich have a start_at <= YEAR_TO_REPORT or end_at >= YEAR_TO_REPORT
