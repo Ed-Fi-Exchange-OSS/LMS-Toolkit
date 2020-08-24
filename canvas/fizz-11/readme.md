@@ -5,7 +5,12 @@ This script gets the data from the Canvas REST API
 [Canvas docs](https://canvas.instructure.com/doc/api/)
 
 ### What does it do?
-Generates a CSV with information about the students that didn't complete assignments for all the courses of the year.
+Generates some CSV files with information for a specified year, extracted from Canvas REST API:
+* Courses
+* Assignments
+* Students
+* Enrollments
+* Submissions
 
 ### How to use it
 1. Run the command ``yarn install``.
