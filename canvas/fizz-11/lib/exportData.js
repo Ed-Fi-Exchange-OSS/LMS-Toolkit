@@ -9,7 +9,7 @@ const ToCsv = (data, name) => {
       if (fsErr)
         console.log('Some error occured - file either not saved or corrupted file saved.')
       else
-        console.log('The file has been generated')
+        console.log(`The file has been generated => ${name}.csv`)
     })
   }
   converter.json2csv(data, json2csvCallback);

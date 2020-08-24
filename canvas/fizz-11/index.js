@@ -1,39 +1,45 @@
 require('dotenv').config()
 const exportData = require('./lib/exportData')
 const { getCoursesForYear } = require('./lib/courses')
-const { getStudentsForCourse } = require('./lib/students')
-const { getMissingAssignmentsForUser } = require('./lib/assignments')
+const { getStudentsForCourse, getEnrollmentsForStudent } = require('./lib/students')
+const { getAssignmentsForCourse } = require('./lib/assignments')
+const { getSubmissionsForAssignment } = require('./lib/submissions')
 
 const getAssignments = async () => {
-  const courses = await getCoursesForYear(process.env.YEAR_TO_REPORT)
-  const coursesToPrint = []
+  const allCourses = await getCoursesForYear(process.env.YEAR_TO_REPORT)
+  let allStudents = []
+  let allAssignments = []
+  let allSubmissions = []
+  let allEnrollments = []
 
-  for(let coursesIndex= 0; coursesIndex<courses.length; coursesIndex++) {
-    const courseId = courses[coursesIndex].id
-    const students = await getStudentsForCourse(courseId)
-    const studentsWithMissingAssignments = []
+  for(let coursesIndex = 0; coursesIndex < allCourses.length; coursesIndex++) {
+    const courseId = allCourses[coursesIndex].id
+    let students = await getStudentsForCourse(courseId)
+    const assignments = await getAssignmentsForCourse(courseId)
 
-    for(let studentsIndex= 0; studentsIndex<students.length; studentsIndex++) {
-      const userId = students[studentsIndex].id
-      const missingAssignments = await getMissingAssignmentsForUser(userId)
-      const missingAssignmentsForCourse = missingAssignments
-        .filter(missingAssignment => missingAssignment.course_id === courseId)
-
-      if (missingAssignmentsForCourse && missingAssignmentsForCourse.length) {
-        students[studentsIndex].missingAssignments = missingAssignmentsForCourse
-        studentsWithMissingAssignments.push(students[studentsIndex])
-      }
+    for(let assignmentIndex = 0; assignmentIndex < assignments.length; assignmentIndex++) {
+      const assignmentId = assignments[assignmentIndex].id
+      const submissionsForAssigment = await getSubmissionsForAssignment(courseId, assignmentId)
+      allSubmissions = [ ...allSubmissions, ...submissionsForAssigment ]
     }
 
-    if(studentsWithMissingAssignments.length > 0) {
-      courses[coursesIndex].studentsWithMissingAssignments = studentsWithMissingAssignments
-      coursesToPrint.push(courses[coursesIndex])
-    }
+    students = students.filter( newStudent => !allStudents.some( existingStudent => existingStudent.id=== newStudent.id ))
+    allStudents = [ ...allStudents, ...students ]
+    allAssignments = [ ...allAssignments, ...assignments ]
   }
 
-  exportData.ToCsv(coursesToPrint, 'students_with_missing_assignments')
+  for(let studentsIndex = 0; studentsIndex < allStudents.length; studentsIndex++) {
+    const studentEnrollments = await getEnrollmentsForStudent(allStudents[studentsIndex].id)
+    allEnrollments = [ ...allEnrollments, ...studentEnrollments ]
+  }
 
-  return coursesToPrint
+  exportData.ToCsv(allCourses, 'courses')
+  exportData.ToCsv(allStudents, 'students')
+  exportData.ToCsv(allAssignments, 'assignments')
+  exportData.ToCsv(allSubmissions, 'submissions')
+  exportData.ToCsv(allEnrollments, 'enrollments')
+
+  return
 }
 
 getAssignments()

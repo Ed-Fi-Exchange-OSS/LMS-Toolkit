@@ -6,19 +6,13 @@ const getAssignments = async (courseId, assignmentStatus) => {
   return data
 }
 
-const getAssignmentsForCourses = async (courses) => {
-  let assignments= []
+const getAssignmentsForCourse = async (courseId) => {
 
-  await Promise.all(courses.map(async ({id}) => {
-    const pastAssignments = await getAssignments(id, 'past')
-    const overdueAssignments = await getAssignments(id, 'overdue')
-    //testing purpose
-    const actualAssignments = await getAssignments(id, 'unsubmitted')
+  const pastAssignments = await getAssignments(courseId, 'past')
+  const overdueAssignments = await getAssignments(courseId, 'overdue')
 
-    assignments = [ ...assignments, ...pastAssignments, ...overdueAssignments, ...actualAssignments ]
-  }))
+  return [ ...pastAssignments, ...overdueAssignments ]
 
-  return assignments
 }
 
 const getMissingAssignmentsForUser =  async (userId) => {
@@ -29,6 +23,6 @@ const getMissingAssignmentsForUser =  async (userId) => {
 
 
 module.exports = {
-  getAssignmentsForCourses,
+  getAssignmentsForCourse,
   getMissingAssignmentsForUser
 }
