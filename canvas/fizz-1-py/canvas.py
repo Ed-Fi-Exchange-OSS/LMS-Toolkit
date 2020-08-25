@@ -28,7 +28,7 @@ def quote_string(value):
 def get_course_for_csv(course):
     return [
         quote_string(course.name),
-        quote_string(course.sis_course_id),
+        str(course.id),
         str(course.start_at_date)
     ]
 
@@ -54,14 +54,14 @@ def main():
 
     # Create a more complex list using a named tuple
     CCourse = namedtuple('CCourse', ['name', 'start_date', 'id'])
-    complex_list = [CCourse(c.name, c.start_at_date, c.sis_course_id) for c in courses]
+    complex_list = [CCourse(c.name, c.start_at_date, c.id) for c in courses]
 
     pprint.pprint(complex_list)
 
     # That was interesting, but I haven't figured out what to do with it other
     # than iterate over the list, which is not really an improvement on direct
     # access to the pages.
-    records = [",".join([c.name, c.sis_course_id, str(c.start_at_date)]) for c in courses]
+    records = [",".join([c.name, str(c.start_at_date)]) for c in courses]
     pprint.pprint(records)
 
     # That was better. Now let's quote those strings if they contain commas, and
