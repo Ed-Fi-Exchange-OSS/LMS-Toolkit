@@ -1,0 +1,9 @@
+id,name,created_at,sortable_name,short_name,sis_user_id,integration_id,sis_import_id,login_id,email
+13,Mary Archer,2020-08-19T10:51:47-06:00,"Archer, Mary",Mary Archer,604863,null,null,Mary.Archer@studentgps.org,Mary.Archer@studentgps.org
+18,Stephen Caldwell,2020-08-19T10:53:22-06:00,"Caldwell, Stephen",Stephen Caldwell,604969,null,null,jgmgp.cnljedcey@example.com,Stephen.Caldwell@studentgps.org
+19,Olivia Doris Hardy,2020-08-19T10:53:40-06:00,"Hardy, Olivia Doris",Olivia Doris Hardy,604974,null,null,rlccvnlp.qufmu@example.com,Olivia.Hardy@studentgps.org
+14,Kyle Hughes,2020-08-19T10:52:03-06:00,"Hughes, Kyle",Kyle Hughes,604874,null,null,sqgnjfvq8@example.com,Kyle.Hughes@studentgps.org
+20,Micheal Turner,2020-08-19T10:54:01-06:00,"Turner, Micheal",Micheal Turner,605015,null,null,orlu.azxgtbda@example.com,Micheal.Turner@studentgps.org
+16,Larry Mahoney,2020-08-19T10:52:42-06:00,"Mahoney, Larry",Larry Mahoney,604927,null,null,iyzfj76@example.com,Larry.Mahoney@studentgps.org
+15,Peter Ivan Nash,2020-08-19T10:52:21-06:00,"Nash, Peter Ivan",Peter Ivan Nash,604918,null,null,ultnacia.vogjlgd@example.com,Peter.Nash@studentgps.org
+17,Roland Phillips,2020-08-19T10:52:59-06:00,"Phillips, Roland",Roland Phillips,604938,null,null,iogw17@example.com,Roland.Phillips@studentgps.org
