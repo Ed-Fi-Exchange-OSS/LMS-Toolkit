@@ -1,45 +1,40 @@
 import collections
-from datetime import datetime, timedelta
+import logging
+import os
+import sys
+from datetime import datetime
+
+import pandas as pd
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
-import logging
-import os
-from operator import itemgetter
-import pandas as pd
-import sys
-import traceback
 
 
 # returns google.auth.service_account.Credentials
 def get_credentials():
-    SCOPES = [
-        "https://www.googleapis.com/auth/classroom.announcements",
+    scopes = [
         "https://www.googleapis.com/auth/admin.directory.orgunit",
         "https://www.googleapis.com/auth/admin.reports.usage.readonly",
         "https://www.googleapis.com/auth/classroom.courses",
         "https://www.googleapis.com/auth/classroom.coursework.students",
-        "https://www.googleapis.com/auth/classroom.guardianlinks.students",
         "https://www.googleapis.com/auth/classroom.profile.emails",
         "https://www.googleapis.com/auth/classroom.rosters",
         "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
-        "https://www.googleapis.com/auth/classroom.topics",
         "https://www.googleapis.com/auth/admin.reports.audit.readonly",
     ]
 
-    filePath = (
-        "classroom-account.json"
-        if os.path.exists("classroom-account.json")
-        else "../classroom-account.json"
+    filename = (
+        "service-account.json"
+        if os.path.exists("service-account.json")
+        else "../service-account.json"
     )
 
     return service_account.Credentials.from_service_account_file(
-        filePath, scopes=SCOPES, subject=os.getenv("CLASSROOM_ACCOUNT")
+        filename, scopes=scopes, subject=os.getenv("CLASSROOM_ACCOUNT")
     )
 
 
 # TODO: handle 'PARTIAL_DATA_AVAILABLE' warning
-#       example message: 'Data for date 2020-08-19 for application classroom is not available right now, please try again after a few hours.'
 # TODO: handle pagination
 def request_usage(resource, date):
     return (
@@ -55,14 +50,12 @@ def request_usage(resource, date):
 
 
 # TODO: handle 'PARTIAL_DATA_AVAILABLE' warning
-#       example message: 'Data for date 2020-08-19 for application classroom is not available right now, please try again after a few hours.'
 # TODO: handle pagination
 def request_courses(resource):
     return resource.courses().list(courseStates=["ACTIVE"], pageToken=None).execute()
 
 
 # TODO: handle 'PARTIAL_DATA_AVAILABLE' warning
-#       example message: 'Data for date 2020-08-19 for application classroom is not available right now, please try again after a few hours.'
 # TODO: handle pagination
 def request_students(resource, course_id):
     return (
@@ -71,7 +64,6 @@ def request_students(resource, course_id):
 
 
 # TODO: handle 'PARTIAL_DATA_AVAILABLE' warning
-#       example message: 'Data for date 2020-08-19 for application classroom is not available right now, please try again after a few hours.'
 # TODO: handle pagination
 def request_submission(resource, course_id):
     return (
@@ -133,6 +125,7 @@ def get_submissions(resource):
 def get_usage(resource):
     logging.info("Pulling usage data")
     reports = []
+    # pylint: disable=no-member
     for date in pd.date_range(
         start=os.getenv("START_DATE"), end=os.getenv("END_DATE")
     ).strftime("%Y-%m-%d"):
@@ -180,7 +173,9 @@ def get_usage(resource):
 def request():
     load_dotenv()
     logging.basicConfig(
-        handlers=[logging.StreamHandler(sys.stdout),],
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+        ],
         level=os.environ.get("LOGLEVEL", "INFO"),
     )
     logging.getLogger("matplotlib").setLevel(logging.ERROR)

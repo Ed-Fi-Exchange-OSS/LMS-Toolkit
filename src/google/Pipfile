@@ -8,6 +8,7 @@ pylint = "*"
 pytest = "*"
 black = "*"
 rope = "*"
+flake8 = "*"
 
 [packages]
 google-api-python-client = "*"
