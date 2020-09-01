@@ -72,7 +72,6 @@ Session = _model('Session')
 MessageThread = _model('MessageThread')
 Message = _model('Message')
 Action = _model('Action')
-Role = _model('Role')
 
 class NoDifferenceError(Exception):
     """
@@ -80,3 +79,7 @@ class NoDifferenceError(Exception):
     and makes it easier to tell what went wrong.
     """
     pass
+
+# Ed-Fi additions
+Role = _model('Role')
+Submission = _model('Submission')

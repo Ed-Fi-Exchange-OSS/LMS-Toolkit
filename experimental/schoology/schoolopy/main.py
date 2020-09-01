@@ -50,6 +50,7 @@ class Schoology:
         self.secret = schoology_auth.consumer_secret
         self.schoology_auth = schoology_auth
         self.verbose = verbose
+        self.this = self
 
     def _get(self, path):
         """
@@ -66,8 +67,18 @@ class Schoology:
 
             response = self.schoology_auth.oauth.get(url=url, headers=self.schoology_auth._request_header(), auth=self.schoology_auth.oauth.auth)
             return response.json()
-        except JSONDecodeError:
+        except JSONDecodeError as ex:
+            # SFUQUA TODO: consider better error handling here, so that we know
+            # what went wrong. For now, at least add verbose logging. Long-term,
+            # probably want to throw dedicated exception types instead of
+            # swallowing the exception.
+            if self.verbose:
+                print(ex)
             return {}
+
+    def get(self, path):
+        assert bool(path and path.strip()) == True
+        return self._get(path)
 
     def _post(self, path, data):
         """
@@ -2166,3 +2177,24 @@ class Schoology:
         :return: A list of dictionaries representing search outputs.
         """
         return self._search(keywords, 'course')
+
+#
+# Ed-Fi additions
+#
+    def get_students(self):
+        ROLE_NAME_STUDENT = 'Student'
+
+        roles = self.get_roles()
+        try:
+            role_id_student = next(r.id for r in roles if r.title == ROLE_NAME_STUDENT)
+
+            resource = 'users/?role_id={}'.format(role_id_student)
+
+            return [User(raw) for raw in self.get(resource)['user']]
+        except StopIteration:
+            if self.verbose:
+                print('Role "{}" does not exist.'.format(ROLE_NAME_STUDENT))
+
+            # TODO: returning an empty dictionary is consistent with other `schoolopy` API
+            # methods, but may not actually be desirable.
+            return {}
