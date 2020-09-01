@@ -2118,7 +2118,12 @@ class Schoology:
         start_time = end_time - 604800 if start_time is None else start_time
         if start_time < end_time - 604800:
             raise AttributeError('Start timestamp must be no earlier than 7 days before end timestamp.')
-        return [Action(raw) for raw in self._get('analytics/users/%s?start_time=%s&end_time=%s&start=%s&limit=%s' % (user_id, start_time, end_time, self.start, self.limit))['actions']]
+        actions = self._get('analytics/users/%s?start_time=%s&end_time=%s&start=%s&limit=%s' % (user_id, start_time, end_time, self.start, self.limit))
+
+        if actions:
+            return [Action(raw) for raw in actions['actions']]
+
+        return None
 
     # TODO: Implement other analytics endpoints
     # TODO: Implement multi-get(!) and multi-options requests. Don't seem to work right now.
