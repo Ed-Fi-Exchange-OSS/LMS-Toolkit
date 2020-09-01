@@ -97,8 +97,7 @@ def get_submissions(resource):
         submissions_df, courses_df, on="courseId", how="left"
     )
 
-    students_df = pd.json_normalize(students)
-    students_df = students_df.astype("string")
+    students_df = pd.json_normalize(students).astype("string")
 
     # TODO - leave sub-json as objects to pluck out of - name in particular
     full_df = pd.merge(
@@ -107,6 +106,20 @@ def get_submissions(resource):
     full_df.rename(
         columns={"profile.name.fullName": "name", "profile.emailAddress": "email"},
         inplace=True,
+    )
+    full_df["importDate"] = datetime.today().strftime("%Y-%m-%d")
+    full_df = full_df.astype(
+        {
+            "creationTime": "datetime64",
+            "updateTime": "datetime64",
+            "state": "string",
+            "draftGrade": "string",
+            "assignedGrade": "string",
+            "courseName": "string",
+            "name": "string",
+            "email": "string",
+            "importDate": "datetime64",
+        }
     )
     return full_df[
         [
@@ -118,6 +131,7 @@ def get_submissions(resource):
             "courseName",
             "name",
             "email",
+            "importDate",
         ]
     ]
 

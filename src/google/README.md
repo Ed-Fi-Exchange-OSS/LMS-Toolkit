@@ -52,6 +52,12 @@ https://www.googleapis.com/auth/admin.reports.audit.readonly`
 
 To pull data from Google Classroom and generate csv files, run `poetry run python google-extractor/main.py` from the root directory of this project.
 
+### usage.csv
+usage.csv is an extract of student usage Google Classroom. Rows are a pairing of student email and as-of date. The as-of date applies to the number of posts a student made on that day to any course. The last interaction time applies to any interaction the student had with Google Classroom, but does not provide historical information beyond that.  Last login time is the last actual login event and does not provide historical information beyond that either.
+
+### submissions.csv
+submission.csv is an extract of student classwork submissions to Google Classroom. Rows are individual submissions for assigned coursework per student. Important submission states include "CREATED", "TURNED_IN" and "RETURNED".  The "CREATED" state only indicates the assignment of coursework by the teacher, not student activity.
+
 ### Analyze with Jupyter Notebook
 
 To open the .ipynb Jupyter Notebook files standalone, run `jupyter notebook`.  More information about Jupyter Notebooks in general can be found [here](https://jupyter-notebook.readthedocs.io/en/stable/notebook.html).
