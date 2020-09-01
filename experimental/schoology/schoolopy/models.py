@@ -72,6 +72,7 @@ Session = _model('Session')
 MessageThread = _model('MessageThread')
 Message = _model('Message')
 Action = _model('Action')
+Role = _model('Role')
 
 class NoDifferenceError(Exception):
     """
