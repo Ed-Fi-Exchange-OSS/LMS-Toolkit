@@ -41,13 +41,15 @@ class Schoology:
     secret = ''
     limit = 20
     start = 0
+    verbose = False
 
-    def __init__(self, schoology_auth):
+    def __init__(self, schoology_auth, verbose = False):
         if not schoology_auth.authorized:
             raise AuthorizationError('Auth instance not authorized. Run authorize() after requesting authorization.')
         self.key = schoology_auth.consumer_key
         self.secret = schoology_auth.consumer_secret
         self.schoology_auth = schoology_auth
+        self.verbose = verbose
 
     def _get(self, path):
         """
@@ -57,7 +59,12 @@ class Schoology:
         :return: JSON response.
         """
         try:
-            response = self.schoology_auth.oauth.get(url='%s%s?limit=%s&start=%s' % (self._ROOT, path, self.limit, self.start), headers=self.schoology_auth._request_header(), auth=self.schoology_auth.oauth.auth)
+            url = '%s%s?limit=%s&start=%s' % (self._ROOT, path, self.limit, self.start)
+
+            if self.verbose:
+                print("--> calling {}".format(url))
+
+            response = self.schoology_auth.oauth.get(url=url, headers=self.schoology_auth._request_header(), auth=self.schoology_auth.oauth.auth)
             return response.json()
         except JSONDecodeError:
             return {}
