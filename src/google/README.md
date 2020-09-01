@@ -2,7 +2,7 @@
 
 The purpose of this project is to make it easy to extract Google Classroom data in order to monitor the progress and participation of students in virtual or blended models.
 
-This data extractor targets two audiences.  The first is someone who just wants the data out of Google Classroom into a .csv file that can be loaded into a spreadsheet.  The second is to present the data in Jupyter Notebook format for analysis and reporting by someone who is familiar with that common Python-based analytics tool.
+This data extractor targets two audiences.  The first is someone who just wants the data out of Google Classroom into a .csv file that can be loaded into a spreadsheet.  The second for someone who is familiar with Jupyter Notebook, a common Python-based tool for analysis and reporting.
 
 ## API Permissions
 
@@ -35,24 +35,32 @@ https://www.googleapis.com/auth/admin.reports.audit.readonly`
 
 ## Installing the Extractor
 
-1. Install the latest version of Python.  You can find it [here](https://www.python.org/downloads/)
+1. Install the latest version of Python.  You can find it [here](https://www.python.org/downloads/).
 
-1. Clone this GitHub repository and open a command prompt in the root directory of this project (where this file resides).
+1. Install Poetry, a Python tool for downloading third-party libraries.  You can find installation instructions [here](https://python-poetry.org/docs/#installation). The instructions are basically a long single-line command to copy and run on Powershell (for Windows) or bash (for Mac/Linux).
+1. Clone this GitHub repository and open a command prompt in the root directory of this project (where this README file resides).
 
-1. Install pipenv from the command line: `pip install pipenv`
-
-1. Install the third-party libraries used by the extractor: `pipenv install`
-
-1. If you want to do hack the Python code, install the developer tools: `pipenv install --dev`
+1. Install the third-party libraries used by the extractor: `poetry install`. This may take a while.
 
 1. Copy the "example.env" file to ".env" and set the variables as documented in the file.
 
-1. Place the service-account.json file downloaded earlier in the root directory of this project (where this file resides).
+1. Place the service-account.json file downloaded earlier in the root directory of this project.
 
 ## Running the Extractor
 
-1. To pull data from Google Classroom and generate csv files, run `pipenv run python src/main.py` from the root directory of this project.
-1. Optional: To open the .ipynb Jupyter Notebook files standalone, run `jupyter notebook`.
-1. Optional: To work in Visual Studio, install the Python Extension.  Then type `Ctrl-Shift-P`, select Python:Select Interpreter and choose pipenv for current folder. The
-.ipynb Jupiter Notebook files can be opened directly in Visual Studio Code.
+### Generate CSV Files
+
+To pull data from Google Classroom and generate csv files, run `poetry run python google-extractor/main.py` from the root directory of this project.
+
+### Analyze with Jupyter Notebook
+
+To open the .ipynb Jupyter Notebook files standalone, run `jupyter notebook`.  More information about Jupyter Notebooks in general can be found [here](https://jupyter-notebook.readthedocs.io/en/stable/notebook.html).
+
+### Visual Studio Code (Optional)
+To work in Visual Studio Code install the Python Extension.  Then:
+1. Close Visual Studio Code and open a new command prompt in the root directory of this project.
+1. Run `poetry shell` followed by `vscode .` (Don't forget the period!  Note you will only need run Visual Studio Code like this once.)
+1. Visual Studio Code will open. Type `Ctrl-Shift-P`, then choose `Python:Select Interpreter` and then choose the environment that includes `google-extractor` in the name.
+
+The .ipynb Jupiter Notebook files can be opened directly in Visual Studio Code.
 
