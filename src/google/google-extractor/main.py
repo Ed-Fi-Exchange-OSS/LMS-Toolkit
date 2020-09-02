@@ -7,6 +7,8 @@ from datetime import datetime
 import pandas as pd
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
+from opnieuw import retry
+from tail_recursive import tail_recursive
 from google.oauth2 import service_account
 
 
@@ -34,44 +36,69 @@ def get_credentials():
     )
 
 
-# TODO: handle 'PARTIAL_DATA_AVAILABLE' warning
-# TODO: handle pagination
+@retry(
+    retry_on_exceptions=(Exception),
+    max_calls_total=4,
+    retry_window_after_first_call_in_seconds=60,
+)
+def execute(executable_resource):
+    return executable_resource.execute()
+
+
+# resource_method is the get/list SDK function to call,
+# resource_parameters is the parameters for get/list
+# response_property is the property in the response json we want
+# results is the result accumulated across pages
+@tail_recursive
+def request_execution(
+    resource_method, resource_parameters, response_property, results=None
+):
+    if results is None:
+        results = []
+    response = execute(resource_method(**resource_parameters))
+    results.extend(response.get(response_property, []))
+    next_page_token = response.get("nextPageToken", None)
+    if not next_page_token:
+        return results
+    resource_parameters["pageToken"] = next_page_token
+    return request_execution.tail_call(
+        resource_method, resource_parameters, response_property, results
+    )
+
+
 def request_usage(resource, date):
-    return (
-        resource.userUsageReport()
-        .get(
-            userKey="all",
-            date=date,
-            parameters="classroom:timestamp_last_interaction,classroom:num_posts_created,accounts:timestamp_last_login",
-            pageToken=None,
-        )
-        .execute()
+    return request_execution(
+        resource.userUsageReport().get,
+        {
+            "userKey": "all",
+            "date": date,
+            "parameters": "classroom:timestamp_last_interaction,classroom:num_posts_created,accounts:timestamp_last_login",
+        },
+        "usageReports",
     )
 
 
-# TODO: handle 'PARTIAL_DATA_AVAILABLE' warning
-# TODO: handle pagination
 def request_courses(resource):
-    return resource.courses().list(courseStates=["ACTIVE"], pageToken=None).execute()
-
-
-# TODO: handle 'PARTIAL_DATA_AVAILABLE' warning
-# TODO: handle pagination
-def request_students(resource, course_id):
-    return (
-        resource.courses().students().list(courseId=course_id, pageToken=None).execute()
+    return request_execution(
+        resource.courses().list,
+        {"courseStates": ["ACTIVE"]},
+        "courses",
     )
 
 
-# TODO: handle 'PARTIAL_DATA_AVAILABLE' warning
-# TODO: handle pagination
+def request_students(resource, course_id):
+    return request_execution(
+        resource.courses().students().list,
+        {"courseId": course_id},
+        "students",
+    )
+
+
 def request_submission(resource, course_id):
-    return (
-        resource.courses()
-        .courseWork()
-        .studentSubmissions()
-        .list(courseId=course_id, courseWorkId="-", pageToken=None)
-        .execute()
+    return request_execution(
+        resource.courses().courseWork().studentSubmissions().list,
+        {"courseId": course_id, "courseWorkId": "-"},
+        "studentSubmissions",
     )
 
 
@@ -79,17 +106,15 @@ def get_submissions(resource):
     logging.info("Pulling submissions data")
 
     courses = request_courses(resource)
-    courses_df = pd.json_normalize(courses.get("courses", []))[["id", "name"]]
+    courses_df = pd.json_normalize(courses)[["id", "name"]]
     courses_df.rename(columns={"id": "courseId", "name": "courseName"}, inplace=True)
     courses_df = courses_df.astype("string")
 
     submissions = []
     students = []
     for course_id in courses_df["courseId"]:
-        submissions.extend(
-            request_submission(resource, course_id).get("studentSubmissions", [])
-        )
-        students.extend(request_students(resource, course_id).get("students", []))
+        submissions.extend(request_submission(resource, course_id))
+        students.extend(request_students(resource, course_id))
 
     submissions_df = pd.json_normalize(submissions).astype("string")
 
@@ -143,8 +168,7 @@ def get_usage(resource):
     for date in pd.date_range(
         start=os.getenv("START_DATE"), end=os.getenv("END_DATE")
     ).strftime("%Y-%m-%d"):
-        single_result = request_usage(resource, date)
-        reports.extend(single_result.get("usageReports", []))
+        reports.extend(request_usage(resource, date))
 
     usage = []
     for response in reports:
@@ -164,8 +188,7 @@ def get_usage(resource):
                 row["lastLoginTime"] = parameter.get("datetimeValue")
         usage.append(row)
 
-    usage_df = pd.json_normalize(usage)
-    usage_df = usage_df.astype(
+    usage_df = pd.json_normalize(usage).astype(
         {
             "email": "string",
             "asOfDate": "datetime64",
@@ -176,7 +199,7 @@ def get_usage(resource):
         }
     )
 
-    # TODO: get this from join with student profile
+    # TODO: get this from a join with student profile
     usage_df["name"] = usage_df["email"].str.split("@").str[0]
 
     usage_df["monthDay"] = usage_df["asOfDate"].dt.strftime("%m/%d")

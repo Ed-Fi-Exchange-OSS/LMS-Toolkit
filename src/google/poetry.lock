@@ -696,6 +696,14 @@ signedtoken = ["cryptography", "pyjwt (>=1.0.0)"]
 
 [[package]]
 category = "main"
+description = "Retries for humans"
+name = "opnieuw"
+optional = false
+python-versions = ">=3.6"
+version = "1.1.0"
+
+[[package]]
+category = "main"
 description = "Core utilities for Python packages"
 name = "packaging"
 optional = false
@@ -825,7 +833,7 @@ six = ">=1.9"
 [[package]]
 category = "main"
 description = "Run a subprocess in a pseudo terminal"
-marker = "sys_platform != \"win32\" or os_name != \"nt\" or python_version >= \"3.3\" and sys_platform != \"win32\""
+marker = "python_version >= \"3.3\" and sys_platform != \"win32\" or sys_platform != \"win32\" or os_name != \"nt\" or python_version >= \"3.3\" and sys_platform != \"win32\" and (python_version >= \"3.3\" and sys_platform != \"win32\" or sys_platform != \"win32\")"
 name = "ptyprocess"
 optional = false
 python-versions = "*"
@@ -1139,6 +1147,14 @@ version = "1.15.0"
 
 [[package]]
 category = "main"
+description = "Tail recursion with a simple decorator api."
+name = "tail-recursive"
+optional = false
+python-versions = ">=3.8,<4.0"
+version = "1.1.0"
+
+[[package]]
+category = "main"
 description = "Terminals served to xterm.js using Tornado websockets"
 name = "terminado"
 optional = false
@@ -1191,7 +1207,7 @@ description = "Traitlets Python configuration system"
 name = "traitlets"
 optional = false
 python-versions = ">=3.7"
-version = "5.0.0"
+version = "5.0.2"
 
 [package.dependencies]
 ipython-genutils = "*"
@@ -1272,7 +1288,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "5469d45d9c981a0260b3c2dcbb4c5115e28ad78a4244174604462537c882a4db"
+content-hash = "d5b6bd2fd53aa905906136e8bb6b07b79054e67ffa0e5dbe4de8950d2d5cbafc"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -1646,6 +1662,10 @@ oauthlib = [
     {file = "oauthlib-3.1.0-py2.py3-none-any.whl", hash = "sha256:df884cd6cbe20e32633f1db1072e9356f53638e4361bef4e8b03c9127c9328ea"},
     {file = "oauthlib-3.1.0.tar.gz", hash = "sha256:bee41cc35fcca6e988463cacc3bcb8a96224f470ca547e697b604cc697b2f889"},
 ]
+opnieuw = [
+    {file = "opnieuw-1.1.0-py3-none-any.whl", hash = "sha256:b49b92dd7eb6b641d77a7fab21e06cdd6d9c8149410341d9523d28fb25b75d9e"},
+    {file = "opnieuw-1.1.0.tar.gz", hash = "sha256:9fd38886d08ed1d77dd26f82a26d6de86f2d59b7894e559600a93408889278da"},
+]
 packaging = [
     {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
     {file = "packaging-20.4.tar.gz", hash = "sha256:4357f74f47b9c12db93624a82154e9b120fa8293699949152b22065d556079f8"},
@@ -1963,6 +1983,10 @@ six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
 ]
+tail-recursive = [
+    {file = "tail-recursive-1.1.0.tar.gz", hash = "sha256:a4bfc7a9876786d8dcf0531f7b7311ee23f3cb1982b57a04ae80f8737e625423"},
+    {file = "tail_recursive-1.1.0-py3-none-any.whl", hash = "sha256:a3ab6f6a11e4493be565a1e99cbbdce4945414c5d89ec526ceff1894293ab4d9"},
+]
 terminado = [
     {file = "terminado-0.8.3-py2.py3-none-any.whl", hash = "sha256:a43dcb3e353bc680dd0783b1d9c3fc28d529f190bc54ba9a229f72fe6e7a54d7"},
     {file = "terminado-0.8.3.tar.gz", hash = "sha256:4804a774f802306a7d9af7322193c5390f1da0abb429e082a10ef1d46e6fb2c2"},
@@ -1990,8 +2014,8 @@ tornado = [
     {file = "tornado-6.0.4.tar.gz", hash = "sha256:0fe2d45ba43b00a41cd73f8be321a44936dc1aba233dee979f17a042b83eb6dc"},
 ]
 traitlets = [
-    {file = "traitlets-5.0.0-py3-none-any.whl", hash = "sha256:62a037f12ccb823fb05823afbe35fe0273bc18fa3202d0cf0ea8f24e97e464be"},
-    {file = "traitlets-5.0.0.tar.gz", hash = "sha256:0d9c4005506b306b0a99551e96174b8bedc675c2dd048f92b3bbbb7d86ac93a9"},
+    {file = "traitlets-5.0.2-py3-none-any.whl", hash = "sha256:613da6efe96bdb4288c72dc65bc82c53320994b1702c6803150e0d2b21f83216"},
+    {file = "traitlets-5.0.2.tar.gz", hash = "sha256:4c9a7212db9642056ea4fcd4ba9e18d302eb617daf679f45fd8cb5d19687b640"},
 ]
 typed-ast = [
     {file = "typed_ast-1.4.1-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:73d785a950fc82dd2a25897d525d003f6378d1cb23ab305578394694202a58c3"},
