@@ -13,27 +13,21 @@ a common Python-based tool for analysis and reporting.
 
 You can explore the work done by navigating across the subfolders
 that you can see inside the current src/canvas folder.
-The folders' names are the names of the spikes/stories that correspond
-to the work done.
+The explorations were driven by spikes and stories that you can see
+in the next list.
 
-* FIZZ-1
-    * [Folder](./fizz-1)
-    * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-1)
-* FIZZ-1-py
-    * [Folder](./fizz-1-py)
-    * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-1)
-* FIZZ-11
-    * [Folder](./fizz-11)
-    * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-11)
-* FIZZ-16
-    * [Folder](./fizz-16)
-    * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-16)
-* FIZZ-21
-    * [Folder](./fizz-21-py)
-    * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-21)
-* FIZZ-27-py
-    * [Folder](./fizz-27-py)
-    * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-27)
+* [initial-canvas-exploration-js](./initial-canvas-exploration-js)
+    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-1)
+* [initial-canvas-exploration-py](./initial-canvas-exploration-py)
+    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-1initial-canvas-exploration-p)
+* [canvas-data-extractor-js](./data-extractor-js)
+    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-11)
+* [login-and-access-data-py](./login-and-access-data-py)
+    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-16)
+* [analize-canvas-data-py](./analize-canvas-data-py)
+    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-21)
+* [data-extractor-py](./data-extractor-py)
+    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-27)
 
 
 ## Installing and running the tools
