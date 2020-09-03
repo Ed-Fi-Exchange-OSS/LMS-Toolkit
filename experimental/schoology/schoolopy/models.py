@@ -83,3 +83,4 @@ class NoDifferenceError(Exception):
 # Ed-Fi additions
 Role = _model('Role')
 Submission = _model('Submission')
+GradingPeriod = _model('GradingPeriod')

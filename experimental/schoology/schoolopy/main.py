@@ -39,7 +39,7 @@ class Schoology:
     _ROOT = 'https://api.schoology.com/v1/'
     key = ''
     secret = ''
-    limit = 20
+    limit = 100
     start = 0
     verbose = False
 
@@ -59,6 +59,7 @@ class Schoology:
         :param path: Path (following API root) to endpoint.
         :return: JSON response.
         """
+
         try:
             url = '%s%s?limit=%s&start=%s' % (self._ROOT, path, self.limit, self.start)
 
@@ -66,7 +67,10 @@ class Schoology:
                 print("--> calling {}".format(url))
 
             response = self.schoology_auth.oauth.get(url=url, headers=self.schoology_auth._request_header(), auth=self.schoology_auth.oauth.auth)
+
             return response.json()
+            # SFUQUA TODO: this library is not well structured for paging support.
+
         except JSONDecodeError as ex:
             # SFUQUA TODO: consider better error handling here, so that we know
             # what went wrong. For now, at least add verbose logging. Long-term,
@@ -2182,15 +2186,21 @@ class Schoology:
 # Ed-Fi additions
 #
     def get_students(self):
+        """
+        Gets all users who are students.
+
+        :return: A list of Users.
+        """
+
         ROLE_NAME_STUDENT = 'Student'
 
         roles = self.get_roles()
         try:
             role_id_student = next(r.id for r in roles if r.title == ROLE_NAME_STUDENT)
 
-            resource = 'users/?role_id={}'.format(role_id_student)
+            resource = 'users'
 
-            return [User(raw) for raw in self.get(resource)['user']]
+            return [User(raw) for raw in self.get(resource)['user'] if raw['role_id'] == role_id_student]
         except StopIteration:
             if self.verbose:
                 print('Role "{}" does not exist.'.format(ROLE_NAME_STUDENT))
@@ -2198,3 +2208,12 @@ class Schoology:
             # TODO: returning an empty dictionary is consistent with other `schoolopy` API
             # methods, but may not actually be desirable.
             return {}
+
+    def get_grading_periods(self):
+        """
+        Gets all grading periods in the account.
+
+        :return: A list of grading periods.
+        """
+        resource = "gradingperiods"
+        return [GradingPeriod(raw) for raw in self.get(resource)['gradingperiods']]
