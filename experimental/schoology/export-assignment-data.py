@@ -10,7 +10,6 @@ file or directly with environment variables:
 
 from datetime import datetime
 import os
-from prettyprinter import pprint
 
 from dotenv import load_dotenv
 import pandas as pd
