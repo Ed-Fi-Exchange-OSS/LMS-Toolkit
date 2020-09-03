@@ -19,23 +19,18 @@ to the work done.
 * FIZZ-1
     * [Folder](./fizz-1)
     * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-1)
-<br/>
 * FIZZ-1-py
     * [Folder](./fizz-1-py)
     * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-1)
-<br/>
 * FIZZ-11
     * [Folder](./fizz-11)
     * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-11)
-<br/>
 * FIZZ-16
     * [Folder](./fizz-16)
     * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-16)
-<br/>
 * FIZZ-21
     * [Folder](./fizz-21-py)
     * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-21)
-<br/>
 * FIZZ-27-py
     * [Folder](./fizz-27-py)
     * [Tracker](https://tracker.ed-fi.org/browse/FIZZ-27)
