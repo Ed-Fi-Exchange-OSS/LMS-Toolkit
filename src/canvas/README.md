@@ -24,7 +24,7 @@ in the next list.
     * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-11)
 * [login-and-access-data-py](./login-and-access-data-py)
     * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-16)
-* [analize-canvas-data-py](./analize-canvas-data-py)
+* [analize-canvas-data-py](./analyze-canvas-data-py)
     * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-21)
 * [data-extractor-py](./data-extractor-py)
     * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-27)
