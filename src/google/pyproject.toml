@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "google-extractor"
-version = "0.1.2"
+version = "0.1.3"
 description = ""
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
-license = Apache-2.0
+license = "Apache-2.0"
 packages = [
     { include = "google-extractor" }
 ]
