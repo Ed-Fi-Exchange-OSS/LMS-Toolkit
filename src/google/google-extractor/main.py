@@ -53,6 +53,24 @@ def execute(executable_resource):
 def request_execution(
     resource_method, resource_parameters, response_property, results=None
 ):
+    """ Execute a Google Classroom/Admin SDK API request
+
+    Parameters
+    ----------
+    resource_method: function
+        is the get/list SDK function to call
+    resource_parameters: dict
+        is the parameters for get/list
+    response_property: string
+        is the property in the API response we want
+    results: list
+        is the list of dicts of the API response accumulated across pages
+
+    Returns
+    -------
+    list
+        a list of dicts of the API response property requested
+    """
     if results is None:
         results = []
     response = execute(resource_method(**resource_parameters))

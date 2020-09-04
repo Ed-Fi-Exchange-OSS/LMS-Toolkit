@@ -2,7 +2,8 @@
 name = "google-extractor"
 version = "0.1.2"
 description = ""
-authors = ["Brad Banister <brad@doublelinepartners.com>"]
+authors = ["Ed-Fi Alliance, LLC, and contributors"]
+license = Apache-2.0
 packages = [
     { include = "google-extractor" }
 ]
