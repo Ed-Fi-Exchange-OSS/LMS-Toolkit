@@ -69,6 +69,8 @@ https://www.googleapis.com/auth/admin.reports.audit.readonly`
 1. Clone this GitHub repository and open a command prompt in
    the root directory of this project (where this README file
    resides).
+1. Configure Poetry to put Python enivronments in the right place: `poetry
+   config virtualenvs.in-project true`.
 1. Install the third-party libraries used by the extractor:
    `poetry install`. This may take a while.
 1. Copy the "example.env" file to ".env" and set the variables
@@ -115,15 +117,9 @@ in general can be found
 
 To work in Visual Studio Code install the Python Extension.
 Then:
-1. Close Visual Studio Code and open a new command prompt in
-   the root directory of this project.
-1. Run `poetry shell` followed by `code .` (Don't forget the
-   period!  Note you will only need run Visual Studio Code like
-   this once.)
-1. Visual Studio Code will open. Type `Ctrl-Shift-P`, then
+1. Type `Ctrl-Shift-P`, then
    choose `Python:Select Interpreter` and then choose the
-   environment that includes `google-extractor` in the name.
-
-The .ipynb Jupiter Notebook files can be opened directly in
+   environment that includes `.venv` in the name.
+1. .ipynb Jupiter Notebook files can be opened directly in
 Visual Studio Code.
 
