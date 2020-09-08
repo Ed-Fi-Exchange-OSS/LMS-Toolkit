@@ -1,5 +1,5 @@
 [MESSAGES CONTROL]
-disable = 
+disable =
     C0330,
     C0326,
     fixme,
@@ -9,3 +9,7 @@ disable =
 
 [format]
 max-line-length = 88
+
+[MASTER]
+disable =
+    C0114,

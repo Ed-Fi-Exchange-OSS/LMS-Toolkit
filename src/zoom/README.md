@@ -28,6 +28,12 @@ Python-based tool for analysis and reporting.
 1. Install the third-party libraries used by the extractor:
    `poetry install`. This may take a while.
 
+## Authentication
+
+This projectuses a JWT token to authorize the requests
+made to the Zoom API.<br>
+[JWT with Zoom](https://marketplace.zoom.us/docs/guides/auth/jwt)
+
 ## Running the Extractor
 
 ### Generate CSV Files
