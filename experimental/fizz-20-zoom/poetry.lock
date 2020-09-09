@@ -44,6 +44,18 @@ tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0
 
 [[package]]
 category = "dev"
+description = "A tool that automatically formats Python code to conform to the PEP 8 style guide"
+name = "autopep8"
+optional = false
+python-versions = "*"
+version = "1.5.4"
+
+[package.dependencies]
+pycodestyle = ">=2.6.0"
+toml = "*"
+
+[[package]]
+category = "dev"
 description = "The uncompromising code formatter."
 name = "black"
 optional = false
@@ -417,20 +429,8 @@ optional = false
 python-versions = "*"
 version = "1.12.1"
 
-[[package]]
-category = "main"
-description = "Python client library for Zoom.us REST API v1 and v2"
-name = "zoomus"
-optional = false
-python-versions = "*"
-version = "1.1.3"
-
-[package.dependencies]
-PyJWT = "*"
-requests = "*"
-
 [metadata]
-content-hash = "04c9fe4e9e52bf714cbb67db1c785211884febe50c3a35998e402df3d49db4d5"
+content-hash = "cac413913f03cd0223aaa29b2b25e33a14f089eaa781060c978104e7d0d3a10f"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -450,6 +450,9 @@ atomicwrites = [
 attrs = [
     {file = "attrs-20.2.0-py2.py3-none-any.whl", hash = "sha256:fce7fc47dfc976152e82d53ff92fa0407700c21acd20886a13777a0d20e655dc"},
     {file = "attrs-20.2.0.tar.gz", hash = "sha256:26b54ddbbb9ee1d34d5d3668dd37d6cf74990ab23c828c2888dccdceee395594"},
+]
+autopep8 = [
+    {file = "autopep8-1.5.4.tar.gz", hash = "sha256:d21d3901cb0da6ebd1e83fc9b0dfbde8b46afc2ede4fe32fbda0c7c6118ca094"},
 ]
 black = [
     {file = "black-20.8b1-py3-none-any.whl", hash = "sha256:70b62ef1527c950db59062cda342ea224d772abdf6adc58b86a45421bab20a6b"},
@@ -689,8 +692,4 @@ wcwidth = [
 ]
 wrapt = [
     {file = "wrapt-1.12.1.tar.gz", hash = "sha256:b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7"},
-]
-zoomus = [
-    {file = "zoomus-1.1.3-py2.py3-none-any.whl", hash = "sha256:d7888f2341ef3ef994e1089ebd53ec6e403f0e90b7b69adee0335809e4307c4c"},
-    {file = "zoomus-1.1.3.tar.gz", hash = "sha256:18172a3d5983c29244d0968809354a28b8e19f8e39d56030237c4b86de7ee345"},
 ]
