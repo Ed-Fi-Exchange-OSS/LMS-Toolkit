@@ -53,7 +53,7 @@ def execute(executable_resource):
 def request_execution(
     resource_method, resource_parameters, response_property, results=None
 ):
-    """ Execute a Google Classroom/Admin SDK API request
+    """Execute a Google Classroom/Admin SDK API request
 
     Parameters
     ----------
@@ -104,6 +104,14 @@ def request_courses(resource):
     )
 
 
+def request_coursework(resource, course_id):
+    return request_execution(
+        resource.courses().courseWork().list,
+        {"courseId": course_id},
+        "courseWork",
+    )
+
+
 def request_students(resource, course_id):
     return request_execution(
         resource.courses().students().list,
@@ -130,53 +138,92 @@ def get_submissions(resource):
 
     submissions = []
     students = []
+    coursework = []
     for course_id in courses_df["courseId"]:
         submissions.extend(request_submission(resource, course_id))
         students.extend(request_students(resource, course_id))
+        coursework.extend(request_coursework(resource, course_id))
 
     submissions_df = pd.json_normalize(submissions).astype("string")
+    submissions_df.rename(
+        columns={
+            "id": "submissionId",
+            "userId": "studentUserId",
+            "state": "submissionState",
+            "creationTime": "submissionCreationTime",
+            "updateTime": "submissionUpdateTime",
+        },
+        inplace=True,
+    )
+    submissions_df.drop(
+        columns=["alternateLink", "assignmentSubmission.attachments", "submissionHistory"], inplace=True
+    )
 
     course_submissions_df = pd.merge(
         submissions_df, courses_df, on="courseId", how="left"
     )
+    submissions_df = submissions_df.iloc[0:0]
+    courses_df = courses_df.iloc[0:0]
+
+    coursework_df = pd.json_normalize(coursework).astype("string")
+    coursework_df.rename(
+        columns={
+            "id": "courseWorkId",
+            "state": "courseWorkState",
+            "title": "courseWorkTitle",
+            "description": "courseWorkDescription",
+            "creationTime": "courseWorkCreationTime",
+            "updateTime": "courseWorkUpdateTime",
+        },
+        inplace=True,
+    )
+    coursework_df[
+        "courseWorkDueDate"
+    ] = coursework_df[["dueDate.year", "dueDate.month", "dueDate.day"]].agg('-'.join, axis=1)
+    coursework_df = coursework_df[
+        [
+            "courseWorkId",
+            "courseWorkState",
+            "courseWorkTitle",
+            "courseWorkDescription",
+            "courseWorkCreationTime",
+            "courseWorkUpdateTime",
+            "courseWorkDueDate",
+        ]
+    ]
+
+    course_coursework_submissions_df = pd.merge(
+        course_submissions_df, coursework_df, on="courseWorkId", how="left"
+    )
+    course_submissions_df = course_submissions_df.iloc[0:0]
+    coursework_df = coursework_df.iloc[0:0]
 
     students_df = pd.json_normalize(students).astype("string")
+    students_df.rename(
+        columns={
+            "profile.name.fullName": "studentName",
+            "profile.emailAddress": "studentEmail",
+            "userId": "studentUserId",
+        },
+        inplace=True,
+    )
+    students_df = students_df[
+        ["studentUserId", "courseId", "studentName", "studentEmail"]
+    ]
 
     # TODO - leave sub-json as objects to pluck out of - name in particular
     full_df = pd.merge(
-        course_submissions_df, students_df, on=["userId", "courseId"], how="left"
+        course_coursework_submissions_df,
+        students_df,
+        on=["studentUserId", "courseId"],
+        how="left",
     )
-    full_df.rename(
-        columns={"profile.name.fullName": "name", "profile.emailAddress": "email"},
-        inplace=True,
-    )
+    course_coursework_submissions_df = course_coursework_submissions_df.iloc[0:0]
+    students_df = students_df.iloc[0:0]
+
     full_df["importDate"] = datetime.today().strftime("%Y-%m-%d")
-    full_df = full_df.astype(
-        {
-            "creationTime": "datetime64",
-            "updateTime": "datetime64",
-            "state": "string",
-            "draftGrade": "string",
-            "assignedGrade": "string",
-            "courseName": "string",
-            "name": "string",
-            "email": "string",
-            "importDate": "datetime64",
-        }
-    )
-    return full_df[
-        [
-            "creationTime",
-            "updateTime",
-            "state",
-            "draftGrade",
-            "assignedGrade",
-            "courseName",
-            "name",
-            "email",
-            "importDate",
-        ]
-    ]
+
+    return full_df
 
 
 def get_usage(resource):
@@ -252,8 +299,8 @@ def request():
 if __name__ == "__main__":
     r = request()
 
-    r.usage().to_csv("usage.csv")
-    logging.info("Usage data written to usage.csv")
+    # r.usage().to_csv("usage.csv")
+    # logging.info("Usage data written to usage.csv")
 
     r.submissions().to_csv("submissions.csv")
     logging.info("Submissions data written to submissions.csv")
