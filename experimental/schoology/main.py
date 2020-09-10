@@ -1,11 +1,6 @@
 """
 This script retrieves and writes out to CSV all students, sections, assignments,
-and submissions for the desired grading period(s). Configuration is via `.env`
-file or directly with environment variables:
-
-* SCHOOLOGY_KEY=<administrator's API key>
-* SCHOOLOGY_SECRET=<administrator's API secret>
-* SCHOOLOGY_GRADING_PERIODS=<csv list of grading period ids>
+and submissions for the desired grading period(s). See readme.md for more info.
 """
 
 from datetime import datetime
