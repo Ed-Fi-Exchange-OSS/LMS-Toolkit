@@ -2,5 +2,7 @@
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
     "python.venvPath": "${workspaceFolder}/.venv/bin/python",
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "python.pythonPath": "C:\\edfi\\Ed-Fi-X-Fizz\\experimental\\canvas\\explorations-py\\.venv",
+    "python.dataScience.jupyterServerURI": "local"
 }

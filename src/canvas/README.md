@@ -1,36 +1,43 @@
-# Canvas LMS Data Extractor Spikes
+# Canvas LMS
 
-The purpose of this project is to explore the Canvas LMS APIS
-in order to extract data and generate new information with it.
+The purpose of this project is to serve a set of tools to extract data from Canvas and analize it.
 
-This data extractor targets two audiences.  The first is
+This data extractor targets two audiences. The first is
 someone who just wants the data out of Canvas LMS into a
-.csv file that can be loaded into a spreadsheet.  The
+.csv file that can be loaded into a spreadsheet. The
 second for someone who is familiar with Jupyter Notebook,
 a common Python-based tool for analysis and reporting.
 
 ## Folder Structure
 
-You can explore the work done by navigating across the subfolders
-that you can see inside the current src/canvas folder.
-The explorations were driven by spikes and stories that you can see
-in the next list.
-
-* [initial-canvas-exploration-js](./initial-canvas-exploration-js)
-    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-1)
-* [initial-canvas-exploration-py](./initial-canvas-exploration-py)
-    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-1initial-canvas-exploration-p)
-* [canvas-data-extractor-js](./data-extractor-js)
-    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-11)
-* [login-and-access-data-py](./login-and-access-data-py)
-    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-16)
-* [analize-canvas-data-py](./analyze-canvas-data-py)
-    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-21)
-* [data-extractor-py](./data-extractor-py)
-    * [Tracker ticket](https://tracker.ed-fi.org/browse/FIZZ-27)
-
+You can explore the work done by navigating across the subfolders that you can see inside the current folder.
 
 ## Installing and running the tools
 
-Each folder has its readme with more information about its purpose
-and how to run it.
+### Requirements
+
+1. Python 3.8
+1. Poetry 1.0.10
+1. Optional/Recomended: Last version of VSCode
+
+### Installation
+
+Following the next steps, you should be able to execute all the code:
+
+1. Run the command `poetry install` in this folder.
+1. Copy the .env.example file to .env and update its values.
+1. In vscode type `ctrl`+`shift`+`p` and search for the command `Python: select interpreter`, then point it to your generated folder `canvas/.venv`.
+
+### Running the tools
+
+You can run the tools following this steps:
+
+-   For data-extractor:
+
+    -   Run the command `poetry run python.exe ./data-extractor/main.py`
+
+-   For analyze-canvas-data:
+    1. Open the `test.ipynb` notebook in VSCode.
+    1. Select the generated virtual environment `canvas/.venv` as interpreter in the notebook. In VSCode you only have to click the python version in the upper right corner, and it should show the option for selecting the virtual environment.
+    1. When opening the notebook in VSCode, you could see a message asking you to install some dependencies, you should install them.
+    1. Run the code.
