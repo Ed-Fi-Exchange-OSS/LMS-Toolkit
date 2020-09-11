@@ -2,12 +2,13 @@
 
 ### Canvas REST API
 
-This script gets the data from the Canvas REST API
-[Canvas docs](https://canvas.instructure.com/doc/api/)
+This script gets the data from the Canvas REST API [Canvas
+docs](https://canvas.instructure.com/doc/api/)
 
 ### What does it do?
 
-Generates some CSV files with information for a specified year, extracted from Canvas REST API:
+Generates some CSV files with information for a specified year, extracted from
+Canvas REST API:
 
 -   Courses
 -   Assignments
@@ -24,5 +25,6 @@ Generates some CSV files with information for a specified year, extracted from C
 ### How to use it
 
 1. Follow the instructions from the [main readme](../README.md).
-1. From the upper folder, run the command `poetry run python.exe ./data-extractor/main.py`.
+1. From the upper folder, run the command `poetry run python.exe
+   ./data-extractor/main.py`.
 1. The file will be generated in the path defined in the .env file.

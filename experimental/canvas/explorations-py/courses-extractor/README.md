@@ -10,13 +10,14 @@ Be sure to have Python 3 and poetry installed.
     poetry install
     ```
 
-1. In vscode type `ctrl`+`shift`+`p` and search for the command `Python: select interpreter`, then point it to your generated folder `explorations-py/.venv`.
+1. In vscode type `ctrl`+`shift`+`p` and search for the command `Python: select
+   interpreter`, then point it to your generated folder `explorations-py/.venv`.
 
 ## Creating CSV of Courses
 
 1. Set up your environment as described above.
-
-1. In the explorations-py folder, copy the `.env.example` file to `.env` and substitute valid values into it.
+1. In the explorations-py folder, copy the `.env.example` file to `.env` and
+   substitute valid values into it.
 1. In the explorations-py folder, run the command:
 
     ```powershell

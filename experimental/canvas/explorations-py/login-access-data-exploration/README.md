@@ -4,8 +4,8 @@
 
 ### Story
 
-As a school district, I want to know if the student engaged with my Canvas
-LMS and/or a particular course on a particular school day
+As a school district, I want to know if the student engaged with my Canvas LMS
+and/or a particular course on a particular school day
 
 ### Acceptance Criteria
 
@@ -23,7 +23,11 @@ A capture of these data points, or an assessment that these are not available
 ## Getting Started
 
 1. In the /explorations-py folder, run poetry install.
-2. Select the generated virtual environment as interpreter in the notebook. In VSCode you only have to click the python version in the upper right corner, and it should show the option for selecting the virtual environment.
-3. Copy the .env.example file to .example and set its values to the ones corresponding to your environment.
-4. When opening the notebook in VSCode, you could see a message asking you to install some dependencies, you should install them.
+2. Select the generated virtual environment as interpreter in the notebook. In
+   VSCode you only have to click the python version in the upper right corner,
+   and it should show the option for selecting the virtual environment.
+3. Copy the .env.example file to .example and set its values to the ones
+   corresponding to your environment.
+4. When opening the notebook in VSCode, you could see a message asking you to
+   install some dependencies, you should install them.
 5. Run the code.
