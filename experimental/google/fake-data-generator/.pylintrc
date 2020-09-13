@@ -1,0 +1,12 @@
+[MESSAGES CONTROL]
+disable = 
+    C0330,
+    C0326,
+    fixme,
+    line-too-long,
+    logging-fstring-interpolation,
+    missing-function-docstring,
+    missing-module-docstring
+
+[format]
+max-line-length = 88
