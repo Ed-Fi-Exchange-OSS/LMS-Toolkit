@@ -2,14 +2,19 @@ import collections
 import logging
 import os
 import sys
+
 from datetime import datetime
 
 import pandas as pd
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
-from opnieuw import retry
-from tail_recursive import tail_recursive
 from google.oauth2 import service_account
+
+from lib.courses import courses_dataframe
+from lib.coursework import coursework_dataframe
+from lib.students import students_dataframe
+from lib.submissions import submissions_dataframe
+from lib.usage import request_usage
 
 
 # returns google.auth.service_account.Credentials
@@ -36,128 +41,15 @@ def get_credentials():
     )
 
 
-@retry(
-    retry_on_exceptions=(Exception),
-    max_calls_total=4,
-    retry_window_after_first_call_in_seconds=60,
-)
-def execute(executable_resource):
-    return executable_resource.execute()
-
-
-# resource_method is the get/list SDK function to call,
-# resource_parameters is the parameters for get/list
-# response_property is the property in the response json we want
-# results is the result accumulated across pages
-@tail_recursive
-def request_execution(
-    resource_method, resource_parameters, response_property, results=None
-):
-    """Execute a Google Classroom/Admin SDK API request
-
-    Parameters
-    ----------
-    resource_method: function
-        is the get/list SDK function to call
-    resource_parameters: dict
-        is the parameters for get/list
-    response_property: string
-        is the property in the API response we want
-    results: list
-        is the list of dicts of the API response accumulated across pages
-
-    Returns
-    -------
-    list
-        a list of dicts of the API response property requested
-    """
-    if results is None:
-        results = []
-    response = execute(resource_method(**resource_parameters))
-    results.extend(response.get(response_property, []))
-    next_page_token = response.get("nextPageToken", None)
-    if not next_page_token:
-        return results
-    resource_parameters["pageToken"] = next_page_token
-    return request_execution.tail_call(
-        resource_method, resource_parameters, response_property, results
-    )
-
-
-def request_usage(resource, date):
-    return request_execution(
-        resource.userUsageReport().get,
-        {
-            "userKey": "all",
-            "date": date,
-            "parameters": "classroom:timestamp_last_interaction,classroom:num_posts_created,accounts:timestamp_last_login",
-        },
-        "usageReports",
-    )
-
-
-def request_courses(resource):
-    return request_execution(
-        resource.courses().list,
-        {"courseStates": ["ACTIVE"]},
-        "courses",
-    )
-
-
-def request_coursework(resource, course_id):
-    return request_execution(
-        resource.courses().courseWork().list,
-        {"courseId": course_id},
-        "courseWork",
-    )
-
-
-def request_students(resource, course_id):
-    return request_execution(
-        resource.courses().students().list,
-        {"courseId": course_id},
-        "students",
-    )
-
-
-def request_submission(resource, course_id):
-    return request_execution(
-        resource.courses().courseWork().studentSubmissions().list,
-        {"courseId": course_id, "courseWorkId": "-"},
-        "studentSubmissions",
-    )
-
-
 def get_submissions(resource):
     logging.info("Pulling submissions data")
 
-    courses = request_courses(resource)
-    courses_df = pd.json_normalize(courses)[["id", "name"]]
-    courses_df.rename(columns={"id": "courseId", "name": "courseName"}, inplace=True)
-    courses_df = courses_df.astype("string")
+    courses_df = courses_dataframe(resource)
+    course_ids = courses_df["courseId"]
 
-    submissions = []
-    students = []
-    coursework = []
-    for course_id in courses_df["courseId"]:
-        submissions.extend(request_submission(resource, course_id))
-        students.extend(request_students(resource, course_id))
-        coursework.extend(request_coursework(resource, course_id))
-
-    submissions_df = pd.json_normalize(submissions).astype("string")
-    submissions_df.rename(
-        columns={
-            "id": "submissionId",
-            "userId": "studentUserId",
-            "state": "submissionState",
-            "creationTime": "submissionCreationTime",
-            "updateTime": "submissionUpdateTime",
-        },
-        inplace=True,
-    )
-    submissions_df.drop(
-        columns=["alternateLink", "assignmentSubmission.attachments", "submissionHistory"], inplace=True
-    )
+    coursework_df = coursework_dataframe(resource, course_ids)
+    submissions_df = submissions_dataframe(resource, course_ids)
+    students_df = submissions_dataframe(resource, course_ids)
 
     course_submissions_df = pd.merge(
         submissions_df, courses_df, on="courseId", how="left"
@@ -165,51 +57,11 @@ def get_submissions(resource):
     submissions_df = submissions_df.iloc[0:0]
     courses_df = courses_df.iloc[0:0]
 
-    coursework_df = pd.json_normalize(coursework).astype("string")
-    coursework_df.rename(
-        columns={
-            "id": "courseWorkId",
-            "state": "courseWorkState",
-            "title": "courseWorkTitle",
-            "description": "courseWorkDescription",
-            "creationTime": "courseWorkCreationTime",
-            "updateTime": "courseWorkUpdateTime",
-        },
-        inplace=True,
-    )
-    coursework_df[
-        "courseWorkDueDate"
-    ] = coursework_df[["dueDate.year", "dueDate.month", "dueDate.day"]].agg('-'.join, axis=1)
-    coursework_df = coursework_df[
-        [
-            "courseWorkId",
-            "courseWorkState",
-            "courseWorkTitle",
-            "courseWorkDescription",
-            "courseWorkCreationTime",
-            "courseWorkUpdateTime",
-            "courseWorkDueDate",
-        ]
-    ]
-
     course_coursework_submissions_df = pd.merge(
         course_submissions_df, coursework_df, on="courseWorkId", how="left"
     )
     course_submissions_df = course_submissions_df.iloc[0:0]
     coursework_df = coursework_df.iloc[0:0]
-
-    students_df = pd.json_normalize(students).astype("string")
-    students_df.rename(
-        columns={
-            "profile.name.fullName": "studentName",
-            "profile.emailAddress": "studentEmail",
-            "userId": "studentUserId",
-        },
-        inplace=True,
-    )
-    students_df = students_df[
-        ["studentUserId", "courseId", "studentName", "studentEmail"]
-    ]
 
     # TODO - leave sub-json as objects to pluck out of - name in particular
     full_df = pd.merge(
@@ -290,7 +142,9 @@ def request():
         "classroom", "v1", credentials=credentials, cache_discovery=False
     )
 
-    Result = collections.namedtuple("Result", ["usage", "submissions"])
+    Result = collections.namedtuple(
+        "Result", ["usage", "submissions"]
+    )
     return Result(
         lambda: get_usage(reports_resource), lambda: get_submissions(classroom_resource)
     )
@@ -299,8 +153,8 @@ def request():
 if __name__ == "__main__":
     r = request()
 
-    # r.usage().to_csv("usage.csv")
-    # logging.info("Usage data written to usage.csv")
+    r.usage().to_csv("usage.csv")
+    logging.info("Usage data written to usage.csv")
 
     r.submissions().to_csv("submissions.csv")
     logging.info("Submissions data written to submissions.csv")

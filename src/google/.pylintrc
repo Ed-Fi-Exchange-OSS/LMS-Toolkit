@@ -4,6 +4,7 @@ disable =
     C0326,
     fixme,
     line-too-long,
+    logging-fstring-interpolation,
     missing-function-docstring,
     missing-module-docstring
 
