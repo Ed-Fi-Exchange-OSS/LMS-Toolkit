@@ -1,8 +1,9 @@
+from typing import List, Dict
 import pandas as pd
 from .api_caller import call_api
 
 
-def request_coursework(resource, course_id):
+def request_coursework(resource, course_id: str) -> List[Dict[str, str]]:
     return call_api(
         resource.courses().courseWork().list,
         {"courseId": course_id},
@@ -10,12 +11,12 @@ def request_coursework(resource, course_id):
     )
 
 
-def coursework_dataframe(resource, course_ids):
-    coursework = []
+def request_coursework_as_df(resource, course_ids: List[str]) -> pd.DataFrame:
+    coursework: List[Dict[str, str]] = []
     for course_id in course_ids:
         coursework.extend(request_coursework(resource, course_id))
 
-    coursework_df = pd.json_normalize(coursework).astype("string")
+    coursework_df: pd.DataFrame = pd.json_normalize(coursework).astype("string")
     coursework_df.rename(
         columns={
             "id": "courseWorkId",

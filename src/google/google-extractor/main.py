@@ -3,21 +3,21 @@ import logging
 import os
 import sys
 from datetime import datetime
+from typing import List
 
 import pandas as pd
 from dotenv import load_dotenv
-from googleapiclient.discovery import build
+from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
 
-from api.courses import courses_dataframe
-from api.coursework import coursework_dataframe
-from api.students import students_dataframe
-from api.submissions import submissions_dataframe
-from api.usage import usage_dataframe
+from api.courses import request_courses_as_df
+from api.coursework import request_coursework_as_df
+from api.students import request_students_as_df
+from api.submissions import request_submissions_as_df
+from api.usage import request_usage_as_df
 
 
-# returns google.auth.service_account.Credentials
-def get_credentials():
+def get_credentials() -> service_account.Credentials:
     scopes = [
         "https://www.googleapis.com/auth/admin.directory.orgunit",
         "https://www.googleapis.com/auth/admin.reports.usage.readonly",
@@ -40,30 +40,28 @@ def get_credentials():
     )
 
 
-def denormalized_submissions(courses_df, coursework_df, submissions_df, students_df):
+def denormalized_submissions(
+    courses_df: pd.DataFrame,
+    coursework_df: pd.DataFrame,
+    submissions_df: pd.DataFrame,
+    students_df: pd.DataFrame,
+) -> pd.DataFrame:
     logging.info("Pulling submissions data")
 
-    course_submissions_df = pd.merge(
+    course_submissions_df: pd.DataFrame = pd.merge(
         submissions_df, courses_df, on="courseId", how="left"
     )
-    submissions_df = submissions_df.iloc[0:0]
-    courses_df = courses_df.iloc[0:0]
 
-    course_coursework_submissions_df = pd.merge(
+    course_coursework_submissions_df: pd.DataFrame = pd.merge(
         course_submissions_df, coursework_df, on="courseWorkId", how="left"
     )
-    course_submissions_df = course_submissions_df.iloc[0:0]
-    coursework_df = coursework_df.iloc[0:0]
 
-    # TODO - leave sub-json as objects to pluck out of - name in particular
-    full_df = pd.merge(
+    full_df: pd.DataFrame = pd.merge(
         course_coursework_submissions_df,
         students_df,
         on=["studentUserId", "courseId"],
         how="left",
     )
-    course_coursework_submissions_df = course_coursework_submissions_df.iloc[0:0]
-    students_df = students_df.iloc[0:0]
 
     full_df["importDate"] = datetime.today().strftime("%Y-%m-%d")
 
@@ -79,21 +77,24 @@ def request():
         level=os.environ.get("LOGLEVEL", "INFO"),
     )
     logging.getLogger("matplotlib").setLevel(logging.ERROR)
+    logging.getLogger("opnieuw").setLevel(logging.DEBUG)
 
-    credentials = get_credentials()
-    reports_resource = build(
+    credentials: service_account.Credentials = get_credentials()
+    reports_resource: Resource = build(
         "admin", "reports_v1", credentials=credentials, cache_discovery=False
     )
-    classroom_resource = build(
+    classroom_resource: Resource = build(
         "classroom", "v1", credentials=credentials, cache_discovery=False
     )
 
-    courses_df = courses_dataframe(classroom_resource)
-    course_ids = courses_df["courseId"]
+    courses_df: pd.DataFrame = request_courses_as_df(classroom_resource)
+    course_ids: List[str] = courses_df["courseId"].tolist()
 
-    coursework_df = coursework_dataframe(classroom_resource, course_ids)
-    submissions_df = submissions_dataframe(classroom_resource, course_ids)
-    students_df = students_dataframe(classroom_resource, course_ids)
+    coursework_df: pd.DataFrame = request_coursework_as_df(
+        classroom_resource, course_ids
+    )
+    submissions_df: pd.DataFrame = request_submissions_as_df(classroom_resource, course_ids)
+    students_df: pd.DataFrame = request_students_as_df(classroom_resource, course_ids)
 
     Result = collections.namedtuple(
         "Result",
@@ -107,7 +108,7 @@ def request():
         ],
     )
     return Result(
-        lambda: usage_dataframe(reports_resource),
+        lambda: request_usage_as_df(reports_resource),
         lambda: denormalized_submissions(
             courses_df=courses_df,
             coursework_df=coursework_df,
@@ -140,4 +141,6 @@ if __name__ == "__main__":
     logging.info("Students data written to students.csv")
 
     r.denormalized_submissions().to_csv("denormalized_submissions.csv")
-    logging.info("Denormalized submissions data written to denormalized_submissions.csv")
+    logging.info(
+        "Denormalized submissions data written to denormalized_submissions.csv"
+    )

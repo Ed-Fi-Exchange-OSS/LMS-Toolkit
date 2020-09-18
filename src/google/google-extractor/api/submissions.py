@@ -1,8 +1,9 @@
+from typing import List, Dict
 import pandas as pd
 from .api_caller import call_api
 
 
-def request_submissions(resource, course_id):
+def request_submissions(resource, course_id: str) -> List[Dict[str, str]]:
     return call_api(
         resource.courses().courseWork().studentSubmissions().list,
         {"courseId": course_id, "courseWorkId": "-"},
@@ -10,12 +11,12 @@ def request_submissions(resource, course_id):
     )
 
 
-def submissions_dataframe(resource, course_ids):
-    submissions = []
+def request_submissions_as_df(resource, course_ids: List[str]) -> pd.DataFrame:
+    submissions: List[Dict[str, str]] = []
     for course_id in course_ids:
         submissions.extend(request_submissions(resource, course_id))
 
-    submissions_df = pd.json_normalize(submissions).astype("string")
+    submissions_df: pd.DataFrame = pd.json_normalize(submissions).astype("string")
     submissions_df.rename(
         columns={
             "id": "submissionId",

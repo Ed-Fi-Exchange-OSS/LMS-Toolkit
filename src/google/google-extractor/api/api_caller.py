@@ -1,9 +1,12 @@
+import logging
+from typing import List, Dict, Optional, Callable, cast
+from requests import RequestException
 from opnieuw import retry
 from tail_recursive import tail_recursive
 
 
 @retry(
-    retry_on_exceptions=(Exception),
+    retry_on_exceptions=(IOError, RequestException),
     max_calls_total=4,
     retry_window_after_first_call_in_seconds=60,
 )
@@ -12,7 +15,12 @@ def execute(executable_resource):
 
 
 @tail_recursive
-def call_api(resource_method, resource_parameters, response_property, results=None):
+def call_api(
+    resource_method: Callable,
+    resource_parameters: Dict[str, str],
+    response_property: str,
+    results: Optional[List[Dict[str, str]]] = None,
+) -> List[Dict[str, str]]:
     """
     Call a Google Classroom/Admin SDK API
 
@@ -32,14 +40,21 @@ def call_api(resource_method, resource_parameters, response_property, results=No
     list
         a list of dicts of the API response property requested
     """
-    if results is None:
-        results = []
+    current_results: List[Dict[str, str]] = [] if results is None else results
     response = execute(resource_method(**resource_parameters))
-    results.extend(response.get(response_property, []))
+    try:
+        current_results.extend(response.get(response_property, []))
+    except (IOError, RequestException):
+        logging.exception("Error during API call after retries.  Will try to continue.")
+        return current_results
+
     next_page_token = response.get("nextPageToken", None)
     if not next_page_token:
-        return results
+        return current_results
     resource_parameters["pageToken"] = next_page_token
-    return call_api.tail_call(
-        resource_method, resource_parameters, response_property, results
+    return cast(
+        List[Dict[str, str]],
+        call_api.tail_call(
+            resource_method, resource_parameters, response_property, current_results
+        ),
     )

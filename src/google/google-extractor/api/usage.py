@@ -1,11 +1,12 @@
 import logging
 import os
+from typing import List, Dict
 from datetime import datetime
 import pandas as pd
 from .api_caller import call_api
 
 
-def request_usage(resource, date):
+def request_usage(resource, date: datetime) -> List[Dict[str, str]]:
     return call_api(
         resource.userUsageReport().get,
         {
@@ -17,16 +18,15 @@ def request_usage(resource, date):
     )
 
 
-def usage_dataframe(resource):
+def request_usage_as_df(resource) -> pd.DataFrame:
     logging.info("Pulling usage data")
     reports = []
-    # pylint: disable=no-member
     for date in pd.date_range(
         start=os.getenv("START_DATE"), end=os.getenv("END_DATE")
-    ).strftime("%Y-%m-%d"):
-        reports.extend(request_usage(resource, date))
+    ):
+        reports.extend(request_usage(resource, date.strftime("%Y-%m-%d")))
 
-    usage = []
+    usage: List[Dict[str, str]] = []
     for response in reports:
         row = {}
         row["email"] = response.get("entity").get("userEmail")
@@ -44,7 +44,7 @@ def usage_dataframe(resource):
                 row["lastLoginTime"] = parameter.get("datetimeValue")
         usage.append(row)
 
-    usage_df = pd.json_normalize(usage).astype(
+    usage_df: pd.DataFrame = pd.json_normalize(usage).astype(
         {
             "email": "string",
             "asOfDate": "datetime64",
