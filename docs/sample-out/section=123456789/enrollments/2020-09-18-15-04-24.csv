@@ -1,6 +1,6 @@
-﻿SourceSystemIdentifier,SourceSystem,EnrollmentStatus,StartDate,EndDate,UserSourceSystemIdentifier,SectionSourceSystemIdentifier
-1357986,Canvas,Active,1/4/2021,5/28/2021,100032894,123456780
-1357987,Canvas,Active,1/4/2021,5/28/2021,100032895,123456780
-1357988,Canvas,Active,1/4/2021,5/28/2021,100032896,123456780
-1357989,Canvas,Active,1/4/2021,5/28/2021,100032897,123456780
-1357990,Canvas,Invited,1/4/2021,5/28/2021,100032890,123456780
+﻿SourceSystemIdentifier,SourceSystem,EnrollmentStatus,StartDate,EndDate,UserSourceSystemIdentifier,SectionSourceSystemIdentifier,EntityStatus
+1357986,Canvas,Active,1/4/2021,5/28/2021,100032894,123456780,
+1357987,Canvas,Active,1/4/2021,5/28/2021,100032895,123456780,
+1357988,Canvas,Active,1/4/2021,5/28/2021,100032896,123456780,
+1357989,Canvas,Active,1/4/2021,5/28/2021,100032897,123456780,
+1357990,Canvas,Invited,1/4/2021,5/28/2021,100032890,123456780,archived

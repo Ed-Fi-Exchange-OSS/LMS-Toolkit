@@ -1,3 +1,3 @@
-﻿SourceSystemIdentifier,SourceSystem,Title,AssignmentCategory,Description,StartDateTime,EndDateTime,DueDateTime,SubmissionType,MaxPoints,SectionSourceSystemIdentifier
-2942251001,Schoology,Algebra foundations,Assignment,Complete the Khan Academy unit: Algebra Foundations. Post a screenshot of your test results as the homework.,2020-08-26 23:59:00,2020-08-28 23:59:00,2020-08-28 23:59:00,online_upload,100,123456780
-2942251002,Schoology,Solving Equations and Inequalities,Assessment,Complete the Khan Academy unit: Solving Equations & inequalities,2020-08-28 23:59:00,2020-12-31 23:59:00,2020-12-31 23:59:00,online_quiz,10,123456780
+﻿SourceSystemIdentifier,SourceSystem,Title,AssignmentCategory,Description,StartDateTime,EndDateTime,DueDateTime,SubmissionType,MaxPoints,SectionSourceSystemIdentifier,EntityStatus
+2942251001,Schoology,Algebra foundations,Assignment,Complete the Khan Academy unit: Algebra Foundations. Post a screenshot of your test results as the homework.,2020-08-26 23:59:00,2020-08-28 23:59:00,2020-08-28 23:59:00,online_upload,100,123456780,
+2942251002,Schoology,Solving Equations and Inequalities,Assessment,Complete the Khan Academy unit: Solving Equations & inequalities,2020-08-28 23:59:00,2020-12-31 23:59:00,2020-12-31 23:59:00,online_quiz,10,123456780,
