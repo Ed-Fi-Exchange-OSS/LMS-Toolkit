@@ -8,6 +8,9 @@ license = "Apache-2.0"
 [tool.poetry.dependencies]
 python = "^3.8"
 requests = "^2.24.0"
+pandas = "^1.1.2"
+rauth = "^0.7.3"
+python-dotenv = "^0.14.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
