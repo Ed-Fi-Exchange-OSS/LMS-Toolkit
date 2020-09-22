@@ -9,6 +9,7 @@ from typing import List
 from lms_ds_loader.argparser import parse_arguments
 from lms_ds_loader.constants import Constants
 
+
 class Test_parse_arguments:
 
     PATH = "./lms_udm_files"
@@ -121,7 +122,7 @@ class Test_parse_arguments:
             *self.path_args(),
             *self.server_args(),
             *self.db_name_args(),
-            *self.integrated_security_arg()
+            *self.integrated_security_arg(),
         ]
 
         parsed = parse_arguments(args)
@@ -132,51 +133,42 @@ class Test_parse_arguments:
 
         self.assert_no_messages(capsys)
 
-
-    def test_when_not_using_integrated_security_then_username_is_required(
-        self, capsys
-    ):
+    def test_when_not_using_integrated_security_then_username_is_required(self, capsys):
 
         with pytest.raises(SystemExit):
             args = [
                 *self.path_args(),
                 *self.server_args(),
                 *self.db_name_args(),
-                *self.password_args()
+                *self.password_args(),
             ]
 
             parse_arguments(args)
 
             self.assert_error_message(capsys)
 
-
-    def test_when_not_using_integrated_security_then_password_is_required(
-        self, capsys
-    ):
+    def test_when_not_using_integrated_security_then_password_is_required(self, capsys):
 
         with pytest.raises(SystemExit):
             args = [
                 *self.path_args(),
                 *self.server_args(),
                 *self.db_name_args(),
-                *self.username_args()
+                *self.username_args(),
             ]
 
             parse_arguments(args)
 
             self.assert_error_message(capsys)
 
-
-    def test_maps_port_into_response(
-        self, capsys
-    ):
+    def test_maps_port_into_response(self, capsys):
 
         args = [
             *self.path_args(),
             *self.server_args(),
             *self.db_name_args(),
             *self.integrated_security_arg(),
-            *self.port_args()
+            *self.port_args(),
         ]
 
         parsed = parse_arguments(args)
@@ -187,9 +179,7 @@ class Test_parse_arguments:
 
         assert str(self.PORT) in parsed.db_connection
 
-    def test_maps_csv_path_into_response(
-        self, capsys
-    ):
+    def test_maps_csv_path_into_response(self, capsys):
 
         args = [
             *self.path_args(),
@@ -215,7 +205,7 @@ class Test_parse_arguments:
             *self.server_args(),
             *self.db_name_args(),
             *self.integrated_security_arg(),
-            *self.engine_args(Constants.MSSQL)
+            *self.engine_args(Constants.MSSQL),
         ]
 
         parsed = parse_arguments(args)
@@ -237,7 +227,7 @@ class Test_parse_arguments:
             *self.server_args(),
             *self.db_name_args(),
             *self.integrated_security_arg(),
-            *self.engine_args(Constants.MSSQL)
+            *self.engine_args(Constants.MSSQL),
         ]
 
         parsed = parse_arguments(args)
@@ -260,7 +250,7 @@ class Test_parse_arguments:
             *self.db_name_args(),
             *self.integrated_security_arg(),
             *self.engine_args(Constants.MSSQL),
-            *self.port_args()
+            *self.port_args(),
         ]
 
         parsed = parse_arguments(args)
@@ -282,7 +272,7 @@ class Test_parse_arguments:
             *self.server_args(),
             *self.db_name_args(),
             *self.integrated_security_arg(),
-            *self.engine_args(Constants.MSSQL)
+            *self.engine_args(Constants.MSSQL),
         ]
 
         parsed = parse_arguments(args)
@@ -305,7 +295,7 @@ class Test_parse_arguments:
             *self.db_name_args(),
             *self.engine_args(Constants.MSSQL),
             *self.username_args(),
-            *self.password_args()
+            *self.password_args(),
         ]
 
         parsed = parse_arguments(args)
@@ -328,7 +318,7 @@ class Test_parse_arguments:
             *self.db_name_args(),
             *self.engine_args(Constants.MSSQL),
             *self.username_args(),
-            *self.password_args()
+            *self.password_args(),
         ]
 
         parsed = parse_arguments(args)

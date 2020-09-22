@@ -22,18 +22,20 @@ from argparser import parse_arguments
 
 # TODO: keeping this around until I need it, at which time it will move elsewhere
 # def test_sql_connection():
-    # import pandas as pd
-    # import pyodbc
-    # import sqlalchemy as sal
-    # from sqlalchemy import create_engine
-    # engine = sal.create_engine("mssql+pyodbc://localhost/fizz?driver=SQL Server?Trusted_Connection=yes")
-    # conn = engine.connect()
-    # tables = pd.read_sql_query("SELECT * FROM INFORMATION_SCHEMA.TABLES", engine)
-    # print(tables)
-    # conn.close()
+# import pandas as pd
+# import pyodbc
+# import sqlalchemy as sal
+# from sqlalchemy import create_engine
+# engine = sal.create_engine("mssql+pyodbc://localhost/fizz?driver=SQL Server?Trusted_Connection=yes")
+# conn = engine.connect()
+# tables = pd.read_sql_query("SELECT * FROM INFORMATION_SCHEMA.TABLES", engine)
+# print(tables)
+# conn.close()
+
 
 def main():
     arguments = parse_arguments(sys.argv[1:])
+    print(arguments)
 
 if __name__ == "__main__":
-	main()
+    main()

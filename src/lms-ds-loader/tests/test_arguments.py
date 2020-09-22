@@ -7,10 +7,13 @@ import pytest
 
 from lms_ds_loader.arguments import DbConnection
 
+
 class Test_DbConnection:
     class Test_when_using_mssql:
         class Test_when_using_integrated_security:
-            def test_when_all_arguments_provided_then_return_pyodbc_connection_string(self):
+            def test_when_all_arguments_provided_then_return_pyodbc_connection_string(
+                self,
+            ):
                 server = "my-server"
                 database = "my-database"
                 port = 1234
@@ -76,18 +79,20 @@ class Test_DbConnection:
                         "a", "a", "   "
                     )
 
-            def test_when_all_arguments_provided_then_return_pyodbc_connection_string(self):
+            def test_when_all_arguments_provided_then_return_pyodbc_connection_string(
+                self,
+            ):
                 server = "my-server"
                 database = "my-database"
                 port = 1234
                 username = "me"
                 password = "yo"
-                expected = "mssql+pyodbc://me:yo@my-server,1234/my-database?driver=SQL Server"
+                expected = (
+                    "mssql+pyodbc://me:yo@my-server,1234/my-database?driver=SQL Server"
+                )
 
-                connection_string = (
-                    DbConnection.build_for_mssql(
-                        server, port, database, username, password
-                    )
+                connection_string = DbConnection.build_for_mssql(
+                    server, port, database, username, password
                 )
 
                 assert connection_string == expected
@@ -117,7 +122,9 @@ class Test_DbConnection:
                     )
 
             def test_when_port_is_None_then_override_with_1433(self):
-                expected = "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=SQL Server"
+                expected = (
+                    "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=SQL Server"
+                )
 
                 server = "my-server"
                 database = "my-database"
@@ -132,7 +139,9 @@ class Test_DbConnection:
                 assert connection_string == expected
 
             def test_when_port_is_whitepsace_then_override_with_1433(self):
-                expected = "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=SQL Server"
+                expected = (
+                    "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=SQL Server"
+                )
 
                 server = "my-server"
                 database = "my-database"
