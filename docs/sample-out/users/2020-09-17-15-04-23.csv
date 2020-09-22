@@ -1,12 +1,12 @@
 ﻿SourceSystemIdentifier,SourceSystem,UserRole,LocalUserId,SISUserIdentifier,Name,EmailAddress,EntityStatus
-100032890,Schoology,student,mary.archer,604863,Mary Archer,Mary.Archer@studentgps.org,
-100032891,Schoology,student,kyle.hughes,604874,Kyle Hughes,Kyle.Hughes@studentgps.org,
-100032892,Schoology,student,peter.nash,604918,Peter Ivan Nash,Peter.Nash@studentgps.org,
-100032893,Schoology,student,larry.mahoney,604927,Larry Mahoney,Larry.Mahoney@studentgps.org,
-100032894,Schoology,student,roland.phillips,604938,Roland Phillips,Roland.Phillips@studentgps.org,
-100032895,Schoology,student,stephen.caldwell,604969,Stephen Caldwell,Stephen.Caldwell@studentgps.org,
-100032896,Schoology,student,olivia.hardy,604974,Olivia Doris Hardy,Olivia.Hardy@studentgps.org,
-100032897,Schoology,student,micheal.turner,605015,Micheal Turner,Micheal.Turner@studentgps.org,
-100032898,Schoology,teacher,kelley.christian,207270,Kelley Heidi Christian,Kelley.Christian@studentgps.org,
-100032899,Schoology,teacher,sara.preston,207268,Sara Stacy Preston,Sara.Preston@studentgps.org,archived
-100032900,Schoology,teacher,sara.preston.2,207268,Sara Stacy Preston,Sara.Preston@studentgps.org,
+100032890,Schoology,student,mary.archer,604863,Mary Archer,Mary.Archer@studentgps.org,Active
+100032891,Schoology,student,kyle.hughes,604874,Kyle Hughes,Kyle.Hughes@studentgps.org,Active
+100032892,Schoology,student,peter.nash,604918,Peter Ivan Nash,Peter.Nash@studentgps.org,Active
+100032893,Schoology,student,larry.mahoney,604927,Larry Mahoney,Larry.Mahoney@studentgps.org,Active
+100032894,Schoology,student,roland.phillips,604938,Roland Phillips,Roland.Phillips@studentgps.org,Active
+100032895,Schoology,student,stephen.caldwell,604969,Stephen Caldwell,Stephen.Caldwell@studentgps.org,Active
+100032896,Schoology,student,olivia.hardy,604974,Olivia Doris Hardy,Olivia.Hardy@studentgps.org,Active
+100032897,Schoology,student,micheal.turner,605015,Micheal Turner,Micheal.Turner@studentgps.org,Active
+100032898,Schoology,teacher,kelley.christian,207270,Kelley Heidi Christian,Kelley.Christian@studentgps.org,Active
+100032899,Schoology,teacher,sara.preston,207268,Sara Stacy Preston,Sara.Preston@studentgps.org,Archived
+100032900,Schoology,teacher,sara.preston.2,207268,Sara Stacy Preston,Sara.Preston@studentgps.org,Active
