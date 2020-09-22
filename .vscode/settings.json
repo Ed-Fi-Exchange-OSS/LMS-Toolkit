@@ -76,5 +76,9 @@
         "exclude": [
             "css", "json", "xml", "config", "plaintext", "markdown", "batch"
         ]
-    }
+    },
+    "cSpell.words": [
+        "MSSQL",
+        "dbname"
+    ]
 }
