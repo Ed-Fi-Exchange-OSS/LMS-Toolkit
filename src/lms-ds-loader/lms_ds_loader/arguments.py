@@ -28,6 +28,7 @@ class Arguments:
         self.engine = engine
         self.connection_string = ""
 
+class DbConnection:
     @staticmethod
     def _build_for_mssql_integrated_security(server, port, db_name):
         assert server is not None

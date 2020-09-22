@@ -8,6 +8,7 @@ from lms_ds_loader.constants import Constants
 from lms_ds_loader.arguments import Arguments
 
 
+
 def parse_arguments(args_in) -> Arguments:
     """
     Configures the command-line interface.
