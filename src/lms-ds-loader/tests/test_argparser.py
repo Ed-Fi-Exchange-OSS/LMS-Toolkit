@@ -8,7 +8,6 @@ import pytest
 from lms_ds_loader.argparser import parse_arguments
 from lms_ds_loader.constants import Constants
 
-
 class Test_parse_arguments:
 
     PATH = "./lms_udm_files"
