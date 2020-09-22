@@ -1,5 +1,5 @@
-﻿SourceSystemIdentifier,SourceSystem,Grade,GradeType,EntityStatus
-1357982,Canvas,A,Letter,Active
-1357983,Canvas,90,Numeric,Active
-1357984,Canvas,55,Numeric,Archived
-1357985,Canvas,B,Letter,Active
+﻿SourceSystemIdentifier,SourceSystem,Grade,GradeType,EntityStatus,CreatedDate,LastModifiedDate
+1357982,Canvas,A,Letter,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
+1357983,Canvas,90,Numeric,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
+1357984,Canvas,55,Numeric,Archived,2020-08-20 12:34:50,2020-08-20 12:34:50
+1357985,Canvas,B,Letter,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
