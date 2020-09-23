@@ -1,0 +1,4 @@
+Shared String LMSDescription
+    documentation ""
+    min length 1
+    max length 1024

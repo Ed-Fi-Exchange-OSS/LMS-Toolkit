@@ -1,0 +1,46 @@
+Domain Entity Assignment
+    documentation "This is documentation."
+    shared integer Identifier
+        documentation ""
+        is part of identity
+        role name Assignment
+    shared string SourceSystemIdentifier
+        documentation ""
+        is required
+    shared string SourceSystem
+        documentation ""
+        is required
+    domain entity LMSSection
+        documentation ""
+        is required
+    shared string Title
+        documentation ""
+        is required
+    shared string AssignmentCategory
+        documentation ""
+        is required
+    shared string LMSDescription named AssignmentDescription
+        documentation ""
+        is optional
+    datetime StartDateTime
+        documentation ""
+        is optional
+    datetime EndDateTime
+        documentation ""
+        is optional
+    datetime DueDateTime
+        documentation ""
+        is optional
+    shared string SubmissionType
+        documentation ""
+        is optional collection
+    shared integer Points
+        documentation ""
+        is optional
+        role name Max
+    shared string EntityStatus
+        documentation ""
+        is required
+    datetime DeletedAt
+        documentation ""
+        is optional

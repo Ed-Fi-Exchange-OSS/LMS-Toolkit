@@ -1,0 +1,4 @@
+Shared String Title
+    documentation ""
+    min length 1
+    max length 255

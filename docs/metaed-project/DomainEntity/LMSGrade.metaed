@@ -1,0 +1,27 @@
+Domain Entity LMSGrade
+    documentation ""
+    shared integer Identifier
+        documentation ""
+        is part of identity
+        role name LMSGrade
+    shared string SourceSystemIdentifier
+        documentation ""
+        is required
+    shared string SourceSystem
+        documentation ""
+        is required
+    association UserLMSSectionAssociation
+        documentation ""
+        is required
+    shared string Grade
+        documentation ""
+        is required
+    shared string GradeType
+        documentation ""
+        is optional
+    shared string EntityStatus
+        documentation ""
+        is required
+    datetime DeletedAt
+        documentation ""
+        is optional

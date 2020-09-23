@@ -1,0 +1,4 @@
+Shared String EntityStatus
+    documentation ""
+    min length 1
+    max length 60

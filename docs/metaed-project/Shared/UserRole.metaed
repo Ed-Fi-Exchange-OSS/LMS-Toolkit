@@ -1,0 +1,4 @@
+Shared String UserRole
+    documentation ""
+    min length 1
+    max length 60
