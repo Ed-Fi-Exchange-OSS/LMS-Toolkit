@@ -6,6 +6,18 @@ DEFAULT_URL = "https://api.schoology.com/v1/"
 
 
 class RequestClient:
+    """
+    The RequestClient class wraps all the configuration complexity related to authentication and http requests for Schoology API
+
+    Args:
+        SCHOOLOGY_KEY (str): The consumer key given by Schoology
+        SCHOOLOGY_SECRET (str): The consumer secret given by Schoology
+        BASE_URL (str, optional): The API base url. Default value: https://api.schoology.com/v1/
+
+    Attributes:
+        oauth (OAuth1Session): The two-legged authenticated OAuth1 session
+"""
+
     def __init__(self, SCHOOLOGY_KEY, SCHOOLOGY_SECRET, BASE_URL=DEFAULT_URL):
         self.oauth = OAuth1Session(SCHOOLOGY_KEY, SCHOOLOGY_SECRET)
         self.base_url = BASE_URL
