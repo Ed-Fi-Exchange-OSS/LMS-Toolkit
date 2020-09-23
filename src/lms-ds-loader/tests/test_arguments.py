@@ -79,6 +79,7 @@ class Test_DbConnection:
                         "a", "a", "   "
                     )
 
+        class Test_when_not_using_integrated_security:
             def test_when_all_arguments_provided_then_return_pyodbc_connection_string(
                 self,
             ):

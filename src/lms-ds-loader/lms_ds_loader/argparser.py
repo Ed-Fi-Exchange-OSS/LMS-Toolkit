@@ -18,7 +18,7 @@ def parse_arguments(args_in) -> Arguments:
     parser.add(
         "-e",
         "--engine",
-        help=f"database engine",
+        help="database engine",
         choices=[Constants.MSSQL, Constants.POSTGRESQL],
         default=Constants.MSSQL,
     )

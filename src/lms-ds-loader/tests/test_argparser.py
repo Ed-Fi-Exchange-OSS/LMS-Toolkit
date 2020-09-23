@@ -4,7 +4,6 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import pytest
-from typing import List
 
 from lms_ds_loader.argparser import parse_arguments
 from lms_ds_loader.constants import Constants

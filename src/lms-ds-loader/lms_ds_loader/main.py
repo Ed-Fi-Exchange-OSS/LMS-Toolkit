@@ -37,5 +37,6 @@ def main():
     arguments = parse_arguments(sys.argv[1:])
     print(arguments)
 
+
 if __name__ == "__main__":
     main()
