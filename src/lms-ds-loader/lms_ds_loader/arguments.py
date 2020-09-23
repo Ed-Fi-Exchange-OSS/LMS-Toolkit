@@ -3,10 +3,20 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from lms_ds_loader.constants import Constants
 
-class DbConnection:
+
+class Arguments:
+    csv_path = ""
+    engine = ""
+    db_connection = ""
+
+    def __init__(self, csv_path, engine):
+        self.csv_path = csv_path
+        self.engine = engine
+
     @staticmethod
-    def build_for_mssql_with_integrated_security(server, port, db_name):
+    def _build_for_mssql_with_integrated_security(server, port, db_name):
         assert server is not None
         assert server.strip() != ""
 
@@ -21,7 +31,7 @@ class DbConnection:
         return f"mssql+pyodbc://{server},{port}/{db_name}?driver=SQL Server?Trusted_Connection=yes"
 
     @staticmethod
-    def build_for_mssql(server, port, db_name, username, password):
+    def _build_for_mssql(server, port, db_name, username, password):
         assert server is not None
         assert server.strip() != ""
 
@@ -35,13 +45,10 @@ class DbConnection:
 
         return f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=SQL Server"
 
+    def set_connection_string_using_integrated_security(self, server, port, db_name):
+        if self.engine == Constants.MSSQL:
+            self.db_connection = Arguments._build_for_mssql_with_integrated_security(server, port, db_name)
 
-class Arguments:
-    csv_path = ""
-    engine = ""
-    db_connection = None
-
-    def __init__(self, csv_path, engine, db_connection):
-        self.csv_path = csv_path
-        self.engine = engine
-        self.db_connection = db_connection
+    def set_connection_string(self, server, port, db_name, username, password):
+        if self.engine == Constants.MSSQL:
+            self.db_connection = Arguments._build_for_mssql(server, port, db_name, username, password)

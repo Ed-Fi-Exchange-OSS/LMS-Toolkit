@@ -5,7 +5,7 @@
 
 import pytest
 
-from lms_ds_loader.arguments import DbConnection
+from lms_ds_loader.arguments import Arguments
 
 
 class Test_DbConnection:
@@ -20,7 +20,7 @@ class Test_DbConnection:
                 expect = "mssql+pyodbc://my-server,1234/my-database?driver=SQL Server?Trusted_Connection=yes"
 
                 connection_string = (
-                    DbConnection.build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_with_integrated_security(
                         server, port, database
                     )
                 )
@@ -29,13 +29,13 @@ class Test_DbConnection:
 
             def test_given_server_is_None_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
-                    DbConnection.build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_with_integrated_security(
                         None, "a", "a"
                     )
 
             def test_given_server_is_whitepsace_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
-                    DbConnection.build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_with_integrated_security(
                         "   ", "a", "a"
                     )
 
@@ -46,7 +46,7 @@ class Test_DbConnection:
                 expected = "mssql+pyodbc://my-server,1433/my-database?driver=SQL Server?Trusted_Connection=yes"
 
                 connection_string = (
-                    DbConnection.build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_with_integrated_security(
                         server, port, database
                     )
                 )
@@ -60,7 +60,7 @@ class Test_DbConnection:
                 expected = "mssql+pyodbc://my-server,1433/my-database?driver=SQL Server?Trusted_Connection=yes"
 
                 connection_string = (
-                    DbConnection.build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_with_integrated_security(
                         server, port, database
                     )
                 )
@@ -69,13 +69,13 @@ class Test_DbConnection:
 
             def test_given_database_name_is_None_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
-                    DbConnection.build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_with_integrated_security(
                         "a", "a", None
                     )
 
             def test_given_database_name_is_whitepsace_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
-                    DbConnection.build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_with_integrated_security(
                         "a", "a", "   "
                     )
 
@@ -92,7 +92,7 @@ class Test_DbConnection:
                     "mssql+pyodbc://me:yo@my-server,1234/my-database?driver=SQL Server"
                 )
 
-                connection_string = DbConnection.build_for_mssql(
+                connection_string = Arguments._build_for_mssql(
                     server, port, database, username, password
                 )
 
@@ -106,7 +106,7 @@ class Test_DbConnection:
                     username = "me"
                     password = "yo"
 
-                    DbConnection.build_for_mssql(
+                    Arguments._build_for_mssql(
                         server, port, database, username, password
                     )
 
@@ -118,7 +118,7 @@ class Test_DbConnection:
                     username = "me"
                     password = "yo"
 
-                    DbConnection.build_for_mssql(
+                    Arguments._build_for_mssql(
                         server, port, database, username, password
                     )
 
@@ -133,7 +133,7 @@ class Test_DbConnection:
                 username = "me"
                 password = "yo"
 
-                connection_string = DbConnection.build_for_mssql(
+                connection_string = Arguments._build_for_mssql(
                     server, port, database, username, password
                 )
 
@@ -150,7 +150,7 @@ class Test_DbConnection:
                 username = "me"
                 password = "yo"
 
-                connection_string = DbConnection.build_for_mssql(
+                connection_string = Arguments._build_for_mssql(
                     server, port, database, username, password
                 )
 
@@ -164,7 +164,7 @@ class Test_DbConnection:
                     username = "me"
                     password = "yo"
 
-                    DbConnection.build_for_mssql(
+                    Arguments._build_for_mssql(
                         server, port, database, username, password
                     )
 
@@ -176,6 +176,6 @@ class Test_DbConnection:
                     username = "me"
                     password = "yo"
 
-                    DbConnection.build_for_mssql(
+                    Arguments._build_for_mssql(
                         server, port, database, username, password
                     )

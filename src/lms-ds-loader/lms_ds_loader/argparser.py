@@ -5,7 +5,7 @@
 
 import configargparse
 from lms_ds_loader.constants import Constants
-from lms_ds_loader.arguments import Arguments, DbConnection
+from lms_ds_loader.arguments import Arguments
 
 
 def parse_arguments(args_in) -> Arguments:
@@ -39,19 +39,19 @@ def parse_arguments(args_in) -> Arguments:
 
     args_parsed = parser.parse_args(args_in)
 
-    db_connection = None
-    if args_parsed.engine == Constants.MSSQL:
-        if args_parsed.useintegratedsecurity:
-            db_connection = DbConnection.build_for_mssql_with_integrated_security(
-                args_parsed.server, args_parsed.port, args_parsed.dbname
-            )
-        else:
-            db_connection = DbConnection.build_for_mssql(
-                args_parsed.server,
-                args_parsed.port,
-                args_parsed.dbname,
-                args_parsed.username,
-                args_parsed.password,
-            )
+    arguments = Arguments(args_parsed.csvpath, args_parsed.engine)
 
-    return Arguments(args_parsed.csvpath, args_parsed.engine, db_connection)
+    if args_parsed.useintegratedsecurity:
+        arguments.set_connection_string_using_integrated_security(
+            args_parsed.server, args_parsed.port, args_parsed.dbname
+        )
+    else:
+        arguments.set_connection_string(
+            args_parsed.server,
+            args_parsed.port,
+            args_parsed.dbname,
+            args_parsed.username,
+            args_parsed.password,
+        )
+
+    return arguments
