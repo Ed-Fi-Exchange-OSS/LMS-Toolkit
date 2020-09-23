@@ -9,15 +9,15 @@ from lms_ds_loader.arguments import DbConnection
 
 
 class Test_DbConnection:
-    class Test_when_using_mssql:
-        class Test_when_using_integrated_security:
-            def test_when_all_arguments_provided_then_return_pyodbc_connection_string(
+    class Test_when_creating_connection:
+        class Test_given_using_mssql_and_using_integrated_security:
+            def test_given_all_arguments_provided_then_return_pyodbc_connection_string(
                 self,
             ):
                 server = "my-server"
                 database = "my-database"
                 port = 1234
-                expected = "mssql+pyodbc://my-server,1234/my-database?driver=SQL Server?Trusted_Connection=yes"
+                expect = "mssql+pyodbc://my-server,1234/my-database?driver=SQL Server?Trusted_Connection=yes"
 
                 connection_string = (
                     DbConnection.build_for_mssql_with_integrated_security(
@@ -25,21 +25,21 @@ class Test_DbConnection:
                     )
                 )
 
-                assert connection_string == expected
+                assert connection_string == expect
 
-            def test_when_server_is_None_then_expect_assertion_error(self):
+            def test_given_server_is_None_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
                     DbConnection.build_for_mssql_with_integrated_security(
                         None, "a", "a"
                     )
 
-            def test_when_server_is_whitepsace_then_expect_assertion_error(self):
+            def test_given_server_is_whitepsace_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
                     DbConnection.build_for_mssql_with_integrated_security(
                         "   ", "a", "a"
                     )
 
-            def test_when_port_is_None_then_override_with_1433(self):
+            def test_given_port_is_None_then_override_with_1433(self):
                 server = "my-server"
                 database = "my-database"
                 port = None
@@ -53,7 +53,7 @@ class Test_DbConnection:
 
                 assert connection_string == expected
 
-            def test_when_port_is_whitepsace_then_override_with_1433(self):
+            def test_given_port_is_whitepsace_then_override_with_1433(self):
                 server = "my-server"
                 database = "my-database"
                 port = "   "
@@ -67,20 +67,20 @@ class Test_DbConnection:
 
                 assert connection_string == expected
 
-            def test_when_database_name_is_None_then_expect_assertion_error(self):
+            def test_given_database_name_is_None_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
                     DbConnection.build_for_mssql_with_integrated_security(
                         "a", "a", None
                     )
 
-            def test_when_database_name_is_whitepsace_then_expect_assertion_error(self):
+            def test_given_database_name_is_whitepsace_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
                     DbConnection.build_for_mssql_with_integrated_security(
                         "a", "a", "   "
                     )
 
-        class Test_when_not_using_integrated_security:
-            def test_when_all_arguments_provided_then_return_pyodbc_connection_string(
+        class Test_given_using_mssql_and_not_using_integrated_security:
+            def test_given_all_arguments_provided_then_return_pyodbc_connection_string(
                 self,
             ):
                 server = "my-server"
@@ -98,7 +98,7 @@ class Test_DbConnection:
 
                 assert connection_string == expected
 
-            def test_when_server_is_None_then_expect_assertion_error(self):
+            def test_given_server_is_None_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
                     server = None
                     database = "my-database"
@@ -110,7 +110,7 @@ class Test_DbConnection:
                         server, port, database, username, password
                     )
 
-            def test_when_server_is_whitepsace_then_expect_assertion_error(self):
+            def test_given_server_is_whitepsace_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
                     server = "     "
                     database = "my-database"
@@ -122,7 +122,7 @@ class Test_DbConnection:
                         server, port, database, username, password
                     )
 
-            def test_when_port_is_None_then_override_with_1433(self):
+            def test_given_port_is_None_then_override_with_1433(self):
                 expected = (
                     "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=SQL Server"
                 )
@@ -139,7 +139,7 @@ class Test_DbConnection:
 
                 assert connection_string == expected
 
-            def test_when_port_is_whitepsace_then_override_with_1433(self):
+            def test_given_port_is_whitepsace_then_override_with_1433(self):
                 expected = (
                     "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=SQL Server"
                 )
@@ -156,7 +156,7 @@ class Test_DbConnection:
 
                 assert connection_string == expected
 
-            def test_when_database_name_is_None_then_expect_assertion_error(self):
+            def test_given_database_name_is_None_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
                     server = "my-server"
                     database = None
@@ -168,7 +168,7 @@ class Test_DbConnection:
                         server, port, database, username, password
                     )
 
-            def test_when_database_name_is_whitepsace_then_expect_assertion_error(self):
+            def test_given_database_name_is_whitepsace_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
                     server = "my-server"
                     database = "     "
