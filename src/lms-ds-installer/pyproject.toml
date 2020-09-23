@@ -3,6 +3,7 @@ name = "lms-ds-installer"
 version = "0.1.0"
 description = "Learing Management System Data Store (LMS-DS) Installer"
 authors = ["Ed-Fi Alliance, LLC and Contributors"]
+license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = "^3.8"

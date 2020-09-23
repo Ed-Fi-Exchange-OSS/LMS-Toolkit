@@ -3,6 +3,7 @@ name = "lms-ds-loader"
 version = "0.1.0"
 description = ""
 authors = ["Ed-Fi Alliance, LLC and contributors"]
+license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = "^3.8"
