@@ -1,0 +1,4 @@
+Shared String ActivityType
+    documentation ""
+    min length 1
+    max length 60

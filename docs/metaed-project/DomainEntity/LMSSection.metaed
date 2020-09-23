@@ -1,0 +1,34 @@
+Domain Entity LMSSection
+    documentation ""
+    shared integer Identifier
+        documentation ""
+        is part of identity
+        role name LMSSection
+    shared string SourceSystemIdentifier
+        documentation ""
+        is required
+    shared string SourceSystem
+        documentation ""
+        is required
+    shared string SourceSystemIdentifier named SISSectionIdentifier
+        documentation ""
+        is optional
+    shared string Title
+        documentation ""
+        is required
+    shared string LMSDescription named SectionDescription
+        documentation ""
+        is optional
+    shared string Term
+        documentation ""
+        is optional
+    shared string Status
+        documentation ""
+        is optional
+        role name LMSSection
+    shared string EntityStatus
+        documentation ""
+        is required
+    datetime DeletedAt
+        documentation ""
+        is optional

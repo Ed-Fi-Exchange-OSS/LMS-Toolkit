@@ -1,0 +1,32 @@
+Association UserLMSSectionAssociation
+    documentation ""
+    domain entity User
+        documentation ""
+    domain entity LMSSection
+        documentation ""
+    shared integer Identifier
+        documentation ""
+        is part of identity
+        role name UserLMSSectionAssociation
+    shared string SourceSystemIdentifier
+        documentation ""
+        is required
+    shared string SourceSystem
+        documentation ""
+        is required
+    shared string Status
+        documentation ""
+        is required
+        role name Enrollment
+    date StartDate
+        documentation ""
+        is required
+    date EndDate
+        documentation ""
+        is required
+    shared string EntityStatus
+        documentation ""
+        is required
+    datetime DeletedAt
+        documentation ""
+        is optional

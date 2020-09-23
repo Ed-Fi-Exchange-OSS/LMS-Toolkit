@@ -1,0 +1,31 @@
+Domain Entity UserAttendanceEvent
+    documentation ""
+    shared integer Identifier
+        documentation ""
+        is part of identity
+        role name UserAttendanceEvent
+    shared string SourceSystemIdentifier
+        documentation ""
+        is required
+    shared string SourceSystem
+        documentation ""
+        is required
+    domain entity User
+        documentation ""
+        is required
+    association UserLMSSectionAssociation
+        documentation ""
+        is optional
+        merge UserLMSSectionAssociation.User.UserIdentifier with User.UserIdentifier
+    date EventDate
+        documentation ""
+        is required
+    shared string Status
+        documentation ""
+        is required
+    shared string EntityStatus
+        documentation ""
+        is required
+    datetime DeletedAt
+        documentation ""
+        is optional

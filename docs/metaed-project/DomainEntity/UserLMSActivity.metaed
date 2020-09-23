@@ -1,0 +1,44 @@
+Domain Entity UserLMSActivity
+    documentation ""
+    shared integer Identifier
+        documentation ""
+        is part of identity
+        role name UserLMSActivity
+    shared string SourceSystemIdentifier
+        documentation ""
+        is required
+    shared string SourceSystem
+        documentation ""
+        is required
+    domain entity User
+        documentation ""
+        is required
+    domain entity LMSSection
+        documentation ""
+        is optional
+    domain entity Assignment
+        documentation ""
+        is optional
+    shared string ActivityType
+        documentation ""
+        is required
+    datetime ActivityDateTime
+        documentation ""
+        is required
+    shared string Status
+        documentation ""
+        is required
+        role name Activity
+    shared string LMSDescription named Content
+        documentation ""
+        is optional
+    shared integer TimeInMinutes
+        documentation ""
+        is optional
+        role name Activity
+    shared string EntityStatus
+        documentation ""
+        is required
+    datetime DeletedAt
+        documentation ""
+        is optional

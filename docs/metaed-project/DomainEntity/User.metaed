@@ -1,0 +1,33 @@
+Domain Entity User
+    documentation ""
+    shared integer Identifier
+        documentation ""
+        is part of identity
+        role name User
+    shared string SourceSystemIdentifier
+        documentation ""
+        is required
+    shared string SourceSystem
+        documentation ""
+        is required
+    shared string UserRole
+        documentation ""
+        is required
+    shared string SourceSystemIdentifier named LocalUserIdentifier
+        documentation ""
+        is optional
+    shared string SourceSystemIdentifier named SISUserIdentifier
+        documentation ""
+        is optional
+    shared string Name
+        documentation ""
+        is required
+    shared string EmailAddress
+        documentation ""
+        is required
+    shared string EntityStatus
+        documentation ""
+        is required
+    datetime DeletedAt
+        documentation ""
+        is optional

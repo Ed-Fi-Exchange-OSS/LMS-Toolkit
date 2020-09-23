@@ -1,0 +1,4 @@
+Shared String EmailAddress
+    documentation ""
+    min length 1
+    max length 255

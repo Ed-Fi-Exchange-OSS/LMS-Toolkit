@@ -1,0 +1,37 @@
+Domain Entity AssignmentSubmission
+    documentation "This is documentation."
+    shared integer Identifier
+        documentation ""
+        is part of identity
+        role name LMSGrade
+    shared string SourceSystemIdentifier
+        documentation ""
+        is required
+    shared string SourceSystem
+        documentation ""
+        is required
+    domain entity User
+        documentation ""
+        is required
+    domain entity Assignment
+        documentation ""
+        is required
+    shared string Status
+        documentation ""
+        is required
+    datetime SubmissionDateTime
+        documentation ""
+        is required
+    shared integer Points
+        documentation ""
+        is optional
+        role name Earned
+    shared string Grade
+        documentation ""
+        is optional
+    shared string EntityStatus
+        documentation ""
+        is required
+    datetime DeletedAt
+        documentation ""
+        is optional
