@@ -19,6 +19,9 @@ class LmsFilesystemProvider:
     Users: List[str] = []
 
     def __init__(self, base_path):
+        assert base_path is not None, "No value passed to base_path"
+        assert base_path.strip() != "", "Whitespace passed as base_path"
+
         self.base_path = base_path
 
     def get_all_files(self):
@@ -29,7 +32,11 @@ class LmsFilesystemProvider:
             user_path = os.path.join(self.base_path, "Users")
 
             if os.path.exists(user_path):
-                self.Users = [f.path for f in os.scandir(user_path) if f.name.endswith(".csv")]
+                self.Users = [
+                    f.path for f in os.scandir(user_path) if f.name.endswith(".csv")
+                ]
+
+        # Other "local" functions can be added for other file types
 
         _get_user_files()
 

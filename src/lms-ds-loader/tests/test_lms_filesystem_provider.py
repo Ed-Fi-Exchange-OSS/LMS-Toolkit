@@ -9,69 +9,84 @@ import pytest
 from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
 
 
-class Test_when_getting_all_files:
-    def test_given_invalid_file_path_then_raise_error(self, mocker):
+class Test_LmsFilesystemProvider:
+    class Test_constructor:
+        def test_given_base_path_is_none_then_raise_error(self):
+            with pytest.raises(AssertionError):
+                LmsFilesystemProvider(None)
 
-        csv_path = "does-not-exist"
+        def test_given_base_path_is_whitespace_then_raise_error(self):
+            with pytest.raises(AssertionError):
+                LmsFilesystemProvider("    ")
 
-        mocker.patch.object(os.path, "exists", return_value=False)
+    class Test_when_getting_all_files:
+        def test_given_invalid_file_path_then_raise_error(self, mocker):
+            csv_path = "does-not-exist"
 
-        with pytest.raises(OSError):
-            LmsFilesystemProvider(csv_path).get_all_files()
+            mocker.patch.object(os.path, "exists", return_value=False)
 
-    def test_given_valid_path_does_not_contain_user_directory_then_do_nothing(self, fs):
-        csv_path = "exists"
+            with pytest.raises(OSError):
+                LmsFilesystemProvider(csv_path).get_all_files()
 
-        # Arrange
-        fs.create_dir(csv_path)
+        def test_given_valid_path_does_not_contain_user_directory_then_do_nothing(
+            self, fs
+        ):
+            csv_path = "exists"
 
-        # Act
-        fs = LmsFilesystemProvider(csv_path).get_all_files()
+            # Arrange
+            fs.create_dir(csv_path)
 
-        # Assert
-        assert len(fs.Users) == 0
+            # Act
+            fs = LmsFilesystemProvider(csv_path).get_all_files()
 
-    def test_given_valid_path_contains_empty_user_directory_then_do_nothing(self, fs):
-        csv_path = "exists"
+            # Assert
+            assert len(fs.Users) == 0
 
-        # Arrange
-        user_path = os.path.join(csv_path, "Users")
-        fs.create_dir(user_path)
+        def test_given_valid_path_contains_empty_user_directory_then_do_nothing(
+            self, fs
+        ):
+            csv_path = "exists"
 
-        # Act
-        fs = LmsFilesystemProvider(csv_path).get_all_files()
+            # Arrange
+            user_path = os.path.join(csv_path, "Users")
+            fs.create_dir(user_path)
 
-        # Assert
-        assert len(fs.Users) == 0
+            # Act
+            fs = LmsFilesystemProvider(csv_path).get_all_files()
 
-    def test_given_valid_path_contains_user_files_then_load_their_file_paths(self, fs):
+            # Assert
+            assert len(fs.Users) == 0
 
-        csv_path = "exists"
-        user_path = os.path.join(csv_path, "Users")
-        expected_1 = os.path.join(user_path, "2020-09-03-12-34-56.csv")
-        expected_2 = os.path.join(user_path, "2020-09-04-12-34-36.csv")
+        def test_given_valid_path_contains_user_files_then_load_their_file_paths(
+            self, fs
+        ):
 
-        fs.create_file(expected_1)
-        fs.create_file(expected_2)
+            csv_path = "exists"
+            user_path = os.path.join(csv_path, "Users")
+            expected_1 = os.path.join(user_path, "2020-09-03-12-34-56.csv")
+            expected_2 = os.path.join(user_path, "2020-09-04-12-34-36.csv")
 
-        # Act
-        fs = LmsFilesystemProvider(csv_path).get_all_files()
+            fs.create_file(expected_1)
+            fs.create_file(expected_2)
 
-        assert len(fs.Users) == 2, "did not find both files"
-        assert fs.Users[0] == expected_1, "did not find file 1"
-        assert fs.Users[1] == expected_2, "did not find file 2"
+            # Act
+            fs = LmsFilesystemProvider(csv_path).get_all_files()
 
-    def test_given_valid_path_contains_non_csv_files_then_ignore_them(self, fs):
+            assert len(fs.Users) == 2, "did not find both files"
+            assert fs.Users[0] == expected_1, "did not find file 1"
+            assert fs.Users[1] == expected_2, "did not find file 2"
 
-        csv_path = "exists"
-        user_path = os.path.join(csv_path, "Users")
-        expected_1 = os.path.join(user_path, "2020-09-03-12-34-56.json")
-        expected_2 = os.path.join(user_path, "2020-09-04-12-34-36.txt")
+        def test_given_valid_path_contains_non_csv_files_then_ignore_them(self, fs):
 
-        fs.create_file(expected_1)
-        fs.create_file(expected_2)
+            csv_path = "exists"
+            user_path = os.path.join(csv_path, "Users")
+            expected_1 = os.path.join(user_path, "2020-09-03-12-34-56.json")
+            expected_2 = os.path.join(user_path, "2020-09-04-12-34-36.txt")
 
-        # Act
-        fs = LmsFilesystemProvider(csv_path).get_all_files()
+            fs.create_file(expected_1)
+            fs.create_file(expected_2)
 
-        assert len(fs.Users) == 0, "Should not have found any files"
+            # Act
+            fs = LmsFilesystemProvider(csv_path).get_all_files()
+
+            assert len(fs.Users) == 0, "Should not have found any files"

@@ -9,11 +9,16 @@ from lms_ds_loader.constants import Constants
 
 class FileProcessor:
     def __init__(self, file_system, connection_string):
+        assert file_system is not None, "file_system cannot be None"
+        assert connection_string is not None, "connection_string cannot be None"
+        assert (
+            connection_string.strip() != ""
+        ), "connection_string cannot be an empty string"
+
         self.file_system = file_system
         self.connection_string = connection_string
 
     def load_lms_files_into_database(self):
-
         csv_to_sql = CsvToSql(self.connection_string)
 
         for f in self.file_system.Users:
