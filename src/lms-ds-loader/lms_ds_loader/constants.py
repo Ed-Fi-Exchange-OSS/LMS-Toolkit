@@ -5,6 +5,7 @@
 
 
 class Constants:
+    """Commonly used constant values"""
 
     class DbEngine:
         MSSQL = "mssql"

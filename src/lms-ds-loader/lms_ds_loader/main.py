@@ -4,7 +4,10 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 """
-placeholder
+A utility for loading CSV files in the Learning Management System Unified Data
+Model (LMS-UDM) into a Learning Management System Data Store (LMS-DS) database.
+
+call `python main.py -h` for a detailed listing of command arguments.
 """
 
 import sys

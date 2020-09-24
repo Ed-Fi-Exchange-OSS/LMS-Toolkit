@@ -9,6 +9,20 @@ from lms_ds_loader.arguments import Arguments
 
 
 def parse_arguments(args_in) -> Arguments:
+    """
+    Configures the command-line interface.
+
+    Parameters
+    ----------
+    args_in : list of str
+        Full argument list from the command line.
+
+    Returns
+    -------
+    arguments  : Arguments
+        A populated `Arguments` object.
+    """
+
     assert args_in is not None
 
     parser = configargparse.ArgParser()

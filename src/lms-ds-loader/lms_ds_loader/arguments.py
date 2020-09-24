@@ -7,18 +7,24 @@ from lms_ds_loader.constants import Constants
 
 
 class Arguments:
+    """
+    Container for holding arguments parsed at the command line.
 
-    # TODO: are these static or instance?
-    csv_path = ""
-    engine = ""
-    connection_string = ""
+    Parameters
+    ----------
+    csv_path : str
+        Base path for finding CSV files.
+    engine : str
+        Database engine, either "mssql" or "postgresql"
+    """
 
     def __init__(self, csv_path, engine):
         self.csv_path = csv_path
         self.engine = engine
+        self.connection_string = ""
 
     @staticmethod
-    def _build_for_mssql_with_integrated_security(server, port, db_name):
+    def _build_for_mssql_integrated_security(server, port, db_name):
         assert server is not None
         assert server.strip() != ""
 
@@ -48,9 +54,39 @@ class Arguments:
         return f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=SQL Server"
 
     def set_connection_string_using_integrated_security(self, server, port, db_name):
+        """
+        Creates a PyODBC connection string using integrated security.
+
+        Parameters
+        ----------
+        server : str
+            Database server name or IP address.
+        port : int or None
+            Database port number.
+        db_name : str
+            Database name.
+        """
+
         if self.engine == Constants.DbEngine.MSSQL:
-            self.connection_string = Arguments._build_for_mssql_with_integrated_security(server, port, db_name)
+            self.connection_string = Arguments._build_for_mssql_integrated_security(server, port, db_name)
 
     def set_connection_string(self, server, port, db_name, username, password):
+        """
+        Creates a PyODBC connection string using username and password.
+
+        Parameters
+        ----------
+        server : str
+            Database server name or IP address.
+        port : int or None
+            Database port number.
+        db_name : str
+            Database name.
+        username : str
+            Database user name.
+        password : str
+            Database password.
+        """
+
         if self.engine == Constants.DbEngine.MSSQL:
             self.connection_string = Arguments._build_for_mssql(server, port, db_name, username, password)
