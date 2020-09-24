@@ -7,9 +7,11 @@ from lms_ds_loader.constants import Constants
 
 
 class Arguments:
+
+    # TODO: are these static or instance?
     csv_path = ""
     engine = ""
-    db_connection = ""
+    connection_string = ""
 
     def __init__(self, csv_path, engine):
         self.csv_path = csv_path
@@ -47,8 +49,8 @@ class Arguments:
 
     def set_connection_string_using_integrated_security(self, server, port, db_name):
         if self.engine == Constants.MSSQL:
-            self.db_connection = Arguments._build_for_mssql_with_integrated_security(server, port, db_name)
+            self.connection_string = Arguments._build_for_mssql_with_integrated_security(server, port, db_name)
 
     def set_connection_string(self, server, port, db_name, username, password):
         if self.engine == Constants.MSSQL:
-            self.db_connection = Arguments._build_for_mssql(server, port, db_name, username, password)
+            self.connection_string = Arguments._build_for_mssql(server, port, db_name, username, password)
