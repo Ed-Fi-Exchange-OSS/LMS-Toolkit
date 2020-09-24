@@ -4,34 +4,14 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 """
-The following comments will be cleaned up before finishing this module. This is just an outline of the task:
-
-# 1 Read arguments
-# 2 Validate arguments
-# 3 Initially only look in the Users folder, looking for files like /ed-fi-udm-lms/users/<YYYY-mm-dd-HH-MM-SS>.csv
-# 4 For each file
-# 4.1 See if it is already loaded
-# 4.2 If not, open file using Pandas
-# 4.3 Query for existing user rows
-# 4.4 Insert rows that aren't already present
+placeholder
 """
 
 import sys
 
 from argparser import parse_arguments
 from lms_filesystem_provider import LmsFilesystemProvider
-
-# TODO: keeping this around until I need it, at which time it will move elsewhere
-# def test_sql_connection():
-# import pandas as pd
-# import pyodbc
-# import sqlalchemy as sal
-# from sqlalchemy import create_engine
-# engine = sal.create_engine("mssql+pyodbc://localhost/fizz?driver=SQL Server?Trusted_Connection=yes")
-# conn = engine.connect()
-# tables = pd.read_sql_query("SELECT * FROM INFORMATION_SCHEMA.TABLES", engine)
-# print(tables)
-# conn.close()
+from file_processor import FileProcessor
 
 
 def main():
@@ -40,7 +20,8 @@ def main():
     fs = LmsFilesystemProvider(arguments.csv_path)
     fs.get_all_files()
 
-    print(list(fs.Users))
+    processor = FileProcessor(fs, arguments.connection_string)
+    processor.load_lms_files_into_database()
 
 
 if __name__ == "__main__":

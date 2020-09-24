@@ -48,9 +48,9 @@ class Arguments:
         return f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=SQL Server"
 
     def set_connection_string_using_integrated_security(self, server, port, db_name):
-        if self.engine == Constants.MSSQL:
+        if self.engine == Constants.DbEngine.MSSQL:
             self.connection_string = Arguments._build_for_mssql_with_integrated_security(server, port, db_name)
 
     def set_connection_string(self, server, port, db_name, username, password):
-        if self.engine == Constants.MSSQL:
+        if self.engine == Constants.DbEngine.MSSQL:
             self.connection_string = Arguments._build_for_mssql(server, port, db_name, username, password)

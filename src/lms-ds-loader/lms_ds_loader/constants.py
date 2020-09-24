@@ -5,5 +5,10 @@
 
 
 class Constants:
-    MSSQL = "mssql"
-    POSTGRESQL = "postgresql"
+
+    class DbEngine:
+        MSSQL = "mssql"
+        POSTGRESQL = "postgresql"
+
+    class Table:
+        USER = "User"

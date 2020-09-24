@@ -12,15 +12,13 @@ def parse_arguments(args_in) -> Arguments:
     assert args_in is not None
 
     parser = configargparse.ArgParser()
-    parser.add(
-        "-c", "--csvpath", help="base path for input files", required=True
-    )
+    parser.add("-c", "--csvpath", help="base path for input files", required=True)
     parser.add(
         "-e",
         "--engine",
         help="database engine",
-        choices=[Constants.MSSQL, Constants.POSTGRESQL],
-        default=Constants.MSSQL,
+        choices=[Constants.DbEngine.MSSQL, Constants.DbEngine.POSTGRESQL],
+        default=Constants.DbEngine.MSSQL,
     )
     parser.add(
         "-s", "--server", help="database server name or IP address", required=True
@@ -29,13 +27,21 @@ def parse_arguments(args_in) -> Arguments:
     parser.add("-d", "--dbname", help="database name", required=True)
 
     USE_INTEGRATED = "--useintegratedsecurity"
+    USE_INTEGRATED_SHORT = "-i"
     parser.add(
-        "-i", USE_INTEGRATED, help="use Integrated Security", action="store_true"
+        USE_INTEGRATED_SHORT,
+        USE_INTEGRATED,
+        help="use Integrated Security",
+        action="store_true",
     )
 
-    user_name_required = USE_INTEGRATED not in args_in
+    user_name_required = (
+        USE_INTEGRATED not in args_in and USE_INTEGRATED_SHORT not in args_in
+    )
     parser.add("-u", "--username", required=user_name_required)
-    parser.add("-p", "--password", required=user_name_required, env_var="MSSQL_PASSWORD")
+    parser.add(
+        "-p", "--password", required=user_name_required, env_var="MSSQL_PASSWORD"
+    )
 
     args_parsed = parser.parse_args(args_in)
 

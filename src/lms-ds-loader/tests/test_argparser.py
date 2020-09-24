@@ -73,7 +73,7 @@ class Test_parse_arguments:
 
         with pytest.raises(SystemExit):
             args = [
-                *self.engine_args(Constants.MSSQL),
+                *self.engine_args(Constants.DbEngine.MSSQL),
                 *self.server_args(),
                 *self.db_name_args(),
                 *self.integrated_security_arg(),
@@ -96,7 +96,7 @@ class Test_parse_arguments:
 
         assert parsed is not None, "No arguments detected"
 
-        assert parsed.engine == Constants.MSSQL
+        assert parsed.engine == Constants.DbEngine.MSSQL
 
         self.assert_no_messages(capsys)
 
@@ -104,7 +104,7 @@ class Test_parse_arguments:
 
         with pytest.raises(SystemExit):
             args = [
-                *self.engine_args(Constants.MSSQL),
+                *self.engine_args(Constants.DbEngine.MSSQL),
                 *self.server_args(),
                 *self.integrated_security_arg(),
             ]
@@ -128,7 +128,26 @@ class Test_parse_arguments:
 
         assert parsed is not None, "No arguments detected"
 
-        assert parsed.engine == Constants.MSSQL
+        assert parsed.engine == Constants.DbEngine.MSSQL
+
+        self.assert_no_messages(capsys)
+
+    def test_when_using_integrated_security_short_flag_then_username_and_password_not_required(
+        self, capsys
+    ):
+
+        args = [
+            *self.path_args(),
+            *self.server_args(),
+            *self.db_name_args(),
+            "-i",
+        ]
+
+        parsed = parse_arguments(args)
+
+        assert parsed is not None, "No arguments detected"
+
+        assert parsed.engine == Constants.DbEngine.MSSQL
 
         self.assert_no_messages(capsys)
 
@@ -176,7 +195,7 @@ class Test_parse_arguments:
 
         assert parsed is not None, "No arguments detected"
 
-        assert str(self.PORT) in parsed.db_connection
+        assert str(self.PORT) in parsed.connection_string
 
     def test_maps_csv_path_into_response(self, capsys):
 
@@ -204,7 +223,7 @@ class Test_parse_arguments:
             *self.server_args(),
             *self.db_name_args(),
             *self.integrated_security_arg(),
-            *self.engine_args(Constants.MSSQL),
+            *self.engine_args(Constants.DbEngine.MSSQL),
         ]
 
         parsed = parse_arguments(args)
@@ -215,7 +234,7 @@ class Test_parse_arguments:
 
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert "Trusted_Connection=yes" in parsed.db_connection
+        assert "Trusted_Connection=yes" in parsed.connection_string
 
     def test_when_engine_mssql_then_create_mssql_connection_with_server_name(
         self, capsys
@@ -226,7 +245,7 @@ class Test_parse_arguments:
             *self.server_args(),
             *self.db_name_args(),
             *self.integrated_security_arg(),
-            *self.engine_args(Constants.MSSQL),
+            *self.engine_args(Constants.DbEngine.MSSQL),
         ]
 
         parsed = parse_arguments(args)
@@ -237,7 +256,7 @@ class Test_parse_arguments:
 
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert self.SERVER in parsed.db_connection
+        assert self.SERVER in parsed.connection_string
 
     def test_when_engine_mssql_with_port_then_create_mssql_connection_with_port(
         self, capsys
@@ -248,7 +267,7 @@ class Test_parse_arguments:
             *self.server_args(),
             *self.db_name_args(),
             *self.integrated_security_arg(),
-            *self.engine_args(Constants.MSSQL),
+            *self.engine_args(Constants.DbEngine.MSSQL),
             *self.port_args(),
         ]
 
@@ -260,7 +279,7 @@ class Test_parse_arguments:
 
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert str(self.PORT) in parsed.db_connection
+        assert str(self.PORT) in parsed.connection_string
 
     def test_when_engine_mssql_then_create_mssql_connection_with_database_name(
         self, capsys
@@ -271,7 +290,7 @@ class Test_parse_arguments:
             *self.server_args(),
             *self.db_name_args(),
             *self.integrated_security_arg(),
-            *self.engine_args(Constants.MSSQL),
+            *self.engine_args(Constants.DbEngine.MSSQL),
         ]
 
         parsed = parse_arguments(args)
@@ -282,7 +301,7 @@ class Test_parse_arguments:
 
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert self.DB_NAME in parsed.db_connection
+        assert self.DB_NAME in parsed.connection_string
 
     def test_when_using_sql_account_with_engine_mssql_then_create_mssql_connection_with_username(
         self, capsys
@@ -292,7 +311,7 @@ class Test_parse_arguments:
             *self.path_args(),
             *self.server_args(),
             *self.db_name_args(),
-            *self.engine_args(Constants.MSSQL),
+            *self.engine_args(Constants.DbEngine.MSSQL),
             *self.username_args(),
             *self.password_args(),
         ]
@@ -305,7 +324,7 @@ class Test_parse_arguments:
 
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert self.USERNAME in parsed.db_connection
+        assert self.USERNAME in parsed.connection_string
 
     def test_when_using_sql_account_with_engine_mssql_then_create_mssql_connection_with_password(
         self, capsys
@@ -315,7 +334,7 @@ class Test_parse_arguments:
             *self.path_args(),
             *self.server_args(),
             *self.db_name_args(),
-            *self.engine_args(Constants.MSSQL),
+            *self.engine_args(Constants.DbEngine.MSSQL),
             *self.username_args(),
             *self.password_args(),
         ]
@@ -328,6 +347,6 @@ class Test_parse_arguments:
 
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert self.PASSWORD in parsed.db_connection
+        assert self.PASSWORD in parsed.connection_string
 
     # NOT TESTING POSTGRESQL UNTIL STORY REQUIRES POSTGRESQL
