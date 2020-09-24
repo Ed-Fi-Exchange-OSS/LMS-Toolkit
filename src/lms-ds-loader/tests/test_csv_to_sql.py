@@ -4,7 +4,6 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import pandas as pd
-import pytest
 import sqlalchemy as sal
 
 
