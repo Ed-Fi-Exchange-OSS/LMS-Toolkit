@@ -8,8 +8,25 @@ import pytest
 from lms_ds_loader.arguments import Arguments
 
 
-class Test_DbConnection:
-    class Test_when_creating_connection:
+class Test_Arguments:
+    class Test_constructor:
+        def test_given_csv_path_is_none_then_raise_error(self):
+            with pytest.raises(AssertionError):
+                Arguments(None, "a")
+
+        def test_given_csv_path_is_whitespaces_then_raise_error(self):
+            with pytest.raises(AssertionError):
+                Arguments("    ", "a")
+
+        def test_given_engine_is_none_then_raise_error(self):
+            with pytest.raises(AssertionError):
+                Arguments("a", None)
+
+        def test_given_engine_is_whitespaces_then_raise_error(self):
+            with pytest.raises(AssertionError):
+                Arguments("a", "    ")
+
+    class Test_when_creating_connection_string:
         class Test_given_using_mssql_and_using_integrated_security:
             def test_given_all_arguments_provided_then_return_pyodbc_connection_string(
                 self,
@@ -20,7 +37,7 @@ class Test_DbConnection:
                 expect = "mssql+pyodbc://my-server,1234/my-database?driver=SQL Server?Trusted_Connection=yes"
 
                 connection_string = (
-                    Arguments._build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_integrated_security(
                         server, port, database
                     )
                 )
@@ -29,13 +46,13 @@ class Test_DbConnection:
 
             def test_given_server_is_None_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
-                    Arguments._build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_integrated_security(
                         None, "a", "a"
                     )
 
             def test_given_server_is_whitepsace_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
-                    Arguments._build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_integrated_security(
                         "   ", "a", "a"
                     )
 
@@ -46,7 +63,7 @@ class Test_DbConnection:
                 expected = "mssql+pyodbc://my-server,1433/my-database?driver=SQL Server?Trusted_Connection=yes"
 
                 connection_string = (
-                    Arguments._build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_integrated_security(
                         server, port, database
                     )
                 )
@@ -60,7 +77,7 @@ class Test_DbConnection:
                 expected = "mssql+pyodbc://my-server,1433/my-database?driver=SQL Server?Trusted_Connection=yes"
 
                 connection_string = (
-                    Arguments._build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_integrated_security(
                         server, port, database
                     )
                 )
@@ -69,13 +86,13 @@ class Test_DbConnection:
 
             def test_given_database_name_is_None_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
-                    Arguments._build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_integrated_security(
                         "a", "a", None
                     )
 
             def test_given_database_name_is_whitepsace_then_expect_assertion_error(self):
                 with pytest.raises(AssertionError):
-                    Arguments._build_for_mssql_with_integrated_security(
+                    Arguments._build_for_mssql_integrated_security(
                         "a", "a", "   "
                     )
 

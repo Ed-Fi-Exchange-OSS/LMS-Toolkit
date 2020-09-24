@@ -19,6 +19,11 @@ class Arguments:
     """
 
     def __init__(self, csv_path, engine):
+        assert csv_path is not None, "csv_path cannot be None"
+        assert csv_path.strip() != "", "csv_path cannot be whitespace"
+        assert engine is not None, "engine cannot be None"
+        assert engine.strip() != "", "engine cannot be whitespace"
+
         self.csv_path = csv_path
         self.engine = engine
         self.connection_string = ""
