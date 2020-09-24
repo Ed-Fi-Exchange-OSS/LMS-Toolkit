@@ -323,6 +323,14 @@ pymysql = ["pymysql"]
 
 [[package]]
 category = "dev"
+description = "Send test results to TeamCity continuous integration server from unittest, nose, py.test, twisted trial, behave (Python 2.6+)"
+name = "teamcity-messages"
+optional = false
+python-versions = "*"
+version = "1.28"
+
+[[package]]
+category = "dev"
 description = "Python Library for Tom's Obvious, Minimal Language"
 name = "toml"
 optional = false
@@ -354,7 +362,7 @@ python-versions = "*"
 version = "0.2.5"
 
 [metadata]
-content-hash = "4402b469e87b503988ff68d052dc8a2b96c213fb35f9fa2155c042c0d88f1ebd"
+content-hash = "3f1d9e16878999a49e9b52657e5400e3914c9d0a77a830b1b9ca420c3cf12087"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -607,6 +615,10 @@ sqlalchemy = [
     {file = "SQLAlchemy-1.3.19-cp38-cp38-win32.whl", hash = "sha256:b70bad2f1a5bd3460746c3fb3ab69e4e0eb5f59d977a23f9b66e5bdc74d97b86"},
     {file = "SQLAlchemy-1.3.19-cp38-cp38-win_amd64.whl", hash = "sha256:83469ad15262402b0e0974e612546bc0b05f379b5aa9072ebf66d0f8fef16bea"},
     {file = "SQLAlchemy-1.3.19.tar.gz", hash = "sha256:3bba2e9fbedb0511769780fe1d63007081008c5c2d7d715e91858c94dbaa260e"},
+]
+teamcity-messages = [
+    {file = "teamcity-messages-1.28.tar.gz", hash = "sha256:188feab063a52b846cfeab6b4f7ca9b64f47f22a27e5cef3ea7b93be0df1d0ca"},
+    {file = "teamcity_messages-1.28-py3-none-any.whl", hash = "sha256:58396d79b7c0d5d8c33890f1a34910ce921668ce9d9d7c4c96f0f94baaf12959"},
 ]
 toml = [
     {file = "toml-0.10.1-py2.py3-none-any.whl", hash = "sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88"},
