@@ -1,4 +1,4 @@
-﻿SourceSystemIdentifier,SourceSystem,UserRole,LocalUserIdentifier,SISUserIdentifier,Name,EmailAddress,EntityStatus,CreatedDate,LastModifiedDate
+﻿SourceSystemIdentifier,SourceSystem,UserRole,LocalUserIdentifier,SISUserIdentifier,Name,EmailAddress,EntityStatus,CreateDate,LastModifiedDate
 100032890,Schoology,student,mary.archer,604863,Mary Archer,Mary.Archer@studentgps.org,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
 100032891,Schoology,student,kyle.hughes,604874,Kyle Hughes,Kyle.Hughes@studentgps.org,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
 100032892,Schoology,student,peter.nash,604918,Peter Ivan Nash,Peter.Nash@studentgps.org,Active,2020-08-20 12:34:50,2020-08-20 12:34:50

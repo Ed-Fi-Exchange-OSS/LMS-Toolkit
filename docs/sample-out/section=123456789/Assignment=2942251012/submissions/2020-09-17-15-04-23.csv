@@ -1,4 +1,4 @@
-﻿SourceSystemIdentifier,SourceSystem,SubmissionStatus,SubmissionDateTime,EarnedPoints,Grade,AssignmentSourceSystemIdentifier,UserSourceSystemIdentifier,EntityStatus,CreatedDate,LastModifiedDate
+﻿SourceSystemIdentifier,SourceSystem,SubmissionStatus,SubmissionDateTime,EarnedPoints,Grade,AssignmentSourceSystemIdentifier,UserSourceSystemIdentifier,EntityStatus,CreateDate,LastModifiedDate
 456789156,Canvas,Returned,2020-08-23 23:59:00,77,C+,2942251001,2942251012,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
 456789157,Canvas,Returned,2020-12-30 23:59:00,82,B-,2942251002,2942251012,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
 456789158,Canvas,Late, 2021-05-01 02:00:00,91,A-,2942251012,2942251012,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
