@@ -19,6 +19,7 @@ The following comments will be cleaned up before finishing this module. This is 
 import sys
 
 from argparser import parse_arguments
+from lms_filesystem_provider import LmsFilesystemProvider
 
 # TODO: keeping this around until I need it, at which time it will move elsewhere
 # def test_sql_connection():
@@ -36,6 +37,11 @@ from argparser import parse_arguments
 def main():
     arguments = parse_arguments(sys.argv[1:])
     print(arguments)
+
+    fs = LmsFilesystemProvider(arguments.csv_path)
+    fs.get_all_files()
+
+    print(fs.Users)
 
 
 if __name__ == "__main__":
