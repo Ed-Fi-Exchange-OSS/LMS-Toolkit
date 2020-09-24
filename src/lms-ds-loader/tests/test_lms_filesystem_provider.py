@@ -9,14 +9,6 @@ import pytest
 from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
 
 
-class PseudoDirEntry:
-    def __init__(self, path):
-        self.path = os.path.realpath(path)
-        self.name = os.path.basename(self.path)
-        self.is_dir = os.path.isdir(self.path)
-        self.stat = lambda: os.stat(self.path)
-
-
 class Test_when_getting_all_files:
     def test_given_invalid_file_path_then_raise_error(self, mocker):
 
