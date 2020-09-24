@@ -19,7 +19,6 @@ from file_processor import FileProcessor
 
 def main():
     arguments = parse_arguments(sys.argv[1:])
-    print(arguments)
 
     fs = LmsFilesystemProvider(arguments.csv_path)
     fs.get_all_files()
