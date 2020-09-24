@@ -29,7 +29,7 @@ class LmsFilesystemProvider:
             user_path = os.path.join(self.base_path, "Users")
 
             if os.path.exists(user_path):
-                self.Users = os.scandir(user_path)
+                self.Users = [f.path for f in os.scandir(user_path) if f.name.endswith(".csv")]
 
         _get_user_files()
 

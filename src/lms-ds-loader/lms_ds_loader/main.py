@@ -36,12 +36,11 @@ from lms_filesystem_provider import LmsFilesystemProvider
 
 def main():
     arguments = parse_arguments(sys.argv[1:])
-    print(arguments)
 
     fs = LmsFilesystemProvider(arguments.csv_path)
     fs.get_all_files()
 
-    print(fs.Users)
+    print(list(fs.Users))
 
 
 if __name__ == "__main__":
