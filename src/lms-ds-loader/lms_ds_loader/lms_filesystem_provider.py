@@ -4,10 +4,10 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import os
+from dataclasses import dataclass, field
 
-from typing import List
 
-
+@dataclass
 class LmsFilesystemProvider:
     """
     Navigates a standard filesystem layout to find CSV files for loading into an
@@ -35,14 +35,8 @@ class LmsFilesystemProvider:
         Base path on the filesystem containing the LMS csv files to load.
     """
 
-    base_path = ""
-    Users: List[str] = []
-
-    def __init__(self, base_path):
-        assert base_path is not None, "No value passed to base_path"
-        assert base_path.strip() != "", "Whitespace passed as base_path"
-
-        self.base_path = base_path
+    base_path: str
+    Users: list = field(default_factory=list)
 
     def get_all_files(self):
         """
