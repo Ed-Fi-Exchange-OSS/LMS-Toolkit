@@ -1,50 +1,42 @@
 import os
-from lib import export_data
-from lib.users import Users
-from lib.assignments import Assignments
-from lib.sections import Sections
-from lib.submissions import Submissions
+
 from dotenv import load_dotenv
 
-load_dotenv()
-SCHOOLOGY_KEY = os.getenv("SCHOOLOGY_KEY")
-SCHOOLOGY_SECRET = os.getenv("SCHOOLOGY_SECRET")
-SCHOOLOGY_SECTION_IDS = os.getenv("SCHOOLOGY_SECTION_IDS")
-SCHOOLOGY_OUTPUT_PATH = os.getenv("SCHOOLOGY_OUTPUT_PATH")
+from lib import export_data
+from lib.request_client import RequestClient
 
-sections_id_array = SCHOOLOGY_SECTION_IDS.split(',')
+load_dotenv()
+schoology_key = os.getenv("SCHOOLOGY_KEY")
+schoology_secret = os.getenv("SCHOOLOGY_SECRET")
+schoology_section_ids = os.getenv("SCHOOLOGY_SECTION_IDS")
+schoology_output_path = os.getenv("SCHOOLOGY_OUTPUT_PATH")
+
+sections_id_array = schoology_section_ids.split(',')
+request_client = RequestClient(schoology_key, schoology_secret)
 
 
 # export users
-users = Users(SCHOOLOGY_KEY, SCHOOLOGY_SECRET)
-
-export_data.tocsv(users.get_all(), f"{SCHOOLOGY_OUTPUT_PATH}/users.csv")
+export_data.tocsv(request_client.get_users(), f"{schoology_output_path}/users.csv")
 
 
 # export sections
-sections = Sections(SCHOOLOGY_KEY, SCHOOLOGY_SECRET)
-
 sections_list = list()
 for section_id in sections_id_array:
-    sections_list.append(sections.get_by_id(section_id))
+    sections_list.append(request_client.get_section_by_id(section_id))
 
 export_data.tocsv(sections_list,
-                  f"{SCHOOLOGY_OUTPUT_PATH}/sections.csv")
+                  f"{schoology_output_path}/sections.csv")
 
 
 # export assigments
-assignments = Assignments(SCHOOLOGY_KEY, SCHOOLOGY_SECRET)
-
-export_data.tocsv(assignments.get_by_section_id_array(sections_id_array),
-                  f"{SCHOOLOGY_OUTPUT_PATH}/assignments.csv")
+export_data.tocsv(request_client.get_assignments_by_section_ids(sections_id_array),
+                  f"{schoology_output_path}/assignments.csv")
 
 
 # export submissions
-submissions = Submissions(SCHOOLOGY_KEY, SCHOOLOGY_SECRET)
-
 submissions_list = list()
 for section_id in sections_id_array:
-    submissions_list.append(submissions.get_by_section_id(section_id))
+    submissions_list.append(request_client.get_submissions_by_section_id(section_id))
 
 export_data.tocsv(submissions_list,
-                  f"{SCHOOLOGY_OUTPUT_PATH}/submissions.csv")
+                  f"{schoology_output_path}/submissions.csv")

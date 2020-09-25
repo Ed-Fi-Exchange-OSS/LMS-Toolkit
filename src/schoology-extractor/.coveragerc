@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = data_extractor
+omit = data_extractor/main.py
+
+[report]
