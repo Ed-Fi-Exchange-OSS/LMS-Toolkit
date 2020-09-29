@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = data_extractor
-omit = data_extractor/main.py
+source = schoology_extractor
+omit = schoology_extractor/main.py
 
 [report]

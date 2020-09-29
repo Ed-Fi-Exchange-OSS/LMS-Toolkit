@@ -7,8 +7,8 @@ import os
 
 from dotenv import load_dotenv
 
-from lib import export_data
-from lib.request_client import RequestClient
+from helpers import export_data
+from api.request_client import RequestClient
 
 load_dotenv()
 schoology_key = os.getenv("SCHOOLOGY_KEY")

@@ -131,7 +131,6 @@ class RequestClient:
             dict: A parsed response from the server
         """
         response = self._get("users")
-        print(response)
         if "user" in response:
             return response["user"]
         return []
