@@ -6,7 +6,7 @@
 import pandas as pd
 
 
-def tocsv(data, output_path):
+def to_csv(data, output_path):
     """
     Args:
         data (dictionary): The data that will be expoted to csv

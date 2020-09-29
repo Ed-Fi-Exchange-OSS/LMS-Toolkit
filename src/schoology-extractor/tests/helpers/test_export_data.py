@@ -6,17 +6,17 @@
 import pytest
 import pandas as pd
 
-from schoology_extractor.helpers.export_data import tocsv
+from schoology_extractor.helpers.export_data import to_csv
 
 class TestExportData():
-    class Test_when_tocsv_method_is_called():
+    class Test_when_to_csv_method_is_called():
         def test_given_no_data_parameter_then_throw_assert_exception(self):
             with pytest.raises(AssertionError):
-                tocsv(None, '')
+                to_csv(None, '')
 
         def test_given_no_output_parameter_then_throw_assert_exception(self):
             with pytest.raises(AssertionError):
-                tocsv([], None)
+                to_csv([], None)
 
         def test_then_call_DataFrame_method(self, mocker):
 
@@ -24,23 +24,10 @@ class TestExportData():
             DataFrame_mock = mocker.patch.object(pd, "DataFrame")
 
             # Act
-            tocsv([], '')
+            to_csv([], '')
 
             # Assert
             DataFrame_mock.assert_called_once()
-
-        def test_then_call_DataFrame_method(self, mocker):
-
-            # Arrange
-            df_mock = mocker.Mock()
-            DataFrame_mock = mocker.MagicMock(return_value = df_mock)
-            mocker.patch.object(pd, "DataFrame", new = DataFrame_mock)
-
-            # Act
-            tocsv([], '')
-
-            # Assert
-            df_mock.to_csv.assert_called_once()
 
 
 
