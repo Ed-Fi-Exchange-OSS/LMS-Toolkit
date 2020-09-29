@@ -53,6 +53,10 @@ class MssqlLmsOperations:
         self._exec(f"alter index [ix_stg_{table}_natural_key] on lms.[stg_{table}] rebuild;")
 
     def insert_into_staging(self, df, table):
+        assert df is not None, "Argument `df` cannot be None"
+        assert table is not None, "Argument `table` cannot be None"
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+
         df.to_sql(
             f"stg_{table}",
             self._get_sql_engine(),

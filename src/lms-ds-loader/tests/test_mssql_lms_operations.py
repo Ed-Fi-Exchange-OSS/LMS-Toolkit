@@ -4,6 +4,10 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import pytest
+from unittest.mock import Mock
+
+import pandas as pd
+
 
 from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
@@ -66,13 +70,17 @@ class Test_MssqlLmsOperations:
         def test_given_valid_input_then_issue_truncate_statement(self, mocker):
             connection_string = "a connection string"
             table = "user"
-            expected = "alter index [ix_stg_user_natural_key] on lms.[stg_user] disable;"
+            expected = (
+                "alter index [ix_stg_user_natural_key] on lms.[stg_user] disable;"
+            )
 
             # Arrange
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(connection_string).disable_staging_natural_key_index(table)
+            MssqlLmsOperations(connection_string).disable_staging_natural_key_index(
+                table
+            )
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -90,13 +98,17 @@ class Test_MssqlLmsOperations:
         def test_given_valid_input_then_issue_truncate_statement(self, mocker):
             connection_string = "a connection string"
             table = "user"
-            expected = "alter index [ix_stg_user_natural_key] on lms.[stg_user] rebuild;"
+            expected = (
+                "alter index [ix_stg_user_natural_key] on lms.[stg_user] rebuild;"
+            )
 
             # Arrange
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(connection_string).enable_staging_natural_key_index(table)
+            MssqlLmsOperations(connection_string).enable_staging_natural_key_index(
+                table
+            )
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -113,17 +125,25 @@ class Test_MssqlLmsOperations:
 
             def test_columns_is_none_then_raise_error(self):
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").insert_new_records_to_production("table", None)
+                    MssqlLmsOperations("a").insert_new_records_to_production(
+                        "table", None
+                    )
 
             def test_columns_is_not_an_array_then_raise_error(self):
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").insert_new_records_to_production("table", "not an array")
+                    MssqlLmsOperations("a").insert_new_records_to_production(
+                        "table", "not an array"
+                    )
 
             def test_columns_is_an_empty_list_then_raise_error(self):
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").insert_new_records_to_production("table", list())
+                    MssqlLmsOperations("a").insert_new_records_to_production(
+                        "table", list()
+                    )
 
-        def test_given_valid_input_then_issue_insert_where_not_exists_statement(self, mocker):
+        def test_given_valid_input_then_issue_insert_where_not_exists_statement(
+            self, mocker
+        ):
             columns = ["a", "b"]
             table = "tbl"
             expected = """
@@ -146,3 +166,43 @@ and sourcesystem = stg.sourcesystem)
             # Assert
             exec_mock.assert_called_with(expected)
 
+    class Test_when_inserting_into_staging:
+        class Test_given_invalid_arguments:
+            def test_given_data_frame_is_none_then_raise_error(self):
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations("aaa").insert_into_staging(None, "table")
+
+            def test_given_table_is_none_then_raise_error(self):
+                df = pd.DataFrame()
+
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations("aaa").insert_into_staging(df, None)
+
+            def test_given_table_is_whitespace_then_raise_error(self):
+                df = pd.DataFrame()
+
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations("aaa").insert_into_staging(df, "   ")
+
+        def test_given_valid_arguments_then_use_pandas_to_load_into_the_db(self, mocker):
+            connection_string = "connection string"
+            table = "aaa"
+            staging_table = "stg_aaa"
+            df = Mock()
+
+            # Arrange
+            engine_mock = mocker.patch.object(MssqlLmsOperations, "_get_sql_engine")
+
+            # Act
+            MssqlLmsOperations(connection_string).insert_into_staging(df, table)
+
+            # Assert
+            engine_mock.assert_called()
+            df.to_sql.assert_called_with(
+                staging_table,
+                engine_mock.return_value,
+                schema="lms",
+                if_exists="append",
+                index=False,
+                method="multi"
+            )
