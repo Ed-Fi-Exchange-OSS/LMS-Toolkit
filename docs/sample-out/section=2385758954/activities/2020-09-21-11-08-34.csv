@@ -1,2 +1,2 @@
-SourceSystemIdentifier,SourceSystem,ActivityType,ActivityDateTime,ActivityStatus,MessagePost,TotalActivityTimeInMinutes,LMSSectionSourceSystemIdentifier,UserSourceSystemIdentifier,EntityStatus,CreatedDate,LastModifiedDate
+SourceSystemIdentifier,SourceSystem,ActivityType,ActivityDateTime,ActivityStatus,MessagePost,TotalActivityTimeInMinutes,LMSSectionSourceSystemIdentifier,UserSourceSystemIdentifier,EntityStatus,CreateDate,LastModifiedDate
 987654321,Canvas,Discussion,9/19/2020 14:23,Published,"First post!, with comma",98,34567,2385758954,Active,9/19/2020 14:23,9/19/2020 14:23

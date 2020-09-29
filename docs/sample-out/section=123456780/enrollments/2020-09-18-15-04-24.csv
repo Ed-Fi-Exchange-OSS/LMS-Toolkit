@@ -1,4 +1,4 @@
-﻿SourceSystemIdentifier,SourceSystem,EnrollmentStatus,StartDate,EndDate,UserSourceSystemIdentifier,LMSSectionSourceSystemIdentifier,EntityStatus,CreatedDate,LastModifiedDate
+﻿SourceSystemIdentifier,SourceSystem,EnrollmentStatus,StartDate,EndDate,UserSourceSystemIdentifier,LMSSectionSourceSystemIdentifier,EntityStatus,CreateDate,LastModifiedDate
 1357982,Canvas,Active,8/17/2020,12/18/2020,100032890,123456789,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
 1357983,Canvas,Completed,8/17/2020,12/18/2020,100032891,123456789,Active,2020-08-20 12:34:50,2020-08-20 12:34:50
 1357984,Canvas,Inactive,8/17/2020,12/18/2020,100032892,123456789,Archived,2020-08-20 12:34:50,2020-08-20 12:34:50

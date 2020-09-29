@@ -1,0 +1,12 @@
+[MASTER]
+ignore = .venv
+
+[MESSAGES CONTROL]
+disable =
+    C0330,
+    C0326,
+    fixme,
+    line-too-long
+
+[format]
+max-line-length = 110
