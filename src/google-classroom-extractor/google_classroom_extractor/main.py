@@ -22,9 +22,17 @@ from google_classroom_extractor.api.students import request_all_students_as_df
 from google_classroom_extractor.api.submissions import request_all_submissions_as_df
 from google_classroom_extractor.api.usage import request_all_usage_as_df
 
+SYNC_DATABASE_LOCATION="data/sync.sqlite"
+
+def is_running_in_notebook() -> bool:
+    main = __import__('__main__', None, None, fromlist=['__file__'])
+    return not hasattr(main, '__file__')
 
 def get_sync_db_engine():
-    return create_engine(os.getenv("SYNC_DATABASE_URI"))
+    running_in_notebook: bool = is_running_in_notebook()
+    logging.debug(f"Running in Jupyter Notebook: {running_in_notebook}")
+    sync_database_uri = f"sqlite:///../{SYNC_DATABASE_LOCATION}" if running_in_notebook else f"sqlite:///{SYNC_DATABASE_LOCATION}"
+    return create_engine(sync_database_uri)
 
 
 def get_credentials() -> service_account.Credentials:
