@@ -32,6 +32,8 @@ poetry run python.exe schoology_extractor/main.py
 ## Test Coverage Report
 
 ```bash
+poetry run coverage run -m pytest
+
 poetry run coverage report
 ```
 
@@ -39,7 +41,7 @@ poetry run coverage report
 
 Four files in the `./output` directory:
 
--   `users-<datetimestamp>.csv`
--   `sections-<datetimestamp>.csv`
--   `assignments-<datetimestamp>.csv`
--   `submissions-<datetimestamp>.csv`
+-   `users.csv`
+-   `sections.csv`
+-   `assignments.csv`
+-   `submissions.csv`
