@@ -1,5 +1,5 @@
 {
-    "python.linting.pylintEnabled": false,
+    "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Args": [
@@ -27,7 +27,7 @@
             ]
         }
     ],
-    "psi-header.lang-config":[
+    "psi-header.lang-config": [
         {
             "_": "Apply double slash-based comments",
             "language": "csharp",
@@ -77,7 +77,13 @@
     "psi-header.changes-tracking": {
         "autoHeader": "autoSave",
         "exclude": [
-            "css", "json", "xml", "config", "plaintext", "markdown", "batch"
+            "css",
+            "json",
+            "xml",
+            "config",
+            "plaintext",
+            "markdown",
+            "batch"
         ]
     },
     "cSpell.words": [
