@@ -151,11 +151,12 @@ insert into lms.[tbl] ( [a], [b] )
 select [a], [b]
 from lms.stg_tbl as stg
 where not exists (
-select 1 from lms.[tbl]
-where sourcesystemidentifier = stg.sourcesystemidentifier
-and sourcesystem = stg.sourcesystem)
+  select 1 from lms.[tbl]
+  where sourcesystemidentifier = stg.sourcesystemidentifier
+  and sourcesystem = stg.sourcesystem
+)
 """
-            expected = expected.strip().replace("\n", " ")
+            expected = expected.strip()
 
             # Arrange
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
@@ -188,7 +189,7 @@ and sourcesystem = stg.sourcesystem)
             connection_string = "connection string"
             table = "aaa"
             staging_table = "stg_aaa"
-            df = Mock()
+            df = Mock(spec=pd.DataFrame)
 
             # Arrange
             engine_mock = mocker.patch.object(MssqlLmsOperations, "_get_sql_engine")
@@ -206,3 +207,45 @@ and sourcesystem = stg.sourcesystem)
                 index=False,
                 method="multi"
             )
+
+    class Test_when_updating_records:
+        class Test_given_invalid_arguments:
+            def test_given_table_is_none_then_raise_error(self):
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations("a").copy_updates_to_production(None, ["a"])
+
+            def test_given_table_is_whitespace_then_raise_error(self):
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations("a").copy_updates_to_production("   ", ["a"])
+
+            def test_give_columns_is_none_then_raise_error(self):
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations("a").copy_updates_to_production("t", None)
+
+            def test_give_columns_is_empty_list_then_raise_error(self):
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations("a").copy_updates_to_production("t", list())
+
+        def test_given_valid_input_then_issue_insert_where_not_exists_statement(
+            self, mocker
+        ):
+            columns = ["a", "b"]
+            table = "tbl"
+            expected = """
+update t set t.[a] = stg.[a], t.[b] = stg.[b]
+from lms.[tbl] as t
+inner join lms.stg_tbl as stg
+on t.sourcesystem = stg.sourcesystem
+and t.sourcesystemidentifier = stg.sourcesystemidentifier
+and t.lastmodifieddate <> stg.lastmodifieddate
+"""
+            expected = expected.strip()
+
+            # Arrange
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+
+            # Act
+            MssqlLmsOperations("aaa").copy_updates_to_production(table, columns)
+
+            # Assert
+            exec_mock.assert_called_with(expected)
