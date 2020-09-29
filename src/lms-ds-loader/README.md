@@ -23,7 +23,7 @@ Limitations as of September 23, 2020:
 
 ## Running the Tool
 
-For detailed help, execute `poetry run lms_ds_loader/main.py -h`.
+For detailed help, execute `poetry run python ./lms_ds_loader/main.py -h`.
 
 Sample call using full integrated security, loading from the sample files
 directory:
