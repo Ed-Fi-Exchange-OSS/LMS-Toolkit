@@ -37,6 +37,10 @@ poetry run python ./lms_ds_loader/main.py --server localhost --dbname fizz --use
 1. Run unit tests: `poetry run pytest`
 1. Run unit tests with XLM report: `poetry run pytest --junitxml="pytest.xml"`
 1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
-1. View coverage report in the console: `poetry run coverage report`
-1. Generate an XML coverage report: `poetry run coverage xml` generates file
-   `coverage.xml`
+1. View code coverage:
+    * View coverage report in the console: `poetry run coverage report`
+    * Generate an XML coverage report: `poetry run coverage xml` generates file
+      `coverage.xml`
+    * Generate an HTML file to view in a browser: `poetry run coverage html`
+      generates file  `htmlcov/index.html`. *This version is clickable*,
+      allowing drilldown to see coverage details.
