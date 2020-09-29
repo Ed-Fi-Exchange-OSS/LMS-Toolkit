@@ -27,7 +27,7 @@ Domain Entity UserAttendanceEvent
         documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation "The date/time the record EntityStatus changed to deleted."
+        documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
 
 // SPDX-License-Identifier: Apache-2.0

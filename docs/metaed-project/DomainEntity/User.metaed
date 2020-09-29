@@ -1,5 +1,5 @@
 Domain Entity User
-    documentation "A system user."
+    documentation "A person using the instructional system."
     shared integer Identifier
         documentation "A unique numeric identifier assigned to the user."
         is part of identity
@@ -29,7 +29,7 @@ Domain Entity User
         documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation "The date/time the record EntityStatus changed to deleted."
+        documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
 
 // SPDX-License-Identifier: Apache-2.0

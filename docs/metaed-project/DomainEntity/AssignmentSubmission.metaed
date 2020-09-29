@@ -1,5 +1,5 @@
 Domain Entity AssignmentSubmission
-    documentation "A student's submission for an assignment."
+    documentation "A user's submission of course work for an assignment."
     shared integer Identifier
         documentation "A unique numeric identifier assigned to the submission."
         is part of identity
@@ -17,10 +17,10 @@ Domain Entity AssignmentSubmission
         documentation "A reference to the submission assignment."
         is required
     shared string Status
-        documentation "The status of the submission in relation to the late policy."
+        documentation "The status of the submission in relation to the late acceptance policy."
         is required
     datetime SubmissionDateTime
-        documentation "The date/time for the assignment submission."
+        documentation "The date and time of the assignment submission."
         is required
     shared integer Points
         documentation "The points earned for the submission."
@@ -33,7 +33,7 @@ Domain Entity AssignmentSubmission
         documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation "The date/time the record EntityStatus changed to deleted."
+        documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
 
 // SPDX-License-Identifier: Apache-2.0

@@ -1,5 +1,5 @@
 Domain Entity UserLMSActivity
-    documentation "A user's activity events within the source system."
+    documentation "An activity performed by a user within the instructional system."
     shared integer Identifier
         documentation "A unique numeric identifier assigned to the user activity."
         is part of identity
@@ -40,7 +40,7 @@ Domain Entity UserLMSActivity
         documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation "The date/time the record EntityStatus changed to deleted."
+        documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
 
 // SPDX-License-Identifier: Apache-2.0

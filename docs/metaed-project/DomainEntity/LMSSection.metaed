@@ -1,5 +1,5 @@
 Domain Entity LMSSection
-    documentation "A course section defined in the source system."
+    documentation "An organized grouping of course content and users over a period of time for the purpose of providing instruction."
     shared integer Identifier
         documentation "A unique numeric identifier assigned to the section."
         is part of identity
@@ -30,7 +30,7 @@ Domain Entity LMSSection
         documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation "The date/time the record EntityStatus changed to deleted."
+        documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
 
 // SPDX-License-Identifier: Apache-2.0

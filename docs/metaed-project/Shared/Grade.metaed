@@ -1,5 +1,5 @@
 Shared String Grade
-    documentation "The user's letter or numeric grade for the section enrollment."
+    documentation "The user's letter or numeric grade for the section."
     min length 1
     max length 20
 

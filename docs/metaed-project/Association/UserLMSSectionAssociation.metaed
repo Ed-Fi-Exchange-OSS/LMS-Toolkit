@@ -1,5 +1,5 @@
 Association UserLMSSectionAssociation
-    documentation "The association of a system user and course section. For a student, this would be a section enrollment. For a teacher, this would be a section assignment."
+    documentation "The association of a user and section. For a student, this would be a section enrollment. For a teacher, this would be a section assignment."
     domain entity User
         documentation "A system user associated with the section."
     domain entity LMSSection
@@ -28,7 +28,7 @@ Association UserLMSSectionAssociation
         documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation "The date/time the record EntityStatus changed to deleted."
+        documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
 
 // SPDX-License-Identifier: Apache-2.0

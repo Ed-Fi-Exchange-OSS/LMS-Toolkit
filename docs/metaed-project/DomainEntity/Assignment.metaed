@@ -23,16 +23,16 @@ Domain Entity Assignment
         documentation "The assignment description."
         is optional
     datetime StartDateTime
-        documentation "The start date/time for the assignment. Students will have access to the assignment after this date."
+        documentation "The start date and time for the assignment. Students will have access to the assignment after this date."
         is optional
     datetime EndDateTime
-        documentation "The end date/time for the assignment. Students will no longer have access to the assignment after this date."
+        documentation "The end date and time for the assignment. Students will no longer have access to the assignment after this date."
         is optional
     datetime DueDateTime
-        documentation "The due date/time for the assignment."
+        documentation "The date and time the assignment is due."
         is optional
     shared string SubmissionType
-        documentation "The type or types of submissions available for the assignment."
+        documentation "The type(s) of submissions available for the assignment."
         is optional collection
     shared integer Points
         documentation "The maximum number of points a student may receive for a submission of the assignment."
@@ -42,7 +42,7 @@ Domain Entity Assignment
         documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation "The date/time the record EntityStatus changed to deleted."
+        documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
 
 // SPDX-License-Identifier: Apache-2.0
