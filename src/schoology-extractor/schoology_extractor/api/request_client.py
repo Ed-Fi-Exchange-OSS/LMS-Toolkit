@@ -38,21 +38,19 @@ class RequestClient:
             Returns:
                 dict: Request headers
         """
-        auth_header = 'OAuth realm="Schoology API",'
-        auth_header += 'oauth_consumer_key="%s",' % self.consumer_key
-        auth_header += 'oauth_token="",'
-        auth_header += 'oauth_nonce="%s",' % "".join(
-            [str(random.randint(0, 9)) for i in range(8)]
+        auth_header = (
+            'OAuth realm="Schoology API",',
+            f'oauth_consumer_key="{self.consumer_key}",',
+            'oauth_token="",',
+            f'oauth_nonce="{"".join( [str(random.randint(0, 9)) for i in range(8)] )}",',
+            f'oauth_timestamp="{time.time()}",',
+            'oauth_signature_method="PLAINTEXT",',
+            'oauth_version="1.0",',
+            'oauth_signature="%s%%26%s"' % ( self.consumer_secret, "",)
         )
-        auth_header += 'oauth_timestamp="%d",' % time.time()
-        auth_header += 'oauth_signature_method="PLAINTEXT",'
-        auth_header += 'oauth_version="1.0",'
-        auth_header += 'oauth_signature="%s%%26%s"' % (
-            self.consumer_secret,
-            "",
-        )
+
         return {
-            "Authorization": auth_header,
+            "Authorization": ''.join(auth_header),
             "Accept": "application/json",
             "Host": "api.schoology.com",
             "Content-Type": "application/json",
