@@ -23,9 +23,8 @@ def main():
     fs = LmsFilesystemProvider(arguments.csv_path)
     fs.get_all_files()
 
-    processor = FileProcessor(fs, arguments.connection_string)
+    processor = FileProcessor(fs, arguments.get_db_operations_adapter())
     processor.load_lms_files_into_database()
-
 
 if __name__ == "__main__":
     main()

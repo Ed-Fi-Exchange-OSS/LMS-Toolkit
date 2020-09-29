@@ -6,6 +6,7 @@
 from dataclasses import dataclass
 
 from lms_ds_loader.constants import Constants
+from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 @dataclass
@@ -95,3 +96,9 @@ class Arguments:
 
         else:
             raise ValueError(f"Invalid `engine` parameter value: {self.engine}")
+
+    def get_db_operations_adapter(self):
+        if (self.engine == Constants.DbEngine.MSSQL):
+            return MssqlLmsOperations(self.connection_string)
+
+        raise NotImplementedError(f"Support for '{self.engine}' has not yet been implemented.")
