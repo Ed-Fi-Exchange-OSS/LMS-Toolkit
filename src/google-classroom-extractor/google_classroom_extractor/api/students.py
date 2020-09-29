@@ -4,20 +4,35 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import List, Dict
+from typing import List, Dict, Optional
 import pandas as pd
+import sqlalchemy
+from googleapiclient.discovery import Resource
 from .api_caller import call_api
 
 
-def request_students(resource, course_id: str) -> List[Dict[str, str]]:
+def request_students(
+    resource: Optional[Resource], course_id: str
+) -> List[Dict[str, str]]:
+    assert isinstance(resource, Resource) or resource is None
+    assert isinstance(course_id, str)
+
+    if resource is None:
+        return []
+
     return call_api(
-        resource.courses().students().list,
-        {"courseId": course_id},  # type: ignore
+        resource.courses().students().list,  # type: ignore - courses() is dynamic
+        {"courseId": course_id},  # type: ignore - due to tail_recursive decorator
         "students",
     )
 
 
-def request_latest_students_as_df(resource, course_ids: List[str]) -> pd.DataFrame:
+def request_latest_students_as_df(
+    resource: Optional[Resource], course_ids: List[str]
+) -> pd.DataFrame:
+    assert isinstance(resource, Resource) or resource is None
+    assert isinstance(course_ids, list)
+
     logging.info("Pulling student data")
     students: List[Dict[str, str]] = []
     for course_id in course_ids:
@@ -26,7 +41,15 @@ def request_latest_students_as_df(resource, course_ids: List[str]) -> pd.DataFra
     return pd.json_normalize(students).astype("string")
 
 
-def request_all_students_as_df(resource, course_ids: List[str], sync_db) -> pd.DataFrame:
+def request_all_students_as_df(
+    resource: Optional[Resource],
+    course_ids: List[str],
+    sync_db: sqlalchemy.engine.base.Engine,
+) -> pd.DataFrame:
+    assert isinstance(resource, Resource) or resource is None
+    assert isinstance(course_ids, list)
+    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
+
     students_df: pd.DataFrame = request_latest_students_as_df(resource, course_ids)
 
     # append everything from API call

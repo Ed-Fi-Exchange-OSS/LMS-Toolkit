@@ -83,7 +83,7 @@ https://www.googleapis.com/auth/admin.reports.audit.readonly`
 ### Generate CSV Files
 
 To pull data from Google Classroom and generate csv files, run
-`poetry run python google-extractor/main.py` from the root
+`poetry run python google_classroom_extractor/main.py` from the root
 directory of this project.
 
 ### usage.csv

@@ -7,146 +7,22 @@ import collections
 import logging
 import os
 import sys
-from datetime import datetime
 from typing import List
 
 import pandas as pd
 from dotenv import load_dotenv
 from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
-from sqlalchemy import create_engine
+import sqlalchemy
+
+from google_classroom_extractor.config import get_credentials, get_sync_db_engine
+from google_classroom_extractor.normalized import normalized_submissions
 
 from google_classroom_extractor.api.courses import request_all_courses_as_df
 from google_classroom_extractor.api.coursework import request_all_coursework_as_df
 from google_classroom_extractor.api.students import request_all_students_as_df
 from google_classroom_extractor.api.submissions import request_all_submissions_as_df
 from google_classroom_extractor.api.usage import request_all_usage_as_df
-
-SYNC_DATABASE_LOCATION="data/sync.sqlite"
-
-def is_running_in_notebook() -> bool:
-    main = __import__('__main__', None, None, fromlist=['__file__'])
-    return not hasattr(main, '__file__')
-
-def get_sync_db_engine():
-    running_in_notebook: bool = is_running_in_notebook()
-    logging.debug(f"Running in Jupyter Notebook: {running_in_notebook}")
-    sync_database_uri = f"sqlite:///../{SYNC_DATABASE_LOCATION}" if running_in_notebook else f"sqlite:///{SYNC_DATABASE_LOCATION}"
-    return create_engine(sync_database_uri)
-
-
-def get_credentials() -> service_account.Credentials:
-    scopes = [
-        "https://www.googleapis.com/auth/admin.directory.orgunit",
-        "https://www.googleapis.com/auth/admin.reports.usage.readonly",
-        "https://www.googleapis.com/auth/classroom.courses",
-        "https://www.googleapis.com/auth/classroom.coursework.students",
-        "https://www.googleapis.com/auth/classroom.profile.emails",
-        "https://www.googleapis.com/auth/classroom.rosters",
-        "https://www.googleapis.com/auth/classroom.student-submissions.students.readonly",
-        "https://www.googleapis.com/auth/admin.reports.audit.readonly",
-    ]
-
-    filename = (
-        "service-account.json"
-        if os.path.exists("service-account.json")
-        else "../service-account.json"
-    )
-
-    return service_account.Credentials.from_service_account_file(
-        filename, scopes=scopes, subject=os.getenv("CLASSROOM_ACCOUNT")
-    )
-
-
-def normalized_submissions(
-    courses_df: pd.DataFrame,
-    coursework_df: pd.DataFrame,
-    submissions_df: pd.DataFrame,
-    students_df: pd.DataFrame,
-) -> pd.DataFrame:
-    logging.info("Normalizing submissions data")
-
-    courses_df.rename(columns={"id": "courseId", "name": "courseName"}, inplace=True)
-    courses_df = courses_df.astype("string")
-
-    submissions_df.rename(
-        columns={
-            "id": "submissionId",
-            "userId": "studentUserId",
-            "state": "submissionState",
-            "creationTime": "submissionCreationTime",
-            "updateTime": "submissionUpdateTime",
-        },
-        inplace=True,
-    )
-    submissions_df.drop(
-        columns=[
-            "alternateLink",
-            "assignmentSubmission.attachments",
-            "submissionHistory",
-        ],
-        inplace=True,
-    )
-
-    course_submissions_df: pd.DataFrame = pd.merge(
-        submissions_df,
-        courses_df[["courseId", "courseName"]],
-        on="courseId",
-        how="left",
-    )
-
-    coursework_df.rename(
-        columns={
-            "id": "courseWorkId",
-            "state": "courseWorkState",
-            "title": "courseWorkTitle",
-            "description": "courseWorkDescription",
-            "creationTime": "courseWorkCreationTime",
-            "updateTime": "courseWorkUpdateTime",
-        },
-        inplace=True,
-    )
-    coursework_df["courseWorkDueDate"] = coursework_df[
-        ["dueDate.year", "dueDate.month", "dueDate.day"]
-    ].agg("-".join, axis=1)
-    coursework_df = coursework_df[
-        [
-            "courseWorkId",
-            "courseWorkState",
-            "courseWorkTitle",
-            "courseWorkDescription",
-            "courseWorkCreationTime",
-            "courseWorkUpdateTime",
-            "courseWorkDueDate",
-        ]
-    ]
-
-    course_coursework_submissions_df: pd.DataFrame = pd.merge(
-        course_submissions_df, coursework_df, on="courseWorkId", how="left"
-    )
-
-    students_df.rename(
-        columns={
-            "profile.name.fullName": "studentName",
-            "profile.emailAddress": "studentEmail",
-            "userId": "studentUserId",
-        },
-        inplace=True,
-    )
-    students_df = students_df[
-        ["studentUserId", "courseId", "studentName", "studentEmail"]
-    ]
-
-    full_df: pd.DataFrame = pd.merge(
-        course_coursework_submissions_df,
-        students_df,
-        on=["studentUserId", "courseId"],
-        how="left",
-    )
-
-    full_df["importDate"] = datetime.today().strftime("%Y-%m-%d")
-
-    return full_df
 
 
 def request():
@@ -169,7 +45,7 @@ def request():
         "classroom", "v1", credentials=credentials, cache_discovery=False
     )
 
-    sync_db = get_sync_db_engine()
+    sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
 
     courses_df: pd.DataFrame = request_all_courses_as_df(classroom_resource, sync_db)
     course_ids: List[str] = courses_df["id"].tolist()

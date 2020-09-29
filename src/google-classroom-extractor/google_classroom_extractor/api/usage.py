@@ -10,13 +10,21 @@ from typing import List, Dict, Optional
 from dateutil.parser import parse as date_parse
 import pandas as pd
 from sqlalchemy.exc import OperationalError
+import sqlalchemy
+from googleapiclient.discovery import Resource
 from .api_caller import call_api
 
 
-def request_usage(resource, date: datetime) -> List[Dict[str, str]]:
+def request_usage(resource: Optional[Resource], date: datetime) -> List[Dict[str, str]]:
+    assert isinstance(resource, Resource) or resource is None
+    assert isinstance(date, datetime)
+
+    if resource is None:
+        return []
+
     return call_api(
-        resource.userUsageReport().get,
-        {  # type: ignore
+        resource.userUsageReport().get,  # type: ignore - userUsageReport() is dynamic
+        {  # type: ignore - due to tail_recursive decorator
             "userKey": "all",
             "date": date,
             "parameters": "classroom:timestamp_last_interaction,classroom:num_posts_created,accounts:timestamp_last_login",
@@ -25,7 +33,9 @@ def request_usage(resource, date: datetime) -> List[Dict[str, str]]:
     )
 
 
-def last_sync_date(sync_db) -> Optional[datetime]:
+def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]:
+    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
+
     with sync_db.connect() as con:
         try:
             usage_df = pd.read_sql("SELECT asOfDate FROM Usage", con)
@@ -33,11 +43,13 @@ def last_sync_date(sync_db) -> Optional[datetime]:
                 return None
             return date_parse(usage_df["asOfDate"].max())
         except OperationalError:
-            # no Usage table yet
+            logging.debug("No Usage table yet")
             return None
 
 
-def start_date(sync_db) -> datetime:
+def start_date(sync_db: sqlalchemy.engine.base.Engine) -> datetime:
+    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
+
     last_date: Optional[datetime] = last_sync_date(sync_db)
     if last_date is not None:
         return last_date + timedelta(days=1)
@@ -54,7 +66,13 @@ def end_date() -> datetime:
     return date_parse(end_date_env)
 
 
-def request_latest_usage_as_df(resource, start: datetime, end: datetime) -> pd.DataFrame:
+def request_latest_usage_as_df(
+    resource: Optional[Resource], start: datetime, end: datetime
+) -> pd.DataFrame:
+    assert isinstance(resource, Resource) or resource is None
+    assert isinstance(start, datetime)
+    assert isinstance(end, datetime)
+
     if end < start:
         logging.warning("Usage data end time is before start time.")
 
@@ -103,7 +121,12 @@ def request_latest_usage_as_df(resource, start: datetime, end: datetime) -> pd.D
     return usage_df
 
 
-def request_all_usage_as_df(resource, sync_db) -> pd.DataFrame:
+def request_all_usage_as_df(
+    resource: Optional[Resource], sync_db: sqlalchemy.engine.base.Engine
+) -> pd.DataFrame:
+    assert isinstance(resource, Resource) or resource is None
+    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
+
     usage_df: pd.DataFrame = request_latest_usage_as_df(
         resource, start_date(sync_db), end_date()
     )
