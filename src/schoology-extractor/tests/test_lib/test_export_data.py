@@ -6,7 +6,7 @@
 import pytest
 import pandas as pd
 
-from data_extractor.lib.export_data import tocsv
+from schoology_extractor.lib.export_data import tocsv
 
 class TestExportData():
     class Test_when_tocsv_method_is_called():

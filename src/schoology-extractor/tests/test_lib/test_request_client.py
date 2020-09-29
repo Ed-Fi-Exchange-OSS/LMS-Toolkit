@@ -5,7 +5,7 @@
 
 import pytest
 
-from data_extractor.lib.request_client import RequestClient
+from schoology_extractor.lib.request_client import RequestClient
 
 pytest.fake_key = 'TEST_KEY'
 pytest.fake_secret = 'TEST_SECRET'
