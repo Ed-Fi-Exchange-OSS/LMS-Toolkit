@@ -97,6 +97,8 @@ class Arguments:
         else:
             raise ValueError(f"Invalid `engine` parameter value: {self.engine}")
 
+        return self
+
     def get_db_operations_adapter(self):
         if (self.engine == Constants.DbEngine.MSSQL):
             return MssqlLmsOperations(self.connection_string)

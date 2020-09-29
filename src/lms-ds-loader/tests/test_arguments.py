@@ -7,6 +7,7 @@ import pytest
 
 from lms_ds_loader.arguments import Arguments
 from lms_ds_loader.constants import Constants
+from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 class Test_Arguments:
@@ -213,3 +214,24 @@ class Test_Arguments:
                         ).set_connection_string(
                             server, port, database, username, password
                         )
+
+        class Test_when_getting_db_operations_adapter:
+            def test_given_engine_is_postgresql_then_raise_NotImplementedError(self):
+                with pytest.raises(NotImplementedError):
+                    a = Arguments(
+                        "some/path", Constants.DbEngine.MSSQL
+                        ).set_connection_string(
+                            "server", None, "database", "username", "password"
+                        )
+
+                    a.engine = "PostgreSQL"
+                    a.get_db_operations_adapter()
+
+            def test_given_engine_is_mssql_then_return_proper_object(self):
+                actual = Arguments(
+                        "some/path", Constants.DbEngine.MSSQL
+                        ).set_connection_string(
+                            "server", None, "database", "username", "password"
+                        ).get_db_operations_adapter()
+
+                assert type(actual) is MssqlLmsOperations
