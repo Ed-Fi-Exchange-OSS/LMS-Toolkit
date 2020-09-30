@@ -16,6 +16,7 @@ from tail_recursive import tail_recursive
     retry_window_after_first_call_in_seconds=60,
 )
 def execute(executable_resource):
+    assert hasattr(executable_resource, "execute")
     return executable_resource.execute()
 
 
@@ -45,6 +46,11 @@ def call_api(
     list
         a list of dicts of the API response property requested
     """
+    assert callable(resource_method)
+    assert isinstance(resource_parameters, dict)
+    assert isinstance(response_property, str)
+    assert isinstance(results, list) or results is None
+
     current_results: List[Dict[str, str]] = [] if results is None else results
     response = execute(resource_method(**resource_parameters))
     try:
