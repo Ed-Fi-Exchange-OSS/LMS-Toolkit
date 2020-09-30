@@ -4,14 +4,13 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import pytest
+from unittest.mock import Mock
 
 from lms_ds_loader.constants import Constants
 from lms_ds_loader.csv_to_sql import CsvToSql
 from lms_ds_loader.file_processor import FileProcessor
-
-
-def create_stub(name, data):
-    return type(name, (object,), data)
+from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
+from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 class Test_FileProcessor:
@@ -31,12 +30,11 @@ class Test_FileProcessor:
                 file_2 = "files/Users/9876-12-31-34-56-01.csv"
 
                 # Arrange
-                file_system = create_stub(
-                    "LmsFileystemProcessor", {"Users": [file_1, file_2]}
-                )
+                file_system = Mock(spec=LmsFilesystemProvider)
+                file_system.Users = [file_1, file_2]
 
                 mock_csv_to_sql = mocker.patch.object(CsvToSql, "load_file")
-                db_operations_adapter = object()
+                db_operations_adapter = Mock(spec=MssqlLmsOperations)
 
                 # Act
                 file_processor = FileProcessor(file_system, db_operations_adapter)
@@ -54,8 +52,10 @@ class Test_FileProcessor:
             def test_given_there_are_no_user_files(self, mocker):
 
                 # Arrange
-                file_system = create_stub("LmsFileystemProcessor", {"Users": []})
-                db_operations_adapter = object()
+                file_system = Mock(spec=LmsFilesystemProvider)
+                file_system.Users = list()
+
+                db_operations_adapter = Mock(spec=MssqlLmsOperations)
 
                 mock_csv_to_sql = mocker.patch.object(CsvToSql, "load_file")
 

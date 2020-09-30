@@ -37,10 +37,12 @@ class FileProcessor:
         Orchestrates the discovery and loading of files.
         """
 
-        assert self.file_system is not None, "Property `file_system` cannot be None."
         assert (
-            self.db_operations_adapter is not None
-        ), "Property `db_operations_adapter` cannot be None."
+            isinstance(self.file_system, LmsFilesystemProvider)
+        ), "Property `file_system` must be a `LmsFilesystemProvider`."
+        assert (
+            isinstance(self.db_operations_adapter, MssqlLmsOperations)
+        ), "Property `db_operations_adapter` must be a `MssqlLmsOperations`."
 
         csv_to_sql = CsvToSql(self.db_operations_adapter)
 
