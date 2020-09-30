@@ -1,36 +1,36 @@
-﻿// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.
-
 Domain Entity UserAttendanceEvent
-    documentation ""
+    documentation "Attendance statuses assigned to users for a specific date."
     shared integer Identifier
-        documentation ""
+        documentation "A unique numeric identifier assigned to the user attendance event."
         is part of identity
         role name UserAttendanceEvent
     shared string SourceSystemIdentifier
-        documentation ""
+        documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
-        documentation ""
+        documentation "The system code or name providing the user data."
         is required
     domain entity User
-        documentation ""
+        documentation "A reference to the user associated with the attendance event."
         is required
     association UserLMSSectionAssociation
-        documentation ""
+        documentation "A reference to the section enrollment associated with the attendance event."
         is optional
         merge UserLMSSectionAssociation.User.UserIdentifier with User.UserIdentifier
     date EventDate
-        documentation ""
+        documentation "The date of the attendance event."
         is required
     shared string Status
-        documentation ""
+        documentation "A code describing the attendance event. E.g., In Attendance, Excused Absence, Unexcused Absence."
         is required
     shared string EntityStatus
-        documentation ""
+        documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation ""
+        documentation "The date/time the record EntityStatus changed to deleted."
         is optional
+
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.

@@ -1,37 +1,37 @@
-﻿// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.
-
 Association UserLMSSectionAssociation
-    documentation ""
+    documentation "The association of a system user and course section. For a student, this would be a section enrollment. For a teacher, this would be a section assignment."
     domain entity User
-        documentation ""
+        documentation "A system user associated with the section."
     domain entity LMSSection
-        documentation ""
+        documentation "A course section defined in the source system associated with the user."
     shared integer Identifier
-        documentation ""
+        documentation "A unique numeric identifier assigned to the user section association."
         is part of identity
         role name UserLMSSectionAssociation
     shared string SourceSystemIdentifier
-        documentation ""
+        documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
-        documentation ""
+        documentation "The system code or name providing the user data."
         is required
     shared string Status
-        documentation ""
+        documentation "The status of the user section association. E.g., Active, Inactive, Withdrawn."
         is required
         role name Enrollment
     date StartDate
-        documentation ""
+        documentation "Month, day, and year of the user's entry or assignment to the section."
         is required
     date EndDate
-        documentation ""
+        documentation "Month, day, and year of the user's withdrawal or exit from the section."
         is required
     shared string EntityStatus
-        documentation ""
+        documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation ""
+        documentation "The date/time the record EntityStatus changed to deleted."
         is optional
+
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.

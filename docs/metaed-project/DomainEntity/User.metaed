@@ -1,38 +1,38 @@
-﻿// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.
-
 Domain Entity User
-    documentation ""
+    documentation "A system user."
     shared integer Identifier
-        documentation ""
+        documentation "A unique numeric identifier assigned to the user."
         is part of identity
         role name User
     shared string SourceSystemIdentifier
-        documentation ""
+        documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
-        documentation ""
+        documentation "The system code or name providing the user data."
         is required
     shared string UserRole
-        documentation ""
+        documentation "The role assigned to the user. E.g., Student, Teacher, Administrator."
         is required
-    shared string SourceSystemIdentifier named LocalUserIdentifier
-        documentation ""
-        is optional
     shared string SourceSystemIdentifier named SISUserIdentifier
-        documentation ""
+        documentation "The user identifier defined in the Student Information System (SIS)."
+        is optional
+    shared string SourceSystemIdentifier named LocalUserIdentifier
+        documentation "The user identifier assigned by a school or district."
         is optional
     shared string Name
-        documentation ""
+        documentation "The full name of the user."
         is required
     shared string EmailAddress
-        documentation ""
+        documentation "The primary e-mail address for the user."
         is required
     shared string EntityStatus
-        documentation ""
+        documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation ""
+        documentation "The date/time the record EntityStatus changed to deleted."
         is optional
+
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.

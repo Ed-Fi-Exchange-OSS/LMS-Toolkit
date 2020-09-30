@@ -1,51 +1,51 @@
-﻿// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.
-
 Domain Entity Assignment
-    documentation "This is documentation."
+    documentation "Course work assigned to students enrolled in a section."
     shared integer Identifier
-        documentation ""
+        documentation "A unique numeric identifier assigned to the assignment."
         is part of identity
         role name Assignment
     shared string SourceSystemIdentifier
-        documentation ""
+        documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
-        documentation ""
+        documentation "The system code or name providing the assignment data."
         is required
     domain entity LMSSection
-        documentation ""
+        documentation "The assigment section."
         is required
     shared string Title
-        documentation ""
+        documentation "The assignment title or name."
         is required
     shared string AssignmentCategory
-        documentation ""
+        documentation "The category or type of assignment."
         is required
     shared string LMSDescription named AssignmentDescription
-        documentation ""
+        documentation "The assignment description."
         is optional
     datetime StartDateTime
-        documentation ""
+        documentation "The start date/time for the assignment. Students will have access to the assignment after this date."
         is optional
     datetime EndDateTime
-        documentation ""
+        documentation "The end date/time for the assignment. Students will no longer have access to the assignment after this date."
         is optional
     datetime DueDateTime
-        documentation ""
+        documentation "The due date/time for the assignment."
         is optional
     shared string SubmissionType
-        documentation ""
+        documentation "The type or types of submissions available for the assignment."
         is optional collection
     shared integer Points
-        documentation ""
+        documentation "The maximum number of points a student may receive for a submission of the assignment."
         is optional
         role name Max
     shared string EntityStatus
-        documentation ""
+        documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation ""
+        documentation "The date/time the record EntityStatus changed to deleted."
         is optional
+
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.

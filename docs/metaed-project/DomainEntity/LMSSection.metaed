@@ -1,39 +1,39 @@
-﻿// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.
-
 Domain Entity LMSSection
-    documentation ""
+    documentation "A course section defined in the source system."
     shared integer Identifier
-        documentation ""
+        documentation "A unique numeric identifier assigned to the section."
         is part of identity
         role name LMSSection
     shared string SourceSystemIdentifier
-        documentation ""
+        documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
-        documentation ""
+        documentation "The system code or name providing the section data."
         is required
     shared string SourceSystemIdentifier named SISSectionIdentifier
-        documentation ""
+        documentation "The section identifier defined in the Student Information System (SIS)."
         is optional
     shared string Title
-        documentation ""
+        documentation "The section title or name."
         is required
     shared string LMSDescription named SectionDescription
-        documentation ""
+        documentation "The section description."
         is optional
     shared string Term
-        documentation ""
+        documentation "The enrollment term for the section."
         is optional
     shared string Status
-        documentation ""
+        documentation "The section status from the source system. E.g., Published, Completed."
         is optional
         role name LMSSection
     shared string EntityStatus
-        documentation ""
+        documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation ""
+        documentation "The date/time the record EntityStatus changed to deleted."
         is optional
+
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.

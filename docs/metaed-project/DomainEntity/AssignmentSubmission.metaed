@@ -1,42 +1,42 @@
-﻿// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.
-
 Domain Entity AssignmentSubmission
-    documentation "This is documentation."
+    documentation "A student's submission for an assignment."
     shared integer Identifier
-        documentation ""
+        documentation "A unique numeric identifier assigned to the submission."
         is part of identity
         role name LMSGrade
     shared string SourceSystemIdentifier
-        documentation ""
+        documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
-        documentation ""
+        documentation "The system code or name providing the user data."
         is required
     domain entity User
-        documentation ""
+        documentation "A reference to the user providing the assignment submission."
         is required
     domain entity Assignment
-        documentation ""
+        documentation "A reference to the submission assignment."
         is required
     shared string Status
-        documentation ""
+        documentation "The status of the submission in relation to the late policy."
         is required
     datetime SubmissionDateTime
-        documentation ""
+        documentation "The date/time for the assignment submission."
         is required
     shared integer Points
-        documentation ""
+        documentation "The points earned for the submission."
         is optional
         role name Earned
     shared string Grade
-        documentation ""
+        documentation "The grade received for the submission."
         is optional
     shared string EntityStatus
-        documentation ""
+        documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation ""
+        documentation "The date/time the record EntityStatus changed to deleted."
         is optional
+
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.

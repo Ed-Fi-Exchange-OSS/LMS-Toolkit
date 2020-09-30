@@ -1,49 +1,49 @@
-﻿// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.
-
 Domain Entity UserLMSActivity
-    documentation ""
+    documentation "A user's activity events within the source system."
     shared integer Identifier
-        documentation ""
+        documentation "A unique numeric identifier assigned to the user activity."
         is part of identity
         role name UserLMSActivity
     shared string SourceSystemIdentifier
-        documentation ""
+        documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
-        documentation ""
+        documentation "The system code or name providing the user data."
         is required
     domain entity User
-        documentation ""
+        documentation "A reference to the user associated with the activity."
         is required
     domain entity LMSSection
-        documentation ""
+        documentation "A reference to the section associated with the activity."
         is optional
     domain entity Assignment
-        documentation ""
+        documentation "A reference to the assignment associated with the activity."
         is optional
     shared string ActivityType
-        documentation ""
+        documentation "The type of activity. E.g., Discussion Post, Account Access/Log In."
         is required
     datetime ActivityDateTime
-        documentation ""
+        documentation "The date/time the activity occurred."
         is required
     shared string Status
-        documentation ""
+        documentation "The activity status."
         is required
         role name Activity
     shared string LMSDescription named Content
-        documentation ""
+        documentation "Content associated with the activity."
         is optional
     shared integer TimeInMinutes
-        documentation ""
+        documentation "The total activity time in minutes."
         is optional
         role name Activity
     shared string EntityStatus
-        documentation ""
+        documentation "The status of the record."
         is required
     datetime DeletedAt
-        documentation ""
+        documentation "The date/time the record EntityStatus changed to deleted."
         is optional
+
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
