@@ -34,6 +34,9 @@ poetry run python ./lms_ds_loader/main.py --server localhost --dbname fizz --use
 
 ## Dev Operations
 
+Assuming `poetry install` has already been run:
+
+1. Style check: `poetry run flake8`
 1. Run unit tests: `poetry run pytest`
 1. Run unit tests with XLM report: `poetry run pytest --junitxml="pytest.xml"`
 1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
