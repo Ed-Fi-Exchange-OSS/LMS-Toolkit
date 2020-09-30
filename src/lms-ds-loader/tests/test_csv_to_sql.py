@@ -7,7 +7,6 @@ import pytest
 from unittest.mock import Mock
 
 import pandas as pd
-import sqlalchemy as sal
 
 from lms_ds_loader.csv_to_sql import CsvToSql
 
