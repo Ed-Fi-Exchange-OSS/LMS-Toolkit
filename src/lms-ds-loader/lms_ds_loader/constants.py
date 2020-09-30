@@ -13,3 +13,17 @@ class Constants:
 
     class Table:
         USER = "User"
+
+    class Columns:
+        USER = [
+            "SourceSystemIdentifier",
+            "SourceSystem",
+            "UserRole",
+            "LocalUserIdentifier",
+            "SISUserIdentifier",
+            "Name",
+            "EmailAddress",
+            "EntityStatus",
+            "CreateDate",
+            "LastModifiedDate",
+        ]

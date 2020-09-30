@@ -10,15 +10,6 @@ from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
 
 
 class Test_LmsFilesystemProvider:
-    class Test_constructor:
-        def test_given_base_path_is_none_then_raise_error(self):
-            with pytest.raises(AssertionError):
-                LmsFilesystemProvider(None)
-
-        def test_given_base_path_is_whitespace_then_raise_error(self):
-            with pytest.raises(AssertionError):
-                LmsFilesystemProvider("    ")
-
     class Test_when_getting_all_files:
         def test_given_invalid_file_path_then_raise_error(self, mocker):
             csv_path = "does-not-exist"

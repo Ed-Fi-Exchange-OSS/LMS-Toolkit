@@ -12,9 +12,9 @@ call `python main.py -h` for a detailed listing of command arguments.
 
 import sys
 
-from argparser import parse_arguments
-from lms_filesystem_provider import LmsFilesystemProvider
-from file_processor import FileProcessor
+from lms_ds_loader.argparser import parse_arguments
+from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
+from lms_ds_loader.file_processor import FileProcessor
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
     fs = LmsFilesystemProvider(arguments.csv_path)
     fs.get_all_files()
 
-    processor = FileProcessor(fs, arguments.connection_string)
+    processor = FileProcessor(fs, arguments.get_db_operations_adapter())
     processor.load_lms_files_into_database()
 
 
