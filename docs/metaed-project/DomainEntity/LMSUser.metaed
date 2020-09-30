@@ -3,30 +3,32 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-Domain Entity LMSUserAttendanceEvent
-    documentation "Attendance statuses assigned to users for a specific date."
+Domain Entity LMSUser
+    documentation "A person using the instructional system."
     shared integer Identifier
-        documentation "A unique numeric identifier assigned to the user attendance event."
+        documentation "A unique numeric identifier assigned to the user."
         is part of identity
-        role name LMSUserAttendanceEvent
+        role name LMSUser
     shared string SourceSystemIdentifier
         documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
         documentation "The system code or name providing the user data."
         is required
-    domain entity LMSUser
-        documentation "A reference to the user associated with the attendance event."
+    shared string UserRole
+        documentation "The role assigned to the user. E.g., Student, Teacher, Administrator."
         is required
-    association LMSUserLMSSectionAssociation
-        documentation "A reference to the section enrollment associated with the attendance event."
+    shared string SourceSystemIdentifier named SISUserIdentifier
+        documentation "The user identifier defined in the Student Information System (SIS)."
         is optional
-        merge LMSUserLMSSectionAssociation.LMSUser.LMSUserIdentifier with LMSUser.LMSUserIdentifier
-    date EventDate
-        documentation "The date of the attendance event."
+    shared string SourceSystemIdentifier named LocalUserIdentifier
+        documentation "The user identifier assigned by a school or district."
+        is optional
+    shared string Name
+        documentation "The full name of the user."
         is required
-    shared string Status
-        documentation "A code describing the attendance event. E.g., In Attendance, Excused Absence, Unexcused Absence."
+    shared string EmailAddress
+        documentation "The primary e-mail address for the user."
         is required
     shared string EntityStatus
         documentation "The status of the record."
