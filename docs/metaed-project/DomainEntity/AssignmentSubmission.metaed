@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
+
 Domain Entity AssignmentSubmission
     documentation "A user's submission of course work for an assignment."
     shared integer Identifier
@@ -10,7 +15,7 @@ Domain Entity AssignmentSubmission
     shared string SourceSystem
         documentation "The system code or name providing the user data."
         is required
-    domain entity User
+    domain entity LMSUser
         documentation "A reference to the user providing the assignment submission."
         is required
     domain entity Assignment
@@ -35,8 +40,3 @@ Domain Entity AssignmentSubmission
     datetime DeletedAt
         documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
-
-// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.

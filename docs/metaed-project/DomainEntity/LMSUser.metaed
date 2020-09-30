@@ -1,9 +1,14 @@
-Domain Entity User
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
+
+Domain Entity LMSUser
     documentation "A person using the instructional system."
     shared integer Identifier
         documentation "A unique numeric identifier assigned to the user."
         is part of identity
-        role name User
+        role name LMSUser
     shared string SourceSystemIdentifier
         documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
@@ -31,8 +36,3 @@ Domain Entity User
     datetime DeletedAt
         documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
-
-// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.

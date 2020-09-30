@@ -1,22 +1,27 @@
-Domain Entity UserAttendanceEvent
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
+
+Domain Entity LMSUserAttendanceEvent
     documentation "Attendance statuses assigned to users for a specific date."
     shared integer Identifier
         documentation "A unique numeric identifier assigned to the user attendance event."
         is part of identity
-        role name UserAttendanceEvent
+        role name LMSUserAttendanceEvent
     shared string SourceSystemIdentifier
         documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
     shared string SourceSystem
         documentation "The system code or name providing the user data."
         is required
-    domain entity User
+    domain entity LMSUser
         documentation "A reference to the user associated with the attendance event."
         is required
-    association UserLMSSectionAssociation
+    association LMSUserLMSSectionAssociation
         documentation "A reference to the section enrollment associated with the attendance event."
         is optional
-        merge UserLMSSectionAssociation.User.UserIdentifier with User.UserIdentifier
+        merge LMSUserLMSSectionAssociation.LMSUser.LMSUserIdentifier with LMSUser.LMSUserIdentifier
     date EventDate
         documentation "The date of the attendance event."
         is required
@@ -29,8 +34,3 @@ Domain Entity UserAttendanceEvent
     datetime DeletedAt
         documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
-
-// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.

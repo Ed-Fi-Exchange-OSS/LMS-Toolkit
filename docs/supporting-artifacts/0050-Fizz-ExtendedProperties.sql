@@ -37,7 +37,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numbe
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceSystem'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'UserIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the assignment.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
 GO
@@ -71,11 +71,11 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numbe
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the grade data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'SourceSystem'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'UserIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user section association.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'UserLMSSectionAssociationIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user section association.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'LMSUserLMSSectionAssociationIdentifier'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The user''s letter or numeric grade for the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'Grade'
 GO
@@ -110,105 +110,105 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'DeletedAt'
 GO
 
--- Extended Properties [fizz].[User] --
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A person using the instructional system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User'
+-- Extended Properties [fizz].[LMSUser] --
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A person using the instructional system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'UserIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'SourceSystem'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceSystem'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The role assigned to the user. E.g., Student, Teacher, Administrator.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'UserRole'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The role assigned to the user. E.g., Student, Teacher, Administrator.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'UserRole'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The user identifier defined in the Student Information System (SIS).', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'SISUserIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The user identifier defined in the Student Information System (SIS).', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SISUserIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The user identifier assigned by a school or district.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'LocalUserIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The user identifier assigned by a school or district.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'LocalUserIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The full name of the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'Name'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The full name of the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'Name'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The primary e-mail address for the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'EmailAddress'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The primary e-mail address for the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'EmailAddress'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'EntityStatus'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'User', @level2type=N'COLUMN', @level2name=N'DeletedAt'
-GO
-
--- Extended Properties [fizz].[UserAttendanceEvent] --
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Attendance statuses assigned to users for a specific date.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user attendance event.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'UserAttendanceEventIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceSystem'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'UserIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user section association.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'UserLMSSectionAssociationIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date of the attendance event.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'EventDate'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A code describing the attendance event. E.g., In Attendance, Excused Absence, Unexcused Absence.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'Status'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'EntityStatus'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'DeletedAt'
 GO
 
--- Extended Properties [fizz].[UserLMSActivity] --
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'An activity performed by a user within the instructional system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity'
+-- Extended Properties [fizz].[LMSUserActivity] --
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'An activity performed by a user within the instructional system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user activity.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'UserLMSActivityIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user activity.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'LMSUserActivityIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'SourceSystem'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'SourceSystem'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'UserIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the assignment.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the assignment.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type of activity. E.g., Discussion Post, Account Access/Log In.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'ActivityType'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type of activity. E.g., Discussion Post, Account Access/Log In.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'ActivityType'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date/time the activity occurred.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'ActivityDateTime'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date/time the activity occurred.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'ActivityDateTime'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The activity status.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'ActivityStatus'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The activity status.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'ActivityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Content associated with the activity.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'Content'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Content associated with the activity.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'Content'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The total activity time in minutes.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'ActivityTimeInMinutes'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The total activity time in minutes.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'ActivityTimeInMinutes'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'EntityStatus'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSActivity', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'DeletedAt'
 GO
 
--- Extended Properties [fizz].[UserLMSSectionAssociation] --
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The association of a user and section. For a student, this would be a section enrollment. For a teacher, this would be a section assignment.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation'
+-- Extended Properties [fizz].[LMSUserAttendanceEvent] --
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Attendance statuses assigned to users for a specific date.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user attendance event.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'LMSUserAttendanceEventIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'UserIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user section association.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'UserLMSSectionAssociationIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceSystem'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'SourceSystem'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the user section association. E.g., Active, Inactive, Withdrawn.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'EnrollmentStatus'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user section association.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'LMSUserLMSSectionAssociationIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Month, day, and year of the user''s entry or assignment to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'StartDate'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date of the attendance event.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'EventDate'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Month, day, and year of the user''s withdrawal or exit from the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'EndDate'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A code describing the attendance event. E.g., In Attendance, Excused Absence, Unexcused Absence.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'Status'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'EntityStatus'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'UserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+GO
+
+-- Extended Properties [fizz].[LMSUserLMSSectionAssociation] --
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The association of a user and section. For a student, this would be a section enrollment. For a teacher, this would be a section assignment.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user section association.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'LMSUserLMSSectionAssociationIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'SourceSystem'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the user section association. E.g., Active, Inactive, Withdrawn.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'EnrollmentStatus'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Month, day, and year of the user''s entry or assignment to the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'StartDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Month, day, and year of the user''s withdrawal or exit from the section.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'EndDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'EntityStatus'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'fizz', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'DeletedAt'
 GO
 

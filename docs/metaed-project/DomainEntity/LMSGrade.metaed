@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
+
 Domain Entity LMSGrade
     documentation "A grade assigned to a user in a section."
     shared integer Identifier
@@ -10,7 +15,7 @@ Domain Entity LMSGrade
     shared string SourceSystem
         documentation "The system code or name providing the grade data."
         is required
-    association UserLMSSectionAssociation
+    association LMSUserLMSSectionAssociation
         documentation "The student section enrollment tied to the grade."
         is required
     shared string Grade
@@ -25,8 +30,3 @@ Domain Entity LMSGrade
     datetime DeletedAt
         documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
-
-// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.

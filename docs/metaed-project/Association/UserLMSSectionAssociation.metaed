@@ -1,13 +1,18 @@
-Association UserLMSSectionAssociation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
+
+Association LMSUserLMSSectionAssociation
     documentation "The association of a user and section. For a student, this would be a section enrollment. For a teacher, this would be a section assignment."
-    domain entity User
+    domain entity LMSUser
         documentation "A system user associated with the section."
     domain entity LMSSection
         documentation "A course section defined in the source system associated with the user."
     shared integer Identifier
         documentation "A unique numeric identifier assigned to the user section association."
         is part of identity
-        role name UserLMSSectionAssociation
+        role name LMSUserLMSSectionAssociation
     shared string SourceSystemIdentifier
         documentation "A unique number or alphanumeric code assigned to a user by the source system."
         is required
@@ -30,8 +35,3 @@ Association UserLMSSectionAssociation
     datetime DeletedAt
         documentation "The datetime the record EntityStatus was changed to deleted."
         is optional
-
-// SPDX-License-Identifier: Apache-2.0
-// Licensed to the Ed-Fi Alliance under one or more agreements.
-// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
-// See the LICENSE and NOTICES files in the project root for more information.

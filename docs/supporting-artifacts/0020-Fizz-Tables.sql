@@ -34,7 +34,7 @@ CREATE TABLE [fizz].[AssignmentSubmission] (
     [LMSGradeIdentifier] [INT] IDENTITY,
     [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
     [SourceSystem] [NVARCHAR](255) NOT NULL,
-    [UserIdentifier] [INT] NOT NULL,
+    [LMSUserIdentifier] [INT] NOT NULL,
     [AssignmentIdentifier] [INT] NOT NULL,
     [Status] [NVARCHAR](60) NOT NULL,
     [SubmissionDateTime] [DATETIME2](7) NOT NULL,
@@ -77,9 +77,9 @@ CREATE TABLE [fizz].[LMSGrade] (
     [LMSGradeIdentifier] [INT] IDENTITY,
     [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
     [SourceSystem] [NVARCHAR](255) NOT NULL,
-    [UserIdentifier] [INT] NOT NULL,
+    [LMSUserIdentifier] [INT] NOT NULL,
     [LMSSectionIdentifier] [INT] NOT NULL,
-    [UserLMSSectionAssociationIdentifier] [INT] NOT NULL,
+    [LMSUserLMSSectionAssociationIdentifier] [INT] NOT NULL,
     [Grade] [NVARCHAR](20) NOT NULL,
     [GradeType] [NVARCHAR](60) NULL,
     [EntityStatus] [NVARCHAR](60) NOT NULL,
@@ -128,9 +128,9 @@ GO
 ALTER TABLE [fizz].[LMSSection] ADD CONSTRAINT [LMSSection_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
 GO
 
--- Table [fizz].[User] --
-CREATE TABLE [fizz].[User] (
-    [UserIdentifier] [INT] IDENTITY,
+-- Table [fizz].[LMSUser] --
+CREATE TABLE [fizz].[LMSUser] (
+    [LMSUserIdentifier] [INT] IDENTITY,
     [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
     [SourceSystem] [NVARCHAR](255) NOT NULL,
     [UserRole] [NVARCHAR](60) NOT NULL,
@@ -144,52 +144,24 @@ CREATE TABLE [fizz].[User] (
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
     [Id] [UNIQUEIDENTIFIER] NOT NULL,
-    CONSTRAINT [User_PK] PRIMARY KEY CLUSTERED (
-        [UserIdentifier] ASC
+    CONSTRAINT [LMSUser_PK] PRIMARY KEY CLUSTERED (
+        [LMSUserIdentifier] ASC
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-ALTER TABLE [fizz].[User] ADD CONSTRAINT [User_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
+ALTER TABLE [fizz].[LMSUser] ADD CONSTRAINT [LMSUser_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
 GO
-ALTER TABLE [fizz].[User] ADD CONSTRAINT [User_DF_Id] DEFAULT (newid()) FOR [Id]
+ALTER TABLE [fizz].[LMSUser] ADD CONSTRAINT [LMSUser_DF_Id] DEFAULT (newid()) FOR [Id]
 GO
-ALTER TABLE [fizz].[User] ADD CONSTRAINT [User_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
-GO
-
--- Table [fizz].[UserAttendanceEvent] --
-CREATE TABLE [fizz].[UserAttendanceEvent] (
-    [UserAttendanceEventIdentifier] [INT] IDENTITY,
-    [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
-    [SourceSystem] [NVARCHAR](255) NOT NULL,
-    [UserIdentifier] [INT] NOT NULL,
-    [LMSSectionIdentifier] [INT] NULL,
-    [UserLMSSectionAssociationIdentifier] [INT] NULL,
-    [EventDate] [DATE] NOT NULL,
-    [Status] [NVARCHAR](60) NOT NULL,
-    [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
-    [Discriminator] [NVARCHAR](128) NULL,
-    [CreateDate] [DATETIME2] NOT NULL,
-    [LastModifiedDate] [DATETIME2] NOT NULL,
-    [Id] [UNIQUEIDENTIFIER] NOT NULL,
-    CONSTRAINT [UserAttendanceEvent_PK] PRIMARY KEY CLUSTERED (
-        [UserAttendanceEventIdentifier] ASC
-    ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-ALTER TABLE [fizz].[UserAttendanceEvent] ADD CONSTRAINT [UserAttendanceEvent_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
-GO
-ALTER TABLE [fizz].[UserAttendanceEvent] ADD CONSTRAINT [UserAttendanceEvent_DF_Id] DEFAULT (newid()) FOR [Id]
-GO
-ALTER TABLE [fizz].[UserAttendanceEvent] ADD CONSTRAINT [UserAttendanceEvent_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
+ALTER TABLE [fizz].[LMSUser] ADD CONSTRAINT [LMSUser_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
 GO
 
--- Table [fizz].[UserLMSActivity] --
-CREATE TABLE [fizz].[UserLMSActivity] (
-    [UserLMSActivityIdentifier] [INT] IDENTITY,
+-- Table [fizz].[LMSUserActivity] --
+CREATE TABLE [fizz].[LMSUserActivity] (
+    [LMSUserActivityIdentifier] [INT] IDENTITY,
     [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
     [SourceSystem] [NVARCHAR](255) NOT NULL,
-    [UserIdentifier] [INT] NOT NULL,
+    [LMSUserIdentifier] [INT] NOT NULL,
     [LMSSectionIdentifier] [INT] NULL,
     [AssignmentIdentifier] [INT] NULL,
     [ActivityType] [NVARCHAR](60) NOT NULL,
@@ -203,23 +175,51 @@ CREATE TABLE [fizz].[UserLMSActivity] (
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
     [Id] [UNIQUEIDENTIFIER] NOT NULL,
-    CONSTRAINT [UserLMSActivity_PK] PRIMARY KEY CLUSTERED (
-        [UserLMSActivityIdentifier] ASC
+    CONSTRAINT [LMSUserActivity_PK] PRIMARY KEY CLUSTERED (
+        [LMSUserActivityIdentifier] ASC
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-ALTER TABLE [fizz].[UserLMSActivity] ADD CONSTRAINT [UserLMSActivity_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
+ALTER TABLE [fizz].[LMSUserActivity] ADD CONSTRAINT [LMSUserActivity_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
 GO
-ALTER TABLE [fizz].[UserLMSActivity] ADD CONSTRAINT [UserLMSActivity_DF_Id] DEFAULT (newid()) FOR [Id]
+ALTER TABLE [fizz].[LMSUserActivity] ADD CONSTRAINT [LMSUserActivity_DF_Id] DEFAULT (newid()) FOR [Id]
 GO
-ALTER TABLE [fizz].[UserLMSActivity] ADD CONSTRAINT [UserLMSActivity_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
+ALTER TABLE [fizz].[LMSUserActivity] ADD CONSTRAINT [LMSUserActivity_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
 GO
 
--- Table [fizz].[UserLMSSectionAssociation] --
-CREATE TABLE [fizz].[UserLMSSectionAssociation] (
-    [LMSSectionIdentifier] [INT] IDENTITY,
-    [UserIdentifier] [INT] NOT NULL,
-    [UserLMSSectionAssociationIdentifier] [INT] NOT NULL,
+-- Table [fizz].[LMSUserAttendanceEvent] --
+CREATE TABLE [fizz].[LMSUserAttendanceEvent] (
+    [LMSUserAttendanceEventIdentifier] [INT] IDENTITY,
+    [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
+    [SourceSystem] [NVARCHAR](255) NOT NULL,
+    [LMSUserIdentifier] [INT] NOT NULL,
+    [LMSSectionIdentifier] [INT] NULL,
+    [LMSUserLMSSectionAssociationIdentifier] [INT] NULL,
+    [EventDate] [DATE] NOT NULL,
+    [Status] [NVARCHAR](60) NOT NULL,
+    [EntityStatus] [NVARCHAR](60) NOT NULL,
+    [DeletedAt] [DATETIME2](7) NULL,
+    [Discriminator] [NVARCHAR](128) NULL,
+    [CreateDate] [DATETIME2] NOT NULL,
+    [LastModifiedDate] [DATETIME2] NOT NULL,
+    [Id] [UNIQUEIDENTIFIER] NOT NULL,
+    CONSTRAINT [LMSUserAttendanceEvent_PK] PRIMARY KEY CLUSTERED (
+        [LMSUserAttendanceEventIdentifier] ASC
+    ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [fizz].[LMSUserAttendanceEvent] ADD CONSTRAINT [LMSUserAttendanceEvent_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [fizz].[LMSUserAttendanceEvent] ADD CONSTRAINT [LMSUserAttendanceEvent_DF_Id] DEFAULT (newid()) FOR [Id]
+GO
+ALTER TABLE [fizz].[LMSUserAttendanceEvent] ADD CONSTRAINT [LMSUserAttendanceEvent_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
+GO
+
+-- Table [fizz].[LMSUserLMSSectionAssociation] --
+CREATE TABLE [fizz].[LMSUserLMSSectionAssociation] (
+    [LMSSectionIdentifier] [INT] NOT NULL,
+    [LMSUserIdentifier] [INT] NOT NULL,
+    [LMSUserLMSSectionAssociationIdentifier] [INT] IDENTITY,
     [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
     [SourceSystem] [NVARCHAR](255) NOT NULL,
     [EnrollmentStatus] [NVARCHAR](60) NOT NULL,
@@ -231,17 +231,17 @@ CREATE TABLE [fizz].[UserLMSSectionAssociation] (
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
     [Id] [UNIQUEIDENTIFIER] NOT NULL,
-    CONSTRAINT [UserLMSSectionAssociation_PK] PRIMARY KEY CLUSTERED (
+    CONSTRAINT [LMSUserLMSSectionAssociation_PK] PRIMARY KEY CLUSTERED (
         [LMSSectionIdentifier] ASC,
-        [UserIdentifier] ASC,
-        [UserLMSSectionAssociationIdentifier] ASC
+        [LMSUserIdentifier] ASC,
+        [LMSUserLMSSectionAssociationIdentifier] ASC
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-ALTER TABLE [fizz].[UserLMSSectionAssociation] ADD CONSTRAINT [UserLMSSectionAssociation_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
+ALTER TABLE [fizz].[LMSUserLMSSectionAssociation] ADD CONSTRAINT [LMSUserLMSSectionAssociation_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
 GO
-ALTER TABLE [fizz].[UserLMSSectionAssociation] ADD CONSTRAINT [UserLMSSectionAssociation_DF_Id] DEFAULT (newid()) FOR [Id]
+ALTER TABLE [fizz].[LMSUserLMSSectionAssociation] ADD CONSTRAINT [LMSUserLMSSectionAssociation_DF_Id] DEFAULT (newid()) FOR [Id]
 GO
-ALTER TABLE [fizz].[UserLMSSectionAssociation] ADD CONSTRAINT [UserLMSSectionAssociation_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
+ALTER TABLE [fizz].[LMSUserLMSSectionAssociation] ADD CONSTRAINT [LMSUserLMSSectionAssociation_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
 GO
 

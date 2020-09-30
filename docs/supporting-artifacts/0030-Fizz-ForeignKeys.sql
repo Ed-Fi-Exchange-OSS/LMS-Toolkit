@@ -14,12 +14,12 @@ CREATE NONCLUSTERED INDEX [FK_AssignmentSubmission_Assignment]
 ON [fizz].[AssignmentSubmission] ([AssignmentIdentifier] ASC)
 GO
 
-ALTER TABLE [fizz].[AssignmentSubmission] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmission_User] FOREIGN KEY ([UserIdentifier])
-REFERENCES [fizz].[User] ([UserIdentifier])
+ALTER TABLE [fizz].[AssignmentSubmission] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmission_LMSUser] FOREIGN KEY ([LMSUserIdentifier])
+REFERENCES [fizz].[LMSUser] ([LMSUserIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_AssignmentSubmission_User]
-ON [fizz].[AssignmentSubmission] ([UserIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_AssignmentSubmission_LMSUser]
+ON [fizz].[AssignmentSubmission] ([LMSUserIdentifier] ASC)
 GO
 
 ALTER TABLE [fizz].[AssignmentSubmissionType] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmissionType_Assignment] FOREIGN KEY ([AssignmentIdentifier])
@@ -31,67 +31,67 @@ CREATE NONCLUSTERED INDEX [FK_AssignmentSubmissionType_Assignment]
 ON [fizz].[AssignmentSubmissionType] ([AssignmentIdentifier] ASC)
 GO
 
-ALTER TABLE [fizz].[LMSGrade] WITH CHECK ADD CONSTRAINT [FK_LMSGrade_UserLMSSectionAssociation] FOREIGN KEY ([LMSSectionIdentifier], [UserIdentifier], [UserLMSSectionAssociationIdentifier])
-REFERENCES [fizz].[UserLMSSectionAssociation] ([LMSSectionIdentifier], [UserIdentifier], [UserLMSSectionAssociationIdentifier])
+ALTER TABLE [fizz].[LMSGrade] WITH CHECK ADD CONSTRAINT [FK_LMSGrade_LMSUserLMSSectionAssociation] FOREIGN KEY ([LMSSectionIdentifier], [LMSUserIdentifier], [LMSUserLMSSectionAssociationIdentifier])
+REFERENCES [fizz].[LMSUserLMSSectionAssociation] ([LMSSectionIdentifier], [LMSUserIdentifier], [LMSUserLMSSectionAssociationIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_LMSGrade_UserLMSSectionAssociation]
-ON [fizz].[LMSGrade] ([LMSSectionIdentifier] ASC, [UserIdentifier] ASC, [UserLMSSectionAssociationIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_LMSGrade_LMSUserLMSSectionAssociation]
+ON [fizz].[LMSGrade] ([LMSSectionIdentifier] ASC, [LMSUserIdentifier] ASC, [LMSUserLMSSectionAssociationIdentifier] ASC)
 GO
 
-ALTER TABLE [fizz].[UserAttendanceEvent] WITH CHECK ADD CONSTRAINT [FK_UserAttendanceEvent_User] FOREIGN KEY ([UserIdentifier])
-REFERENCES [fizz].[User] ([UserIdentifier])
-GO
-
-CREATE NONCLUSTERED INDEX [FK_UserAttendanceEvent_User]
-ON [fizz].[UserAttendanceEvent] ([UserIdentifier] ASC)
-GO
-
-ALTER TABLE [fizz].[UserAttendanceEvent] WITH CHECK ADD CONSTRAINT [FK_UserAttendanceEvent_UserLMSSectionAssociation] FOREIGN KEY ([LMSSectionIdentifier], [UserIdentifier], [UserLMSSectionAssociationIdentifier])
-REFERENCES [fizz].[UserLMSSectionAssociation] ([LMSSectionIdentifier], [UserIdentifier], [UserLMSSectionAssociationIdentifier])
-GO
-
-CREATE NONCLUSTERED INDEX [FK_UserAttendanceEvent_UserLMSSectionAssociation]
-ON [fizz].[UserAttendanceEvent] ([LMSSectionIdentifier] ASC, [UserIdentifier] ASC, [UserLMSSectionAssociationIdentifier] ASC)
-GO
-
-ALTER TABLE [fizz].[UserLMSActivity] WITH CHECK ADD CONSTRAINT [FK_UserLMSActivity_Assignment] FOREIGN KEY ([AssignmentIdentifier])
+ALTER TABLE [fizz].[LMSUserActivity] WITH CHECK ADD CONSTRAINT [FK_LMSUserActivity_Assignment] FOREIGN KEY ([AssignmentIdentifier])
 REFERENCES [fizz].[Assignment] ([AssignmentIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_UserLMSActivity_Assignment]
-ON [fizz].[UserLMSActivity] ([AssignmentIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_LMSUserActivity_Assignment]
+ON [fizz].[LMSUserActivity] ([AssignmentIdentifier] ASC)
 GO
 
-ALTER TABLE [fizz].[UserLMSActivity] WITH CHECK ADD CONSTRAINT [FK_UserLMSActivity_LMSSection] FOREIGN KEY ([LMSSectionIdentifier])
+ALTER TABLE [fizz].[LMSUserActivity] WITH CHECK ADD CONSTRAINT [FK_LMSUserActivity_LMSSection] FOREIGN KEY ([LMSSectionIdentifier])
 REFERENCES [fizz].[LMSSection] ([LMSSectionIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_UserLMSActivity_LMSSection]
-ON [fizz].[UserLMSActivity] ([LMSSectionIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_LMSUserActivity_LMSSection]
+ON [fizz].[LMSUserActivity] ([LMSSectionIdentifier] ASC)
 GO
 
-ALTER TABLE [fizz].[UserLMSActivity] WITH CHECK ADD CONSTRAINT [FK_UserLMSActivity_User] FOREIGN KEY ([UserIdentifier])
-REFERENCES [fizz].[User] ([UserIdentifier])
+ALTER TABLE [fizz].[LMSUserActivity] WITH CHECK ADD CONSTRAINT [FK_LMSUserActivity_LMSUser] FOREIGN KEY ([LMSUserIdentifier])
+REFERENCES [fizz].[LMSUser] ([LMSUserIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_UserLMSActivity_User]
-ON [fizz].[UserLMSActivity] ([UserIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_LMSUserActivity_LMSUser]
+ON [fizz].[LMSUserActivity] ([LMSUserIdentifier] ASC)
 GO
 
-ALTER TABLE [fizz].[UserLMSSectionAssociation] WITH CHECK ADD CONSTRAINT [FK_UserLMSSectionAssociation_LMSSection] FOREIGN KEY ([LMSSectionIdentifier])
+ALTER TABLE [fizz].[LMSUserAttendanceEvent] WITH CHECK ADD CONSTRAINT [FK_LMSUserAttendanceEvent_LMSUser] FOREIGN KEY ([LMSUserIdentifier])
+REFERENCES [fizz].[LMSUser] ([LMSUserIdentifier])
+GO
+
+CREATE NONCLUSTERED INDEX [FK_LMSUserAttendanceEvent_LMSUser]
+ON [fizz].[LMSUserAttendanceEvent] ([LMSUserIdentifier] ASC)
+GO
+
+ALTER TABLE [fizz].[LMSUserAttendanceEvent] WITH CHECK ADD CONSTRAINT [FK_LMSUserAttendanceEvent_LMSUserLMSSectionAssociation] FOREIGN KEY ([LMSSectionIdentifier], [LMSUserIdentifier], [LMSUserLMSSectionAssociationIdentifier])
+REFERENCES [fizz].[LMSUserLMSSectionAssociation] ([LMSSectionIdentifier], [LMSUserIdentifier], [LMSUserLMSSectionAssociationIdentifier])
+GO
+
+CREATE NONCLUSTERED INDEX [FK_LMSUserAttendanceEvent_LMSUserLMSSectionAssociation]
+ON [fizz].[LMSUserAttendanceEvent] ([LMSSectionIdentifier] ASC, [LMSUserIdentifier] ASC, [LMSUserLMSSectionAssociationIdentifier] ASC)
+GO
+
+ALTER TABLE [fizz].[LMSUserLMSSectionAssociation] WITH CHECK ADD CONSTRAINT [FK_LMSUserLMSSectionAssociation_LMSSection] FOREIGN KEY ([LMSSectionIdentifier])
 REFERENCES [fizz].[LMSSection] ([LMSSectionIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_UserLMSSectionAssociation_LMSSection]
-ON [fizz].[UserLMSSectionAssociation] ([LMSSectionIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_LMSUserLMSSectionAssociation_LMSSection]
+ON [fizz].[LMSUserLMSSectionAssociation] ([LMSSectionIdentifier] ASC)
 GO
 
-ALTER TABLE [fizz].[UserLMSSectionAssociation] WITH CHECK ADD CONSTRAINT [FK_UserLMSSectionAssociation_User] FOREIGN KEY ([UserIdentifier])
-REFERENCES [fizz].[User] ([UserIdentifier])
+ALTER TABLE [fizz].[LMSUserLMSSectionAssociation] WITH CHECK ADD CONSTRAINT [FK_LMSUserLMSSectionAssociation_LMSUser] FOREIGN KEY ([LMSUserIdentifier])
+REFERENCES [fizz].[LMSUser] ([LMSUserIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_UserLMSSectionAssociation_User]
-ON [fizz].[UserLMSSectionAssociation] ([UserIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_LMSUserLMSSectionAssociation_LMSUser]
+ON [fizz].[LMSUserLMSSectionAssociation] ([LMSUserIdentifier] ASC)
 GO
 

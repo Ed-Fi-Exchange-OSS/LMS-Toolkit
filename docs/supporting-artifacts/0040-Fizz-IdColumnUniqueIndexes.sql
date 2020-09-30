@@ -27,29 +27,29 @@ BEGIN TRANSACTION
 COMMIT
 
 BEGIN TRANSACTION
-    IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'fizz.User') AND name = N'UX_User_Id')
-    CREATE UNIQUE NONCLUSTERED INDEX UX_User_Id ON [fizz].[User]
+    IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'fizz.LMSUser') AND name = N'UX_LMSUser_Id')
+    CREATE UNIQUE NONCLUSTERED INDEX UX_LMSUser_Id ON [fizz].[LMSUser]
     (Id) WITH (PAD_INDEX = ON, FILLFACTOR = 75, STATISTICS_NORECOMPUTE = OFF) ON [PRIMARY]
     GO
 COMMIT
 
 BEGIN TRANSACTION
-    IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'fizz.UserAttendanceEvent') AND name = N'UX_UserAttendanceEvent_Id')
-    CREATE UNIQUE NONCLUSTERED INDEX UX_UserAttendanceEvent_Id ON [fizz].[UserAttendanceEvent]
+    IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'fizz.LMSUserActivity') AND name = N'UX_LMSUserActivity_Id')
+    CREATE UNIQUE NONCLUSTERED INDEX UX_LMSUserActivity_Id ON [fizz].[LMSUserActivity]
     (Id) WITH (PAD_INDEX = ON, FILLFACTOR = 75, STATISTICS_NORECOMPUTE = OFF) ON [PRIMARY]
     GO
 COMMIT
 
 BEGIN TRANSACTION
-    IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'fizz.UserLMSActivity') AND name = N'UX_UserLMSActivity_Id')
-    CREATE UNIQUE NONCLUSTERED INDEX UX_UserLMSActivity_Id ON [fizz].[UserLMSActivity]
+    IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'fizz.LMSUserAttendanceEvent') AND name = N'UX_LMSUserAttendanceEvent_Id')
+    CREATE UNIQUE NONCLUSTERED INDEX UX_LMSUserAttendanceEvent_Id ON [fizz].[LMSUserAttendanceEvent]
     (Id) WITH (PAD_INDEX = ON, FILLFACTOR = 75, STATISTICS_NORECOMPUTE = OFF) ON [PRIMARY]
     GO
 COMMIT
 
 BEGIN TRANSACTION
-    IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'fizz.UserLMSSectionAssociation') AND name = N'UX_UserLMSSectionAssociation_Id')
-    CREATE UNIQUE NONCLUSTERED INDEX UX_UserLMSSectionAssociation_Id ON [fizz].[UserLMSSectionAssociation]
+    IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'fizz.LMSUserLMSSectionAssociation') AND name = N'UX_LMSUserLMSSectionAssociation_Id')
+    CREATE UNIQUE NONCLUSTERED INDEX UX_LMSUserLMSSectionAssociation_Id ON [fizz].[LMSUserLMSSectionAssociation]
     (Id) WITH (PAD_INDEX = ON, FILLFACTOR = 75, STATISTICS_NORECOMPUTE = OFF) ON [PRIMARY]
     GO
 COMMIT
