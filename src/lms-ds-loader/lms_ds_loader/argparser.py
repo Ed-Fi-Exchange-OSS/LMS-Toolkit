@@ -23,7 +23,7 @@ def parse_arguments(args_in) -> Arguments:
         A populated `Arguments` object.
     """
 
-    assert type(args_in) is list, "Argument `args_in` must be a list"
+    assert isinstance(args_in, list), "Argument `args_in` must be a list"
 
     parser = configargparse.ArgParser()
     parser.add("-c", "--csvpath", help="base path for input files", required=True)

@@ -44,7 +44,7 @@ class MssqlLmsOperations:
     def _exec(self, statement):
         """This is a wrapper function that will not be unit tested."""
 
-        assert type(statement) is str, "Argument `statement` must be a string"
+        assert isinstance(statement, str), "Argument `statement` must be a string"
         assert statement.strip() != "", "Argument `statement` cannot be whitespace"
 
         with self._get_sql_engine().connect() as connection:
@@ -60,7 +60,7 @@ class MssqlLmsOperations:
             Name of the table to truncate, not including the `stg_` prefix
         """
 
-        assert type(table) is str, "Argument `table` must be a string"
+        assert isinstance(table, str), "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         # TODO: for postgresql we'll want `TRUNCATE TABLE {staging} RESTART IDENTITY`
@@ -77,7 +77,7 @@ class MssqlLmsOperations:
             Name of the table to truncate, not including the `stg_` prefix
         """
 
-        assert type(table) is str, "Argument `table` must be a string"
+        assert isinstance(table, str), "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         self._exec(
@@ -94,7 +94,7 @@ class MssqlLmsOperations:
             Name of the table to truncate, not including the `stg_` prefix
         """
 
-        assert type(table) is str, "Argument `table` must be a string"
+        assert isinstance(table, str), "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         self._exec(
@@ -114,7 +114,7 @@ class MssqlLmsOperations:
         """
 
         assert isinstance(df, pd.DataFrame), "Argument `df` must be a DataFrame"
-        assert type(table) is str, "Argument `table` must be a string"
+        assert isinstance(table, str), "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         df.to_sql(
@@ -138,10 +138,10 @@ class MssqlLmsOperations:
             A list of the column names in the table
         """
 
-        assert type(table) is str, "Argument `table` must be a string"
+        assert isinstance(table, str), "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert columns is not None, "Argument `columns` cannot be None"
-        assert type(columns) is list, "Argument `columns` must be a list"
+        assert isinstance(columns, list), "Argument `columns` must be a list"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
         column_string = ", ".join([f"[{c}]" for c in columns])
@@ -172,7 +172,7 @@ where not exists (
             A list of the column names in the table
         """
 
-        assert type(table) is str, "Argument `table` must be a string"
+        assert isinstance(table, str), "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert (
             type(columns) is list

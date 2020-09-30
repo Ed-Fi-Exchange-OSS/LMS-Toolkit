@@ -47,10 +47,10 @@ class Arguments:
         db_name : str
             Database name.
         """
-        assert type(server) is str, "Argument `server` must be a string"
+        assert isinstance(server, str), "Argument `server` must be a string"
         assert server.strip() != "", "Argument `server` cannot be whitespace"
 
-        assert type(db_name) is str, "Argument `db_name` must be a string"
+        assert isinstance(db_name, str), "Argument `db_name` must be a string"
         assert db_name.strip() != "", "Argument `db_name` cannot be whitespace"
 
         if self.engine == Constants.DbEngine.MSSQL:
@@ -78,16 +78,16 @@ class Arguments:
             Database password.
         """
 
-        assert type(server) is str, "Argument `server` must be a string`"
+        assert isinstance(server, str), "Argument `server` must be a string`"
         assert server.strip() != "", "Argument `server` cannot be whitespace"
 
-        assert type(db_name) is str, "Argument `db_name` must be a string`"
+        assert isinstance(db_name, str), "Argument `db_name` must be a string`"
         assert db_name.strip() != "", "Argument `db_name` cannot be whitespace"
 
-        assert type(username) is str, "Argument `username` must be a string`"
+        assert isinstance(username, str), "Argument `username` must be a string`"
         assert username.strip() != "", "Argument `username` cannot be whitespace"
 
-        assert type(password) is str, "Argument `password` must be a string`"
+        assert isinstance(password, str), "Argument `password` must be a string`"
         assert password.strip() != "", "Argument `password` cannot be whitespace"
 
         if self.engine == Constants.DbEngine.MSSQL:
