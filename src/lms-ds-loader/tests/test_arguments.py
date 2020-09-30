@@ -48,7 +48,9 @@ class Test_Arguments:
 
                     a = Arguments("some/path", Constants.DbEngine.MSSQL)
                     a.set_connection_string_using_integrated_security(
-                        server, port, database,
+                        server,
+                        port,
+                        database,
                     )
 
                     assert a.connection_string == expect
@@ -77,7 +79,9 @@ class Test_Arguments:
 
                     a = Arguments("some/path", Constants.DbEngine.MSSQL)
                     a.set_connection_string_using_integrated_security(
-                        server, port, database,
+                        server,
+                        port,
+                        database,
                     )
 
                     assert a.connection_string == expected
@@ -90,7 +94,9 @@ class Test_Arguments:
 
                     a = Arguments("some/path", Constants.DbEngine.MSSQL)
                     a.set_connection_string_using_integrated_security(
-                        server, port, database,
+                        server,
+                        port,
+                        database,
                     )
 
                     assert a.connection_string == expected
@@ -220,18 +226,20 @@ class Test_Arguments:
                 with pytest.raises(NotImplementedError):
                     a = Arguments(
                         "some/path", Constants.DbEngine.MSSQL
-                        ).set_connection_string(
-                            "server", None, "database", "username", "password"
-                        )
+                    ).set_connection_string(
+                        "server", None, "database", "username", "password"
+                    )
 
                     a.engine = "PostgreSQL"
                     a.get_db_operations_adapter()
 
             def test_given_engine_is_mssql_then_return_proper_object(self):
-                actual = Arguments(
-                        "some/path", Constants.DbEngine.MSSQL
-                        ).set_connection_string(
-                            "server", None, "database", "username", "password"
-                        ).get_db_operations_adapter()
+                actual = (
+                    Arguments("some/path", Constants.DbEngine.MSSQL)
+                    .set_connection_string(
+                        "server", None, "database", "username", "password"
+                    )
+                    .get_db_operations_adapter()
+                )
 
                 assert type(actual) is MssqlLmsOperations

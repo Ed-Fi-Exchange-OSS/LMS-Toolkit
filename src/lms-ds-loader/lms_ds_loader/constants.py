@@ -16,14 +16,14 @@ class Constants:
 
     class Columns:
         USER = [
-                    "SourceSystemIdentifier",
-                    "SourceSystem",
-                    "UserRole",
-                    "LocalUserIdentifier",
-                    "SISUserIdentifier",
-                    "Name",
-                    "EmailAddress",
-                    "EntityStatus",
-                    "CreateDate",
-                    "LastModifiedDate",
-                ]
+            "SourceSystemIdentifier",
+            "SourceSystem",
+            "UserRole",
+            "LocalUserIdentifier",
+            "SISUserIdentifier",
+            "Name",
+            "EmailAddress",
+            "EntityStatus",
+            "CreateDate",
+            "LastModifiedDate",
+        ]

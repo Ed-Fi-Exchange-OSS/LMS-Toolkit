@@ -185,7 +185,9 @@ where not exists (
                 with pytest.raises(AssertionError):
                     MssqlLmsOperations("aaa").insert_into_staging(df, "   ")
 
-        def test_given_valid_arguments_then_use_pandas_to_load_into_the_db(self, mocker):
+        def test_given_valid_arguments_then_use_pandas_to_load_into_the_db(
+            self, mocker
+        ):
             connection_string = "connection string"
             table = "aaa"
             staging_table = "stg_aaa"
@@ -205,7 +207,7 @@ where not exists (
                 schema="lms",
                 if_exists="append",
                 index=False,
-                method="multi"
+                method="multi",
             )
 
     class Test_when_updating_records:

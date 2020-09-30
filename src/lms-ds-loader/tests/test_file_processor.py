@@ -44,8 +44,12 @@ class Test_FileProcessor:
 
                 # Assert
                 assert file_processor.db_operations_adapter == db_operations_adapter
-                mock_csv_to_sql.assert_called_with(file_1, Constants.Table.USER, Constants.Columns.USER)
-                mock_csv_to_sql.assert_called_with(file_2, Constants.Table.USER, Constants.Columns.USER)
+                mock_csv_to_sql.assert_called_with(
+                    file_1, Constants.Table.USER, Constants.Columns.USER
+                )
+                mock_csv_to_sql.assert_called_with(
+                    file_2, Constants.Table.USER, Constants.Columns.USER
+                )
 
             def test_given_there_are_no_user_files(self, mocker):
 

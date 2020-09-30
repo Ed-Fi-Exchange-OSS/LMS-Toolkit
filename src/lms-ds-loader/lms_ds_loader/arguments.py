@@ -100,7 +100,9 @@ class Arguments:
         return self
 
     def get_db_operations_adapter(self):
-        if (self.engine == Constants.DbEngine.MSSQL):
+        if self.engine == Constants.DbEngine.MSSQL:
             return MssqlLmsOperations(self.connection_string)
 
-        raise NotImplementedError(f"Support for '{self.engine}' has not yet been implemented.")
+        raise NotImplementedError(
+            f"Support for '{self.engine}' has not yet been implemented."
+        )

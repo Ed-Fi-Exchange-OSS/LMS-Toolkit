@@ -63,6 +63,8 @@ class Test_when_reading_csv_and_loading_into_a_database:
             adapter.disable_staging_natural_key_index.assert_called_with(table)
             adapter.truncate_staging_table.assert_called_with(table)
             adapter.enable_staging_natural_key_index.assert_called_with(table)
-            adapter.insert_into_staging.assert_called_with(read_csv_mock.return_value, table)
+            adapter.insert_into_staging.assert_called_with(
+                read_csv_mock.return_value, table
+            )
             adapter.insert_new_records_to_production.assert_called_with(table, columns)
             adapter.copy_updates_to_production.assert_called_with(table, columns)

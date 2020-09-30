@@ -17,8 +17,12 @@ class MssqlLmsOperations:
         self.engine = None
 
     def _get_sql_engine(self):
-        assert type(self.connection_string) is str, "Variable `connection_string` must ba string"
-        assert self.connection_string.strip() != "", "Variable `connection_string` cannot be whitespace"
+        assert (
+            type(self.connection_string) is str
+        ), "Variable `connection_string` must ba string"
+        assert (
+            self.connection_string.strip() != ""
+        ), "Variable `connection_string` cannot be whitespace"
 
         if not self.engine:
             self.engine = sal.create_engine(self.connection_string)
@@ -45,13 +49,17 @@ class MssqlLmsOperations:
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        self._exec(f"alter index [ix_stg_{table}_natural_key] on lms.[stg_{table}] disable;")
+        self._exec(
+            f"alter index [ix_stg_{table}_natural_key] on lms.[stg_{table}] disable;"
+        )
 
     def enable_staging_natural_key_index(self, table):
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        self._exec(f"alter index [ix_stg_{table}_natural_key] on lms.[stg_{table}] rebuild;")
+        self._exec(
+            f"alter index [ix_stg_{table}_natural_key] on lms.[stg_{table}] rebuild;"
+        )
 
     def insert_into_staging(self, df, table):
         assert isinstance(df, pd.DataFrame), "Argument `df` must be a DataFrame"
@@ -92,7 +100,9 @@ where not exists (
     def copy_updates_to_production(self, table, columns):
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
-        assert type(columns) is list, f"Argument `columns` must be a list, not a {type(columns)}"
+        assert (
+            type(columns) is list
+        ), f"Argument `columns` must be a list, not a {type(columns)}"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
         column_string = ", ".join([f"t.[{c}] = stg.[{c}]" for c in columns])
