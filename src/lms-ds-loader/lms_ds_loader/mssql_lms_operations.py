@@ -11,15 +11,27 @@ import sqlalchemy as sal
 
 @dataclass
 class MssqlLmsOperations:
+    """
+    An adapter providing Microsoft SQL Server operations for management and use
+    of LMS staging and production tables.
+
+    Parameters
+    ----------
+    connection_string: str
+        Fully-formatted database connection string
+    """
+
     connection_string: str
 
     def __post_init__(self):
         self.engine = None
 
     def _get_sql_engine(self):
+        """This is a wrapper function that will not be unit tested."""
+
         assert (
             type(self.connection_string) is str
-        ), "Variable `connection_string` must ba string"
+        ), "Variable `connection_string` must be a string"
         assert (
             self.connection_string.strip() != ""
         ), "Variable `connection_string` cannot be whitespace"
@@ -39,6 +51,15 @@ class MssqlLmsOperations:
             connection.execute(statement)
 
     def truncate_staging_table(self, table):
+        """
+        Executes a truncate command on the staging version of a table.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to truncate, not including the `stg_` prefix
+        """
+
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
@@ -46,6 +67,16 @@ class MssqlLmsOperations:
         self._exec(f"truncate table lms.[stg_{table}];")
 
     def disable_staging_natural_key_index(self, table):
+        """
+        Disables the natural key index on the staging table, for optimizing
+        inserts.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to truncate, not including the `stg_` prefix
+        """
+
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
@@ -54,6 +85,15 @@ class MssqlLmsOperations:
         )
 
     def enable_staging_natural_key_index(self, table):
+        """
+        Re-builds the natural key index on the staging table.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to truncate, not including the `stg_` prefix
+        """
+
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
@@ -62,6 +102,17 @@ class MssqlLmsOperations:
         )
 
     def insert_into_staging(self, df, table):
+        """
+        Inserts all records from a DataFrame into the staging table.
+
+        Parameters
+        ----------
+        df: DataFrame
+            A Pandas dataframe with column names that match the destination table
+        table: str
+            Name of the table to truncate, not including the `stg_` prefix
+        """
+
         assert isinstance(df, pd.DataFrame), "Argument `df` must be a DataFrame"
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
@@ -76,6 +127,17 @@ class MssqlLmsOperations:
         )
 
     def insert_new_records_to_production(self, table, columns):
+        """
+        Copies new records from the staging table to the production table.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to truncate, not including the `stg_` prefix
+        columns: List[str]
+            A list of the column names in the table
+        """
+
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert columns is not None, "Argument `columns` cannot be None"
@@ -98,6 +160,18 @@ where not exists (
         self._exec(statement)
 
     def copy_updates_to_production(self, table, columns):
+        """
+        Updates modified records in production based on the staging table, based
+        on the LastModifiedDate.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to truncate, not including the `stg_` prefix
+        columns: List[str]
+            A list of the column names in the table
+        """
+
         assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert (
