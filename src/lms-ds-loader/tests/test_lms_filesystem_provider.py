@@ -14,16 +14,10 @@ class Test_LmsFilesystemProvider:
         def test_given_invalid_file_path_then_raise_error(self, mocker):
             csv_path = "does-not-exist"
 
-    class Test_when_getting_all_files:
-        def test_given_invalid_file_path_then_raise_error(self, mocker):
-            csv_path = "does-not-exist"
-
             mocker.patch.object(os.path, "exists", return_value=False)
 
-        def test_given_valid_path_does_not_contain_user_directory_then_do_nothing(
-            self, fs
-        ):
-            csv_path = "exists"
+            with pytest.raises(OSError):
+                LmsFilesystemProvider(csv_path).get_all_files()
 
         def test_given_valid_path_does_not_contain_user_directory_then_do_nothing(
             self, fs
@@ -36,10 +30,8 @@ class Test_LmsFilesystemProvider:
             # Act
             fs = LmsFilesystemProvider(csv_path).get_all_files()
 
-        def test_given_valid_path_contains_empty_user_directory_then_do_nothing(
-            self, fs
-        ):
-            csv_path = "exists"
+            # Assert
+            assert len(fs.Users) == 0
 
         def test_given_valid_path_contains_empty_user_directory_then_do_nothing(
             self, fs
@@ -53,9 +45,8 @@ class Test_LmsFilesystemProvider:
             # Act
             fs = LmsFilesystemProvider(csv_path).get_all_files()
 
-        def test_given_valid_path_contains_user_files_then_load_their_file_paths(
-            self, fs
-        ):
+            # Assert
+            assert len(fs.Users) == 0
 
         def test_given_valid_path_contains_user_files_then_load_their_file_paths(
             self, fs
