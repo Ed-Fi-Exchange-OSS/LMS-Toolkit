@@ -12,9 +12,9 @@ call `python main.py -h` for a detailed listing of command arguments.
 
 import sys
 
-from argparser import parse_arguments
-from lms_filesystem_provider import LmsFilesystemProvider
-from file_processor import FileProcessor
+from lms_ds_loader.argparser import parse_arguments
+from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
+from lms_ds_loader.file_processor import FileProcessor
 
 
 def main():

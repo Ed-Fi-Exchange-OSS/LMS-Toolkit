@@ -39,10 +39,10 @@ class FileProcessor:
 
         assert (
             isinstance(self.file_system, LmsFilesystemProvider)
-        ), "Property `file_system` must be a `LmsFilesystemProvider`."
+        ), "Property `file_system` must be a `LmsFilesystemProvider`"
         assert (
             isinstance(self.db_operations_adapter, MssqlLmsOperations)
-        ), "Property `db_operations_adapter` must be a `MssqlLmsOperations`."
+        ), "Property `db_operations_adapter` must be a `MssqlLmsOperations`"
 
         csv_to_sql = CsvToSql(self.db_operations_adapter)
 

@@ -39,13 +39,13 @@ class CsvToSql:
         table : str
             Name of the destination table, assumed to be in an "lms" schema.
         """
-        assert file is not None, "Argument `file` cannot be None"
+        assert type(file) is str, "Argument `file` cannot be None"
         if not os.path.exists(file):
             raise OSError(f"Path {file} does not exist.")
 
-        assert table is not None, "Argument `table` cannot be None"
+        assert type(table) is str, "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
-        assert type(columns) is list, "Argument `columns` should be a list"
+        assert type(columns) is list, "Argument `columns` must be a list"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
         df = pd.read_csv(file)
