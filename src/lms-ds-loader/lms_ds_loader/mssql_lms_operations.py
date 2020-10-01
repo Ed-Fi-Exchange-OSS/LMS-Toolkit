@@ -4,9 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from dataclasses import dataclass
+import logging
 
 import pandas as pd
 import sqlalchemy as sal
+from sqlalchemy.orm import sessionmaker
 
 
 @dataclass
@@ -41,14 +43,19 @@ class MssqlLmsOperations:
 
         return self.engine
 
-    def _exec(self, statement):
+    def _exec(self, statement) -> int:
         """This is a wrapper function that will not be unit tested."""
 
         assert isinstance(statement, str), "Argument `statement` must be a string"
         assert statement.strip() != "", "Argument `statement` cannot be whitespace"
 
-        with self._get_sql_engine().connect() as connection:
-            connection.execute(statement)
+        Session = sessionmaker(bind=self._get_sql_engine())
+        session = Session()
+        result = session.execute(statement)
+        session.commit()
+        session.close()
+
+        return result.rowcount
 
     def truncate_staging_table(self, table):
         """
@@ -193,4 +200,28 @@ and t.lastmodifieddate <> stg.lastmodifieddate
         self._exec(statement)
 
     def soft_delete_from_production(self, table):
-        pass
+        """
+        Updates production records that do not have a match in the staging table
+        by setting their `deletedat` value to the current timestamp.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to truncate, not including the `stg_`
+        """
+
+        assert isinstance(table, str), "Argument `table` must be a string"
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+
+        statement = f"""
+update t set t.deletedat = getdate()
+from lms.[{table}] as t
+where not exists (
+select 1 from lms.stg_{table} as stg
+where t.sourcesystemidentifier = stg.sourcesystemidentifier
+and t.sourcesystem = stg.sourcesystem
+) and deletedat is null
+""".strip()
+
+        rowcount = self._exec(statement)
+        logging.info(f"Deleted {rowcount} records from table `{table}`")
