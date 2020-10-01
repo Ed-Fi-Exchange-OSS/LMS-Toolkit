@@ -20,7 +20,6 @@ def default_request_client():
 
 class TestRequestClient:
 
-
     class Test_when_constructing:
         def test_given_not_passing_in_a_url_then_use_the_default_url(self):
             request_client = RequestClient(fake_key, fake_secret)
@@ -38,59 +37,6 @@ class TestRequestClient:
             # Assert
             assert request_client.base_url == custom_url
 
-
-    class Test_when_building_request_header:
-        def test_then_consumer_key_is_present(self, default_request_client):
-            assert self._present_in_header(
-                default_request_client._request_header,
-                header_key="Authorization",
-                contained_value=fake_key
-            )
-
-        def test_then_oauth_word_is_present(self, default_request_client):
-            assert self._present_in_header(
-                default_request_client._request_header,
-                header_key="Authorization",
-                contained_value="OAuth"
-            )
-
-        def _present_in_header(self, request_header, header_key, contained_value):
-            header_section = request_header[header_key]
-            return header_section.find(contained_value) != -1
-
-
-    class Test_when_get_method_is_called:
-        def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):
-            with pytest.raises(AssertionError):
-                default_request_client._get(None)
-
-        def test_then_oauth_base_get_method_is_called(self, mocker, default_request_client):
-
-            # Arrange
-            mock_oauth_client = mocker.Mock()
-            default_request_client.oauth = mock_oauth_client
-
-            # Act
-            default_request_client._get(fake_endpoint_url)
-
-            # Assert
-            mock_oauth_client.get.assert_called_once()
-
-        def test_then_right_url_is_passed(self, mocker, default_request_client):
-
-            # Arrange
-            expected_url = default_url+fake_endpoint_url
-            mock_oauth_client = mocker.Mock()
-            default_request_client.oauth = mock_oauth_client
-
-            # Act
-            default_request_client._get(fake_endpoint_url)
-
-            # Assert
-            request_url = mock_oauth_client.get.call_args.kwargs['url']
-            assert expected_url in request_url
-
-
     class Test_when_get_assignments_by_section_ids_method_is_called:
         def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):
             with pytest.raises(AssertionError):
@@ -100,7 +46,7 @@ class TestRequestClient:
 
             # Arrange
             array_of_ids = ['1', '2', '3', '4']
-            mock_oauth_client = mocker.MagicMock(return_value= { "assignment": "test_assignment" })
+            mock_oauth_client = mocker.MagicMock(return_value={"assignment": "test_assignment"})
             default_request_client.oauth = mock_oauth_client
 
             # Act
@@ -113,7 +59,8 @@ class TestRequestClient:
 
             # Arrange
             array_of_ids = ['1', '2', '3', '4']
-            fake_list_of_assignments = [{"assignment": "test"}, {"assignment": "test"}, {"assignment": "test"}]
+            fake_list_of_assignments = [{"assignment": "test"},
+                                        {"assignment": "test"}, {"assignment": "test"}]
             mock_oauth_client = mocker.Mock()
             response_json = mocker.MagicMock()
             response_json.json = mocker.MagicMock(return_value={"assignment": fake_list_of_assignments})
@@ -130,7 +77,7 @@ class TestRequestClient:
 
             # Arrange
             array_of_ids = []
-            mock_oauth_client = mocker.MagicMock(return_value= { "assignment": "test_assignment" })
+            mock_oauth_client = mocker.MagicMock(return_value={"assignment": "test_assignment"})
             default_request_client.oauth = mock_oauth_client
 
             # Act
@@ -143,7 +90,7 @@ class TestRequestClient:
 
             # Arrange
             array_of_ids = ['1', '2', '3', '4']
-            mock_oauth_client = mocker.MagicMock(return_value= {})
+            mock_oauth_client = mocker.MagicMock(return_value={})
             default_request_client.oauth = mock_oauth_client
 
             # Act
@@ -151,7 +98,6 @@ class TestRequestClient:
 
             # Assert
             assert (isinstance(response, list) and len(response) == 0)
-
 
     class Test_when_get_section_by_id_method_is_called:
         def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):
@@ -161,7 +107,7 @@ class TestRequestClient:
         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(self, default_request_client, mocker):
 
             # Arrange
-            mock_oauth_client = mocker.MagicMock(return_value= {})
+            mock_oauth_client = mocker.MagicMock(return_value={})
             default_request_client.oauth = mock_oauth_client
 
             # Act
@@ -169,7 +115,6 @@ class TestRequestClient:
 
             # Assert
             assert mock_oauth_client.get.call_count == 1
-
 
     class Test_when_get_submissions_by_section_id_method_is_called:
         def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):
@@ -179,7 +124,7 @@ class TestRequestClient:
         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(self, default_request_client, mocker):
 
             # Arrange
-            mock_oauth_client = mocker.MagicMock(return_value= {})
+            mock_oauth_client = mocker.MagicMock(return_value={})
             default_request_client.oauth = mock_oauth_client
 
             # Act
@@ -188,12 +133,11 @@ class TestRequestClient:
             # Assert
             assert mock_oauth_client.get.call_count == 1
 
-
     class Test_when_get_users_method_is_called:
         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(self, default_request_client, mocker):
 
             # Arrange
-            mock_oauth_client = mocker.MagicMock(return_value= {})
+            mock_oauth_client = mocker.MagicMock(return_value={})
             default_request_client.oauth = mock_oauth_client
 
             # Act
@@ -205,7 +149,7 @@ class TestRequestClient:
         def test_given_the_get_call_returns_empty_response_then_return_empty_array(self, default_request_client, mocker):
 
             # Arrange
-            mock_oauth_client = mocker.MagicMock(return_value= {})
+            mock_oauth_client = mocker.MagicMock(return_value={})
             default_request_client.oauth = mock_oauth_client
 
             # Act
@@ -220,8 +164,8 @@ class TestRequestClient:
             fake_list_of_users = [{"test": "test"}, {"test": "test"}, {"test": "test"}]
             mock_oauth_client = mocker.Mock()
             response_json = mocker.Mock()
-            response_json.json = mocker.MagicMock(return_value= { "user": fake_list_of_users})
-            mock_oauth_client.get = mocker.MagicMock(return_value= response_json)
+            response_json.json = mocker.MagicMock(return_value={"user": fake_list_of_users})
+            mock_oauth_client.get = mocker.MagicMock(return_value=response_json)
             default_request_client.oauth = mock_oauth_client
 
             # Act
