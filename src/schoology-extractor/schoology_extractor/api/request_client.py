@@ -82,7 +82,7 @@ class RequestClient(RequestClientBase):
             section_id (list): The id of the section
 
         Returns:
-            dict: A parsed response from the server
+            PaginatedResult: A parsed response from the server
         """
         assert section_id is not None
 
@@ -100,7 +100,7 @@ class RequestClient(RequestClientBase):
         Gets all the users from the Schoology API
 
         Returns:
-            ApiResponse: An object that wraps the request's response
+            PaginatedResult: An object that wraps the request's response
         """
         url = f'users?start=0&limit={page_size}'
 
