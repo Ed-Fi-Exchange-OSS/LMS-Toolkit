@@ -12,7 +12,7 @@ class Constants:
         POSTGRESQL = "postgresql"
 
     class Table:
-        USER = "User"
+        USER = "LMSUser"
 
     class Columns:
         USER = [

@@ -19,7 +19,14 @@ Limitations as of September 23, 2020:
    poetry install
    ```
 
-1. Run the two SQL scripts in `src/lms-ds-installer/mssql` in a database.
+1. Run the two SQL scripts in `src/lms-ds-installer/mssql` in a SQL Server
+   database.
+1. The database account used when running the tool needs to be a member of the
+   following roles in the destination database:
+
+   * db_datareader
+   * db_datawriter
+   * db_ddladmin
 
 ## Running the Tool
 

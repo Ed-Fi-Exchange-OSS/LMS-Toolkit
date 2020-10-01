@@ -1,5 +1,5 @@
-CREATE TABLE lms.[User] (
-    Identifier INT NOT NULL IDENTITY,
+CREATE TABLE lms.LMSUser (
+    LMSUserIdentifier INT NOT NULL IDENTITY,
     SourceSystemIdentifier VARCHAR(50) NOT NULL,
     SourceSystem VARCHAR(50) NOT NULL,
     UserRole VARCHAR(50) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE lms.[User] (
     LastModifiedDate DATETIME2 NOT NULL CONSTRAINT DF_User_LastModifiedDate DEFAULT (getdate()),
     DeletedAt DATETIME2,
     CONSTRAINT PK_User PRIMARY KEY CLUSTERED (
-        Identifier ASC
+        LMSUserIdentifier ASC
     ) WITH(
         PAD_INDEX = OFF,
         STATISTICS_NORECOMPUTE = OFF,
@@ -26,7 +26,7 @@ CREATE TABLE lms.[User] (
     )
 ) ON [PRIMARY];
 
-CREATE TABLE lms.[stg_User] (
+CREATE TABLE lms.stg_LMSUser (
     StagingId INT NOT NULL IDENTITY,
     SourceSystemIdentifier VARCHAR(50) NOT NULL,
     SourceSystem VARCHAR(50) NOT NULL,
@@ -49,5 +49,5 @@ CREATE TABLE lms.[stg_User] (
     ) ON [PRIMARY],
 ) ON [PRIMARY];
 
-CREATE INDEX IX_stg_User_Natural_Key ON lms.[stg_user] (SourceSystemIdentifier, SourceSystem, LastModifiedDate);
+CREATE INDEX IX_stg_User_Natural_Key ON lms.stg_LMSUser (SourceSystemIdentifier, SourceSystem, LastModifiedDate);
 
