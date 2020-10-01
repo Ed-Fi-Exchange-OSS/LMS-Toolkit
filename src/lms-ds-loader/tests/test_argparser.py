@@ -349,4 +349,21 @@ class Test_parse_arguments:
         # suite - test only enough here to prove the point
         assert self.PASSWORD in parsed.connection_string
 
+    def test_when_verbose_flag_provided_then_set_verbose_true(self, capsys):
+        args = [
+            *self.path_args(),
+            *self.server_args(),
+            *self.db_name_args(),
+            *self.integrated_security_arg(),
+            *self.engine_args(Constants.DbEngine.MSSQL),
+            "--verbose"
+        ]
+
+        parsed = parse_arguments(args)
+
+        self.assert_no_messages(capsys)
+
+        assert parsed is not None, "No arguments detected"
+        assert parsed.verbose, "verbose not set"
+
     # NOT TESTING POSTGRESQL UNTIL STORY REQUIRES POSTGRESQL

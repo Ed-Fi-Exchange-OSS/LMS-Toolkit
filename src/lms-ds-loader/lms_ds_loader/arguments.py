@@ -25,6 +25,9 @@ class Arguments:
     csv_path: str
     engine: str
 
+    def __post_init__(self):
+        self.verbose = False
+
     @staticmethod
     def _get_mssql_port(port):
         if not port:
