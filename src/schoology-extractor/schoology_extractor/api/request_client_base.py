@@ -14,7 +14,8 @@ DEFAULT_URL = "https://api.schoology.com/v1/"
 
 class RequestClientBase:
     """
-    The RequestClientBase class wraps all the configuration complexity related to authentication and http requests for Schoology API
+    The RequestClientBase class wraps all the configuration complexity related
+    to authentication and http requests for Schoology API
 
     Args:
         schoology_key (str): The consumer key given by Schoology
@@ -23,7 +24,7 @@ class RequestClientBase:
 
     Attributes:
         oauth (OAuth1Session): The two-legged authenticated OAuth1 session
-"""
+    """
 
     def __init__(
         self,
@@ -66,9 +67,9 @@ class RequestClientBase:
             "Content-Type": "application/json",
         }
 
-    def _get(self, url: str) -> dict:
+    def get(self, url: str) -> dict:
         """
-        Internal method to create requests and parse responses
+        Send an HTTP GET request.
 
         Args:
             url (string): The endpoint that you want to request

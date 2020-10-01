@@ -18,7 +18,7 @@ def default_request_client():
     return RequestClientBase(fake_key, fake_secret)
 
 
-class TestRequestClient:
+class TestRequestClientBase:
 
     class Test_when_constructing:
         def test_given_not_passing_in_a_url_then_use_the_default_url(self):
@@ -36,6 +36,11 @@ class TestRequestClient:
 
             # Assert
             assert request_client.base_url == custom_url
+
+        def test_given_None_as_parameters_then_assert_should_fail(self):
+            # Assert
+            with pytest.raises(AssertionError):
+                RequestClientBase(None, None)
 
     class Test_when_building_request_header:
         def test_then_consumer_key_is_present(self, default_request_client):
@@ -59,7 +64,7 @@ class TestRequestClient:
     class Test_when_get_method_is_called:
         def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):
             with pytest.raises(AssertionError):
-                default_request_client._get(None)
+                default_request_client.get(None)
 
         def test_then_oauth_base_get_method_is_called(self, mocker, default_request_client):
 
@@ -68,7 +73,7 @@ class TestRequestClient:
             default_request_client.oauth = mock_oauth_client
 
             # Act
-            default_request_client._get(fake_endpoint_url)
+            default_request_client.get(fake_endpoint_url)
 
             # Assert
             mock_oauth_client.get.assert_called_once()
@@ -81,7 +86,7 @@ class TestRequestClient:
             default_request_client.oauth = mock_oauth_client
 
             # Act
-            default_request_client._get(fake_endpoint_url)
+            default_request_client.get(fake_endpoint_url)
 
             # Assert
             request_url = mock_oauth_client.get.call_args.kwargs['url']
