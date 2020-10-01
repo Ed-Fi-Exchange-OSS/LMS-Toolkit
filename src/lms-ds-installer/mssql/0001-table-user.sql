@@ -49,5 +49,5 @@ CREATE TABLE lms.stg_LMSUser (
     ) ON [PRIMARY],
 ) ON [PRIMARY];
 
-CREATE INDEX IX_stg_User_Natural_Key ON lms.stg_LMSUser (SourceSystemIdentifier, SourceSystem, LastModifiedDate);
+CREATE INDEX IX_stg_LMSUser_Natural_Key ON lms.[stg_lmsuser] (SourceSystemIdentifier, SourceSystem, LastModifiedDate);
 
