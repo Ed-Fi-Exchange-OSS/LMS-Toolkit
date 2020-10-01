@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from .request_client_base import RequestClientBase
-from .api_response import ApiResponse
+from .paginated_result import PaginatedResult
 
 
 DEFAULT_URL = "https://api.schoology.com/v1/"
@@ -12,7 +12,8 @@ DEFAULT_URL = "https://api.schoology.com/v1/"
 
 class RequestClient(RequestClientBase):
     """
-    The RequestClient class wraps all the configuration complexity related to authentication and http requests for Schoology API
+    The RequestClient class wraps all the configuration complexity related to authentication
+    and http requests for Schoology API
 
     Args:
         schoology_key (str): The consumer key given by Schoology
@@ -21,7 +22,7 @@ class RequestClient(RequestClientBase):
 
     Attributes:
         oauth (OAuth1Session): The two-legged authenticated OAuth1 session
-"""
+    """
 
     def __init__(
         self,
@@ -48,9 +49,17 @@ class RequestClient(RequestClientBase):
         assignments = []
         for section_id in section_ids:
             url = f"sections/{section_id}/assignments"
-            response = self._get(url)
-            if "assignment" in response:
-                assignments = assignments + response["assignment"]
+            assignments_per_section = PaginatedResult(
+                self,
+                20,
+                self.get(url),
+                "assignment",
+                self.base_url + url
+            )
+            while True:
+                assignments = assignments + assignments_per_section.current_page_items
+                if assignments_per_section.get_next_page() is None:
+                    break
 
         return assignments
 
@@ -64,10 +73,10 @@ class RequestClient(RequestClientBase):
         """
         assert section_id is not None
 
-        response = self._get(f"sections/{section_id}")
+        response = self.get(f"sections/{section_id}")
         return response
 
-    def get_submissions_by_section_id(self, section_id: str, page_size: int = 20) -> dict:
+    def get_submissions_by_section_id(self, section_id: str, page_size: int = 20) -> PaginatedResult:
         """
         Args:
             section_id (list): The id of the section
@@ -78,15 +87,15 @@ class RequestClient(RequestClientBase):
         assert section_id is not None
 
         url = f"sections/{section_id}/submissions"
-        return ApiResponse(
+        return PaginatedResult(
             self,
             page_size,
-            self._get(url),
+            self.get(url),
             "user",
             self.base_url + url
         )
 
-    def get_users(self, page_size: int = 20) -> ApiResponse:
+    def get_users(self, page_size: int = 20) -> PaginatedResult:
         """
         Gets all the users from the Schoology API
 
@@ -95,10 +104,10 @@ class RequestClient(RequestClientBase):
         """
         url = f'users?start=0&limit={page_size}'
 
-        return ApiResponse(
+        return PaginatedResult(
             self,
             page_size,
-            self._get(url),
+            self.get(url),
             "user",
             self.base_url + url
         )

@@ -21,12 +21,18 @@ request_client = RequestClient(schoology_key, schoology_secret)
 
 
 # export users
-export_data.to_csv(request_client.get_users(), f"{schoology_output_path}/users.csv")
+users_response = request_client.get_users()
+users_list = []
+while True:
+    users_list = users_list + users_response.current_page_items
+    if users_response.get_next_page() is None:
+        break
+
+export_data.to_csv(users_list, f"{schoology_output_path}/users.csv")
 
 
 # export sections
-sections_list = list()
-
+sections_list = []
 for section_id in sections_id_array:
     sections_list.append(request_client.get_section_by_id(section_id))
 
@@ -40,9 +46,14 @@ export_data.to_csv(request_client.get_assignments_by_section_ids(sections_id_arr
 
 
 # export submissions
-submissions_list = list()
+submissions_list = []
+
 for section_id in sections_id_array:
-    submissions_list.append(request_client.get_submissions_by_section_id(section_id))
+    submissions_response = request_client.get_submissions_by_section_id(section_id)
+    while True:
+        submissions_list = submissions_list + submissions_response.current_page_items
+        if submissions_response.get_next_page() is None:
+            break
 
 export_data.to_csv(submissions_list,
                    f"{schoology_output_path}/submissions.csv")
