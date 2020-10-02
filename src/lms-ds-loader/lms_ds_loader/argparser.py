@@ -57,9 +57,12 @@ def parse_arguments(args_in) -> Arguments:
         "-p", "--password", required=user_name_required, env_var="MSSQL_PASSWORD"
     )
 
+    parser.add("-v", "--verbose", help="Enable verbose logging", action="store_true")
+
     args_parsed = parser.parse_args(args_in)
 
     arguments = Arguments(args_parsed.csvpath, args_parsed.engine)
+    arguments.verbose = args_parsed.verbose
 
     if args_parsed.useintegratedsecurity:
         arguments.set_connection_string_using_integrated_security(

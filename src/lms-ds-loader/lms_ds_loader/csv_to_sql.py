@@ -57,5 +57,6 @@ class CsvToSql:
 
         adapter.insert_new_records_to_production(table, columns)
         adapter.copy_updates_to_production(table, columns)
+        adapter.soft_delete_from_production(table)
 
         adapter.enable_staging_natural_key_index(table)
