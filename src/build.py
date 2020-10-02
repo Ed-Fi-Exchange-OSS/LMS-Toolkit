@@ -51,7 +51,8 @@ def _run_install():
 
 def _run_tests():
     _run_command([
-        "poetry"
+        "poetry",
+        "run",
         "pytest"
     ])
 
