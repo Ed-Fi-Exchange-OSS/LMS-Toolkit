@@ -22,6 +22,11 @@ the `.env` file has the key and secret values already configured).
 -   `SCHOOLOGY_OUTPUT_PATH=<output directory>`
 -   `SCHOOLOGY_SECTION_IDS=<csv list of sections' ids>`
 
+(!) Note for MSDF/Ed-Fi users: if you have setup environment variable
+`REQUESTS_CA_BUNDLE` to support poetry installs, you actually need to disable it
+before running this program. You can do this by setting `REQUESTS_CA_BUNDLE=`
+(nothing) in your `.env` file.
+
 ## Execution
 
 ```bash
