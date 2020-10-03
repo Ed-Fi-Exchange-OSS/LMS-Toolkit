@@ -3,17 +3,21 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from .request_client_base import RequestClientBase
+import time
+import random
+
+from requests_oauthlib import OAuth1Session
+
 from .paginated_result import PaginatedResult
 
 
 DEFAULT_URL = "https://api.schoology.com/v1/"
 
 
-class RequestClient(RequestClientBase):
+class RequestClient:
     """
-    The RequestClient class wraps all the configuration complexity related to authentication
-    and http requests for Schoology API
+    The RequestClient class wraps all the configuration complexity related
+    to authentication and http requests for Schoology API
 
     Args:
         schoology_key (str): The consumer key given by Schoology
@@ -25,18 +29,67 @@ class RequestClient(RequestClientBase):
     """
 
     def __init__(
-        self,
-        schoology_key: str,
-        schoology_secret: str,
-        base_url: str = DEFAULT_URL
+        self, schoology_key: str, schoology_secret: str, base_url: str = DEFAULT_URL
     ):
         assert schoology_key is not None
         assert schoology_secret is not None
         assert base_url is not None
 
-        super().__init__(schoology_key, schoology_secret, base_url)
+        self.oauth = OAuth1Session(schoology_key, schoology_secret)
+        self.base_url = base_url
+        self.consumer_key = schoology_key
+        self.consumer_secret = schoology_secret
 
-    def get_assignments_by_section_ids(self, section_ids: list) -> dict:
+    @property
+    def _request_header(self) -> dict:
+        """
+        The _request_header property helps to build the Request Header for oauth requests
+
+        Returns:
+            dict: Request headers
+        """
+        auth_header = (
+            'OAuth realm="Schoology API",',
+            f'oauth_consumer_key="{self.consumer_key}",',
+            'oauth_token="",',
+            f'oauth_nonce="{"".join( [str(random.randint(0, 9)) for i in range(8)] )}",',
+            f'oauth_timestamp="{time.time()}",',
+            'oauth_signature_method="PLAINTEXT",',
+            'oauth_version="1.0",',
+            'oauth_signature="%s%%26%s"'
+            % (
+                self.consumer_secret,
+                "",
+            ),
+        )
+
+        return {
+            "Authorization": "".join(auth_header),
+            "Accept": "application/json",
+            "Host": "api.schoology.com",
+            "Content-Type": "application/json",
+        }
+
+    def get(self, url: str) -> dict:
+        """
+        Send an HTTP GET request.
+
+        Args:
+            url (string): The endpoint that you want to request
+
+        Returns:
+            dict: A parsed response from the server
+        """
+        assert url is not None
+
+        response = self.oauth.get(
+            url=self.base_url + url,
+            headers=self._request_header,
+            auth=self.oauth.auth,
+        )
+        return response.json()
+
+    def get_assignments_by_section_ids(self, section_ids: list) -> list:
         """
         Args:
             section_ids (list): A list of section ids
@@ -50,11 +103,7 @@ class RequestClient(RequestClientBase):
         for section_id in section_ids:
             url = f"sections/{section_id}/assignments"
             assignments_per_section = PaginatedResult(
-                self,
-                20,
-                self.get(url),
-                "assignment",
-                self.base_url + url
+                self, 20, self.get(url), "assignment", self.base_url + url
             )
             while True:
                 assignments = assignments + assignments_per_section.current_page_items
@@ -76,7 +125,9 @@ class RequestClient(RequestClientBase):
         response = self.get(f"sections/{section_id}")
         return response
 
-    def get_submissions_by_section_id(self, section_id: str, page_size: int = 20) -> PaginatedResult:
+    def get_submissions_by_section_id(
+        self, section_id: str, page_size: int = 20
+    ) -> PaginatedResult:
         """
         Args:
             section_id (list): The id of the section
@@ -88,11 +139,7 @@ class RequestClient(RequestClientBase):
 
         url = f"sections/{section_id}/submissions"
         return PaginatedResult(
-            self,
-            page_size,
-            self.get(url),
-            "user",
-            self.base_url + url
+            self, page_size, self.get(url), "user", self.base_url + url
         )
 
     def get_users(self, page_size: int = 20) -> PaginatedResult:
@@ -102,12 +149,8 @@ class RequestClient(RequestClientBase):
         Returns:
             PaginatedResult: An object that wraps the request's response
         """
-        url = f'users?start=0&limit={page_size}'
+        url = f"users?start=0&limit={page_size}"
 
         return PaginatedResult(
-            self,
-            page_size,
-            self.get(url),
-            "user",
-            self.base_url + url
+            self, page_size, self.get(url), "user", self.base_url + url
         )

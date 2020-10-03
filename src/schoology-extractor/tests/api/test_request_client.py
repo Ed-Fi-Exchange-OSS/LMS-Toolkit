@@ -41,7 +41,57 @@ class TestRequestClient:
         def test_given_None_as_parameters_then_assert_should_fail(self):
             # Assert
             with pytest.raises(AssertionError):
-                RequestClient(None, None)
+                RequestClient(None, None)   # type: ignore
+
+    class Test_when_building_request_header:
+        def test_then_consumer_key_is_present(self, default_request_client):
+            assert self._present_in_header(
+                default_request_client._request_header,
+                header_key="Authorization",
+                contained_value=fake_key
+            )
+
+        def test_then_oauth_word_is_present(self, default_request_client):
+            assert self._present_in_header(
+                default_request_client._request_header,
+                header_key="Authorization",
+                contained_value="OAuth"
+            )
+
+        def _present_in_header(self, request_header, header_key, contained_value):
+            header_section = request_header[header_key]
+            return header_section.find(contained_value) != -1
+
+    class Test_when_get_method_is_called:
+        def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):
+            with pytest.raises(AssertionError):
+                default_request_client.get(None)
+
+        def test_then_oauth_base_get_method_is_called(self, mocker, default_request_client):
+
+            # Arrange
+            mock_oauth_client = mocker.Mock()
+            default_request_client.oauth = mock_oauth_client
+
+            # Act
+            default_request_client.get(fake_endpoint_url)
+
+            # Assert
+            mock_oauth_client.get.assert_called_once()
+
+        def test_then_right_url_is_passed(self, mocker, default_request_client):
+
+            # Arrange
+            expected_url = default_url+fake_endpoint_url
+            mock_oauth_client = mocker.Mock()
+            default_request_client.oauth = mock_oauth_client
+
+            # Act
+            default_request_client.get(fake_endpoint_url)
+
+            # Assert
+            request_url = mock_oauth_client.get.call_args.kwargs['url']
+            assert expected_url in request_url
 
     class Test_when_get_assignments_by_section_ids_method_is_called:
         def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):

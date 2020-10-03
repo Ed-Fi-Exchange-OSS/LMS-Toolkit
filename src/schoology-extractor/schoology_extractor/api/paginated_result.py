@@ -4,17 +4,20 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from __future__ import annotations
+from typing import Optional
+from typing import TYPE_CHECKING
 
-from .request_client_base import RequestClientBase
+if TYPE_CHECKING:
+    from .request_client import RequestClient
 
 
-class PaginatedResult():
+class PaginatedResult:
     """
     The PaginatedResult class is bound with information from the response of the Schoology
     api, specifically when it returns a list of items that could be paginated.
 
     Args:
-        request_client_base (RequestClientBase): The request client.
+        request_client (RequestClient): The request client.
         page_size (int): The number of items per page.
         api_response (dict): The original response as a dictionary.
         resource_name (str): The name used by the Schoology API for the current resource.
@@ -22,7 +25,7 @@ class PaginatedResult():
         current_page(int, optional=1): The page that you have requested
 
     Attributes:
-        request_client (RequestClientBase): The request client.
+        request_client (RequestClient): The request client.
         page_size (int): The number of items per page.
         requested_url(str): The URL where you got the response from.
         current_page_items(list): The list of items for the current page.
@@ -33,32 +36,21 @@ class PaginatedResult():
 
     def __init__(
         self,
-        request_client_base: RequestClientBase,
+        request_client: "RequestClient",
         page_size: int,
         api_response: dict,
         resource_name: str,
         requested_url: str,
-        current_page: int = 1
+        current_page: int = 1,
     ):
-        assert request_client_base is not None
-        assert isinstance(request_client_base, RequestClientBase)
-
-        assert page_size is not None
+        assert hasattr(request_client, "get")
         assert isinstance(page_size, int)
-
-        assert api_response is not None
         assert isinstance(api_response, dict)
-
-        assert resource_name is not None
         assert isinstance(resource_name, str)
-
-        assert requested_url is not None
         assert isinstance(requested_url, str)
-
-        assert current_page is not None
         assert isinstance(current_page, int)
 
-        self.request_client = request_client_base
+        self.request_client = request_client
         self.page_size = page_size
         self.requested_url = requested_url
         self.current_page = current_page
@@ -83,13 +75,12 @@ class PaginatedResult():
             return 0
         return int(self._api_response["total"])
 
-    def get_next_page(self) -> PaginatedResult:
+    def get_next_page(self) -> Optional[PaginatedResult]:
         """
         Send an HTTP GET request for the next page.
 
         Returns:
-            PaginatedResult: If there are more pages.
-            None: If there are not more pages.
+            Optional[PaginatedResult]: If there are more pages.
         """
         if "links" not in self._api_response:
             return None
@@ -105,7 +96,7 @@ class PaginatedResult():
         self.requested_url = next_url
         self.current_page = self.current_page + 1
         self._api_response = response
-        if(self._resource_name in self._api_response):
+        if self._resource_name in self._api_response:
             self.current_page_items = self._api_response[self._resource_name]
         else:
             self.current_page_items = []

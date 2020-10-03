@@ -6,7 +6,7 @@
 import pytest
 
 from schoology_extractor.api.paginated_result import PaginatedResult
-from schoology_extractor.api.request_client_base import RequestClientBase
+from schoology_extractor.api.request_client import RequestClient
 
 fake_key = 'TEST_KEY'
 fake_secret = 'TEST_SECRET'
@@ -23,7 +23,7 @@ fake_api_response = {
 
 @pytest.fixture
 def default_request_client(mocker):
-    request_client = RequestClientBase(fake_key, fake_secret)
+    request_client = RequestClient(fake_key, fake_secret)
     request_client.get = mocker.MagicMock()
     return request_client
 
@@ -31,7 +31,7 @@ def default_request_client(mocker):
 @pytest.fixture
 def default_paginated_result(default_request_client, mocker):
     return PaginatedResult(
-        request_client_base=default_request_client,
+        request_client=default_request_client,
         page_size=20,
         api_response=fake_api_response,
         resource_name=fake_resource_name,
@@ -44,13 +44,13 @@ class TestPaginatedResult:
 
             # Assert
             with pytest.raises(AssertionError):
-                PaginatedResult(None, None, None, None, None)
+                PaginatedResult(None, None, None, None, None)   # type: ignore
 
         def test_given_wrong_types_in_parameters_shoud_throw_assertException(self):
 
             # Assert
             with pytest.raises(AssertionError):
-                PaginatedResult(0, 1, 'None', [], '')
+                PaginatedResult(0, 1, 'None', [], '')   # type: ignore
 
         def test_given_correct_params_then_set_correct_properties(self, default_paginated_result):
 
