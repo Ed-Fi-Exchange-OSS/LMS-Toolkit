@@ -15,9 +15,9 @@ from googleapiclient.discovery import Resource
 from .api_caller import call_api
 
 
-def request_usage(resource: Optional[Resource], date: datetime) -> List[Dict[str, str]]:
+def request_usage(resource: Optional[Resource], date: str) -> List[Dict[str, str]]:
     assert isinstance(resource, Resource) or resource is None
-    assert isinstance(date, datetime)
+    assert isinstance(date, str)
 
     if resource is None:
         return []
@@ -73,10 +73,11 @@ def request_latest_usage_as_df(
     assert isinstance(start, datetime)
     assert isinstance(end, datetime)
 
+    logging.info("Pulling usage data")
+
     if end < start:
         logging.warning("Usage data end time is before start time.")
 
-    logging.info("Pulling usage data")
     reports = []
     for date in pd.date_range(start=start, end=end):
         reports.extend(request_usage(resource, date.strftime("%Y-%m-%d")))

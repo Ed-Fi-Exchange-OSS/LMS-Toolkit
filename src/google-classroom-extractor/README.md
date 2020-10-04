@@ -123,3 +123,9 @@ Then:
 1. .ipynb Jupiter Notebook files can be opened directly in
 Visual Studio Code.
 
+## Dev Operations
+
+1. Style check: `poetry run flake8`
+1. Run unit tests: `poetry run pytest`
+1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
+1. View code coverage: `poetry run coverage report`

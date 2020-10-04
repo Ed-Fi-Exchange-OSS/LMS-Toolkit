@@ -16,6 +16,27 @@ from tail_recursive import tail_recursive
     retry_window_after_first_call_in_seconds=60,
 )
 def execute(executable_resource):
+    """
+    Invoke a get/list Google Classroom SDK function,
+    retrying if there are errors.
+
+    Parameters
+    ----------
+    executable_resource: function
+        is the get/list Google Classroom SDK function to call
+
+    Returns
+    -------
+    object
+        a Google Classroom SDK response object
+
+    Raises
+    ------
+    IOError
+        if there is an IOError after retrying
+    RequestException
+        if there is a RequestException after retrying
+    """
     assert hasattr(executable_resource, "execute")
     return executable_resource.execute()
 

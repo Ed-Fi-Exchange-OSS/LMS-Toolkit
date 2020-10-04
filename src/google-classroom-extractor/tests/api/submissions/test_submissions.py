@@ -9,7 +9,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from google_classroom_extractor.api.submissions import request_all_submissions_as_df
 
-DB_FILE = "tests/submissions/test_submissions.db"
+DB_FILE = "tests/api/submissions/test_submissions.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -44,7 +44,7 @@ def test_overlap_removal(mock_latest_submissions_df):
 
     # 1st pull: 17 rows
     mock_latest_submissions_df.return_value = pd.read_csv(
-        "tests/submissions/submissions-1st.csv"
+        "tests/api/submissions/submissions-1st.csv"
     )
     first_submissions_df = request_all_submissions_as_df(
         None, DUMMY_COURSE_IDS, test_db
@@ -55,7 +55,7 @@ def test_overlap_removal(mock_latest_submissions_df):
 
     # 2nd pull: 58 rows, overlaps 7
     mock_latest_submissions_df.return_value = pd.read_csv(
-        "tests/submissions/submissions-2nd-overlaps-1st.csv"
+        "tests/api/submissions/submissions-2nd-overlaps-1st.csv"
     )
     second_submissions_df = request_all_submissions_as_df(
         None, DUMMY_COURSE_IDS, test_db
@@ -66,7 +66,7 @@ def test_overlap_removal(mock_latest_submissions_df):
 
     # 3rd pull: 98 rows, overlaps 43
     mock_latest_submissions_df.return_value = pd.read_csv(
-        "tests/submissions/submissions-3rd-overlaps-1st-and-2nd.csv"
+        "tests/api/submissions/submissions-3rd-overlaps-1st-and-2nd.csv"
     )
     third_submissions_df = request_all_submissions_as_df(
         None, DUMMY_COURSE_IDS, test_db

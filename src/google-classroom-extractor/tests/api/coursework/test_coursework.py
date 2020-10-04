@@ -9,7 +9,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from google_classroom_extractor.api.coursework import request_all_coursework_as_df
 
-DB_FILE = "tests/coursework/test_coursework.db"
+DB_FILE = "tests/api/coursework/test_coursework.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -42,7 +42,7 @@ def test_overlap_removal(mock_latest_coursework_df):
 
     # 1st pull: 17 rows, last row id is 87699559
     mock_latest_coursework_df.return_value = pd.read_csv(
-        "tests/coursework/coursework-1st.csv"
+        "tests/api/coursework/coursework-1st.csv"
     )
     first_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db)
     assert dataframe_row_count(first_coursework_df) == 17
@@ -51,7 +51,7 @@ def test_overlap_removal(mock_latest_coursework_df):
 
     # 2nd pull: 39 rows, overlaps 7, last row id is 87025291
     mock_latest_coursework_df.return_value = pd.read_csv(
-        "tests/coursework/coursework-2nd-overlaps-1st.csv"
+        "tests/api/coursework/coursework-2nd-overlaps-1st.csv"
     )
     second_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db)
     assert dataframe_row_count(second_coursework_df) == 39
@@ -60,7 +60,7 @@ def test_overlap_removal(mock_latest_coursework_df):
 
     # 3rd pull: 98 rows, overlaps 43, last row id is 15461200
     mock_latest_coursework_df.return_value = pd.read_csv(
-        "tests/coursework/coursework-3rd-overlaps-1st-and-2nd.csv"
+        "tests/api/coursework/coursework-3rd-overlaps-1st-and-2nd.csv"
     )
     third_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db)
     assert dataframe_row_count(third_coursework_df) == 98

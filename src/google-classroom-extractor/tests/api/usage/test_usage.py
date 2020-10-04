@@ -9,7 +9,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from google_classroom_extractor.api.usage import request_all_usage_as_df
 
-DB_FILE = "tests/usage/test_usage.db"
+DB_FILE = "tests/api/usage/test_usage.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -39,7 +39,7 @@ def test_overlap_removal(mock_latest_usage_df):
 
     # 1st pull: 17 rows
     mock_latest_usage_df.return_value = pd.read_csv(
-        "tests/usage/usage-1st.csv"
+        "tests/api/usage/usage-1st.csv"
     )
     first_usage_df = request_all_usage_as_df(None, test_db)
     assert dataframe_row_count(first_usage_df) == 17
@@ -48,7 +48,7 @@ def test_overlap_removal(mock_latest_usage_df):
 
     # 2nd pull: 49 rows, overlaps 7
     mock_latest_usage_df.return_value = pd.read_csv(
-        "tests/usage/usage-2nd-overlaps-1st.csv"
+        "tests/api/usage/usage-2nd-overlaps-1st.csv"
     )
     second_usage_df = request_all_usage_as_df(None, test_db)
     assert dataframe_row_count(second_usage_df) == 49
@@ -57,7 +57,7 @@ def test_overlap_removal(mock_latest_usage_df):
 
     # 3rd pull: 98 rows, overlaps 49
     mock_latest_usage_df.return_value = pd.read_csv(
-        "tests/usage/usage-3rd-overlaps-1st-and-2nd.csv"
+        "tests/api/usage/usage-3rd-overlaps-1st-and-2nd.csv"
     )
     third_usage_df = request_all_usage_as_df(None, test_db)
     assert dataframe_row_count(third_usage_df) == 98

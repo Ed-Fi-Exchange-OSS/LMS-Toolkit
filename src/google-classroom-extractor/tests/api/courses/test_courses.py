@@ -9,7 +9,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from google_classroom_extractor.api.courses import request_all_courses_as_df
 
-DB_FILE = "tests/courses/test_courses.db"
+DB_FILE = "tests/api/courses/test_courses.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -38,7 +38,7 @@ def test_overlap_removal(mock_latest_courses_df):
     test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
 
     # 1st pull: courses-1st.csv is 17 rows ending with "Julia Harding"
-    mock_latest_courses_df.return_value = pd.read_csv("tests/courses/courses-1st.csv")
+    mock_latest_courses_df.return_value = pd.read_csv("tests/api/courses/courses-1st.csv")
     first_courses_df = request_all_courses_as_df(None, test_db)
     assert dataframe_row_count(first_courses_df) == 17
     assert db_row_count(test_db) == 17
@@ -46,7 +46,7 @@ def test_overlap_removal(mock_latest_courses_df):
 
     # 2nd pull: courses-2nd-overlaps-1st is 59 rows with 5 overlapping ending with "Maurice Hatfield"
     mock_latest_courses_df.return_value = pd.read_csv(
-        "tests/courses/courses-2nd-overlaps-1st.csv"
+        "tests/api/courses/courses-2nd-overlaps-1st.csv"
     )
     second_courses_df = request_all_courses_as_df(None, test_db)
     assert dataframe_row_count(second_courses_df) == 59
@@ -55,7 +55,7 @@ def test_overlap_removal(mock_latest_courses_df):
 
     # 3rd pull: courses-3rd-overlaps-1st-and-2nd is 87 rows with 5 overlapping ending with "Troy Greene"
     mock_latest_courses_df.return_value = pd.read_csv(
-        "tests/courses/courses-3rd-overlaps-1st-and-2nd.csv"
+        "tests/api/courses/courses-3rd-overlaps-1st-and-2nd.csv"
     )
     third_courses_df = request_all_courses_as_df(None, test_db)
     assert dataframe_row_count(third_courses_df) == 87

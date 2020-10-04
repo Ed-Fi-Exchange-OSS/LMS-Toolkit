@@ -14,13 +14,29 @@ SYNC_DATABASE_LOCATION = "data/sync.sqlite"
 
 
 def _is_running_in_notebook() -> bool:
+    """
+    Determine whether code is running in a Jupyter Notebook
+
+    Returns
+    -------
+    bool
+        True if code is running in a Jupyter Notebook
+    """
     main = __import__("__main__", None, None, fromlist=["__file__"])
     return not hasattr(main, "__file__")
 
 
 def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
+    """
+    Create a SQL Alchemy Engine for a SQLite file
+
+    Returns
+    -------
+    sqlalchemy.engine.base.Engine
+        a SQL Alchemy Engine
+    """
     running_in_notebook: bool = _is_running_in_notebook()
-    logging.debug(f"Running in Jupyter Notebook: {running_in_notebook}")
+    logging.debug("Running in Jupyter Notebook: %s", running_in_notebook)
     sync_database_uri = (
         f"sqlite:///../{SYNC_DATABASE_LOCATION}"
         if running_in_notebook
@@ -30,6 +46,14 @@ def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
 
 
 def get_credentials() -> service_account.Credentials:
+    """
+    Create a Google OAuth Credentials object from a service-account.json file
+
+    Returns
+    -------
+    Credentials
+        a Google OAuth Credentials object
+    """
     scopes = [
         "https://www.googleapis.com/auth/admin.directory.orgunit",
         "https://www.googleapis.com/auth/admin.reports.usage.readonly",
