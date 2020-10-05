@@ -31,9 +31,9 @@ class RequestClient:
     def __init__(
         self, schoology_key: str, schoology_secret: str, base_url: str = DEFAULT_URL
     ):
-        assert schoology_key is not None
-        assert schoology_secret is not None
-        assert base_url is not None
+        assert isinstance(schoology_key, str), "Argument `schoology_key` should be of type `str`."
+        assert isinstance(schoology_secret, str), "Argument `schoology_secret` should be of type `str`."
+        assert isinstance(base_url, str), "Argument `base_url` should be of type `str`."
 
         self.oauth = OAuth1Session(schoology_key, schoology_secret)
         self.base_url = base_url
@@ -80,7 +80,7 @@ class RequestClient:
         Returns:
             dict: A parsed response from the server
         """
-        assert url is not None
+        assert isinstance(url, str), "Argument `url` should be of type `str`."
 
         response = self.oauth.get(
             url=self.base_url + url,
@@ -97,7 +97,7 @@ class RequestClient:
         Returns:
             dict: A parsed response from the server
         """
-        assert section_ids is not None
+        assert isinstance(section_ids, list), "Argument `section_ids` should be of type `list`."
 
         assignments = []
         for section_id in section_ids:
@@ -120,7 +120,7 @@ class RequestClient:
         Returns:
             dict: A parsed response from the server
         """
-        assert section_id is not None
+        assert isinstance(section_id, str), "Argument `section_id` should be of type `str`."
 
         response = self.get(f"sections/{section_id}")
         return response
@@ -135,7 +135,8 @@ class RequestClient:
         Returns:
             PaginatedResult: A parsed response from the server
         """
-        assert section_id is not None
+        assert isinstance(section_id, str), "Argument `section_id` should be of type `str`."
+        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
 
         url = f"sections/{section_id}/submissions"
         return PaginatedResult(
