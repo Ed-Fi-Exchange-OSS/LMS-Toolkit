@@ -25,7 +25,7 @@ class RequestClient:
         The consumer key given by Schoology.
     schoology_secret : str
         The consumer secret given by Schoology.
-    base_url : str, optional
+    base_url : Optional[str]
         The API base url. Default value: https://api.schoology.com/v1/
 
     Attributes
@@ -125,13 +125,17 @@ class RequestClient:
                 self, 20, self.get(url), "assignment", self.base_url + url
             )
             while True:
-                assignments = assignments + assignments_per_section.current_page_items
+                current_page_assignments = assignments_per_section.current_page_items
+                for assignment in current_page_assignments:
+                    assignment["section_id"] = section_id
+                assignments = assignments + current_page_assignments
+
                 if assignments_per_section.get_next_page() is None:
                     break
 
         return assignments
 
-    def get_section_by_id(self, section_id: str) -> dict:
+    def get_section_by_course_ids(self, course_ids: list) -> list:
         """
         Parameters
         ----------
@@ -144,19 +148,31 @@ class RequestClient:
             A parsed response from the server
 
         """
-        assert isinstance(section_id, str), "Argument `section_id` should be of type `str`."
+        assert isinstance(course_ids, list), "Argument `course_ids` should be of type `list`."
 
-        response = self.get(f"sections/{section_id}")
-        return response
+        sections = []
+        for course_id in course_ids:
+            url = f"courses/{course_id}/sections"
+            sections_per_course = PaginatedResult(
+                self, 20, self.get(url), "section", self.base_url + url
+            )
+            while True:
+                sections = sections + sections_per_course.current_page_items
+                if sections_per_course.get_next_page() is None:
+                    break
 
-    def get_submissions_by_section_id(
-        self, section_id: str, page_size: int = 20
+        return sections
+
+    def get_submissions_by_section_id_and_grade_item_id(
+        self, section_id: str, grade_item_id: str, page_size: int = 20
     ) -> PaginatedResult:
         """
         Parameters
         ----------
         section_id : str
             The id of the section.
+        grade_item_id : str
+            Grade item id.
         page_size : int
             Number of items per page.
 
@@ -168,13 +184,13 @@ class RequestClient:
         """
         assert isinstance(section_id, str), "Argument `section_id` should be of type `str`."
         assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
+        assert isinstance(grade_item_id, str), "Argument `grade_item_id` should be of type `str`."
 
-        url = f"sections/{section_id}/submissions?{self._build_pagination_params(page_size)}"
+        url = f"sections/{section_id}/submissions/{grade_item_id}"
 
         response = self.get(url)
-        print(response)
         return PaginatedResult(
-            self, page_size, response, "submissions", self.base_url + url
+            self, page_size, response, "revision", self.base_url + url
         )
 
     def get_users(self, page_size: int = 20) -> PaginatedResult:
@@ -183,8 +199,6 @@ class RequestClient:
 
         Parameters
         ----------
-        section_id : str
-            The id of the section.
         page_size : int
             Number of items per page.
 
@@ -198,6 +212,52 @@ class RequestClient:
 
         return PaginatedResult(
             self, page_size, self.get(url), "user", self.base_url + url
+        )
+
+    def get_grading_periods(self, page_size: int = 20) -> PaginatedResult:
+        """
+        Gets all the grading periods from the Schoology API
+
+        Parameters
+        ----------
+        section_id : str
+            The id of the section.
+        page_size : int
+            Number of items per page.
+
+        Returns
+        -------
+        PaginatedResult
+            A parsed response from the server
+
+        """
+        url = f"gradingperiods?{self._build_pagination_params(page_size)}"
+        response = self.get(url)
+
+        return PaginatedResult(
+            self, page_size, response, "gradingperiods", self.base_url + url
+        )
+
+    def get_courses(self, page_size: int = 20) -> PaginatedResult:
+        """
+        Gets all the courses from the Schoology API
+
+        Parameters
+        ----------
+        page_size : int
+            Number of items per page.
+
+        Returns
+        -------
+        PaginatedResult
+            A parsed response from the server
+
+        """
+        url = f"courses?{self._build_pagination_params(page_size)}"
+        response = self.get(url)
+
+        return PaginatedResult(
+            self, page_size, response, "course", self.base_url + url
         )
 
     def _build_pagination_params(self, page_size: int):

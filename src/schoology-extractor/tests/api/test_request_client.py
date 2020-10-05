@@ -211,3 +211,21 @@ class TestRequestClient:
 
             # Assert
             assert len(response.current_page_items) == len(fake_list_of_users)
+
+    class Test_when__build_pagination_params_method_is_called:
+        def test_given_wrong_type_in_params_then_thrown_assertion_error(self, default_request_client):
+            with pytest.raises(AssertionError):
+                default_request_client._build_pagination_params([])
+
+        def test_given_correct_parameter_then_url_is_built_correctly(self, default_request_client):
+            # Arrange
+            items_per_page = 17
+            expected_result = f'start=0&limit={items_per_page}'
+
+            # Act
+            result = default_request_client._build_pagination_params(items_per_page)
+
+            # Assert
+            assert result == expected_result
+
+

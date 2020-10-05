@@ -28,7 +28,7 @@ class PaginatedResult:
         The name used by the Schoology API for the current resource.
     requested_url : str
         The URL where you got the response from.
-    current_page : str, optional
+    current_page : Optional[str]
         The page that you have requested.
 
     Attributes
@@ -87,7 +87,7 @@ class PaginatedResult:
 
         Returns
         -------
-        PaginatedResult, optional
+        Optional[PaginatedResult]
             If there are more pages, this method will send a get request
             in order to get the elements for the next page.
 
