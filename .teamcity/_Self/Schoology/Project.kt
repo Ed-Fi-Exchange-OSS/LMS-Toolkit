@@ -8,7 +8,7 @@ package schoology
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 
 object SchoologyProject : Project({
-    RelativeId("Schoology")
+    id("EdFi_RandD_Exchange_Fizz_Schoology")
     name = "Schoology Utilities"
     description = "Python scripts for interacting with Schoology"
 
