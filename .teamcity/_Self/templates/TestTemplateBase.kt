@@ -51,7 +51,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./build.py install ../%project.directory%
+                    python ./build.py coverage:xml ../%project.directory%
                 """.trimIndent()
             }
         }
@@ -62,7 +62,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./build.py install ../%project.directory%
+                    python ./build.py typecheck:xml ../%project.directory%
                 """.trimIndent()
             }
         }
@@ -73,7 +73,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./build.py install ../%project.directory%
+                    python ./build.py lint ../%project.directory%
                 """.trimIndent()
             }
         }
