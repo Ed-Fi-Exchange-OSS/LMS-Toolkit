@@ -433,6 +433,14 @@ version = "1.15.0"
 
 [[package]]
 category = "dev"
+description = "Send test results to TeamCity continuous integration server from unittest, nose, py.test, twisted trial, behave (Python 2.6+)"
+name = "teamcity-messages"
+optional = false
+python-versions = "*"
+version = "1.28"
+
+[[package]]
+category = "dev"
 description = "Python Library for Tom's Obvious, Minimal Language"
 name = "toml"
 optional = false
@@ -485,7 +493,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "c6ace0c0b74fb4dfed3e35f08a687ccc290ac9a32083b39d8f7cfc71c153d898"
+content-hash = "310f3ae8af126817b746f1f1be658e445d4585996dbcdb3118d3f74786a0126e"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -765,6 +773,10 @@ rope = [
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
+]
+teamcity-messages = [
+    {file = "teamcity-messages-1.28.tar.gz", hash = "sha256:188feab063a52b846cfeab6b4f7ca9b64f47f22a27e5cef3ea7b93be0df1d0ca"},
+    {file = "teamcity_messages-1.28-py3-none-any.whl", hash = "sha256:58396d79b7c0d5d8c33890f1a34910ce921668ce9d9d7c4c96f0f94baaf12959"},
 ]
 toml = [
     {file = "toml-0.10.1-py2.py3-none-any.whl", hash = "sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88"},
