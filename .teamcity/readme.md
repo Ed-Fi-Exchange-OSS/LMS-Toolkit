@@ -20,6 +20,13 @@ version: `2019.2.x`):
     If pull from an organization, use that organization's name. Else use own
     GitHub user name to pull from your fork.
 
+1. If running on an Ed-Fi/MSDF computer or server, then also set one parameter
+   as an *environment* variable:
+
+    ```none
+    REQUESTS_CA_BUNDLE="c:\msdfrootca.cer"
+    ```
+
 1. Create a VCS Root:
     * Type: `Git`
     * Name: `Fizz`
