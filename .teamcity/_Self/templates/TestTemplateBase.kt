@@ -25,10 +25,11 @@ open class TestTemplateBase : Template({
         powerShell {
             name = "Install"
             formatStderrAsError = true
+            workingDir = "eng"
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./eng/build.py install %project.directory%
+                    python ./build.py install ../%project.directory%
                 """.trimIndent()
             }
         }
@@ -38,7 +39,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./src/build.py coverage:xml %project.directory%
+                    python ./build.py install ../%project.directory%
                 """.trimIndent()
             }
         }
@@ -48,7 +49,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./src/build.py typecheck:xml %project.directory%
+                    python ./build.py install ../%project.directory%
                 """.trimIndent()
             }
         }
@@ -58,7 +59,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./src/build.py lint %project.directory%
+                    python ./build.py install ../%project.directory%
                 """.trimIndent()
             }
         }
