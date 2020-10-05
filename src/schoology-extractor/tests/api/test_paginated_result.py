@@ -40,7 +40,7 @@ def default_paginated_result(default_request_client, mocker):
 
 class TestPaginatedResult:
     class Test_when_constructing:
-        def test_given_no_parameters_shoud_throw_assertException(self):
+        def test_given_no_parameters_should_throw_assertException(self):
 
             # Assert
             with pytest.raises(AssertionError):
