@@ -26,14 +26,14 @@ def _display_help():
 For example, to run unit tests with code coverage, optimized for TeamCity
 output, on utility `lms-ds-loader`:
 
-> ./build.py coverage:ci lms-ds-loader
+> ./build.py coverage:xml lms-ds-loader
 """
     print(message)
     exit(-1)
 
 
 def _run_command(command: List[str], exit_immediately: bool = True):
-    result = subprocess.run(command, cwd=sys.argv[2])
+    result = subprocess.run(command, cwd=f"../src/{sys.argv[2]}")
 
     if exit_immediately:
         exit(result.returncode)
