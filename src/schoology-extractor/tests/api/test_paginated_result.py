@@ -8,12 +8,12 @@ import pytest
 from schoology_extractor.api.paginated_result import PaginatedResult
 from schoology_extractor.api.request_client import RequestClient
 
-fake_key = 'TEST_KEY'
-fake_secret = 'TEST_SECRET'
-fake_endpoint_url = 'FAKE_URL'
-default_url = 'https://api.schoology.com/v1/'
-fake_resource_name = 'resource_name'
-fake_api_response = {
+FAKE_KEY = 'TEST_KEY'
+FAKE_SECRET = 'TEST_SECRET'
+FAKE_ENDPOINT_URL = 'FAKE_URL'
+DEFAULT_URL = 'https://api.schoology.com/v1/'
+FAKE_RESOURCE_NAME = 'resource_name'
+FAKE_API_RESPONSE = {
     'total': 2,
     'links': {
         'next': 'url'
@@ -23,7 +23,7 @@ fake_api_response = {
 
 @pytest.fixture
 def default_request_client(mocker):
-    request_client = RequestClient(fake_key, fake_secret)
+    request_client = RequestClient(FAKE_KEY, FAKE_SECRET)
     request_client.get = mocker.MagicMock()
     return request_client
 
@@ -33,9 +33,9 @@ def default_paginated_result(default_request_client, mocker):
     return PaginatedResult(
         request_client=default_request_client,
         page_size=20,
-        api_response=fake_api_response,
-        resource_name=fake_resource_name,
-        requested_url=fake_endpoint_url)
+        api_response=FAKE_API_RESPONSE,
+        resource_name=FAKE_RESOURCE_NAME,
+        requested_url=FAKE_ENDPOINT_URL)
 
 
 class TestPaginatedResult:
@@ -56,10 +56,10 @@ class TestPaginatedResult:
 
             # Assert
             assert default_paginated_result.page_size == 20
-            assert default_paginated_result._resource_name == fake_resource_name
+            assert default_paginated_result._resource_name == FAKE_RESOURCE_NAME
             assert default_paginated_result.current_page == 1
             assert len(default_paginated_result.current_page_items) == 0
-            assert default_paginated_result.requested_url == fake_endpoint_url
+            assert default_paginated_result.requested_url == FAKE_ENDPOINT_URL
 
     class Test_when_calling_total_pages_property:
         def test_given_total_key_present_in_api_response_then_return_total(self, default_paginated_result):
@@ -98,10 +98,10 @@ class TestPaginatedResult:
         def test_given_resource_name_key_present_in_api_response_then_bind_current_page_items(self, mocker, default_paginated_result):
 
             # Arrange
-            fake_api_response = {
-                fake_resource_name: [{'test': 'test'}]
+            FAKE_API_RESPONSE = {
+                FAKE_RESOURCE_NAME: [{'test': 'test'}]
             }
-            default_paginated_result.request_client.get = mocker.MagicMock(return_value=fake_api_response)
+            default_paginated_result.request_client.get = mocker.MagicMock(return_value=FAKE_API_RESPONSE)
 
             # Act
             default_paginated_result.get_next_page()

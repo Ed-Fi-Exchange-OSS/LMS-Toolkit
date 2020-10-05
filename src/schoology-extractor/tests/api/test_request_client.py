@@ -8,23 +8,23 @@ import pytest
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.api.paginated_result import PaginatedResult
 
-fake_key = 'TEST_KEY'
-fake_secret = 'TEST_SECRET'
-fake_endpoint_url = 'FAKE_URL'
-default_url = 'https://api.schoology.com/v1/'
+FAKE_KEY = 'TEST_KEY'
+FAKE_SECRET = 'TEST_SECRET'
+FAKE_ENDPOINT_URL = 'FAKE_URL'
+DEFAULT_URL = 'https://api.schoology.com/v1/'
 
 
 @pytest.fixture
 def default_request_client():
-    return RequestClient(fake_key, fake_secret)
+    return RequestClient(FAKE_KEY, FAKE_SECRET)
 
 
 class TestRequestClient:
 
     class Test_when_constructing:
-        def test_given_not_passing_in_a_url_then_use_the_default_url(self):
-            request_client = RequestClient(fake_key, fake_secret)
-            assert request_client.base_url == default_url
+        def test_given_not_passing_in_a_url_then_use_the_DEFAULT_URL(self):
+            request_client = RequestClient(FAKE_KEY, FAKE_SECRET)
+            assert request_client.base_url == DEFAULT_URL
 
         def test_given_custom_url_then_use_it_for_the_base_url(self):
 
@@ -33,7 +33,7 @@ class TestRequestClient:
 
             # Act
             request_client = RequestClient(
-                fake_key, fake_secret, custom_url)
+                FAKE_KEY, FAKE_SECRET, custom_url)
 
             # Assert
             assert request_client.base_url == custom_url
@@ -48,7 +48,7 @@ class TestRequestClient:
             assert self._present_in_header(
                 default_request_client._request_header,
                 header_key="Authorization",
-                contained_value=fake_key
+                contained_value=FAKE_KEY
             )
 
         def test_then_oauth_word_is_present(self, default_request_client):
@@ -74,7 +74,7 @@ class TestRequestClient:
             default_request_client.oauth = mock_oauth_client
 
             # Act
-            default_request_client.get(fake_endpoint_url)
+            default_request_client.get(FAKE_ENDPOINT_URL)
 
             # Assert
             mock_oauth_client.get.assert_called_once()
@@ -82,12 +82,12 @@ class TestRequestClient:
         def test_then_right_url_is_passed(self, mocker, default_request_client):
 
             # Arrange
-            expected_url = default_url+fake_endpoint_url
+            expected_url = DEFAULT_URL+FAKE_ENDPOINT_URL
             mock_oauth_client = mocker.Mock()
             default_request_client.oauth = mock_oauth_client
 
             # Act
-            default_request_client.get(fake_endpoint_url)
+            default_request_client.get(FAKE_ENDPOINT_URL)
 
             # Assert
             request_url = mock_oauth_client.get.call_args.kwargs['url']
