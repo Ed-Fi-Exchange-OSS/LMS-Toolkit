@@ -104,9 +104,7 @@ def _run_coverage_xml():
         "poetry",
         "run",
         "coverage",
-        "xml",
-        "-m",
-        "pytest"
+        "xml"
     ])
 
 
