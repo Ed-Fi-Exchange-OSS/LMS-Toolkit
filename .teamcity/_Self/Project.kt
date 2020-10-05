@@ -8,7 +8,7 @@ package _self
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 
 object FizzProject : Project({
-    RelativeId("Fizz")
+    Id("EdFi_RandD_Exchange_Fizz")
     name = "Fizz"
     description = "Project Fizz Utilities for Learning Management System Data"
 
