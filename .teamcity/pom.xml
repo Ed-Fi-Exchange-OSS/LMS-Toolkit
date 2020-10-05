@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <name>EdFi_RandD_Fizz Config DSL Script</name>
-  <groupId>EdFi_RandD_Fizz</groupId>
-  <artifactId>EdFi_RandD_Fizz_dsl</artifactId>
+  <name>EdFi_RandD_Exchange_Fizz Config DSL Script</name>
+  <groupId>EdFi_RandD_Exchange_Fizz</groupId>
+  <artifactId>EdFi_RandD_Exchange_Fizz_dsl</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <parent>

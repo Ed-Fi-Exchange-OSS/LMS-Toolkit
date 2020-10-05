@@ -1,10 +1,10 @@
 # Getting Started
 
 To apply these build configuration settings on a new TeamCity environment (min
-version: `2019.2.2`):
+version: `2019.2.x`):
 
 1. Create a "root" project that will contain this work as a sub-project, e.g.
-   "ODS Tools"
+   `Exchange` below `R&D`
 1. Ensure these parameters are set:
 
     ```none
