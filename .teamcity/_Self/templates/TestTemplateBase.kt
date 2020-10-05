@@ -18,7 +18,7 @@ open class TestTemplateBase : Template({
     option("shouldFailBuildOnAnyErrorMessage", "true")
 
     vcs {
-        root(DslContext.settingsRoot)
+        root(DslContext.settingsRoot, "%vcs.checkout.rules%")
     }
 
     steps {
@@ -28,7 +28,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./src/build.py install %project.directory%
+                    python ./eng/build.py install %project.directory%
                 """.trimIndent()
             }
         }
