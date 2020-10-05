@@ -51,7 +51,9 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    python ./build.py coverage:xml ../%project.directory%
+                    ${"$"}dir = "../%project.directory%"
+                    python ./build.py coverage:html ${"$"}dir
+                    Compress-Archive -Path ${"$"}dir/htmlcov -DestinationPath ${"$"}dir/coverage.zip
                 """.trimIndent()
             }
         }
