@@ -102,7 +102,7 @@ class TestRequestClient:
 
             # Arrange
             array_of_ids = ['1', '2', '3', '4']
-            get_mock = mocker.MagicMock(return_value=dict())
+            get_mock = mocker.MagicMock(return_value={"assignment": [{}, {}]})
             default_request_client.get = get_mock
 
             # Act
@@ -137,27 +137,32 @@ class TestRequestClient:
             # Assert
             assert (isinstance(response, list) and len(response) == 0)
 
-    class Test_when_get_section_by_id_method_is_called:
+    class Test_when_get_section_by_course_ids_method_is_called:
         def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):
             with pytest.raises(AssertionError):
-                default_request_client.get_section_by_id(None)
+                default_request_client.get_section_by_course_ids(None)
 
-        def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(self, default_request_client, mocker):
+        def test_given_a_parameter_is_passed_then_shoud_make_the_get_calls(self, default_request_client, mocker):
 
             # Arrange
             get_mock = mocker.MagicMock(return_value=dict())
             default_request_client.get = get_mock
+            section_ids = [1, 2, 3, 4]
 
             # Act
-            default_request_client.get_section_by_id('1')
+            default_request_client.get_section_by_course_ids(section_ids)
 
             # Assert
-            assert get_mock.call_count == 1
+            assert get_mock.call_count == 4
 
-    class Test_when_get_submissions_by_section_id_method_is_called:
-        def test_given_no_parameters_passed_then_throw_assert_exception(self, default_request_client):
+    class Test_when_get_submissions_by_section_id_and_grade_item_id_method_is_called:
+        def test_given_no_section_id_passed_then_throw_assert_exception(self, default_request_client):
             with pytest.raises(AssertionError):
-                default_request_client.get_submissions_by_section_id(None)
+                default_request_client.get_submissions_by_section_id_and_grade_item_id(None, 'grade_item_id')
+
+        def test_given_no_grade_item_id_passed_then_throw_assert_exception(self, default_request_client):
+            with pytest.raises(AssertionError):
+                default_request_client.get_submissions_by_section_id_and_grade_item_id('2', None)
 
         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(self, default_request_client, mocker):
 
@@ -166,7 +171,7 @@ class TestRequestClient:
             default_request_client.get = get_mock
 
             # Act
-            default_request_client.get_submissions_by_section_id('1')
+            default_request_client.get_submissions_by_section_id_and_grade_item_id('1', 'grade_item_id')
 
             # Assert
             assert get_mock.call_count == 1
@@ -228,4 +233,34 @@ class TestRequestClient:
             # Assert
             assert result == expected_result
 
+    class Test_when_get_grading_periods_method_is_called:
+        def test_given_wrong_type_in_params_then_thrown_assertion_error(self, default_request_client):
+            with pytest.raises(AssertionError):
+                default_request_client.get_grading_periods([])
 
+        def test_given_correct_parameter_then_get_call_is_made(self, default_request_client, mocker):
+            # Arrange
+            get_mock = mocker.MagicMock(return_value={})
+            default_request_client.get = get_mock
+
+            # Act
+            default_request_client.get_grading_periods()
+
+            # Assert
+            assert get_mock.call_count == 1
+
+    class Test_when_get_courses_method_is_called:
+        def test_given_wrong_type_in_params_then_thrown_assertion_error(self, default_request_client):
+            with pytest.raises(AssertionError):
+                default_request_client.get_courses([])
+
+        def test_given_correct_parameter_then_get_call_is_made(self, default_request_client, mocker):
+            # Arrange
+            get_mock = mocker.MagicMock(return_value={})
+            default_request_client.get = get_mock
+
+            # Act
+            default_request_client.get_courses()
+
+            # Assert
+            assert get_mock.call_count == 1

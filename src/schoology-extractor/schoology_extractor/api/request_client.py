@@ -208,6 +208,7 @@ class RequestClient:
             A parsed response from the server
 
         """
+        assert isinstance(page_size, int), "Argument `page_size` should be of type `str`."
         url = f"users?{self._build_pagination_params(page_size)}"
 
         return PaginatedResult(
@@ -231,6 +232,8 @@ class RequestClient:
             A parsed response from the server
 
         """
+        assert isinstance(page_size, int), "Argument `section_id` should be of type `int`."
+
         url = f"gradingperiods?{self._build_pagination_params(page_size)}"
         response = self.get(url)
 
