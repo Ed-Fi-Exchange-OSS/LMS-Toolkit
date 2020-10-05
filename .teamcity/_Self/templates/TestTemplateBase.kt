@@ -30,7 +30,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    pip install poetry --user
+                    pip install poetry --user --disable-pip-version-check
                 """.trimIndent()
             }
         }
