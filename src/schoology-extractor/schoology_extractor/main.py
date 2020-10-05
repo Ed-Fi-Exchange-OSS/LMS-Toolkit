@@ -16,6 +16,12 @@ schoology_secret = os.getenv("SCHOOLOGY_SECRET")
 schoology_section_ids = os.getenv("SCHOOLOGY_SECTION_IDS")
 schoology_output_path = os.getenv("SCHOOLOGY_OUTPUT_PATH")
 
+assert schoology_key is not None, "A `SCHOOLOGY_KEY` must be present in the .env file and it was not found."
+assert schoology_secret is not None, "A `SCHOOLOGY_SECRET` must be present in the .env file and it was not found."
+assert schoology_section_ids is not None, "A `SCHOOLOGY_SECTION_IDS` must be present in the .env file and it was not found."
+assert schoology_output_path is not None, "A `SCHOOLOGY_OUTPUT_PATH` must be present in the .env file and it was not found."
+
+
 sections_id_array = schoology_section_ids.split(',')
 request_client = RequestClient(schoology_key, schoology_secret)
 
@@ -50,7 +56,9 @@ submissions_list = []
 
 for section_id in sections_id_array:
     submissions_response = request_client.get_submissions_by_section_id(section_id)
+
     while True:
+        print(submissions_response.current_page_items)
         submissions_list = submissions_list + submissions_response.current_page_items
         if submissions_response.get_next_page() is None:
             break
