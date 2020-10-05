@@ -15,6 +15,7 @@ open class TestTemplateBase : Template({
     name = "Python Test Template Base Class"
     id = RelativeId("TestTemplateBase")
 
+    artifactRules = "+:%project.directory%/htmlcov => coverage.zip"
     option("shouldFailBuildOnAnyErrorMessage", "true")
 
     vcs {
@@ -51,9 +52,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    ${"$"}dir = "../%project.directory%"
-                    python ./build.py coverage:html ${"$"}dir
-                    Compress-Archive -Path ${"$"}dir/htmlcov -DestinationPath ${"$"}dir/coverage.zip
+                    python ./build.py coverage:html ../%project.directory%
                 """.trimIndent()
             }
         }
