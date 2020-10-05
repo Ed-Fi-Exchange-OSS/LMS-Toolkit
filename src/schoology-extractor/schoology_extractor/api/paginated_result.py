@@ -12,27 +12,36 @@ if TYPE_CHECKING:
 
 
 class PaginatedResult:
-    """
+    '''
     The PaginatedResult class is bound with information from the response of the Schoology
     api, specifically when it returns a list of items that could be paginated.
 
-    Args:
-        request_client (RequestClient): The request client.
-        page_size (int): The number of items per page.
-        api_response (dict): The original response as a dictionary.
-        resource_name (str): The name used by the Schoology API for the current resource.
-        requested_url(str): The URL where you got the response from.
-        current_page(int, optional=1): The page that you have requested
+    Parameters
+    ----------
+    request_client : RequestClient
+        The request client.
+    page_size : int
+        The number of items per page.
+    api_response : dict
+        The original response as a dictionary.
+    resource_name : str
+        The name used by the Schoology API for the current resource.
+    requested_url : str
+        The URL where you got the response from.
+    current_page : str, optional
+        The page that you have requested.
 
-    Attributes:
-        request_client (RequestClient): The request client.
-        page_size (int): The number of items per page.
-        requested_url(str): The URL where you got the response from.
-        current_page_items(list): The list of items for the current page.
-        _api_response (dict): The original response as a dictionary.
-        _resource_name (str): The name used by the Schoology API for the current resource.
-
-    """
+    Attributes
+    ----------
+    request_client : RequestClient
+        The request client.
+    page_size : int
+        The number of items per page.
+    requested_url : str
+        The URL where you got the response from.
+    current_page_items : list
+        The list of items for the current page.
+    '''
 
     def __init__(
         self,
@@ -65,22 +74,23 @@ class PaginatedResult:
 
     @property
     def total_pages(self) -> int:
-        """
-        Number of pages for the current resource with the current page size.
+        """int: Number of pages for the current resource with the current page size.
 
-        Returns:
-            int: Request headers
+        The value is obtained from the original request dictionary.
         """
         if "total" not in self._api_response:
             return 0
         return int(self._api_response["total"])
 
     def get_next_page(self) -> Optional[PaginatedResult]:
-        """
-        Send an HTTP GET request for the next page.
+        """Send an HTTP GET request for the next page.
 
-        Returns:
-            Optional[PaginatedResult]: If there are more pages.
+        Returns
+        -------
+        PaginatedResult, optional
+            If there are more pages, this method will send a get request
+            in order to get the elements for the next page.
+
         """
         if "links" not in self._api_response:
             return None

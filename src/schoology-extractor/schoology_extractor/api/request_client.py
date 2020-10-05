@@ -15,18 +15,24 @@ DEFAULT_URL = "https://api.schoology.com/v1/"
 
 
 class RequestClient:
-    """
+    '''
     The RequestClient class wraps all the configuration complexity related
     to authentication and http requests for Schoology API
 
-    Args:
-        schoology_key (str): The consumer key given by Schoology
-        schoology_secret (str): The consumer secret given by Schoology
-        base_url (str, optional): The API base url. Default value: https://api.schoology.com/v1/
+    Parameters
+    ----------
+    schoology_key : str
+        The consumer key given by Schoology.
+    schoology_secret : str
+        The consumer secret given by Schoology.
+    base_url : str, optional
+        The API base url. Default value: https://api.schoology.com/v1/
 
-    Attributes:
-        oauth (OAuth1Session): The two-legged authenticated OAuth1 session
-    """
+    Attributes
+    ----------
+    oauth : OAuth1Session
+        The two-legged authenticated OAuth1 session.
+    '''
 
     def __init__(
         self, schoology_key: str, schoology_secret: str, base_url: str = DEFAULT_URL
@@ -42,11 +48,13 @@ class RequestClient:
 
     @property
     def _request_header(self) -> dict:
-        """
-        The _request_header property helps to build the Request Header for oauth requests
+        """The _request_header property builds the Request Header for oauth requests
 
-        Returns:
-            dict: Request headers
+        Returns
+        -------
+        dict
+            Request headers.
+
         """
         auth_header = (
             'OAuth realm="Schoology API",',
@@ -74,11 +82,16 @@ class RequestClient:
         """
         Send an HTTP GET request.
 
-        Args:
-            url (string): The endpoint that you want to request
+        Parameters
+        ----------
+        url : string
+            The endpoint that you want to request.
 
-        Returns:
-            dict: A parsed response from the server
+        Returns
+        -------
+        dict
+            A parsed response from the server
+
         """
         assert isinstance(url, str), "Argument `url` should be of type `str`."
 
@@ -91,11 +104,16 @@ class RequestClient:
 
     def get_assignments_by_section_ids(self, section_ids: list) -> list:
         """
-        Args:
-            section_ids (list): A list of section ids
+        Parameters
+        ----------
+        section_ids : list
+            A list of section ids.
 
-        Returns:
-            dict: A parsed response from the server
+        Returns
+        -------
+        dict
+            A parsed response from the server
+
         """
         assert isinstance(section_ids, list), "Argument `section_ids` should be of type `list`."
 
@@ -114,11 +132,16 @@ class RequestClient:
 
     def get_section_by_id(self, section_id: str) -> dict:
         """
-        Args:
-            section_id (list): The id of the section
+        Parameters
+        ----------
+        section_id : str
+            The id of the section.
 
-        Returns:
-            dict: A parsed response from the server
+        Returns
+        -------
+        dict
+            A parsed response from the server
+
         """
         assert isinstance(section_id, str), "Argument `section_id` should be of type `str`."
 
@@ -129,11 +152,18 @@ class RequestClient:
         self, section_id: str, page_size: int = 20
     ) -> PaginatedResult:
         """
-        Args:
-            section_id (list): The id of the section
+        Parameters
+        ----------
+        section_id : str
+            The id of the section.
+        page_size : int
+            Number of items per page.
 
-        Returns:
-            PaginatedResult: A parsed response from the server
+        Returns
+        -------
+        PaginatedResult
+            A parsed response from the server
+
         """
         assert isinstance(section_id, str), "Argument `section_id` should be of type `str`."
         assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
@@ -147,8 +177,18 @@ class RequestClient:
         """
         Gets all the users from the Schoology API
 
-        Returns:
-            PaginatedResult: An object that wraps the request's response
+        Parameters
+        ----------
+        section_id : str
+            The id of the section.
+        page_size : int
+            Number of items per page.
+
+        Returns
+        -------
+        PaginatedResult
+            A parsed response from the server
+
         """
         url = f"users?start=0&limit={page_size}"
 
