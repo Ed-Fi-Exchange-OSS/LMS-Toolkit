@@ -47,9 +47,7 @@ object TestTemplatePullRequest : TestTemplateBase() {
                 // triggering on the default branch and in feature branches,
                 // thus leaving only the pull requests.
                 branchFilter = """
-                    +:*
-                    -:<default>
-                    -:refs/heads/*
+                    +:pull/*
                 """.trimIndent()
             }
         }
