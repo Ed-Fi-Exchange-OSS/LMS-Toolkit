@@ -9,7 +9,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.*
 
 object FizzProject : Project({
     RelativeId("Fizz")
-    name = "Project Fizz"
+    name = "Fizz"
     description = "Project Fizz Utilities for Learning Management System Data"
 
     params {
