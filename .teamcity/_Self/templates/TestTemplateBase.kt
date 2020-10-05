@@ -88,5 +88,13 @@ open class TestTemplateBase : Template({
         swabra {
             forceCleanCheckout = true
         }
+        feature {
+            type = "xml-report-plugin"
+            param("xmlReportParsing.reportType", "junit")
+            param("xmlReportParsing.reportDirs", """
+                %project.directory%/coverage.xml
+                %project.directory%/mypy.xml
+            """.trimIndent())
+        }
     }
 })
