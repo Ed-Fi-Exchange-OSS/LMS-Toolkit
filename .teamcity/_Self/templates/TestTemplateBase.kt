@@ -23,6 +23,17 @@ open class TestTemplateBase : Template({
 
     steps {
         powerShell {
+            name = "Install Poetry"
+            formatStderrAsError = true
+            workingDir = "eng"
+            executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+            scriptMode = script {
+                content = """
+                    pip install poetry
+                """.trimIndent()
+            }
+        }
+        powerShell {
             name = "Install"
             formatStderrAsError = true
             workingDir = "eng"
