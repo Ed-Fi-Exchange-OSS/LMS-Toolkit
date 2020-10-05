@@ -152,7 +152,7 @@ if __name__ == "__main__":
         print("This program requires Python 3.8 or newer.", file=sys.stderr)
         exit(-1)
 
-    if len(sys.argv) == 2:
+    if len(sys.argv) < 3:
         _display_help()
 
     switcher = {
