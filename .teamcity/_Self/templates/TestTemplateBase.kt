@@ -29,7 +29,7 @@ open class TestTemplateBase : Template({
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
-                    pip install poetry
+                    pip install poetry --user
                 """.trimIndent()
             }
         }
@@ -47,6 +47,7 @@ open class TestTemplateBase : Template({
         powerShell {
             name = "Run Tests with Coverage"
             formatStderrAsError = true
+            workingDir = "eng"
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
@@ -57,6 +58,7 @@ open class TestTemplateBase : Template({
         powerShell {
             name = "Type Check"
             formatStderrAsError = true
+            workingDir = "eng"
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
@@ -67,6 +69,7 @@ open class TestTemplateBase : Template({
         powerShell {
             name = "Style Check"
             formatStderrAsError = true
+            workingDir = "eng"
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
             scriptMode = script {
                 content = """
