@@ -220,7 +220,7 @@ class TestRequestClient:
     class Test_when__build_pagination_params_method_is_called:
         def test_given_wrong_type_in_params_then_thrown_assertion_error(self, default_request_client):
             with pytest.raises(AssertionError):
-                default_request_client._build_pagination_params([])
+                default_request_client._build_query_params_for_first_page([])
 
         def test_given_correct_parameter_then_url_is_built_correctly(self, default_request_client):
             # Arrange
@@ -228,7 +228,7 @@ class TestRequestClient:
             expected_result = f'start=0&limit={items_per_page}'
 
             # Act
-            result = default_request_client._build_pagination_params(items_per_page)
+            result = default_request_client._build_query_params_for_first_page(items_per_page)
 
             # Assert
             assert result == expected_result

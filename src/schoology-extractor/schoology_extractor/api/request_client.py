@@ -119,7 +119,7 @@ class RequestClient:
 
         assignments = []
         for section_id in section_ids:
-            url = f"sections/{section_id}/assignments?{self._build_pagination_params(20)}"
+            url = f"sections/{section_id}/assignments?{self._build_query_params_for_first_page(20)}"
 
             assignments_per_section = PaginatedResult(
                 self, 20, self.get(url), "assignment", self.base_url + url
@@ -209,7 +209,7 @@ class RequestClient:
 
         """
         assert isinstance(page_size, int), "Argument `page_size` should be of type `str`."
-        url = f"users?{self._build_pagination_params(page_size)}"
+        url = f"users?{self._build_query_params_for_first_page(page_size)}"
 
         return PaginatedResult(
             self, page_size, self.get(url), "user", self.base_url + url
@@ -234,7 +234,7 @@ class RequestClient:
         """
         assert isinstance(page_size, int), "Argument `section_id` should be of type `int`."
 
-        url = f"gradingperiods?{self._build_pagination_params(page_size)}"
+        url = f"gradingperiods?{self._build_query_params_for_first_page(page_size)}"
         response = self.get(url)
 
         return PaginatedResult(
@@ -256,13 +256,13 @@ class RequestClient:
             A parsed response from the server
 
         """
-        url = f"courses?{self._build_pagination_params(page_size)}"
+        url = f"courses?{self._build_query_params_for_first_page(page_size)}"
         response = self.get(url)
 
         return PaginatedResult(
             self, page_size, response, "course", self.base_url + url
         )
 
-    def _build_pagination_params(self, page_size: int):
+    def _build_query_params_for_first_page(self, page_size: int):
         assert isinstance(page_size, int)
         return f"start=0&limit={page_size}"
