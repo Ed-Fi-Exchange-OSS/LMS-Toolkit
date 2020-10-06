@@ -8,7 +8,6 @@ package _self.templates
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.freeDiskSpace
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.swabra
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.powerShell
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 open class TestTemplateBase : Template({
@@ -23,7 +22,7 @@ open class TestTemplateBase : Template({
     }
 
     steps {
-        powerShell {
+        script {
             name = "Install"
             formatStderrAsError = true
             workingDir = "eng"
@@ -34,7 +33,7 @@ open class TestTemplateBase : Template({
                 """.trimIndent()
             }
         }
-        powerShell {
+        script {
             name = "Run Tests with Coverage"
             formatStderrAsError = true
             workingDir = "eng"
@@ -45,7 +44,7 @@ open class TestTemplateBase : Template({
                 """.trimIndent()
             }
         }
-        powerShell {
+        script {
             name = "Type Check"
             formatStderrAsError = true
             workingDir = "eng"
@@ -56,7 +55,7 @@ open class TestTemplateBase : Template({
                 """.trimIndent()
             }
         }
-        powerShell {
+        script {
             name = "Style Check"
             formatStderrAsError = true
             workingDir = "eng"
