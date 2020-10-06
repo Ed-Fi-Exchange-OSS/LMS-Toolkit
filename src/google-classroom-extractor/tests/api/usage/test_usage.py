@@ -3,13 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from pathlib import Path
 from unittest.mock import patch
 import pandas as pd
-from sqlalchemy import create_engine
 from google_classroom_extractor.api.usage import request_all_usage_as_df
-
-DB_FILE = "tests/usage/test_usage.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -33,43 +29,37 @@ def db_posts_by_name_date(test_db, name_date) -> int:
 
 
 @patch("google_classroom_extractor.api.usage.request_latest_usage_as_df")
-def test_overlap_removal(mock_latest_usage_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_overlap_removal(mock_latest_usage_df, test_db_fixture):
     # 1st pull: 17 rows
     mock_latest_usage_df.return_value = pd.read_csv(
-        "tests/usage/usage-1st.csv"
+        "tests/api/usage/usage-1st.csv"
     )
-    first_usage_df = request_all_usage_as_df(None, test_db)
+    first_usage_df = request_all_usage_as_df(None, test_db_fixture)
     assert dataframe_row_count(first_usage_df) == 17
-    assert db_row_count(test_db) == 17
-    assert db_ending_email(test_db) == "luislopez@conrad-turner.com"
+    assert db_row_count(test_db_fixture) == 17
+    assert db_ending_email(test_db_fixture) == "luislopez@conrad-turner.com"
 
     # 2nd pull: 49 rows, overlaps 7
     mock_latest_usage_df.return_value = pd.read_csv(
-        "tests/usage/usage-2nd-overlaps-1st.csv"
+        "tests/api/usage/usage-2nd-overlaps-1st.csv"
     )
-    second_usage_df = request_all_usage_as_df(None, test_db)
+    second_usage_df = request_all_usage_as_df(None, test_db_fixture)
     assert dataframe_row_count(second_usage_df) == 49
-    assert db_row_count(test_db) == 59  # 49 new + 17 existing - 7 overlapping
-    assert db_ending_email(test_db) == "xavierlopez@hotmail.com"
+    assert db_row_count(test_db_fixture) == 59  # 49 new + 17 existing - 7 overlapping
+    assert db_ending_email(test_db_fixture) == "xavierlopez@hotmail.com"
 
     # 3rd pull: 98 rows, overlaps 49
     mock_latest_usage_df.return_value = pd.read_csv(
-        "tests/usage/usage-3rd-overlaps-1st-and-2nd.csv"
+        "tests/api/usage/usage-3rd-overlaps-1st-and-2nd.csv"
     )
-    third_usage_df = request_all_usage_as_df(None, test_db)
+    third_usage_df = request_all_usage_as_df(None, test_db_fixture)
     assert dataframe_row_count(third_usage_df) == 98
-    assert db_row_count(test_db) == 99  # 98 new + 44 existing - 43 overlapping
-    assert db_ending_email(test_db) == "petersstephen@yahoo.com"
+    assert db_row_count(test_db_fixture) == 99  # 98 new + 44 existing - 43 overlapping
+    assert db_ending_email(test_db_fixture) == "petersstephen@yahoo.com"
 
 
 @patch("google_classroom_extractor.api.usage.request_latest_usage_as_df")
-def test_value_replacement(mock_latest_usage_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_value_replacement(mock_latest_usage_df, test_db_fixture):
     name_date = "april.vaughan 08/20"
 
     # original usage
@@ -88,10 +78,10 @@ def test_value_replacement(mock_latest_usage_df):
     )
 
     # initial pull
-    first_usage_df = request_all_usage_as_df(None, test_db)
+    first_usage_df = request_all_usage_as_df(None, test_db_fixture)
     assert dataframe_row_count(first_usage_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_posts_by_name_date(test_db, name_date) == "3"
+    assert db_row_count(test_db_fixture) == 1
+    assert db_posts_by_name_date(test_db_fixture, name_date) == "3"
 
     # same student, with email updated
     mock_latest_usage_df.return_value = pd.DataFrame(
@@ -109,7 +99,7 @@ def test_value_replacement(mock_latest_usage_df):
     )
 
     # overwrite pull
-    overwrite_usage_df = request_all_usage_as_df(None, test_db)
+    overwrite_usage_df = request_all_usage_as_df(None, test_db_fixture)
     assert dataframe_row_count(overwrite_usage_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_posts_by_name_date(test_db, name_date) == "5"
+    assert db_row_count(test_db_fixture) == 1
+    assert db_posts_by_name_date(test_db_fixture, name_date) == "5"

@@ -3,11 +3,14 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from collections import namedtuple
 import logging
 from typing import List, Dict, Optional, Callable, cast
 from requests import RequestException
 from opnieuw import retry
 from tail_recursive import tail_recursive
+
+ResourceType = namedtuple("ValidSdkFunction", ["courses", "userUsageReport"])
 
 
 @retry(
@@ -15,13 +18,34 @@ from tail_recursive import tail_recursive
     max_calls_total=4,
     retry_window_after_first_call_in_seconds=60,
 )
-def execute(executable_resource):
+def _execute(executable_resource):
+    """
+    Invoke a get/list Google Classroom SDK function,
+    retrying if there are errors.
+
+    Parameters
+    ----------
+    executable_resource: function
+        is the get/list Google Classroom SDK function to call
+
+    Returns
+    -------
+    object
+        a Google Classroom SDK response object
+
+    Raises
+    ------
+    IOError
+        if there is an IOError after retrying
+    RequestException
+        if there is a RequestException after retrying
+    """
     assert hasattr(executable_resource, "execute")
     return executable_resource.execute()
 
 
 @tail_recursive
-def call_api(
+def _call_api_recursive(
     resource_method: Callable,
     resource_parameters: Dict[str, str],
     response_property: str,
@@ -52,7 +76,7 @@ def call_api(
     assert isinstance(results, list) or results is None
 
     current_results: List[Dict[str, str]] = [] if results is None else results
-    response = execute(resource_method(**resource_parameters))
+    response = _execute(resource_method(**resource_parameters))
     try:
         current_results.extend(response.get(response_property, []))
     except (IOError, RequestException):
@@ -65,7 +89,40 @@ def call_api(
     resource_parameters["pageToken"] = next_page_token
     return cast(
         List[Dict[str, str]],
-        call_api.tail_call(
+        _call_api_recursive.tail_call(
             resource_method, resource_parameters, response_property, current_results
         ),
     )
+
+
+def call_api(
+    resource_method: Callable,
+    resource_parameters: Dict[str, str],
+    response_property: str,
+    results: Optional[List[Dict[str, str]]] = None,
+) -> List[Dict[str, str]]:
+    """
+    Call a Google Classroom/Admin SDK API
+
+    Parameters
+    ----------
+    resource_method: function
+        is the get/list SDK function to call
+    resource_parameters: dict
+        is the parameters for get/list
+    response_property: string
+        is the property in the API response we want
+    results: list
+        is the list of dicts of the API response accumulated across pages
+
+    Returns
+    -------
+    list
+        a list of dicts of the API response property requested
+    """
+    assert callable(resource_method)
+    assert isinstance(resource_parameters, dict)
+    assert isinstance(response_property, str)
+    assert isinstance(results, list) or results is None
+
+    return _call_api_recursive(resource_method, resource_parameters, response_property, results)

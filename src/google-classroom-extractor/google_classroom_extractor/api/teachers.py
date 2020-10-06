@@ -11,11 +11,11 @@ from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
 
 
-def request_students(
+def request_teachers(
     resource: Optional[Resource], course_id: str
 ) -> List[Dict[str, str]]:
     """
-    Fetch Students API data for a course and return a list of student data
+    Fetch Teachers API data for a course and return a list of teacher data
 
     Parameters
     ----------
@@ -27,8 +27,17 @@ def request_students(
     Returns
     -------
     List[Dict[str, str]]
-        a list of Google Classroom Student resources,
-            see https://developers.google.com/classroom/reference/rest/v1/courses.students
+        a list of Google Classroom Teacher resources,
+            see https://developers.google.com/classroom/reference/rest/v1/courses.teachers
+
+    DataFrame columns are:
+        courseId: Identifier of the course
+        userId: Identifier of the user
+        profile.id: Identifier of the user
+        profile.name.givenName: The user's first name
+        profile.name.familyName: The user's last name
+        profile.name.fullName: The user's full name formed by concatenating the first and last name values
+        profile.emailAddress: Email address of the user
     """
 
     assert isinstance(resource, Resource) or resource is None
@@ -38,17 +47,17 @@ def request_students(
         return []
 
     return call_api(
-        cast(ResourceType, resource).courses().students().list,
+        cast(ResourceType, resource).courses().teachers().list,
         {"courseId": course_id},
-        "students",
+        "teachers",
     )
 
 
-def request_latest_students_as_df(
+def request_latest_teachers_as_df(
     resource: Optional[Resource], course_ids: List[str]
 ) -> pd.DataFrame:
     """
-    Fetch Students API data for a range of courses and return a Students API DataFrame
+    Fetch Teachers API data for a range of courses and return a Teachers API DataFrame
 
     Parameters
     ----------
@@ -60,7 +69,7 @@ def request_latest_students_as_df(
     Returns
     -------
     DataFrame
-        a Students API DataFrame with the fetched data
+        a Teachers API DataFrame with the fetched data
 
     DataFrame columns are:
         courseId: Identifier of the course
@@ -75,21 +84,21 @@ def request_latest_students_as_df(
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_ids, list)
 
-    logging.info("Pulling student data")
-    students: List[Dict[str, str]] = []
+    logging.info("Pulling teacher data")
+    teachers: List[Dict[str, str]] = []
     for course_id in course_ids:
-        students.extend(request_students(resource, course_id))
+        teachers.extend(request_teachers(resource, course_id))
 
-    return pd.json_normalize(students).astype("string")
+    return pd.json_normalize(teachers).astype("string")
 
 
-def request_all_students_as_df(
+def request_all_teachers_as_df(
     resource: Optional[Resource],
     course_ids: List[str],
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> pd.DataFrame:
     """
-    Fetch Students API data for a range of courses and return a Students API DataFrame
+    Fetch Teachers API data for a range of courses and return a Teachers API DataFrame
     with current and previously fetched data
 
     Parameters
@@ -104,7 +113,7 @@ def request_all_students_as_df(
     Returns
     -------
     DataFrame
-        a Students API DataFrame with the current and previously fetched data
+        a Teachers API DataFrame with the current and previously fetched data
 
     DataFrame columns are:
         courseId: Identifier of the course
@@ -120,19 +129,19 @@ def request_all_students_as_df(
     assert isinstance(course_ids, list)
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
-    students_df: pd.DataFrame = request_latest_students_as_df(resource, course_ids)
+    teachers_df: pd.DataFrame = request_latest_teachers_as_df(resource, course_ids)
 
     # append everything from API call
-    students_df.to_sql(
-        "Students", sync_db, if_exists="append", index=False, chunksize=500
+    teachers_df.to_sql(
+        "Teachers", sync_db, if_exists="append", index=False, chunksize=500
     )
     # remove duplicates - leave only the most recent
     with sync_db.connect() as con:
         con.execute(
-            "DELETE from Students "
+            "DELETE from Teachers "
             "WHERE rowid not in (select max(rowid) "
-            "FROM Students "
+            "FROM Teachers "
             "GROUP BY courseId, userId)"
         )
 
-    return students_df
+    return teachers_df

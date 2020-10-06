@@ -3,11 +3,11 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-import collections
+
+from datetime import datetime
 import logging
 import os
 import sys
-from typing import List
 
 import pandas as pd
 from dotenv import load_dotenv
@@ -15,14 +15,16 @@ from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
 import sqlalchemy
 
+from google_classroom_extractor.result import Result
 from google_classroom_extractor.config import get_credentials, get_sync_db_engine
-from google_classroom_extractor.normalized import normalized_submissions
-
-from google_classroom_extractor.api.courses import request_all_courses_as_df
-from google_classroom_extractor.api.coursework import request_all_coursework_as_df
-from google_classroom_extractor.api.students import request_all_students_as_df
-from google_classroom_extractor.api.submissions import request_all_submissions_as_df
-from google_classroom_extractor.api.usage import request_all_usage_as_df
+from google_classroom_extractor.request import request_all
+from google_classroom_extractor.mapping.users import students_and_teachers_to_users_df
+from google_classroom_extractor.mapping.sections import courses_to_sections_df
+from google_classroom_extractor.csv_generation.write import (
+    write_csv,
+    USERS_ROOT_DIRECTORY,
+    SECTIONS_ROOT_DIRECTORY,
+)
 
 
 def request():
@@ -47,56 +49,13 @@ def request():
 
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
 
-    courses_df: pd.DataFrame = request_all_courses_as_df(classroom_resource, sync_db)
-    course_ids: List[str] = courses_df["id"].tolist()
-
-    coursework_df: pd.DataFrame = request_all_coursework_as_df(
-        classroom_resource, course_ids, sync_db
-    )
-    submissions_df: pd.DataFrame = request_all_submissions_as_df(
-        classroom_resource, course_ids, sync_db
-    )
-    students_df: pd.DataFrame = request_all_students_as_df(
-        classroom_resource, course_ids, sync_db
-    )
-
-    Result = collections.namedtuple(
-        "Result",
-        [
-            "usage",
-            "normalized_submissions",
-            "courses",
-            "coursework",
-            "submissions",
-            "students",
-        ],
-    )
-    return Result(
-        lambda: request_all_usage_as_df(reports_resource, sync_db),
-        lambda: normalized_submissions(
-            courses_df=courses_df,
-            coursework_df=coursework_df,
-            submissions_df=submissions_df,
-            students_df=students_df,
-        ),
-        lambda: courses_df,
-        lambda: coursework_df,
-        lambda: submissions_df,
-        lambda: students_df,
-    )
+    return request_all(classroom_resource, reports_resource, sync_db)
 
 
 if __name__ == "__main__":
-    r = request()
+    result_dfs: Result = request()
 
-    r.usage()
-    r.courses()
-    r.coursework()
-    r.submissions()
-    r.students()
-    r.normalized_submissions()
-
-    logging.info("Writing data to CSV files")
+    logging.info("Writing API data to CSV files")
     with get_sync_db_engine().connect() as con:
         for table in con.execute(
             "SELECT name FROM sqlite_master WHERE type='table';"
@@ -104,3 +63,19 @@ if __name__ == "__main__":
             table_name = table[0]
             df = pd.read_sql(f"SELECT * FROM {table_name}", con)
             df.to_csv(f"{table_name.lower()}.csv", index=False)
+
+    logging.info("Writing LMS UDM Users to CSV file")
+    write_csv(
+        students_and_teachers_to_users_df(
+            result_dfs.students_df, result_dfs.teachers_df
+        ),
+        datetime.now(),
+        USERS_ROOT_DIRECTORY,
+    )
+
+    logging.info("Writing LMS UDM Sections to CSV file")
+    write_csv(
+        courses_to_sections_df(result_dfs.courses_df),
+        datetime.now(),
+        SECTIONS_ROOT_DIRECTORY,
+    )
