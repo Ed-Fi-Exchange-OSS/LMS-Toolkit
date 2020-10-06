@@ -5,6 +5,7 @@
 
 """Build automation scripts"""
 
+import os
 import subprocess
 import sys
 from typing import List
@@ -33,6 +34,15 @@ output, on utility `lms-ds-loader`:
 
 
 def _run_command(command: List[str], exit_immediately: bool = True):
+
+    # Some system configurations on Windows-based CI servers have trouble
+    # finding poetry, others do not. Explicitly calling "cmd /c" seems to help,
+    # though unsure why.
+
+    if (os.name == "nt"):
+        # All versions of Windows are "nt"
+        command = ["cmd", "/c", *command]
+
     result = subprocess.run(command, cwd=f"../src/{sys.argv[2]}")
 
     if exit_immediately:
