@@ -25,24 +25,6 @@ def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
     List[Dict[str, str]]
         a list of Google Classroom Course resources,
             see https://developers.google.com/classroom/reference/rest/v1/courses
-
-    DataFrame columns are:
-        id: Identifier for this course assigned by Classroom
-        name: Name of the course
-        section: Section of the course
-        descriptionHeading: Optional heading for the description
-        description: Optional description
-        room: Optional room location
-        ownerId: The identifier of the owner of a course
-        creationTime: Creation time of the course
-        updateTime: Time of the most recent update to this course
-        enrollmentCode: Enrollment code to use when joining this course
-        courseState: State of the course
-        alternateLink: Absolute link to this course in the Classroom web UI
-        teacherGroupEmail: The email address of a Google group containing all teachers of the course
-        courseGroupEmail: The email address of a Google group containing all members of the course
-        guardiansEnabled: Whether or not guardian notifications are enabled for this course
-        calendarId: The Calendar ID for a calendar that all course members can see
     """
 
     assert isinstance(resource, Resource) or resource is None

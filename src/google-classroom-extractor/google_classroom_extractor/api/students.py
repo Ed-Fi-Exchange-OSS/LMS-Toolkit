@@ -29,15 +29,6 @@ def request_students(
     List[Dict[str, str]]
         a list of Google Classroom Student resources,
             see https://developers.google.com/classroom/reference/rest/v1/courses.students
-
-    DataFrame columns are:
-        courseId: Identifier of the course
-        userId: Identifier of the user
-        profile.id: Identifier of the user
-        profile.name.givenName: The user's first name
-        profile.name.familyName: The user's last name
-        profile.name.fullName: The user's full name formed by concatenating the first and last name values
-        profile.emailAddress: Email address of the user
     """
 
     assert isinstance(resource, Resource) or resource is None

@@ -21,7 +21,7 @@ def request_all(
     classroom_resource: Resource,
     reports_resource: Resource,
     sync_db: sqlalchemy.engine.base.Engine,
-):
+) -> Result:
     """
     Fetch from all API endpoints and return DataFrames for each
 
