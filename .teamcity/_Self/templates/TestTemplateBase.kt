@@ -8,6 +8,7 @@ package _self.templates
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.freeDiskSpace
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.swabra
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 open class TestTemplateBase : Template({
@@ -27,44 +28,36 @@ open class TestTemplateBase : Template({
             formatStderrAsError = true
             workingDir = "eng"
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = script {
-                content = """
+            scriptContent = """
                     python ./build.py install ../%project.directory%
                 """.trimIndent()
-            }
         }
         script {
             name = "Run Tests with Coverage"
             formatStderrAsError = true
             workingDir = "eng"
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = script {
-                content = """
+            scriptContent = """
                     python ./build.py coverage:html ../%project.directory%
                 """.trimIndent()
-            }
         }
         script {
             name = "Type Check"
             formatStderrAsError = true
             workingDir = "eng"
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = script {
-                content = """
+            scriptContent = """
                     python ./build.py typecheck:xml ../%project.directory%
                 """.trimIndent()
-            }
         }
         script {
             name = "Style Check"
             formatStderrAsError = true
             workingDir = "eng"
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = script {
-                content = """
+            scriptContent = """
                     python ./build.py lint ../%project.directory%
                 """.trimIndent()
-            }
         }
     }
 
