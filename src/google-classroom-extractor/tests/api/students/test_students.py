@@ -3,13 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from pathlib import Path
 from unittest.mock import patch
 import pandas as pd
-from sqlalchemy import create_engine
 from google_classroom_extractor.api.students import request_all_students_as_df
-
-DB_FILE = "tests/api/students/test_students.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -36,43 +32,37 @@ DUMMY_COURSE_IDS = ["1", "2"]
 
 
 @patch("google_classroom_extractor.api.students.request_latest_students_as_df")
-def test_overlap_removal(mock_latest_students_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_overlap_removal(mock_latest_students_df, test_db_fixture):
     # 1st pull: 17 rows
     mock_latest_students_df.return_value = pd.read_csv(
         "tests/api/students/students-1st.csv"
     )
-    first_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db)
+    first_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(first_students_df) == 17
-    assert db_row_count(test_db) == 17
-    assert db_ending_user_id(test_db) == 87275837
+    assert db_row_count(test_db_fixture) == 17
+    assert db_ending_user_id(test_db_fixture) == 87275837
 
     # 2nd pull: 43 rows, overlaps 7
     mock_latest_students_df.return_value = pd.read_csv(
         "tests/api/students/students-2nd-overlaps-1st.csv"
     )
-    second_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db)
+    second_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(second_students_df) == 43
-    assert db_row_count(test_db) == 50  # 43 new + 14 existing - 7 overlapping
-    assert db_ending_user_id(test_db) == 80099260
+    assert db_row_count(test_db_fixture) == 50  # 43 new + 14 existing - 7 overlapping
+    assert db_ending_user_id(test_db_fixture) == 80099260
 
     # 3rd pull: 98 rows, overlaps 43
     mock_latest_students_df.return_value = pd.read_csv(
         "tests/api/students/students-3rd-overlaps-1st-and-2nd.csv"
     )
-    third_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db)
+    third_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(third_students_df) == 98
-    assert db_row_count(test_db) == 99  # 98 new + 44 existing - 43 overlapping
-    assert db_ending_user_id(test_db) == 92311706
+    assert db_row_count(test_db_fixture) == 99  # 98 new + 44 existing - 43 overlapping
+    assert db_ending_user_id(test_db_fixture) == 92311706
 
 
 @patch("google_classroom_extractor.api.students.request_latest_students_as_df")
-def test_value_replacement(mock_latest_students_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_value_replacement(mock_latest_students_df, test_db_fixture):
     course_id = "5583344"
     user_id = "79924907"
 
@@ -90,10 +80,10 @@ def test_value_replacement(mock_latest_students_df):
     )
 
     # initial pull
-    first_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db)
+    first_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(first_students_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_email_by_course_and_user_id(test_db, course_id, user_id) == "karen21@hotmail.com"
+    assert db_row_count(test_db_fixture) == 1
+    assert db_email_by_course_and_user_id(test_db_fixture, course_id, user_id) == "karen21@hotmail.com"
 
     # same student, with email updated
     mock_latest_students_df.return_value = pd.DataFrame(
@@ -109,7 +99,7 @@ def test_value_replacement(mock_latest_students_df):
     )
 
     # overwrite pull
-    overwrite_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db)
+    overwrite_students_df = request_all_students_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(overwrite_students_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_email_by_course_and_user_id(test_db, course_id, user_id) == "kowens@gmail.com"
+    assert db_row_count(test_db_fixture) == 1
+    assert db_email_by_course_and_user_id(test_db_fixture, course_id, user_id) == "kowens@gmail.com"

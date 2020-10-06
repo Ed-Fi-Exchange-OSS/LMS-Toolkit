@@ -3,13 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from pathlib import Path
 from unittest.mock import patch
 import pandas as pd
-from sqlalchemy import create_engine
 from google_classroom_extractor.api.submissions import request_all_submissions_as_df
-
-DB_FILE = "tests/api/submissions/test_submissions.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -38,49 +34,43 @@ DUMMY_COURSE_IDS = ["1", "2"]
 
 
 @patch("google_classroom_extractor.api.submissions.request_latest_submissions_as_df")
-def test_overlap_removal(mock_latest_submissions_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_overlap_removal(mock_latest_submissions_df, test_db_fixture):
     # 1st pull: 17 rows
     mock_latest_submissions_df.return_value = pd.read_csv(
         "tests/api/submissions/submissions-1st.csv"
     )
     first_submissions_df = request_all_submissions_as_df(
-        None, DUMMY_COURSE_IDS, test_db
+        None, DUMMY_COURSE_IDS, test_db_fixture
     )
     assert dataframe_row_count(first_submissions_df) == 17
-    assert db_row_count(test_db) == 17
-    assert db_ending_user_id(test_db) == 60912479
+    assert db_row_count(test_db_fixture) == 17
+    assert db_ending_user_id(test_db_fixture) == 60912479
 
     # 2nd pull: 58 rows, overlaps 7
     mock_latest_submissions_df.return_value = pd.read_csv(
         "tests/api/submissions/submissions-2nd-overlaps-1st.csv"
     )
     second_submissions_df = request_all_submissions_as_df(
-        None, DUMMY_COURSE_IDS, test_db
+        None, DUMMY_COURSE_IDS, test_db_fixture
     )
     assert dataframe_row_count(second_submissions_df) == 49
-    assert db_row_count(test_db) == 59  # 58 new + 8 existing - 7 overlapping
-    assert db_ending_user_id(test_db) == 57180732
+    assert db_row_count(test_db_fixture) == 59  # 58 new + 8 existing - 7 overlapping
+    assert db_ending_user_id(test_db_fixture) == 57180732
 
     # 3rd pull: 98 rows, overlaps 43
     mock_latest_submissions_df.return_value = pd.read_csv(
         "tests/api/submissions/submissions-3rd-overlaps-1st-and-2nd.csv"
     )
     third_submissions_df = request_all_submissions_as_df(
-        None, DUMMY_COURSE_IDS, test_db
+        None, DUMMY_COURSE_IDS, test_db_fixture
     )
     assert dataframe_row_count(third_submissions_df) == 98
-    assert db_row_count(test_db) == 99  # 98 new + 44 existing - 43 overlapping
-    assert db_ending_user_id(test_db) == 42125460
+    assert db_row_count(test_db_fixture) == 99  # 98 new + 44 existing - 43 overlapping
+    assert db_ending_user_id(test_db_fixture) == 42125460
 
 
 @patch("google_classroom_extractor.api.submissions.request_latest_submissions_as_df")
-def test_value_replacement(mock_latest_submissions_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_value_replacement(mock_latest_submissions_df, test_db_fixture):
     submission_id = "5583344"
 
     # original submissions
@@ -101,11 +91,11 @@ def test_value_replacement(mock_latest_submissions_df):
 
     # initial pull
     first_submissions_df = request_all_submissions_as_df(
-        None, DUMMY_COURSE_IDS, test_db
+        None, DUMMY_COURSE_IDS, test_db_fixture
     )
     assert dataframe_row_count(first_submissions_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_assigned_grade_by_id(test_db, submission_id) == "0"
+    assert db_row_count(test_db_fixture) == 1
+    assert db_assigned_grade_by_id(test_db_fixture, submission_id) == "0"
 
     # same submission, with grade updated
     mock_latest_submissions_df.return_value = pd.DataFrame(
@@ -125,8 +115,8 @@ def test_value_replacement(mock_latest_submissions_df):
 
     # overwrite pull
     overwrite_submissions_df = request_all_submissions_as_df(
-        None, DUMMY_COURSE_IDS, test_db
+        None, DUMMY_COURSE_IDS, test_db_fixture
     )
     assert dataframe_row_count(overwrite_submissions_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_assigned_grade_by_id(test_db, submission_id) == "100"
+    assert db_row_count(test_db_fixture) == 1
+    assert db_assigned_grade_by_id(test_db_fixture, submission_id) == "100"

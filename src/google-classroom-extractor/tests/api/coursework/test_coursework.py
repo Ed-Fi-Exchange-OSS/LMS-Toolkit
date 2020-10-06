@@ -3,13 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from pathlib import Path
 from unittest.mock import patch
 import pandas as pd
-from sqlalchemy import create_engine
 from google_classroom_extractor.api.coursework import request_all_coursework_as_df
-
-DB_FILE = "tests/api/coursework/test_coursework.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -36,43 +32,37 @@ DUMMY_COURSE_IDS = ["1", "2"]
 
 
 @patch("google_classroom_extractor.api.coursework.request_latest_coursework_as_df")
-def test_overlap_removal(mock_latest_coursework_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_overlap_removal(mock_latest_coursework_df, test_db_fixture):
     # 1st pull: 17 rows, last row id is 87699559
     mock_latest_coursework_df.return_value = pd.read_csv(
         "tests/api/coursework/coursework-1st.csv"
     )
-    first_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db)
+    first_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(first_coursework_df) == 17
-    assert db_row_count(test_db) == 17
-    assert db_ending_id(test_db) == 87699559
+    assert db_row_count(test_db_fixture) == 17
+    assert db_ending_id(test_db_fixture) == 87699559
 
     # 2nd pull: 39 rows, overlaps 7, last row id is 87025291
     mock_latest_coursework_df.return_value = pd.read_csv(
         "tests/api/coursework/coursework-2nd-overlaps-1st.csv"
     )
-    second_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db)
+    second_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(second_coursework_df) == 39
-    assert db_row_count(test_db) == 44  # 39 new + 12 existing - 7 overlapping
-    assert db_ending_id(test_db) == 87025291
+    assert db_row_count(test_db_fixture) == 44  # 39 new + 12 existing - 7 overlapping
+    assert db_ending_id(test_db_fixture) == 87025291
 
     # 3rd pull: 98 rows, overlaps 43, last row id is 15461200
     mock_latest_coursework_df.return_value = pd.read_csv(
         "tests/api/coursework/coursework-3rd-overlaps-1st-and-2nd.csv"
     )
-    third_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db)
+    third_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(third_coursework_df) == 98
-    assert db_row_count(test_db) == 99  # 98 new + 44 existing - 43 overlapping
-    assert db_ending_id(test_db) == 15461200
+    assert db_row_count(test_db_fixture) == 99  # 98 new + 44 existing - 43 overlapping
+    assert db_ending_id(test_db_fixture) == 15461200
 
 
 @patch("google_classroom_extractor.api.coursework.request_latest_coursework_as_df")
-def test_value_replacement(mock_latest_coursework_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_value_replacement(mock_latest_coursework_df, test_db_fixture):
     # original coursework
     coursework_id = "1234"
     mock_latest_coursework_df.return_value = pd.DataFrame(
@@ -95,10 +85,10 @@ def test_value_replacement(mock_latest_coursework_df):
     )
 
     # initial pull
-    first_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db)
+    first_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db_fixture)
     assert dataframe_row_count(first_coursework_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_state_by_coursework_id(test_db, coursework_id) == "CREATED"
+    assert db_row_count(test_db_fixture) == 1
+    assert db_state_by_coursework_id(test_db_fixture, coursework_id) == "CREATED"
 
     # same coursework, with state updated
     mock_latest_coursework_df.return_value = pd.DataFrame(
@@ -121,7 +111,9 @@ def test_value_replacement(mock_latest_coursework_df):
     )
 
     # overwrite pull
-    overwrite_coursework_df = request_all_coursework_as_df(None, DUMMY_COURSE_IDS, test_db)
+    overwrite_coursework_df = request_all_coursework_as_df(
+        None, DUMMY_COURSE_IDS, test_db_fixture
+    )
     assert dataframe_row_count(overwrite_coursework_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_state_by_coursework_id(test_db, coursework_id) == "PUBLISHED"
+    assert db_row_count(test_db_fixture) == 1
+    assert db_state_by_coursework_id(test_db_fixture, coursework_id) == "PUBLISHED"
