@@ -220,7 +220,7 @@ class RequestClient:
             A parsed response from the server
 
         """
-        assert isinstance(page_size, int), "Argument `page_size` should be of type `str`."
+        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
         url = f"users?{self._build_query_params_for_first_page(page_size)}"
 
         return PaginatedResult(
@@ -233,8 +233,6 @@ class RequestClient:
 
         Parameters
         ----------
-        section_id : str
-            The id of the section.
         page_size : int
             Number of items per page.
 
