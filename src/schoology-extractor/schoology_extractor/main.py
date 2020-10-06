@@ -34,7 +34,7 @@ while True:
     if users_response.get_next_page() is None:
         break
 
-export_data.to_csv(users_list, f"{schoology_output_path}/users.csv")
+export_data.to_csv(users_list, os.path.join(schoology_output_path, 'users.csv'))
 
 # export sections
 
@@ -50,7 +50,7 @@ while True:
 course_ids = map(lambda x: x["id"], courses_list)
 sections_list = request_client.get_section_by_course_ids(list(course_ids))
 export_data.to_csv(sections_list,
-                   f"{schoology_output_path}/sections.csv")
+                   os.path.join(schoology_output_path, 'sections.csv'))
 
 
 # export assigments
@@ -61,7 +61,7 @@ assignments = request_client.get_assignments_by_section_ids(list(section_ids))
 filtered_assignments = [assignment for assignment in assignments if assignment["grading_period"] in grading_periods_array]
 
 export_data.to_csv(filtered_assignments,
-                   f"{schoology_output_path}/assignments.csv")
+                   os.path.join(schoology_output_path, 'assignments.csv'))
 
 
 # export submissions
@@ -75,4 +75,4 @@ for assignment in assignments:
             break
 
 export_data.to_csv(submissions_list,
-                   f"{schoology_output_path}/submissions.csv")
+                   os.path.join(schoology_output_path, 'submissions.csv'))
