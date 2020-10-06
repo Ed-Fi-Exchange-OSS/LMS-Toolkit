@@ -36,12 +36,15 @@ class TestExportData():
                 to_string(None)   # type: ignore
 
         def test_then_call_DataFrame_method(self, mocker):
-
             # Arrange
-            DataFrame_mock = mocker.patch.object(pd, "DataFrame")
+            fake_data = [
+                {"test": "test"},
+                {"test": "test"}
+            ]
+            expected_result = '   test\n0  test\n1  test'
 
             # Act
-            to_string([])
+            result = to_string(fake_data)
 
             # Assert
-            DataFrame_mock.assert_called_once()
+            assert result == expected_result
