@@ -238,29 +238,41 @@ class TestRequestClient:
             with pytest.raises(AssertionError):
                 default_request_client.get_grading_periods([])
 
-        def test_given_correct_parameter_then_get_call_is_made(self, default_request_client, mocker):
+        def test_given_correct_parameter_then_returns_expected_data(self, default_request_client, mocker):
             # Arrange
-            get_mock = mocker.MagicMock(return_value={})
+            fake_list_of_gradingperiods = [
+                {'gradingperiod': 'test_data'},
+                {'gradingperiod': 'test_data'},
+                {'gradingperiod': 'test_data'}
+            ]
+            get_mock = mocker.MagicMock(return_value={'gradingperiods': fake_list_of_gradingperiods})
             default_request_client.get = get_mock
 
             # Act
-            default_request_client.get_grading_periods()
+            response = default_request_client.get_grading_periods()
 
             # Assert
-            assert get_mock.call_count == 1
+            assert isinstance(response, PaginatedResult)
+            assert response.current_page_items == fake_list_of_gradingperiods
 
     class Test_when_get_courses_method_is_called:
         def test_given_wrong_type_in_params_then_thrown_assertion_error(self, default_request_client):
             with pytest.raises(AssertionError):
                 default_request_client.get_courses([])
 
-        def test_given_correct_parameter_then_get_call_is_made(self, default_request_client, mocker):
+        def test_given_correct_parameter_then_returns_expected_data(self, default_request_client: RequestClient, mocker):
             # Arrange
-            get_mock = mocker.MagicMock(return_value={})
+            fake_list_of_courses = [
+                {'course': 'test_data'},
+                {'course': 'test_data'},
+                {'course': 'test_data'}
+            ]
+            get_mock = mocker.MagicMock(return_value={'course': fake_list_of_courses})
             default_request_client.get = get_mock
 
             # Act
-            default_request_client.get_courses()
+            response = default_request_client.get_courses()
 
             # Assert
-            assert get_mock.call_count == 1
+            assert isinstance(response, PaginatedResult)
+            assert response.current_page_items == fake_list_of_courses
