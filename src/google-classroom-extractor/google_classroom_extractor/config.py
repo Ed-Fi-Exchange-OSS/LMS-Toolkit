@@ -10,7 +10,7 @@ from google.oauth2 import service_account
 from sqlalchemy import create_engine
 import sqlalchemy
 
-SYNC_DATABASE_LOCATION = "data/sync.sqlite"
+SYNC_DATABASE_LOCATION_SUFFIX = "data"
 
 
 def _is_running_in_notebook() -> bool:
@@ -37,12 +37,14 @@ def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
     """
     running_in_notebook: bool = _is_running_in_notebook()
     logging.debug("Running in Jupyter Notebook: %s", running_in_notebook)
-    sync_database_uri = (
-        f"sqlite:///../{SYNC_DATABASE_LOCATION}"
+    sync_database_directory = (
+        os.path.join("..", SYNC_DATABASE_LOCATION_SUFFIX)
         if running_in_notebook
-        else f"sqlite:///{SYNC_DATABASE_LOCATION}"
+        else SYNC_DATABASE_LOCATION_SUFFIX
     )
-    return create_engine(sync_database_uri)
+    logging.debug("Ensuring database directory at %s", os.path.abspath(sync_database_directory))
+    os.makedirs(sync_database_directory, exist_ok=True)
+    return create_engine(f"sqlite:///{sync_database_directory}/sync.sqlite")
 
 
 def get_credentials() -> service_account.Credentials:
