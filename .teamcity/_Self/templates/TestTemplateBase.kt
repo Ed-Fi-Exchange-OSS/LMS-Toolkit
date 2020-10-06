@@ -45,7 +45,7 @@ open class TestTemplateBase : Template({
             name = "Type Check"
             formatStderrAsError = true
             workingDir = "eng"
-            executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+            executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             scriptContent = """
                     python ./build.py typecheck:xml ../%project.directory%
                 """.trimIndent()
@@ -54,7 +54,7 @@ open class TestTemplateBase : Template({
             name = "Style Check"
             formatStderrAsError = true
             workingDir = "eng"
-            executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+            executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             scriptContent = """
                     python ./build.py lint ../%project.directory%
                 """.trimIndent()
