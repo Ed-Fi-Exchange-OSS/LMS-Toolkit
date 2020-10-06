@@ -11,6 +11,7 @@ import pandas as pd
 USERS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/users/"
 SECTIONS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/sections/"
 
+
 def write_csv(df_to_write: pd.DataFrame, output_date: datetime, directory: str):
     """
     Write a LMS UDM DataFrame to a CSV file

@@ -73,59 +73,40 @@ https://www.googleapis.com/auth/admin.reports.audit.readonly`
    config virtualenvs.in-project true`.
 1. Install the third-party libraries used by the extractor:
    `poetry install`. This may take a while.
-1. Copy the "example.env" file to ".env" and set the variables
-   as documented in the file.
+1. Copy the "example.env" file to ".env" in the same directory
+   and set the variables as documented in the file.
 1. Place the service-account.json file downloaded earlier in
    the root directory of this project.
 
 ## Running the Extractor
 
-### Generate CSV Files
+### Generate LMS UDM CSV Files
 
 To pull data from Google Classroom and generate csv files, run
 `poetry run python google_classroom_extractor/main.py` from the root
-directory of this project.
+directory of this project. CSV files are output into the
+`data/ed-fi-udm-lms` directory.
 
-### usage.csv
-
-usage.csv is an extract of student usage Google Classroom. Rows
-are a pairing of student email and as-of date. The as-of date
-applies to the number of posts a student made on that day to
-any course. The last interaction time applies to any
-interaction the student had with Google Classroom, but does not
-provide historical information beyond that.  Last login time is
-the last actual login event and does not provide historical
-information beyond that either.
-
-### submissions.csv
-
-submission.csv is an extract of student classwork submissions
-to Google Classroom. Rows are individual submissions for
-assigned coursework per student. Important submission states
-include "CREATED", "TURNED_IN" and "RETURNED".  The "CREATED"
-state only indicates the assignment of coursework by the
-teacher, not student activity.
-
-### Analyze with Jupyter Notebook
-
-To open the .ipynb Jupyter Notebook files standalone, run
-`jupyter notebook`.  More information about Jupyter Notebooks
-in general can be found
-[here](https://jupyter-notebook.readthedocs.io/en/stable/notebook.html).
 
 ### Visual Studio Code (Optional)
 
 To work in Visual Studio Code install the Python Extension.
-Then:
-1. Type `Ctrl-Shift-P`, then
-   choose `Python:Select Interpreter` and then choose the
-   environment that includes `.venv` in the name.
-1. .ipynb Jupiter Notebook files can be opened directly in
-Visual Studio Code.
+Then type `Ctrl-Shift-P`, then choose `Python:Select Interpreter`,
+then choose the environment that includes `.venv` in the name.
+
+
+### TLS/SSL proxying
+
+Users on a corporate network that intercepts TLS/SSL traffic will need
+to have a copy of the corporate root certificate on file, and then add
+an environment variable pointing to this file:
+`HTTPLIB2_CA_CERTS=<absolute path to certificate>`
+
 
 ## Dev Operations
 
 1. Style check: `poetry run flake8`
+1. Static typing check: `poetry run mypy .`
 1. Run unit tests: `poetry run pytest`
 1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
 1. View code coverage: `poetry run coverage report`

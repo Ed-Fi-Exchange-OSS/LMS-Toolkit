@@ -4,11 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, cast
 import pandas as pd
 import sqlalchemy
 from googleapiclient.discovery import Resource
-from .api_caller import call_api
+from .api_caller import call_api, ResourceType
 
 
 def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
@@ -33,8 +33,8 @@ def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
         return []
 
     return call_api(
-        resource.courses().list,  # type: ignore - courses() is dynamic
-        {},  # type: ignore - due to tail_recursive decorator
+        cast(ResourceType, resource).courses().list,
+        {},
         "courses",
     )
 

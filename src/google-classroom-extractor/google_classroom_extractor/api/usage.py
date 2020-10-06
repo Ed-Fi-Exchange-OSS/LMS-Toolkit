@@ -6,13 +6,13 @@
 from datetime import datetime, timedelta
 import logging
 import os
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any, cast
 from dateutil.parser import parse as date_parse
 import pandas as pd
 from sqlalchemy.exc import OperationalError
 import sqlalchemy
 from googleapiclient.discovery import Resource
-from .api_caller import call_api
+from .api_caller import call_api, ResourceType
 
 
 def request_usage(resource: Optional[Resource], date: str) -> List[Dict[str, str]]:
@@ -23,8 +23,8 @@ def request_usage(resource: Optional[Resource], date: str) -> List[Dict[str, str
         return []
 
     return call_api(
-        resource.userUsageReport().get,  # type: ignore - userUsageReport() is dynamic
-        {  # type: ignore - due to tail_recursive decorator
+        cast(ResourceType, resource).userUsageReport().get,
+        {
             "userKey": "all",
             "date": date,
             "parameters": "classroom:timestamp_last_interaction,classroom:num_posts_created,accounts:timestamp_last_login",
@@ -78,13 +78,13 @@ def request_latest_usage_as_df(
     if end < start:
         logging.warning("Usage data end time is before start time.")
 
-    reports = []
+    reports: List[Any] = []
     for date in pd.date_range(start=start, end=end):
         reports.extend(request_usage(resource, date.strftime("%Y-%m-%d")))
 
     usage: List[Dict[str, str]] = []
     for response in reports:
-        row = {}
+        row: Dict[str, str] = {}
         row["email"] = response.get("entity").get("userEmail")
         row["asOfDate"] = response.get("date")
         row["importDate"] = datetime.today().strftime("%Y-%m-%d")
