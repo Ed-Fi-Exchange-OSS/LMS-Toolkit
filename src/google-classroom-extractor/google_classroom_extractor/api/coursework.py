@@ -14,6 +14,21 @@ from .api_caller import call_api, ResourceType
 def request_coursework(
     resource: Optional[Resource], course_id: str
 ) -> List[Dict[str, str]]:
+    """
+    Fetch Coursework API data for all coursework for a course,
+    and return a list of coursework data
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource
+
+    Returns
+    -------
+    List[Dict[str, str]]
+        a list of Google Classroom Coursework resources,
+            see https://developers.google.com/classroom/reference/rest/v1/courses.courseWork
+    """
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_id, str)
 
@@ -30,6 +45,45 @@ def request_coursework(
 def request_latest_coursework_as_df(
     resource: Optional[Resource], course_ids: List[str]
 ) -> pd.DataFrame:
+    """
+    Fetch Coursework API data for the given courses
+        and return a Coursework API DataFrame
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource
+    course_ids: List[str]
+        a list of course ids to retrieve coursework for
+
+    Returns
+    -------
+    DataFrame
+        a Coursework API DataFrame with the fetched data
+
+    DataFrame columns are:
+        courseId: Identifier of the course
+        id: Classroom-assigned identifier of this course work, unique per course
+        title: Title of this course work
+        description: Optional description of this course work
+        state: Status of this course work
+        alternateLink: Absolute link to this course work in the Classroom web UI
+        creationTime: Timestamp when this course work was created
+        updateTime: Timestamp of the most recent change to this course work
+        maxPoints: Maximum grade for this course work
+        workType: Type of this course work
+        submissionModificationMode: Setting to determine when students are allowed
+            to modify submissions
+        assigneeMode: Assignee mode of the coursework
+        creatorUserId: Identifier for the user that created the coursework
+        dueDate.year: Optional year, in UTC, that submissions are due
+        dueDate.month: Optional month, in UTC, that submissions are due
+        dueDate.day: Optional day, in UTC, that submissions are due
+        dueTime.hours: Optional hour, in UTC, that submissions are due
+        dueTime.minutes: Optional minute, in UTC, that submissions are due
+        scheduledTime: Optional timestamp when this course work is scheduled to be published
+        topicId: Identifier for the topic that this coursework is associated with
+    """
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_ids, list)
 
@@ -45,6 +99,45 @@ def request_all_coursework_as_df(
     course_ids: List[str],
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> pd.DataFrame:
+    """
+    Fetch Coursework API data for all courses and return a Coursework API DataFrame
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource
+    course_ids: List[str]
+        a list of course ids to retrieve coursework for
+    sync_db: sqlalchemy.engine.base.Engine
+        an Engine instance for creating database connections
+
+    Returns
+    -------
+    DataFrame
+        a Coursework API DataFrame with the current and previously fetched data
+
+    DataFrame columns are:
+        courseId: Identifier of the course
+        id: Classroom-assigned identifier of this course work, unique per course
+        title: Title of this course work
+        description: Optional description of this course work
+        state: Status of this course work
+        alternateLink: Absolute link to this course work in the Classroom web UI
+        creationTime: Timestamp when this course work was created
+        updateTime: Timestamp of the most recent change to this course work
+        maxPoints: Maximum grade for this course work
+        workType: Type of this course work
+        submissionModificationMode: Setting to determine when students are allowed
+            to modify submissions
+        assigneeMode: Assignee mode of the coursework
+        creatorUserId: Identifier for the user that created the coursework
+        dueDate.year: Optional year, in UTC, that submissions are due
+        dueDate.month: Optional month, in UTC, that submissions are due
+        dueDate.day: Optional day, in UTC, that submissions are due
+        dueTime.hours: Optional hour, in UTC, that submissions are due
+        dueTime.minutes: Optional minute, in UTC, that submissions are due
+        topicId: Identifier for the topic that this coursework is associated with
+    """
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_ids, list)
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
