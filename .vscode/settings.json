@@ -1,4 +1,7 @@
 {
+    "python.analysis.extraPaths": ["./change_to_module_name", "./tests"],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.languageServer": "Pylance",
     "python.linting.pylintEnabled": false,
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
@@ -6,7 +9,7 @@
         "--max-line-length=110"
     ],
     "python.formatting.provider": "black",
-    "python.venvPath": "${workspaceFolder}/.venv/bin/python",
+    "python.venvPath": ".venv/bin/python",
     "python.dataScience.jupyterServerURI": "local",
     "files.associations": {
         "*.metaed": "csharp"

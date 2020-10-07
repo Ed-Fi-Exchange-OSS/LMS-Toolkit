@@ -14,13 +14,14 @@ Configuration is via `.env` file or directly with environment variables listed
 below. User's API key and secret are managed at https://app.schoology.com/api.
 The grading periods list helps determine which grading periods are of interest -
 for example, an organization with school years in one Schoology account would
-only want to list the grading periods for the current school year. Run `poetry run python grading_periods.py` to get a list of grading periods (requires that
+only want to list the grading periods for the current school year. Run `poetry run python schoology_extractor/grading_periods.py` to get a list of grading periods (requires that
 the `.env` file has the key and secret values already configured).
 
 -   `SCHOOLOGY_KEY=<administrator's API key>`
 -   `SCHOOLOGY_SECRET=<administrator's API secret>`
 -   `SCHOOLOGY_OUTPUT_PATH=<output directory>`
--   `SCHOOLOGY_SECTION_IDS=<csv list of sections' ids>`
+-   `SCHOOLOGY_GRADING_PERIODS=<csv list of grading period ids>`
+
 
 ## Execution
 

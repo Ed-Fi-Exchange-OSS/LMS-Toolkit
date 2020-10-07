@@ -6,16 +6,43 @@
 import pandas as pd
 
 
-def to_csv(data, output_path):
+def to_csv(data: list, output_path: str):
     """
-    Args:
-        data (dictionary): The data that will be expoted to csv
-        output_path (dictionary): The path and name where you want your csv to be generated
+        Exports the data to csv
+
+        Parameters
+        ----------
+        data : list
+            The data that will be expoted to csv.
+        output_path : str
+            The path and name where you want your csv to be generated.
+
     """
-    assert data is not None
-    assert output_path is not None
+    assert isinstance(data, list)
+    assert isinstance(output_path, str)
 
     df = pd.DataFrame(data)
 
     df.to_csv(output_path, index=False)
     print(f"The file has been generated => {output_path}")
+
+
+def to_string(data: list) -> str:
+    """
+    Exports the data to string format
+
+    Parameters
+    ----------
+    data : list
+        The data that will be expoted to string.
+
+    Returns
+    -------
+    str
+        The information converted to string
+
+    """
+    assert isinstance(data, list)
+
+    df = pd.DataFrame(data)
+    return df.to_string()
