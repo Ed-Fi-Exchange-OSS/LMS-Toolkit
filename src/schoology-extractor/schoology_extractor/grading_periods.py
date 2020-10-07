@@ -40,11 +40,13 @@ assert schoology_secret is not None, "A `SCHOOLOGY_SECRET` must be present in th
 request_client = RequestClient(schoology_key, schoology_secret)
 
 logger.info("Getting grading periods")
-grading_periods_list: List[Any] = []
-grading_periods_response = request_client.get_grading_periods()
-while True:
-    grading_periods_list = grading_periods_list + grading_periods_response.current_page_items
-    if grading_periods_response.get_next_page() is None:
-        break
-
-print(export_data.to_string(grading_periods_list))
+try:
+    grading_periods_list: List[Any] = []
+    grading_periods_response = request_client.get_grading_periods()
+    while True:
+        grading_periods_list = grading_periods_list + grading_periods_response.current_page_items
+        if grading_periods_response.get_next_page() is None:
+            break
+    print(export_data.to_string(grading_periods_list))
+except Exception:
+    logger.error('An exception has occurred in the process of getting Grading Periods')

@@ -59,66 +59,78 @@ request_client = RequestClient(schoology_key, schoology_secret)
 
 # export users
 logger.info("Exporting users")
-users_response = request_client.get_users()
-users_list: List[Any] = []
-while True:
-    users_list = users_list + users_response.current_page_items
-    if users_response.get_next_page() is None:
-        break
+try:
+    users_response = request_client.get_users()
+    users_list: List[Any] = []
+    while True:
+        users_list = users_list + users_response.current_page_items
+        if users_response.get_next_page() is None:
+            break
 
-export_data.to_csv(users_list, os.path.join(schoology_output_path, "users.csv"))
+    export_data.to_csv(users_list, os.path.join(schoology_output_path, "users.csv"))
+except Exception:
+    logger.error('An exception has occurred in the process of generating the users.csv file')
 
 
 # export sections
 logger.info("Exporting sections")
+sections_list = []
+try:
+    # first we need to get a list of courses
+    logger.info("Exporting sections - Getting courses")
+    courses_response = request_client.get_courses()
+    courses_list: List[Any] = []
+    while True:
+        courses_list = courses_list + courses_response.current_page_items
+        if courses_response.get_next_page() is None:
+            break
 
-# first we need to get a list of courses
-logger.info("Exporting sections - Getting courses")
-courses_response = request_client.get_courses()
-courses_list: List[Any] = []
-while True:
-    courses_list = courses_list + courses_response.current_page_items
-    if courses_response.get_next_page() is None:
-        break
-
-# now we can get a list of sections
-course_ids = map(lambda x: x["id"], courses_list)
-sections_list = request_client.get_section_by_course_ids(list(course_ids))
-export_data.to_csv(sections_list, os.path.join(schoology_output_path, "sections.csv"))
+    # now we can get a list of sections
+    course_ids = map(lambda x: x["id"], courses_list)
+    sections_list = request_client.get_section_by_course_ids(list(course_ids))
+    export_data.to_csv(sections_list, os.path.join(schoology_output_path, "sections.csv"))
+except Exception:
+    logger.error('An exception has occurred in the process of generating the sections.csv file')
 
 
 # export assigments
 logger.info("Exporting assigments")
-section_ids = map(lambda x: x["id"], sections_list)
+assignments = []
+try:
+    section_ids = map(lambda x: x["id"], sections_list)
 
-assignments = request_client.get_assignments_by_section_ids(list(section_ids))
+    assignments = request_client.get_assignments_by_section_ids(list(section_ids))
 
-filtered_assignments = [
-    assignment
-    for assignment in assignments
-    if assignment["grading_period"] in grading_periods_array
-]
+    filtered_assignments = [
+        assignment
+        for assignment in assignments
+        if assignment["grading_period"] in grading_periods_array
+    ]
 
-export_data.to_csv(
-    filtered_assignments, os.path.join(schoology_output_path, "assignments.csv")
-)
-
+    export_data.to_csv(
+        filtered_assignments, os.path.join(schoology_output_path, "assignments.csv")
+    )
+except Exception:
+    logger.error('An exception has occurred in the process of generating the assigments.csv file')
 
 # export submissions
 logger.info("Exporting submissions")
-submissions_list: List[Any] = []
+try:
+    submissions_list: List[Any] = []
 
-for assignment in assignments:
-    submissions_response = (
-        request_client.get_submissions_by_section_id_and_grade_item_id(
-            assignment["section_id"], str(assignment["grade_item_id"])
+    for assignment in assignments:
+        submissions_response = (
+            request_client.get_submissions_by_section_id_and_grade_item_id(
+                assignment["section_id"], str(assignment["grade_item_id"])
+            )
         )
-    )
-    while True:
-        submissions_list = submissions_list + submissions_response.current_page_items
-        if submissions_response.get_next_page() is None:
-            break
+        while True:
+            submissions_list = submissions_list + submissions_response.current_page_items
+            if submissions_response.get_next_page() is None:
+                break
 
-export_data.to_csv(
-    submissions_list, os.path.join(schoology_output_path, "submissions.csv")
-)
+    export_data.to_csv(
+        submissions_list, os.path.join(schoology_output_path, "submissions.csv")
+    )
+except Exception:
+    logger.error('An exception has occurred in the process of generating the submissions.csv file')
