@@ -2,6 +2,7 @@
     "recommendations": [
         "psioniq.psi-header",
         "streetsidesoftware.code-spell-checker",
-        "editorconfig.editorconfig"
+        "editorconfig.editorconfig",
+        "ms-python.vscode-pylance"
     ]
 }

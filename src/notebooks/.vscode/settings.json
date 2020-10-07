@@ -1,0 +1,4 @@
+{
+    "python.venvPath": ".venv/Scripts/python",
+    "python.dataScience.jupyterServerURI": "local"
+}
