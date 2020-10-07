@@ -5,7 +5,7 @@
 
 import time
 import random
-from typing import List, TypeVar
+from typing import List
 
 from requests_oauthlib import OAuth1Session  # type: ignore
 
@@ -14,7 +14,6 @@ from .paginated_result import PaginatedResult
 
 DEFAULT_URL = "https://api.schoology.com/v1/"
 DEFAULT_PAGE_SIZE = 20
-T = TypeVar('T')
 
 
 class RequestClient:

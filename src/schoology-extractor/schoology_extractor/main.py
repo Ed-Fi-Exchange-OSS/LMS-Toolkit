@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 logger.info("Starting Ed-Fi LMS Schoology Extractor")
-logger.debug("Loading and processing .env variables")
+logger.debug("Loading and processing environment variables")
 
 schoology_key = os.getenv("SCHOOLOGY_KEY")
 schoology_secret = os.getenv("SCHOOLOGY_SECRET")
@@ -54,10 +54,8 @@ assert (
 
 grading_periods_array = schoology_grading_periods.split(",")
 
-logger.debug("Finished loading and processing .env variables")
-
-
 request_client = RequestClient(schoology_key, schoology_secret)
+
 
 # export users
 logger.info("Exporting users")
@@ -69,7 +67,7 @@ while True:
         break
 
 export_data.to_csv(users_list, os.path.join(schoology_output_path, "users.csv"))
-logger.info("Finished exporting users")
+
 
 # export sections
 logger.info("Exporting sections")
@@ -82,13 +80,11 @@ while True:
     courses_list = courses_list + courses_response.current_page_items
     if courses_response.get_next_page() is None:
         break
-logger.info("Exporting sections - Finished getting courses")
 
 # now we can get a list of sections
 course_ids = map(lambda x: x["id"], courses_list)
 sections_list = request_client.get_section_by_course_ids(list(course_ids))
 export_data.to_csv(sections_list, os.path.join(schoology_output_path, "sections.csv"))
-logger.info("Finished exporting sections")
 
 
 # export assigments
@@ -106,7 +102,6 @@ filtered_assignments = [
 export_data.to_csv(
     filtered_assignments, os.path.join(schoology_output_path, "assignments.csv")
 )
-logger.info("Finished exporting assigments")
 
 
 # export submissions
@@ -127,4 +122,3 @@ for assignment in assignments:
 export_data.to_csv(
     submissions_list, os.path.join(schoology_output_path, "submissions.csv")
 )
-logger.info("Finished exporting submissions")
