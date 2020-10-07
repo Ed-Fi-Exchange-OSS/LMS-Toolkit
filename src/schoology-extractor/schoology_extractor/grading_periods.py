@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import os
+from typing import Any, List
 
 from dotenv import load_dotenv
 
@@ -21,7 +22,7 @@ assert schoology_secret is not None, "A `SCHOOLOGY_SECRET` must be present in th
 
 request_client = RequestClient(schoology_key, schoology_secret)
 
-grading_periods_list = []
+grading_periods_list: List[Any] = []
 grading_periods_response = request_client.get_grading_periods()
 while True:
     grading_periods_list = grading_periods_list + grading_periods_response.current_page_items

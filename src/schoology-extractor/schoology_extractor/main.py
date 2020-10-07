@@ -4,11 +4,12 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import os
+from typing import Any, List
 
 from dotenv import load_dotenv
 
 from helpers import export_data
-from api.request_client import RequestClient
+from api.request_client import RequestClient, PaginatedResult
 
 load_dotenv()
 schoology_key = os.getenv("SCHOOLOGY_KEY")
@@ -28,7 +29,7 @@ request_client = RequestClient(schoology_key, schoology_secret)
 
 # export users
 users_response = request_client.get_users()
-users_list = []
+users_list: List[Any] = []
 while True:
     users_list = users_list + users_response.current_page_items
     if users_response.get_next_page() is None:
@@ -40,7 +41,7 @@ export_data.to_csv(users_list, os.path.join(schoology_output_path, 'users.csv'))
 
 # first we need to get a list of courses
 courses_response = request_client.get_courses()
-courses_list = []
+courses_list: List[Any] = []
 while True:
     courses_list = courses_list + courses_response.current_page_items
     if courses_response.get_next_page() is None:
@@ -65,7 +66,7 @@ export_data.to_csv(filtered_assignments,
 
 
 # export submissions
-submissions_list = []
+submissions_list: List[Any] = []
 
 for assignment in assignments:
     submissions_response = request_client.get_submissions_by_section_id_and_grade_item_id(assignment["section_id"], str(assignment["grade_item_id"]))

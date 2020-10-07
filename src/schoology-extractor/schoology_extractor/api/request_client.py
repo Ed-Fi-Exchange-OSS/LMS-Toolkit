@@ -5,14 +5,16 @@
 
 import time
 import random
+from typing import List, TypeVar
 
-from requests_oauthlib import OAuth1Session
+from requests_oauthlib import OAuth1Session  # type: ignore
 
 from .paginated_result import PaginatedResult
 
 
 DEFAULT_URL = "https://api.schoology.com/v1/"
 DEFAULT_PAGE_SIZE = 20
+T = TypeVar('T')
 
 
 class RequestClient:
@@ -124,15 +126,17 @@ class RequestClient:
         """
         assert isinstance(section_ids, list), "Argument `section_ids` should be of type `list`."
 
-        assignments = []
+        assignments: List[object] = []
         for section_id in section_ids:
-            url = f"sections/{section_id}/assignments?{self._build_query_params_for_first_page(DEFAULT_PAGE_SIZE)}"
+            params = self._build_query_params_for_first_page(DEFAULT_PAGE_SIZE)
+            url = f"sections/{section_id}/assignments?{params}"
 
             assignments_per_section = PaginatedResult(
                 self, DEFAULT_PAGE_SIZE, self.get(url), "assignment", self.base_url + url
             )
             while True:
                 current_page_assignments = assignments_per_section.current_page_items
+
                 for assignment in current_page_assignments:
                     assignment["section_id"] = section_id
                 assignments = assignments + current_page_assignments
@@ -162,7 +166,7 @@ class RequestClient:
         """
         assert isinstance(course_ids, list), "Argument `course_ids` should be of type `list`."
 
-        sections = []
+        sections: List[object] = []
         for course_id in course_ids:
             url = f"courses/{course_id}/sections"
             sections_per_course = PaginatedResult(
