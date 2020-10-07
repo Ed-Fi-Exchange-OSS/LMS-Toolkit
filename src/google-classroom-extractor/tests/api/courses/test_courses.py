@@ -3,13 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from pathlib import Path
 from unittest.mock import patch
 import pandas as pd
-from sqlalchemy import create_engine
 from google_classroom_extractor.api.courses import request_all_courses_as_df
-
-DB_FILE = "tests/courses/test_courses.db"
 
 
 def dataframe_row_count(dataframe) -> int:
@@ -33,41 +29,37 @@ def db_room_by_course_id(test_db, course_id) -> int:
 
 
 @patch("google_classroom_extractor.api.courses.request_latest_courses_as_df")
-def test_overlap_removal(mock_latest_courses_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_overlap_removal(mock_latest_courses_df, test_db_fixture):
     # 1st pull: courses-1st.csv is 17 rows ending with "Julia Harding"
-    mock_latest_courses_df.return_value = pd.read_csv("tests/courses/courses-1st.csv")
-    first_courses_df = request_all_courses_as_df(None, test_db)
+    mock_latest_courses_df.return_value = pd.read_csv(
+        "tests/api/courses/courses-1st.csv"
+    )
+    first_courses_df = request_all_courses_as_df(None, test_db_fixture)
     assert dataframe_row_count(first_courses_df) == 17
-    assert db_row_count(test_db) == 17
-    assert db_ending_name(test_db) == "Julia Harding"
+    assert db_row_count(test_db_fixture) == 17
+    assert db_ending_name(test_db_fixture) == "Julia Harding"
 
     # 2nd pull: courses-2nd-overlaps-1st is 59 rows with 5 overlapping ending with "Maurice Hatfield"
     mock_latest_courses_df.return_value = pd.read_csv(
-        "tests/courses/courses-2nd-overlaps-1st.csv"
+        "tests/api/courses/courses-2nd-overlaps-1st.csv"
     )
-    second_courses_df = request_all_courses_as_df(None, test_db)
+    second_courses_df = request_all_courses_as_df(None, test_db_fixture)
     assert dataframe_row_count(second_courses_df) == 59
-    assert db_row_count(test_db) == 71  # 59 new + 17 existing - 5 overlapping
-    assert db_ending_name(test_db) == "Maurice Hatfield"
+    assert db_row_count(test_db_fixture) == 71  # 59 new + 17 existing - 5 overlapping
+    assert db_ending_name(test_db_fixture) == "Maurice Hatfield"
 
     # 3rd pull: courses-3rd-overlaps-1st-and-2nd is 87 rows with 5 overlapping ending with "Troy Greene"
     mock_latest_courses_df.return_value = pd.read_csv(
-        "tests/courses/courses-3rd-overlaps-1st-and-2nd.csv"
+        "tests/api/courses/courses-3rd-overlaps-1st-and-2nd.csv"
     )
-    third_courses_df = request_all_courses_as_df(None, test_db)
+    third_courses_df = request_all_courses_as_df(None, test_db_fixture)
     assert dataframe_row_count(third_courses_df) == 87
-    assert db_row_count(test_db) == 99  # 87 new + 71 existing - 59 overlapping
-    assert db_ending_name(test_db) == "Troy Greene"
+    assert db_row_count(test_db_fixture) == 99  # 87 new + 71 existing - 59 overlapping
+    assert db_ending_name(test_db_fixture) == "Troy Greene"
 
 
 @patch("google_classroom_extractor.api.courses.request_latest_courses_as_df")
-def test_value_replacement(mock_latest_courses_df):
-    Path(DB_FILE).unlink(missing_ok=True)
-    test_db = create_engine(f"sqlite:///{DB_FILE}", echo=True)
-
+def test_value_replacement(mock_latest_courses_df, test_db_fixture):
     # original course
     course_id = "1234"
     initial_room_id = "Room1234"
@@ -93,10 +85,10 @@ def test_value_replacement(mock_latest_courses_df):
     )
 
     # initial pull
-    first_courses_df = request_all_courses_as_df(None, test_db)
+    first_courses_df = request_all_courses_as_df(None, test_db_fixture)
     assert dataframe_row_count(first_courses_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_room_by_course_id(test_db, course_id) == initial_room_id
+    assert db_row_count(test_db_fixture) == 1
+    assert db_room_by_course_id(test_db_fixture, course_id) == initial_room_id
 
     # same course, with room updated
     update_room_id = "room2345"
@@ -122,7 +114,7 @@ def test_value_replacement(mock_latest_courses_df):
     )
 
     # overwrite pull
-    overwrite_courses_df = request_all_courses_as_df(None, test_db)
+    overwrite_courses_df = request_all_courses_as_df(None, test_db_fixture)
     assert dataframe_row_count(overwrite_courses_df) == 1
-    assert db_row_count(test_db) == 1
-    assert db_room_by_course_id(test_db, course_id) == update_room_id
+    assert db_row_count(test_db_fixture) == 1
+    assert db_room_by_course_id(test_db_fixture, course_id) == update_room_id
