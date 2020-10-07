@@ -1,0 +1,8 @@
+[run]
+branch = True
+source = google_classroom_extractor
+omit =
+    google_classroom_extractor/main.py
+    google_classroom_extractor/config.py
+
+[report]

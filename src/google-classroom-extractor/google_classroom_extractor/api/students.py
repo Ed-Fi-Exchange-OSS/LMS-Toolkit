@@ -4,16 +4,33 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, cast
 import pandas as pd
 import sqlalchemy
 from googleapiclient.discovery import Resource
-from .api_caller import call_api
+from .api_caller import call_api, ResourceType
 
 
 def request_students(
     resource: Optional[Resource], course_id: str
 ) -> List[Dict[str, str]]:
+    """
+    Fetch Students API data for a course and return a list of student data
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource
+    course_ids: str
+        a Google Classroom course id as a string
+
+    Returns
+    -------
+    List[Dict[str, str]]
+        a list of Google Classroom Student resources,
+            see https://developers.google.com/classroom/reference/rest/v1/courses.students
+    """
+
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_id, str)
 
@@ -21,8 +38,8 @@ def request_students(
         return []
 
     return call_api(
-        resource.courses().students().list,  # type: ignore - courses() is dynamic
-        {"courseId": course_id},  # type: ignore - due to tail_recursive decorator
+        cast(ResourceType, resource).courses().students().list,
+        {"courseId": course_id},
         "students",
     )
 
@@ -30,6 +47,31 @@ def request_students(
 def request_latest_students_as_df(
     resource: Optional[Resource], course_ids: List[str]
 ) -> pd.DataFrame:
+    """
+    Fetch Students API data for a range of courses and return a Students API DataFrame
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource or None
+    course_ids: List[str]
+        a list of Google Classroom course ids as a string array
+
+    Returns
+    -------
+    DataFrame
+        a Students API DataFrame with the fetched data
+
+    DataFrame columns are:
+        courseId: Identifier of the course
+        userId: Identifier of the user
+        profile.id: Identifier of the user
+        profile.name.givenName: The user's first name
+        profile.name.familyName: The user's last name
+        profile.name.fullName: The user's full name formed by concatenating the first and last name values
+        profile.emailAddress: Email address of the user
+    """
+
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_ids, list)
 
@@ -46,6 +88,34 @@ def request_all_students_as_df(
     course_ids: List[str],
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> pd.DataFrame:
+    """
+    Fetch Students API data for a range of courses and return a Students API DataFrame
+    with current and previously fetched data
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource or None
+    course_ids: List[str]
+        a list of Google Classroom course ids as a string array
+    sync_db: sqlalchemy.engine.base.Engine
+        an Engine instance for creating database connections
+
+    Returns
+    -------
+    DataFrame
+        a Students API DataFrame with the current and previously fetched data
+
+    DataFrame columns are:
+        courseId: Identifier of the course
+        userId: Identifier of the user
+        profile.id: Identifier of the user
+        profile.name.givenName: The user's first name
+        profile.name.familyName: The user's last name
+        profile.name.fullName: The user's full name formed by concatenating the first and last name values
+        profile.emailAddress: Email address of the user
+    """
+
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_ids, list)
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)

@@ -55,6 +55,7 @@ coverage.xml
 .pytest_cache/
 cover/
 pytest.xml
+coverage.zip
 
 # Translations
 *.mo
@@ -132,6 +133,7 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+mypy.xml
 
 # Pyre type checker
 .pyre/
