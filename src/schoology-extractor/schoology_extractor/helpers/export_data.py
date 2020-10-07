@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import pandas as pd  # type: ignore
+import logging
 
 
 def to_csv(data: list, output_path: str):
@@ -24,7 +25,7 @@ def to_csv(data: list, output_path: str):
     df = pd.DataFrame(data)
 
     df.to_csv(output_path, index=False)
-    print(f"The file has been generated => {output_path}")
+    logging.info(f"The file has been generated => {output_path}")
 
 
 def to_string(data: list) -> str:
@@ -45,4 +46,5 @@ def to_string(data: list) -> str:
     assert isinstance(data, list)
 
     df = pd.DataFrame(data)
+    logging.info("The data has been converted to string")
     return df.to_string()
