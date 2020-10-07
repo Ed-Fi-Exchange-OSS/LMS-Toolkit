@@ -48,5 +48,5 @@ try:
         if grading_periods_response.get_next_page() is None:
             break
     print(export_data.to_string(grading_periods_list))
-except Exception:
-    logger.error('An exception has occurred in the process of getting Grading Periods')
+except Exception as ex:
+    logger.error('An exception occurred while getting the Grading Periods: %s', ex)

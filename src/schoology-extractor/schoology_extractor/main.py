@@ -68,8 +68,8 @@ try:
             break
 
     export_data.to_csv(users_list, os.path.join(schoology_output_path, "users.csv"))
-except Exception:
-    logger.error('An exception has occurred in the process of generating the users.csv file')
+except Exception as ex:
+    logger.error('An exception has occurred in the process of generating the users.csv file: %s', ex)
 
 
 # export sections
@@ -89,8 +89,8 @@ try:
     course_ids = map(lambda x: x["id"], courses_list)
     sections_list = request_client.get_section_by_course_ids(list(course_ids))
     export_data.to_csv(sections_list, os.path.join(schoology_output_path, "sections.csv"))
-except Exception:
-    logger.error('An exception has occurred in the process of generating the sections.csv file')
+except Exception as ex:
+    logger.error('An exception has occurred in the process of generating the sections.csv file: %s', ex)
 
 
 # export assigments
@@ -110,8 +110,9 @@ try:
     export_data.to_csv(
         filtered_assignments, os.path.join(schoology_output_path, "assignments.csv")
     )
-except Exception:
-    logger.error('An exception has occurred in the process of generating the assigments.csv file')
+except Exception as ex:
+    logger.error('An exception has occurred in the process of generating the assigments.csv file: %s', ex)
+
 
 # export submissions
 logger.info("Exporting submissions")
@@ -132,5 +133,5 @@ try:
     export_data.to_csv(
         submissions_list, os.path.join(schoology_output_path, "submissions.csv")
     )
-except Exception:
-    logger.error('An exception has occurred in the process of generating the submissions.csv file')
+except Exception as ex:
+    logger.error('An exception has occurred in the process of generating the submissions.csv file: %s', ex)
