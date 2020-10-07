@@ -1,7 +1,7 @@
 # Getting Started
 
 To apply these build configuration settings on a new TeamCity environment (min
-version: `2019.2.x`):
+version: TeamCity - `2019.2.x`, Python - `3.8.x`, Poetry - 1.0.x):
 
 1. Create a "root" project that will contain this work as a sub-project, e.g.
    `Exchange` below `R&D`
