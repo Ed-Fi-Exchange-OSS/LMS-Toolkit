@@ -3,7 +3,8 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-import pandas as pd
+import pandas as pd  # type: ignore
+import logging
 
 
 def to_csv(data: list, output_path: str):
@@ -24,7 +25,7 @@ def to_csv(data: list, output_path: str):
     df = pd.DataFrame(data)
 
     df.to_csv(output_path, index=False)
-    print(f"The file has been generated => {output_path}")
+    logging.info("The file has been generated => %s" % output_path)
 
 
 def to_string(data: list) -> str:

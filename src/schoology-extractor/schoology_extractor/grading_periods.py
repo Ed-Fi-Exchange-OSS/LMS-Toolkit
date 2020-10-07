@@ -3,7 +3,10 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+import logging
 import os
+from typing import Any, List
+import sys
 
 from dotenv import load_dotenv
 
@@ -11,6 +14,21 @@ from helpers import export_data
 from api.request_client import RequestClient
 
 load_dotenv()
+# Configure logger
+log_level = os.getenv("SCHOOLOGY_LOG_LEVEL", "INFO")
+assert log_level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], "The specified `SCHOOLOGY_LOG_LEVEL` is not valid"
+logFormatter = '%(asctime)s - %(levelname)s - %(message)s'
+
+logging.basicConfig(
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+    ],
+    format=logFormatter,
+    level=log_level
+)
+logger = logging.getLogger(__name__)
+
+logger.debug("Loading and processing environment variables")
 schoology_key = os.getenv("SCHOOLOGY_KEY")
 schoology_secret = os.getenv("SCHOOLOGY_SECRET")
 schoology_section_ids = os.getenv("SCHOOLOGY_SECTION_IDS")
@@ -21,11 +39,14 @@ assert schoology_secret is not None, "A `SCHOOLOGY_SECRET` must be present in th
 
 request_client = RequestClient(schoology_key, schoology_secret)
 
-grading_periods_list = []
-grading_periods_response = request_client.get_grading_periods()
-while True:
-    grading_periods_list = grading_periods_list + grading_periods_response.current_page_items
-    if grading_periods_response.get_next_page() is None:
-        break
-
-print(export_data.to_string(grading_periods_list))
+logger.info("Getting grading periods")
+try:
+    grading_periods_list: List[Any] = []
+    grading_periods_response = request_client.get_grading_periods()
+    while True:
+        grading_periods_list = grading_periods_list + grading_periods_response.current_page_items
+        if grading_periods_response.get_next_page() is None:
+            break
+    print(export_data.to_string(grading_periods_list))
+except Exception as ex:
+    logger.error('An exception occurred while getting the Grading Periods: %s', ex)
