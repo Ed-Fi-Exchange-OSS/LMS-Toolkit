@@ -22,6 +22,7 @@ def to_csv(data: list, output_path: str):
     assert isinstance(data, list)
     assert isinstance(output_path, str)
 
+    logging.info("Generating CSV File")
     df = pd.DataFrame(data)
 
     df.to_csv(output_path, index=False)
@@ -45,6 +46,7 @@ def to_string(data: list) -> str:
     """
     assert isinstance(data, list)
 
+    logging.info("Converting data to string")
     df = pd.DataFrame(data)
     logging.info("The data has been converted to string")
     return df.to_string()

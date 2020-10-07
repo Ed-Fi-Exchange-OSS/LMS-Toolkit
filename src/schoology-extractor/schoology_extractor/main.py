@@ -29,6 +29,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+logger.info("Starting Ed-Fi LMS Schoology Extractor")
 logger.debug("Loading and processing .env variables")
 
 schoology_key = os.getenv("SCHOOLOGY_KEY")
