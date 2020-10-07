@@ -136,6 +136,7 @@ def request_all_coursework_as_df(
         dueDate.day: Optional day, in UTC, that submissions are due
         dueTime.hours: Optional hour, in UTC, that submissions are due
         dueTime.minutes: Optional minute, in UTC, that submissions are due
+        scheduledTime: Optional timestamp when this course work is scheduled to be published
         topicId: Identifier for the topic that this coursework is associated with
     """
     assert isinstance(resource, Resource) or resource is None

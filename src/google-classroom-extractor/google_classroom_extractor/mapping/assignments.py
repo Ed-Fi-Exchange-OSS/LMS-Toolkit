@@ -12,12 +12,12 @@ from google_classroom_extractor.mapping.constants import (
 )
 
 
-def coursework_to_assignments_section(
+def coursework_to_assignments_dfs(
     coursework_df: pd.DataFrame,
 ) -> Dict[str, pd.DataFrame]:
     """
-    Convert a Coursework API DataFrame to a list of AssignmentSections
-    (Assignment UDM DataFrame/LMS Section id pairs)
+    Convert a Coursework API DataFrame to a Dict of Assignment UDM DataFrames
+    grouped by source system section id pairs
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def coursework_to_assignments_section(
     Returns
     -------
     Dict[str, DataFrame]
-        groups LMS UDM Assignment DataFrames by source system section id
+        LMS UDM Assignment DataFrames grouped by source system section id
 
     Assignment DataFrame columns are:
         AssignmentCategory: The category or type of assignment
@@ -68,23 +68,28 @@ def coursework_to_assignments_section(
         ]
     ].apply(lambda date_element: datetime(*date_element), axis=1)
 
-    result: pd.DataFrame = coursework_df[
+    coursework_df["SourceSystemIdentifier"] = coursework_df[["courseId", "id"]].agg(
+        ":".join, axis=1
+    )
+
+    assignments_df: pd.DataFrame = coursework_df[
         [
             "courseId",
-            "id",
             "workType",
             "description",
             "scheduledTime",
             "maxPoints",
             "title",
+            "creationTime",
+            "updateTime",
             "DueDateTime",
+            "SourceSystemIdentifier",
         ]
     ]
 
-    result = result.rename(
+    assignments_df = assignments_df.rename(
         columns={
-            "courseId": "SourceSystemIdentifier1",
-            "id": "SourceSystemIdentifier2",
+            "courseId": "SourceSystemSectionIdentifier",
             "workType": "AssignmentCategory",
             "description": "AssignmentDescription",
             "scheduledTime": "StartDateTime",
@@ -95,9 +100,17 @@ def coursework_to_assignments_section(
         }
     )
 
-    result["SourceSystem"] = SOURCE_SYSTEM
-    result["EntityStatus"] = ENTITY_STATUS_ACTIVE
-    result["EndDateTime"] = ""  # No EndDateTime available from API
+    assignments_df["SourceSystem"] = SOURCE_SYSTEM
+    assignments_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
+    assignments_df["EndDateTime"] = ""  # No EndDateTime available from API
 
     # group by section id as a Dict of DataFrames
-    return dict(tuple(result.groupby(["SourceSystemIdentifier1"])))
+    result: Dict[str, pd.DataFrame] = dict(
+        tuple(assignments_df.groupby(["SourceSystemSectionIdentifier"]))
+    )
+
+    # no longer need group by column
+    for grouped_df in result.values():
+        grouped_df.drop(columns=["SourceSystemSectionIdentifier"], inplace=True)
+
+    return result
