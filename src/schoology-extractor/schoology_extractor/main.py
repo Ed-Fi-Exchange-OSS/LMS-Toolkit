@@ -9,7 +9,7 @@ from typing import Any, List
 from dotenv import load_dotenv
 
 from helpers import export_data
-from api.request_client import RequestClient, PaginatedResult
+from api.request_client import RequestClient
 
 load_dotenv()
 schoology_key = os.getenv("SCHOOLOGY_KEY")
@@ -17,13 +17,21 @@ schoology_secret = os.getenv("SCHOOLOGY_SECRET")
 schoology_output_path = os.getenv("SCHOOLOGY_OUTPUT_PATH")
 schoology_grading_periods = os.getenv("SCHOOLOGY_GRADING_PERIODS")
 
-assert schoology_key is not None, "A `SCHOOLOGY_KEY` must be present in the .env file and it was not found."
-assert schoology_secret is not None, "A `SCHOOLOGY_SECRET` must be present in the .env file and it was not found."
-assert schoology_output_path is not None, "A `SCHOOLOGY_OUTPUT_PATH` must be present in the .env file and it was not found."
-assert schoology_grading_periods is not None, "A `SCHOOLOGY_GRADING_PERIODS` must be present in the .env file and it was not found."
+assert (
+    schoology_key is not None
+), "A `SCHOOLOGY_KEY` must be present in the .env file and it was not found."
+assert (
+    schoology_secret is not None
+), "A `SCHOOLOGY_SECRET` must be present in the .env file and it was not found."
+assert (
+    schoology_output_path is not None
+), "A `SCHOOLOGY_OUTPUT_PATH` must be present in the .env file and it was not found."
+assert (
+    schoology_grading_periods is not None
+), "A `SCHOOLOGY_GRADING_PERIODS` must be present in the .env file and it was not found."
 
 
-grading_periods_array = schoology_grading_periods.split(',')
+grading_periods_array = schoology_grading_periods.split(",")
 
 request_client = RequestClient(schoology_key, schoology_secret)
 
@@ -35,7 +43,7 @@ while True:
     if users_response.get_next_page() is None:
         break
 
-export_data.to_csv(users_list, os.path.join(schoology_output_path, 'users.csv'))
+export_data.to_csv(users_list, os.path.join(schoology_output_path, "users.csv"))
 
 # export sections
 
@@ -50,8 +58,7 @@ while True:
 # now we can get a list of sections
 course_ids = map(lambda x: x["id"], courses_list)
 sections_list = request_client.get_section_by_course_ids(list(course_ids))
-export_data.to_csv(sections_list,
-                   os.path.join(schoology_output_path, 'sections.csv'))
+export_data.to_csv(sections_list, os.path.join(schoology_output_path, "sections.csv"))
 
 
 # export assigments
@@ -59,21 +66,31 @@ section_ids = map(lambda x: x["id"], sections_list)
 
 assignments = request_client.get_assignments_by_section_ids(list(section_ids))
 
-filtered_assignments = [assignment for assignment in assignments if assignment["grading_period"] in grading_periods_array]
+filtered_assignments = [
+    assignment
+    for assignment in assignments
+    if assignment["grading_period"] in grading_periods_array
+]
 
-export_data.to_csv(filtered_assignments,
-                   os.path.join(schoology_output_path, 'assignments.csv'))
+export_data.to_csv(
+    filtered_assignments, os.path.join(schoology_output_path, "assignments.csv")
+)
 
 
 # export submissions
 submissions_list: List[Any] = []
 
 for assignment in assignments:
-    submissions_response = request_client.get_submissions_by_section_id_and_grade_item_id(assignment["section_id"], str(assignment["grade_item_id"]))
+    submissions_response = (
+        request_client.get_submissions_by_section_id_and_grade_item_id(
+            assignment["section_id"], str(assignment["grade_item_id"])
+        )
+    )
     while True:
         submissions_list = submissions_list + submissions_response.current_page_items
         if submissions_response.get_next_page() is None:
             break
 
-export_data.to_csv(submissions_list,
-                   os.path.join(schoology_output_path, 'submissions.csv'))
+export_data.to_csv(
+    submissions_list, os.path.join(schoology_output_path, "submissions.csv")
+)
