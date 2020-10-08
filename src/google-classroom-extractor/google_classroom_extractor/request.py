@@ -6,7 +6,7 @@
 from typing import List
 import pandas as pd
 from googleapiclient.discovery import Resource
-from sqlalchemy.engine.base import Engine as saEngine
+import sqlalchemy
 
 from google_classroom_extractor.api.courses import request_all_courses_as_df
 from google_classroom_extractor.api.coursework import request_all_coursework_as_df
@@ -20,7 +20,7 @@ from .result import Result
 def request_all(
     classroom_resource: Resource,
     reports_resource: Resource,
-    sync_db: saEngine,
+    sync_db: sqlalchemy.engine.base.Engine,
 ) -> Result:
     """
     Fetch from all API endpoints and return DataFrames for each
@@ -31,7 +31,7 @@ def request_all(
         a Google Classroom SDK Resource
     reports_resource: Resource
         a Google Reports SDK Resource
-    sync_db: saEngine
+    sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
 
     Returns
@@ -42,7 +42,7 @@ def request_all(
 
     assert isinstance(classroom_resource, Resource)
     assert isinstance(reports_resource, Resource)
-    assert isinstance(sync_db, saEngine)
+    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
     courses_df: pd.DataFrame = request_all_courses_as_df(classroom_resource, sync_db)
     course_ids: List[str] = courses_df["id"].tolist()

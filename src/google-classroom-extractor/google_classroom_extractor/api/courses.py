@@ -6,7 +6,7 @@
 import logging
 from typing import List, Dict, Optional, cast
 import pandas as pd
-from sqlalchemy.engine.base import Engine as saEngine
+import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
 
@@ -79,7 +79,7 @@ def request_latest_courses_as_df(resource: Optional[Resource]) -> pd.DataFrame:
 
 
 def request_all_courses_as_df(
-    resource: Optional[Resource], sync_db: saEngine
+    resource: Optional[Resource], sync_db: sqlalchemy.engine.base.Engine
 ) -> pd.DataFrame:
     """
     Fetch Course API data for all courses and return a Courses API DataFrame
@@ -88,7 +88,7 @@ def request_all_courses_as_df(
     ----------
     resource: Optional[Resource]
         a Google Classroom SDK Resource
-    sync_db: saEngine
+    sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
 
     Returns
@@ -115,7 +115,7 @@ def request_all_courses_as_df(
         calendarId: The Calendar ID for a calendar that all course members can see
     """
     assert isinstance(resource, Resource) or resource is None
-    assert isinstance(sync_db, saEngine)
+    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
     courses_df = request_latest_courses_as_df(resource)
 
