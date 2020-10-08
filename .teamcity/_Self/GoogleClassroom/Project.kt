@@ -16,7 +16,7 @@ object GoogleClassroomProject : Project({
     buildType(googleClassroom.buildTypes.TestBranch)
 
     params{
-        param("project.directory", "google-classroom-extractor");
+        param("project.directory", "./src/google-classroom-extractor");
         param("vcs.checkout.rules","""
             +:.teamcity => .teamcity
             +:%project.directory% => %project.directory%
