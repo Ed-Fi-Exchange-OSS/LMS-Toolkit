@@ -22,6 +22,7 @@ object FizzProject : Project({
     }
 
     subProject(schoology.SchoologyProject)
+    subProject(googleClassroom.GoogleClassroomProject)
 
     template(_self.templates.TestTemplateBranch)
     template(_self.templates.TestTemplatePullRequest)

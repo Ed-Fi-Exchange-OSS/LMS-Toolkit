@@ -43,7 +43,10 @@ def _run_command(command: List[str], exit_immediately: bool = True):
         # All versions of Windows are "nt"
         command = ["cmd", "/c", *command]
 
-    result = subprocess.run(command, cwd=f"../src/{sys.argv[2]}")
+    script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+    package_dir = os.path.join(script_dir, "..", "src", sys.argv[2])
+
+    result = subprocess.run(command, cwd=package_dir)
 
     if exit_immediately:
         exit(result.returncode)

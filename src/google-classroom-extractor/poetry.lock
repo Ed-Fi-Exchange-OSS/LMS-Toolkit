@@ -629,6 +629,14 @@ version = "2.0.0"
 pytest-timeout = ">=1.4.2,<2.0.0"
 
 [[package]]
+category = "main"
+description = "Send test results to TeamCity continuous integration server from unittest, nose, py.test, twisted trial, behave (Python 2.6+)"
+name = "teamcity-messages"
+optional = false
+python-versions = "*"
+version = "1.28"
+
+[[package]]
 category = "dev"
 description = "The most basic Text::Unidecode port"
 name = "text-unidecode"
@@ -698,7 +706,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "97e6115cd8c364cca0ef056e660c4db8f590b8af1a7c637ef351a92f5cf408a8"
+content-hash = "4f842cf502b90ae8e0ba1f6bbef7cf4248dc491e44e0ca6a118d21b4b94e2bb4"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -1113,6 +1121,10 @@ sqlalchemy = [
 tail-recursive = [
     {file = "tail-recursive-2.0.0.tar.gz", hash = "sha256:1752f200ac7886ee5623e0926233701c04ad73701ddff166711fef98902022d9"},
     {file = "tail_recursive-2.0.0-py3-none-any.whl", hash = "sha256:899fa097deb815229cbf30ccb30ffd5f878b7efc9e3bf5f755e168d615d42939"},
+]
+teamcity-messages = [
+    {file = "teamcity-messages-1.28.tar.gz", hash = "sha256:188feab063a52b846cfeab6b4f7ca9b64f47f22a27e5cef3ea7b93be0df1d0ca"},
+    {file = "teamcity_messages-1.28-py3-none-any.whl", hash = "sha256:58396d79b7c0d5d8c33890f1a34910ce921668ce9d9d7c4c96f0f94baaf12959"},
 ]
 text-unidecode = [
     {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
