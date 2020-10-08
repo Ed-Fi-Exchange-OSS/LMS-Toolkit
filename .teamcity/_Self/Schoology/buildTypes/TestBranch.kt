@@ -14,4 +14,5 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 object TestBranch : BuildType ({
     name = "Branch Testing"
     templates(_self.templates.TestTemplateBranch)
+    RelativeId("Schoology_TestBranch")
 })
