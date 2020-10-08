@@ -14,5 +14,5 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 object TestPullRequest : BuildType ({
     name = "Pull Request Testing"
     templates(_self.templates.TestTemplatePullRequest)
-    RelativeId("GoogleClassRoom_TestPullRequest")
+    id = RelativeId("GoogleClassRoom_TestPullRequest")
 })
