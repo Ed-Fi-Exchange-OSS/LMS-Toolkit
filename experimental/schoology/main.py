@@ -12,7 +12,7 @@ from datetime import datetime
 import os
 
 from dotenv import load_dotenv
-import pandas as pd
+import pandas as pd  # type: ignore
 import schoolopy
 from schoolopy.models import Submission
 

@@ -8,10 +8,10 @@ import logging
 import os
 from typing import List, Dict, Optional, Any, cast
 from dateutil.parser import parse as date_parse
-import pandas as pd
-from sqlalchemy.exc import OperationalError
-import sqlalchemy
-from googleapiclient.discovery import Resource
+import pandas as pd  # type: ignore
+from sqlalchemy.exc import OperationalError  # type: ignore
+from sqlalchemy.engine.base import Engine as saEngine  # type: ignore
+from googleapiclient.discovery import Resource  # type: ignore
 from .api_caller import call_api, ResourceType
 
 
@@ -33,8 +33,8 @@ def request_usage(resource: Optional[Resource], date: str) -> List[Dict[str, str
     )
 
 
-def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]:
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
+def last_sync_date(sync_db: saEngine) -> Optional[datetime]:
+    assert isinstance(sync_db, saEngine)
 
     with sync_db.connect() as con:
         try:
@@ -47,8 +47,8 @@ def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]
             return None
 
 
-def start_date(sync_db: sqlalchemy.engine.base.Engine) -> datetime:
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
+def start_date(sync_db: saEngine) -> datetime:
+    assert isinstance(sync_db, saEngine)
 
     last_date: Optional[datetime] = last_sync_date(sync_db)
     if last_date is not None:
@@ -123,10 +123,10 @@ def request_latest_usage_as_df(
 
 
 def request_all_usage_as_df(
-    resource: Optional[Resource], sync_db: sqlalchemy.engine.base.Engine
+    resource: Optional[Resource], sync_db: saEngine
 ) -> pd.DataFrame:
     assert isinstance(resource, Resource) or resource is None
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
+    assert isinstance(sync_db, saEngine)
 
     usage_df: pd.DataFrame = request_latest_usage_as_df(
         resource, start_date(sync_db), end_date()

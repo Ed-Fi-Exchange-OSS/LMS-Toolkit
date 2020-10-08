@@ -5,7 +5,7 @@
 
 import os
 from datetime import datetime
-import pandas as pd
+import pandas as pd  # type: ignore
 
 
 USERS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/users/"

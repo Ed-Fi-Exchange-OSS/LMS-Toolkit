@@ -5,9 +5,9 @@
 
 import logging
 from typing import List, Dict, Optional, cast
-import pandas as pd
-import sqlalchemy
-from googleapiclient.discovery import Resource
+import pandas as pd  # type: ignore
+from sqlalchemy.engine.base import Engine as saEngine  # type: ignore
+from googleapiclient.discovery import Resource  # type: ignore
 from .api_caller import call_api, ResourceType
 
 
@@ -86,7 +86,7 @@ def request_latest_students_as_df(
 def request_all_students_as_df(
     resource: Optional[Resource],
     course_ids: List[str],
-    sync_db: sqlalchemy.engine.base.Engine,
+    sync_db: saEngine,
 ) -> pd.DataFrame:
     """
     Fetch Students API data for a range of courses and return a Students API DataFrame
@@ -98,7 +98,7 @@ def request_all_students_as_df(
         a Google Classroom SDK Resource or None
     course_ids: List[str]
         a list of Google Classroom course ids as a string array
-    sync_db: sqlalchemy.engine.base.Engine
+    sync_db: saEngine
         an Engine instance for creating database connections
 
     Returns
@@ -118,7 +118,7 @@ def request_all_students_as_df(
 
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_ids, list)
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
+    assert isinstance(sync_db, saEngine)
 
     students_df: pd.DataFrame = request_latest_students_as_df(resource, course_ids)
 

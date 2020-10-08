@@ -9,11 +9,11 @@ import logging
 import os
 import sys
 
-import pandas as pd
+import pandas as pd  # type: ignore
 from dotenv import load_dotenv
-from googleapiclient.discovery import build, Resource
-from google.oauth2 import service_account
-import sqlalchemy
+from googleapiclient.discovery import build, Resource  # type: ignore
+from google.oauth2 import service_account  # type: ignore
+from sqlalchemy.engine.base import Engine as saEngine  # type: ignore
 
 from google_classroom_extractor.result import Result
 from google_classroom_extractor.config import get_credentials, get_sync_db_engine
@@ -47,7 +47,7 @@ def request():
         "classroom", "v1", credentials=credentials, cache_discovery=False
     )
 
-    sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
+    sync_db: saEngine = get_sync_db_engine()
 
     return request_all(classroom_resource, reports_resource, sync_db)
 

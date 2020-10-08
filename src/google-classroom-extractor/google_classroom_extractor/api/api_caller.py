@@ -8,7 +8,7 @@ import logging
 from typing import List, Dict, Optional, Callable, cast
 from requests import RequestException
 from opnieuw import retry
-from tail_recursive import tail_recursive
+from tail_recursive import tail_recursive  # type: ignore
 
 ResourceType = namedtuple("ValidSdkFunction", ["courses", "userUsageReport"])
 
