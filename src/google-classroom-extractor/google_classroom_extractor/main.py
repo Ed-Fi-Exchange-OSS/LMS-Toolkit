@@ -9,7 +9,6 @@ import logging
 import os
 import sys
 
-import pandas as pd
 from dotenv import load_dotenv
 from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
@@ -20,14 +19,17 @@ from google_classroom_extractor.config import get_credentials, get_sync_db_engin
 from google_classroom_extractor.request import request_all
 from google_classroom_extractor.mapping.users import students_and_teachers_to_users_df
 from google_classroom_extractor.mapping.sections import courses_to_sections_df
+from google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
 from google_classroom_extractor.csv_generation.write import (
     write_csv,
+    write_multi_csv,
     USERS_ROOT_DIRECTORY,
     SECTIONS_ROOT_DIRECTORY,
+    ASSIGNMENT_ROOT_DIRECTORY,
 )
 
 
-def request():
+def request() -> Result:
     load_dotenv()
     logging.basicConfig(
         handlers=[
@@ -55,15 +57,6 @@ def request():
 if __name__ == "__main__":
     result_dfs: Result = request()
 
-    logging.info("Writing API data to CSV files")
-    with get_sync_db_engine().connect() as con:
-        for table in con.execute(
-            "SELECT name FROM sqlite_master WHERE type='table';"
-        ).fetchall():
-            table_name = table[0]
-            df = pd.read_sql(f"SELECT * FROM {table_name}", con)
-            df.to_csv(f"{table_name.lower()}.csv", index=False)
-
     logging.info("Writing LMS UDM Users to CSV file")
     write_csv(
         students_and_teachers_to_users_df(
@@ -78,4 +71,11 @@ if __name__ == "__main__":
         courses_to_sections_df(result_dfs.courses_df),
         datetime.now(),
         SECTIONS_ROOT_DIRECTORY,
+    )
+
+    logging.info("Writing LMS UDM Assignments to CSV files")
+    write_multi_csv(
+        coursework_to_assignments_dfs(result_dfs.coursework_df),
+        datetime.now(),
+        ASSIGNMENT_ROOT_DIRECTORY,
     )

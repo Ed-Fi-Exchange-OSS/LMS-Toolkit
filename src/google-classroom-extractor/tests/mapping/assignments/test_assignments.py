@@ -22,17 +22,18 @@ ALTERNATE_LINK = "6"
 CREATION_TIME = "7"
 UPDATE_TIME = "8"
 MAX_POINTS = "9"
-DUEDATE_YEAR = 2000
-DUEDATE_MONTH = 10
-DUEDATE_DAY = 11
-DUETIME_HOURS = 12
-DUETIME_MINUTES = 13
+DUEDATE_YEAR = "2000"
+DUEDATE_MONTH = "10"
+DUEDATE_DAY = "11"
+DUETIME_HOURS = "12"
+DUETIME_MINUTES = "13.0"  # API returns float strings
 WORK_TYPE = "14"
 SUBMISSION_MODIFICATION_MODE = "15"
 ASSIGNEE_MODE = "16"
 CREATOR_USER_ID = "17"
 SCHEDULED_TIME = "18"
 TOPIC_ID = "19"
+
 
 # mutates first dict
 def merged_dict(dict1: Dict, dict2: Dict) -> Dict:
@@ -83,7 +84,11 @@ def test_mappings():
     assert row_dict["AssignmentCategory"] == WORK_TYPE
     assert row_dict["AssignmentDescription"] == DESCRIPTION
     assert row_dict["DueDateTime"] == datetime(
-        DUEDATE_YEAR, DUEDATE_MONTH, DUEDATE_DAY, DUETIME_HOURS, DUETIME_MINUTES
+        int(DUEDATE_YEAR),
+        int(DUEDATE_MONTH),
+        int(DUEDATE_DAY),
+        int(DUETIME_HOURS),
+        int(float(DUETIME_MINUTES)),
     )
     assert row_dict["EndDateTime"] == ""
     assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
@@ -94,6 +99,7 @@ def test_mappings():
     assert row_dict["Title"] == TITLE
     assert row_dict["CreateDate"] == CREATION_TIME
     assert row_dict["LastModifiedDate"] == UPDATE_TIME
+
 
 BOILERPLATE: Dict[str, str] = {
     "description": DESCRIPTION,
@@ -114,6 +120,7 @@ BOILERPLATE: Dict[str, str] = {
     "scheduledTime": SCHEDULED_TIME,
     "topicId": TOPIC_ID,
 }
+
 
 def test_multiple_in_same_section():
     # arrange
@@ -158,6 +165,7 @@ def test_multiple_in_same_section():
     assert coursework2_dict["SourceSystemIdentifier"] == f"{COURSE_ID}:{coursework2_id}"
     assert coursework2_dict["Title"] == coursework2_title
 
+
 def test_in_different_sections():
     # arrange
     coursework1: Dict[str, str] = {
@@ -196,7 +204,6 @@ def test_in_different_sections():
     coursework1_dict = assignments_df1.to_dict(orient="records")[0]
     assert coursework1_dict["SourceSystemIdentifier"] == f"{COURSE_ID}:{ID}"
     assert coursework1_dict["Title"] == TITLE
-
 
     assignments_df2: pd.DataFrame = assignments_dfs[coursework2_course_id]
     row_count, _ = assignments_df2.shape

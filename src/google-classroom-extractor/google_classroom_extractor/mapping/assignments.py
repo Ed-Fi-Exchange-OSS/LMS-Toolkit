@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Dict
+from typing import Dict, Optional
 from datetime import datetime
 import pandas as pd
 from google_classroom_extractor.mapping.constants import (
@@ -58,15 +58,31 @@ def coursework_to_assignments_dfs(
     assert "dueTime.hours" in coursework_df.columns
     assert "dueTime.minutes" in coursework_df.columns
 
-    coursework_df["DueDateTime"] = coursework_df[
-        [
-            "dueDate.year",
-            "dueDate.month",
-            "dueDate.day",
-            "dueTime.hours",
-            "dueTime.minutes",
+    if {
+        "dueDate.year",
+        "dueDate.month",
+        "dueDate.day",
+        "dueTime.hours",
+        "dueTime.minutes",
+    }.issubset(coursework_df.columns):
+        due_date_df: pd.DataFrame = coursework_df[
+            [
+                "dueDate.year",
+                "dueDate.month",
+                "dueDate.day",
+                "dueTime.hours",
+                "dueTime.minutes",
+            ]
         ]
-    ].apply(lambda date_element: datetime(*date_element), axis=1)
+        filled_df: Optional[pd.DataFrame] = due_date_df.fillna("0")
+        if filled_df is None:
+            raise ValueError  # fillna will never return None in this usage
+        coursework_df["DueDateTime"] = filled_df.apply(
+            lambda date_element: datetime(*pd.to_numeric(date_element, downcast="integer")),
+            axis=1,
+        )
+    else:
+        coursework_df["DueDateTime"] = ""
 
     coursework_df["SourceSystemIdentifier"] = coursework_df[["courseId", "id"]].agg(
         ":".join, axis=1

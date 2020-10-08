@@ -5,10 +5,33 @@
 
 import logging
 from typing import List, Dict, Optional, cast
-import pandas as pd
+from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
+
+REQUIRED_COLUMNS = [
+    "courseId",
+    "id",
+    "title",
+    "description",
+    "state",
+    "alternateLink",
+    "creationTime",
+    "updateTime",
+    "maxPoints",
+    "workType",
+    "submissionModificationMode",
+    "assigneeMode",
+    "creatorUserId",
+    "dueDate.year",
+    "dueDate.month",
+    "dueDate.day",
+    "dueTime.hours",
+    "dueTime.minutes",
+    "scheduledTime",
+    "topicId",
+]
 
 
 def request_coursework(
@@ -44,7 +67,7 @@ def request_coursework(
 
 def request_latest_coursework_as_df(
     resource: Optional[Resource], course_ids: List[str]
-) -> pd.DataFrame:
+) -> DataFrame:
     """
     Fetch Coursework API data for the given courses
         and return a Coursework API DataFrame
@@ -91,14 +114,18 @@ def request_latest_coursework_as_df(
     coursework: List[Dict[str, str]] = []
     for course_id in course_ids:
         coursework.extend(request_coursework(resource, course_id))
-    return pd.json_normalize(coursework).astype("string")
+
+    json_df: DataFrame = json_normalize(coursework).astype("string")
+    return json_df.reindex(
+        json_df.columns.union(REQUIRED_COLUMNS, sort=False), axis=1, fill_value=""
+    )
 
 
 def request_all_coursework_as_df(
     resource: Optional[Resource],
     course_ids: List[str],
     sync_db: sqlalchemy.engine.base.Engine,
-) -> pd.DataFrame:
+) -> DataFrame:
     """
     Fetch Coursework API data for all courses and return a Coursework API DataFrame
 
@@ -143,7 +170,7 @@ def request_all_coursework_as_df(
     assert isinstance(course_ids, list)
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
-    coursework_df: pd.DataFrame = request_latest_coursework_as_df(resource, course_ids)
+    coursework_df: DataFrame = request_latest_coursework_as_df(resource, course_ids)
 
     # append everything from API call
     coursework_df.to_sql(
