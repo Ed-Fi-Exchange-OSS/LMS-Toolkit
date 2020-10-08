@@ -4,9 +4,9 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import List
-import pandas as pd  # type: ignore
-from googleapiclient.discovery import Resource  # type: ignore
-from sqlalchemy.engine.base import Engine as saEngine  # type: ignore
+import pandas as pd
+from googleapiclient.discovery import Resource
+from sqlalchemy.engine.base import Engine as saEngine
 
 from google_classroom_extractor.api.courses import request_all_courses_as_df
 from google_classroom_extractor.api.coursework import request_all_coursework_as_df

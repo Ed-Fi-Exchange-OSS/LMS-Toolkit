@@ -9,11 +9,11 @@ import logging
 import os
 import sys
 
-import pandas as pd  # type: ignore
+import pandas as pd
 from dotenv import load_dotenv
-from googleapiclient.discovery import build, Resource  # type: ignore
-from google.oauth2 import service_account  # type: ignore
-from sqlalchemy.engine.base import Engine as saEngine  # type: ignore
+from googleapiclient.discovery import build, Resource
+from google.oauth2 import service_account
+from sqlalchemy.engine.base import Engine as saEngine
 
 from google_classroom_extractor.result import Result
 from google_classroom_extractor.config import get_credentials, get_sync_db_engine

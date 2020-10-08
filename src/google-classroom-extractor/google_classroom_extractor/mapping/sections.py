@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-import pandas as pd  # type: ignore
+import pandas as pd
 from google_classroom_extractor.mapping.constants import (
     SOURCE_SYSTEM,
     ENTITY_STATUS_ACTIVE,

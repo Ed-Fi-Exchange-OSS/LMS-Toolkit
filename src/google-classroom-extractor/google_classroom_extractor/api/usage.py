@@ -8,10 +8,10 @@ import logging
 import os
 from typing import List, Dict, Optional, Any, cast
 from dateutil.parser import parse as date_parse
-import pandas as pd  # type: ignore
-from sqlalchemy.exc import OperationalError  # type: ignore
-from sqlalchemy.engine.base import Engine as saEngine  # type: ignore
-from googleapiclient.discovery import Resource  # type: ignore
+import pandas as pd
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.engine.base import Engine as saEngine
+from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
 
 

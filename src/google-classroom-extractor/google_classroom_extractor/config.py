@@ -6,8 +6,9 @@
 import logging
 import os
 
-from google.oauth2 import service_account  # type: ignore
-from sqlalchemy import create_engine, engine  # type: ignore
+from google.oauth2 import service_account
+from sqlalchemy import create_engine
+from sqlalchemy.engine.base import Engine as saEngine
 
 SYNC_DATABASE_LOCATION_SUFFIX = "data"
 
@@ -25,7 +26,7 @@ def _is_running_in_notebook() -> bool:
     return not hasattr(main, "__file__")
 
 
-def get_sync_db_engine() -> engine.base.Engine:
+def get_sync_db_engine() -> saEngine:
     """
     Create a SQL Alchemy Engine for a SQLite file
 
