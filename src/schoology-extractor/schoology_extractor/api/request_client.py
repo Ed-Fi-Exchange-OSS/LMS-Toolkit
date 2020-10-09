@@ -276,6 +276,28 @@ class RequestClient:
             self, page_size, response, "course", self.base_url + url
         )
 
+    def get_roles(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
+        """
+        Gets all the roles from the Schoology API
+
+        Parameters
+        ----------
+        page_size : int
+            Number of items per page.
+
+        Returns
+        -------
+        PaginatedResult
+            A parsed response from the server
+
+        """
+        url = f"roles?{self._build_query_params_for_first_page(page_size)}"
+        response = self.get(url)
+
+        return PaginatedResult(
+            self, page_size, response, "role", self.base_url + url
+        )
+
     def _build_query_params_for_first_page(self, page_size: int):
         assert isinstance(page_size, int)
         return f"start=0&limit={page_size}"
