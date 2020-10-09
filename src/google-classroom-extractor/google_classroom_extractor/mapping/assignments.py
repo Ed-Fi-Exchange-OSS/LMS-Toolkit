@@ -52,11 +52,6 @@ def coursework_to_assignments_dfs(
     assert "scheduledTime" in coursework_df.columns
     assert "maxPoints" in coursework_df.columns
     assert "title" in coursework_df.columns
-    assert "dueDate.year" in coursework_df.columns
-    assert "dueDate.month" in coursework_df.columns
-    assert "dueDate.day" in coursework_df.columns
-    assert "dueTime.hours" in coursework_df.columns
-    assert "dueTime.minutes" in coursework_df.columns
 
     if {
         "dueDate.year",
@@ -85,7 +80,7 @@ def coursework_to_assignments_dfs(
         coursework_df["DueDateTime"] = ""
 
     coursework_df["SourceSystemIdentifier"] = coursework_df[["courseId", "id"]].agg(
-        ":".join, axis=1
+        "-".join, axis=1
     )
 
     assignments_df: pd.DataFrame = coursework_df[

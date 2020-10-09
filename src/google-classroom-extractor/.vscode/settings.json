@@ -93,5 +93,11 @@
         "MSSQL",
         "SPDX",
         "dbname"
-    ]
+    ],
+    "files.exclude": {
+        ".mypy_cache": true,
+        ".pytest_cache": true,
+        "**/__pycache__": true,
+        "**/*.egg-info": true
+    }
 }
