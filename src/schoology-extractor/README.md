@@ -15,11 +15,12 @@ The grading periods list helps determine which grading periods are of interest -
 for example, an organization with school years in one Schoology account would
 only want to list the grading periods for the current school year.
 Run
+
 ```bash
 poetry run python schoology_extractor/grading_periods.py -k your-schoology-client-key -s your-schoology-client-secret
 ```
-to get a list of grading periods.
 
+to get a list of grading periods.
 
 ## Execution
 
