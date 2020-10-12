@@ -29,7 +29,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-logger.info("Starting Ed-Fi LMS Schoology Extractor")
+logger.info("Ed-Fi LMS Schoology Extractor - Grading Periods")
 request_client = RequestClient(schoology_key, schoology_secret)
 
 logger.info("Getting grading periods")
