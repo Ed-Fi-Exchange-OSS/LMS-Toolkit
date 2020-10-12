@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": ["./schoology_extractor", "./tests"],
+    "python.analysis.typeCheckingMode": "basic",
     "python.languageServer": "Pylance",
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,

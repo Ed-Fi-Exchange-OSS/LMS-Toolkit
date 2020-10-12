@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 
-from configargparse import ArgParser
+from configargparse import ArgParser  # type: ignore
 
 from . import constants
 
@@ -27,12 +27,15 @@ class MainArguments:
         The output directory for the generated csv files.
     log_level: str
         The log level for the tool.
+    page_size: int
+        The size of the page for paginated requests.
     """
     client_key: str
     client_secret: str
     grading_period: str
     output_directory: str
     log_level: str
+    page_size: int
 
 
 def parse_main_arguments(args_in: list) -> MainArguments:
@@ -52,10 +55,10 @@ def parse_main_arguments(args_in: list) -> MainArguments:
 
     assert isinstance(args_in, list), "Argument `args_in` must be a list"
     parser = ArgParser()
-    parser.add('-k', '--client-key', required=True, help='Schoology client key.', type=str)
-    parser.add('-s', '--client_secret', required=True, help='Schoology client secret.', type=str)
-    parser.add('-g', '--grading-period', required=True, help='CSV with the grading periods.', type=str)
-    parser.add(
+    parser.add('-k', '--client-key', required=True, help='Schoology client key.', type=str)  # type: ignore
+    parser.add('-s', '--client-secret', required=True, help='Schoology client secret.', type=str)  # type: ignore
+    parser.add('-g', '--grading-period', required=True, help='CSV with the grading periods.', type=str)  # type: ignore
+    parser.add(  # type: ignore
         '-o',
         '--output-directory',
         required=False,
@@ -63,7 +66,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         type=str,
         default="")
 
-    parser.add(
+    parser.add(  # type: ignore
         '-l',
         '--log-level',
         required=False,
@@ -71,6 +74,8 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         choices=constants.LOG_LEVELS,
         type=str,
         default="INFO")
+
+    parser.add('-p', '--page-size', required=False, help='Page size for the paginated requests.', type=int, default=20)  # type: ignore
 
     args_parsed = parser.parse_args(args_in)
     # Required
@@ -81,6 +86,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
     # Optional
     assert isinstance(args_parsed.output_directory, str), "The specified `output-directory` is not valid."
     assert args_parsed.log_level in constants.LOG_LEVELS, "The specified `log-level` is not an allowed value."
+    assert isinstance(args_parsed.page_size, int), "Argument `page-size` must be an int."
 
     arguments = MainArguments(
         client_key=args_parsed.client_key,
@@ -88,6 +94,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         grading_period=args_parsed.grading_period,
         output_directory=args_parsed.output_directory,
         log_level=args_parsed.log_level,
+        page_size=args_parsed.page_size
     )
 
     return arguments
@@ -106,10 +113,13 @@ class GradingPeriodsArguments:
         Schoology client secret.
     log_level: str
         The log level for the tool.
+    page_size: int
+        The size of the page for paginated requests.
     """
     client_key: str
     client_secret: str
     log_level: str
+    page_size: int
 
 
 def parse_grading_periods_arguments(args_in: list) -> GradingPeriodsArguments:
@@ -130,9 +140,9 @@ def parse_grading_periods_arguments(args_in: list) -> GradingPeriodsArguments:
     assert isinstance(args_in, list), "Argument `args_in` must be a list"
 
     parser = ArgParser()
-    parser.add('-k', '--client-key', required=True, help='Schoology client key.', type=str)
-    parser.add('-s', '--client_secret', required=True, help='Schoology client secret.', type=str)
-    parser.add(
+    parser.add('-k', '--client-key', required=True, help='Schoology client key.', type=str)  # type: ignore
+    parser.add('-s', '--client_secret', required=True, help='Schoology client secret.', type=str)  # type: ignore
+    parser.add(  # type: ignore
         '-l',
         '--log-level',
         required=False,
@@ -140,16 +150,21 @@ def parse_grading_periods_arguments(args_in: list) -> GradingPeriodsArguments:
         choices=constants.LOG_LEVELS,
         type=str,
         default="INFO")
+
+    parser.add('-p', '--page-size', required=False, help='Page size for the paginated requests.', type=int, default=20)  # type: ignore
+
     args_parsed = parser.parse_args(args_in)
 
     assert isinstance(args_parsed.client_key, str), "Argument `client-key` must be a string."
     assert isinstance(args_parsed.client_secret, str), "Argument `client-secret` must be a string."
     assert args_parsed.log_level in constants.LOG_LEVELS, "The specified `log-level` is not an allowed value."
+    assert isinstance(args_parsed.page_size, int), "Argument `page-size` must be an int."
 
     arguments = GradingPeriodsArguments(
         client_key=args_parsed.client_key,
         client_secret=args_parsed.client_secret,
-        log_level=args_parsed.log_level
+        log_level=args_parsed.log_level,
+        page_size=args_parsed.page_size
     )
 
     return arguments

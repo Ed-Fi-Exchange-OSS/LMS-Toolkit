@@ -67,6 +67,12 @@ class Test_parse_main_argument:
                 parse_main_arguments(args)
                 assert_error_message(capsys)
 
+        def test_given_not_valid_page_size_parameter_then_throw_system_exit_error(self, required_params_for_parse_main_arguments, capsys):
+            args = ['-p', 'non_numeric_value'] + required_params_for_parse_main_arguments
+            with pytest.raises(SystemExit):
+                parse_main_arguments(args)
+                assert_error_message(capsys)
+
 
 class Test_parse_grading_periods_arguments:
     class Test_when_parameters_are_valid:
@@ -100,6 +106,12 @@ class Test_parse_grading_periods_arguments:
 
         def test_given_not_valid_log_level_parameter_is_missing_then_throw_system_exit_error(self, required_params_for_parse_grading_periods_arguments, capsys):
             args = ['-l', 'invalid_log_level'] + required_params_for_parse_grading_periods_arguments
+            with pytest.raises(SystemExit):
+                parse_grading_periods_arguments(args)
+                assert_error_message(capsys)
+
+        def test_given_not_valid_page_size_parameter_then_throw_system_exit_error(self, required_params_for_parse_grading_periods_arguments, capsys):
+            args = ['-p', 'non_numeric_value'] + required_params_for_parse_grading_periods_arguments
             with pytest.raises(SystemExit):
                 parse_grading_periods_arguments(args)
                 assert_error_message(capsys)

@@ -24,6 +24,7 @@ schoology_secret = arguments.client_secret
 schoology_output_path = arguments.output_directory
 schoology_grading_periods = arguments.grading_period
 log_level = arguments.log_level
+page_size = arguments.page_size
 
 
 # Configure logging
@@ -48,7 +49,7 @@ request_client = RequestClient(schoology_key, schoology_secret)
 # Export users
 logger.info("Exporting users")
 try:
-    users_response = request_client.get_users()
+    users_response = request_client.get_users(page_size)
     users_list: List[Any] = []
     while True:
         users_list = users_list + users_response.current_page_items
@@ -78,7 +79,7 @@ sections_list = []
 try:
     # first we need to get a list of courses
     logger.info("Exporting sections - Getting courses")
-    courses_response = request_client.get_courses()
+    courses_response = request_client.get_courses(page_size)
     courses_list: List[Any] = []
     while True:
         courses_list = courses_list + courses_response.current_page_items
@@ -122,7 +123,9 @@ try:
     for assignment in assignments:
         submissions_response = (
             request_client.get_submissions_by_section_id_and_grade_item_id(
-                assignment["section_id"], str(assignment["grade_item_id"])
+                assignment["section_id"],
+                str(assignment["grade_item_id"]),
+                page_size
             )
         )
         while True:
