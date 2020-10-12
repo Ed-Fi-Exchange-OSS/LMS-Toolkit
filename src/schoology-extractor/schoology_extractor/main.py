@@ -8,7 +8,6 @@ import os
 from typing import Any, List
 import sys
 
-from dotenv import load_dotenv
 import pandas as pd
 
 from helpers import export_data
