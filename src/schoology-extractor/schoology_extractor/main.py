@@ -9,10 +9,11 @@ from typing import Any, List
 import sys
 
 from dotenv import load_dotenv
+import pandas as pd
 
 from helpers import export_data
 from api.request_client import RequestClient
-
+from mapping import users as usersMap
 
 load_dotenv()
 # Configure logging
@@ -67,10 +68,21 @@ try:
         if users_response.get_next_page() is None:
             break
 
-    export_data.to_csv(users_list, os.path.join(schoology_output_path, "users.csv"))
+    roles_list: List[Any] = []
+    roles_response = request_client.get_roles()
+    while True:
+        roles_list = roles_list + roles_response.current_page_items
+        if roles_response.get_next_page() is None:
+            break
+
+    users_df = pd.DataFrame(users_list)
+    roles_df = pd.DataFrame(roles_list)
+
+    udm_users = usersMap.map_to_udm(users_df, roles_df)
+
+    export_data.df_to_csv(udm_users, os.path.join(schoology_output_path, "users.csv"))
 except Exception as ex:
     logger.error('An exception has occurred in the process of generating the users.csv file: %s', ex)
-
 
 # export sections
 logger.info("Exporting sections")
