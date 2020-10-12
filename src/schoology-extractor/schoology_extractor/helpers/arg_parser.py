@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from configargparse import ArgParser
 
-from helpers import constants
+from . import constants
 
 
 @dataclass
