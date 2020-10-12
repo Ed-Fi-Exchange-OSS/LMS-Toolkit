@@ -13,12 +13,20 @@ import pandas as pd
 
 from helpers import export_data
 from api.request_client import RequestClient
+from helpers import arg_parser
 from mapping import users as usersMap
 
-load_dotenv()
+# Parse arguments
+arguments = arg_parser.parse_main_arguments(sys.argv[1:])
+# Parameters are validated in the parse_main_arguments function
+schoology_key = arguments.client_key
+schoology_secret = arguments.client_secret
+schoology_output_path = arguments.output_directory
+schoology_grading_periods = arguments.grading_period
+log_level = arguments.log_level
+
+
 # Configure logging
-log_level = os.getenv("SCHOOLOGY_LOG_LEVEL", "INFO")
-assert log_level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], "The specified `SCHOOLOGY_LOG_LEVEL` is not valid"
 logFormatter = '%(asctime)s - %(levelname)s - %(message)s'
 
 logging.basicConfig(
@@ -28,37 +36,16 @@ logging.basicConfig(
     format=logFormatter,
     level=log_level
 )
+
 logger = logging.getLogger(__name__)
-
-
 logger.info("Starting Ed-Fi LMS Schoology Extractor")
-logger.debug("Loading and processing environment variables")
 
-schoology_key = os.getenv("SCHOOLOGY_KEY")
-schoology_secret = os.getenv("SCHOOLOGY_SECRET")
-schoology_output_path = os.getenv("SCHOOLOGY_OUTPUT_PATH")
-schoology_grading_periods = os.getenv("SCHOOLOGY_GRADING_PERIODS")
-
-assert (
-    schoology_key is not None
-), "A `SCHOOLOGY_KEY` must be present in the .env file and it was not found."
-assert (
-    schoology_secret is not None
-), "A `SCHOOLOGY_SECRET` must be present in the .env file and it was not found."
-assert (
-    schoology_output_path is not None
-), "A `SCHOOLOGY_OUTPUT_PATH` must be present in the .env file and it was not found."
-assert (
-    schoology_grading_periods is not None
-), "A `SCHOOLOGY_GRADING_PERIODS` must be present in the .env file and it was not found."
-
-
+# Init variables
 grading_periods_array = schoology_grading_periods.split(",")
-
 request_client = RequestClient(schoology_key, schoology_secret)
 
 
-# export users
+# Export users
 logger.info("Exporting users")
 try:
     users_response = request_client.get_users()
@@ -84,7 +71,8 @@ try:
 except Exception as ex:
     logger.error('An exception has occurred in the process of generating the users.csv file: %s', ex)
 
-# export sections
+
+# Export sections
 logger.info("Exporting sections")
 sections_list = []
 try:
@@ -105,7 +93,7 @@ except Exception as ex:
     logger.error('An exception has occurred in the process of generating the sections.csv file: %s', ex)
 
 
-# export assigments
+# Export assigments
 logger.info("Exporting assigments")
 assignments = []
 try:
@@ -126,7 +114,7 @@ except Exception as ex:
     logger.error('An exception has occurred in the process of generating the assigments.csv file: %s', ex)
 
 
-# export submissions
+# Export submissions
 logger.info("Exporting submissions")
 try:
     submissions_list: List[Any] = []
