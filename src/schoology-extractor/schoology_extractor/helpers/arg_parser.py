@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from configargparse import ArgParser
 
-from schoology_extractor.helpers import constants
+from helpers import constants
 
 
 @dataclass
