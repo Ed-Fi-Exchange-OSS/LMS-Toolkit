@@ -9,6 +9,7 @@ from typing import Any, List
 import sys
 
 import pandas as pd
+from dotenv import load_dotenv
 
 from helpers import export_data
 from api.request_client import RequestClient
@@ -16,6 +17,7 @@ from helpers import arg_parser
 from mapping import users as usersMap
 
 # Parse arguments
+load_dotenv()
 arguments = arg_parser.parse_main_arguments(sys.argv[1:])
 # Parameters are validated in the parse_main_arguments function
 schoology_key = arguments.client_key

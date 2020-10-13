@@ -55,16 +55,38 @@ def parse_main_arguments(args_in: list) -> MainArguments:
 
     assert isinstance(args_in, list), "Argument `args_in` must be a list"
     parser = ArgParser()
-    parser.add('-k', '--client-key', required=True, help='Schoology client key.', type=str)  # type: ignore
-    parser.add('-s', '--client-secret', required=True, help='Schoology client secret.', type=str)  # type: ignore
-    parser.add('-g', '--grading-period', required=True, help='CSV with the grading periods.', type=str)  # type: ignore
+    parser.add(  # type: ignore
+        '-k',
+        '--client-key',
+        required=True,
+        help='Schoology client key.',
+        type=str,
+        env_var="CLIENT_KEY")
+
+    parser.add(  # type: ignore
+        '-s',
+        '--client-secret',
+        required=True,
+        help='Schoology client secret.',
+        type=str,
+        env_var="CLIENT_SECRET")
+
+    parser.add(  # type: ignore
+        '-g',
+        '--grading-period',
+        required=True,
+        help='CSV with the grading periods.',
+        type=str,
+        env_var="GRADING_PERIOD")
+
     parser.add(  # type: ignore
         '-o',
         '--output-directory',
         required=False,
         help='The output directory for the generated csv files.',
         type=str,
-        default="")
+        default="",
+        env_var="OUTPUT_DIRECTORY")
 
     parser.add(  # type: ignore
         '-l',
@@ -73,9 +95,17 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         help='The log level for the tool.',
         choices=constants.LOG_LEVELS,
         type=str,
-        default="INFO")
+        default="INFO",
+        env_var="LOG_LEVEL")
 
-    parser.add('-p', '--page-size', required=False, help='Page size for the paginated requests.', type=int, default=20)  # type: ignore
+    parser.add(  # type: ignore
+        '-p',
+        '--page-size',
+        required=False,
+        help='Page size for the paginated requests.',
+        type=int,
+        default=20,
+        env_var="PAGE_SIZE")
 
     args_parsed = parser.parse_args(args_in)
     # Required
