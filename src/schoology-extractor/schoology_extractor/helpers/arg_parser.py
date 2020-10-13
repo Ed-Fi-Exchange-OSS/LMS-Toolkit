@@ -61,7 +61,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         required=True,
         help='Schoology client key.',
         type=str,
-        env_var="CLIENT_KEY")
+        env_var="SCHOOLOGY_KEY")
 
     parser.add(  # type: ignore
         '-s',
@@ -69,7 +69,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         required=True,
         help='Schoology client secret.',
         type=str,
-        env_var="CLIENT_SECRET")
+        env_var="SCHOOLOGY_SECRET")
 
     parser.add(  # type: ignore
         '-g',
@@ -77,7 +77,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         required=True,
         help='CSV with the grading periods.',
         type=str,
-        env_var="GRADING_PERIOD")
+        env_var="SCHOOLOGY_GRADING_PERIODS")
 
     parser.add(  # type: ignore
         '-o',
@@ -86,7 +86,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         help='The output directory for the generated csv files.',
         type=str,
         default="",
-        env_var="OUTPUT_DIRECTORY")
+        env_var="SCHOOLOGY_OUTPUT_PATH")
 
     parser.add(  # type: ignore
         '-l',
@@ -96,7 +96,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         choices=constants.LOG_LEVELS,
         type=str,
         default="INFO",
-        env_var="LOG_LEVEL")
+        env_var="SCHOOLOGY_LOG_LEVEL")
 
     parser.add(  # type: ignore
         '-p',
