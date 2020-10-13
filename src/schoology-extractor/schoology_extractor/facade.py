@@ -46,7 +46,7 @@ class Facade:
 
         self._logger.debug("Exporting users: get roles")
         roles_list: List[Any] = []
-        roles_response = self._client.get_roles()
+        roles_response = self._client.get_roles(self._page_size)
         while True:
             roles_list = roles_list + roles_response.current_page_items
             if roles_response.get_next_page() is None:
@@ -67,16 +67,14 @@ class Facade:
             if courses_response.get_next_page() is None:
                 break
 
-        course_ids = map(lambda x: x["id"], courses_list)
         self._logger.debug("Exporting sections: get sections for active courses")
-
-        return self._client.get_section_by_course_ids(list(course_ids))
+        return self._client.get_section_by_course_ids([c["id"] for c in courses_list])
 
     def get_assignments(
         self, sections: List[Dict[str, Any]], grading_periods: List[str]
     ) -> list:
         assignments = self._client.get_assignments_by_section_ids(
-            [s["id"] for s in sections]
+            [s["id"] for s in sections], self._page_size
         )
 
         return [

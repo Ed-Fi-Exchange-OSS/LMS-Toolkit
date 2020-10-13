@@ -36,11 +36,6 @@ class TestRequestClient:
             # Assert
             assert request_client.base_url == custom_url
 
-        def test_given_None_as_parameters_then_assert_should_fail(self):
-            # Assert
-            with pytest.raises(AssertionError):
-                RequestClient(None, None)  # type: ignore
-
     class Test_when_building_request_header:
         def test_then_consumer_key_is_present(self, default_request_client):
             assert self._present_in_header(

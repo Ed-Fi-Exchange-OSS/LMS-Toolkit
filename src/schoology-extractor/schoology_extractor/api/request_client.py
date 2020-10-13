@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from dataclasses import dataclass
 import os
 import time
 import random
@@ -25,6 +26,7 @@ REQUEST_RETRY_TIMEOUT_SECONDS = int(
 )
 
 
+@dataclass
 class RequestClient:
     """
     The RequestClient class wraps all the configuration complexity related
@@ -45,24 +47,12 @@ class RequestClient:
         The two-legged authenticated OAuth1 session.
     """
 
-    def __init__(
-        self, schoology_key: str, schoology_secret: str, base_url: str = DEFAULT_URL
-    ):
+    schoology_key: str
+    schoology_secret: str
+    base_url: str = DEFAULT_URL
 
-        # TODO: look into moving these asserts to the point at which the value
-        # is used and then look into making this a dataclass
-        assert isinstance(
-            schoology_key, str
-        ), "Argument `schoology_key` should be of type `str`."
-        assert isinstance(
-            schoology_secret, str
-        ), "Argument `schoology_secret` should be of type `str`."
-        assert isinstance(base_url, str), "Argument `base_url` should be of type `str`."
-
-        self.oauth = OAuth1Session(schoology_key, schoology_secret)
-        self.base_url = base_url
-        self.consumer_key = schoology_key
-        self.consumer_secret = schoology_secret
+    def __post_init__(self):
+        self.oauth = OAuth1Session(self.schoology_key, self.schoology_secret)
 
     @property
     def _request_header(self) -> dict:
@@ -74,9 +64,16 @@ class RequestClient:
             Request headers.
 
         """
+        assert isinstance(
+            self.schoology_key, str
+        ), "Property `schoology_key` should be of type `str`."
+        assert isinstance(
+            self.schoology_secret, str
+        ), "Property `schoology_secret` should be of type `str`."
+
         auth_header = (
             'OAuth realm="Schoology API",',
-            f'oauth_consumer_key="{self.consumer_key}",',
+            f'oauth_consumer_key="{self.schoology_key}",',
             'oauth_token="",',
             f'oauth_nonce="{"".join( [str(random.randint(0, 9)) for i in range(8)] )}",',
             f'oauth_timestamp="{time.time()}",',
@@ -84,7 +81,7 @@ class RequestClient:
             'oauth_version="1.0",',
             'oauth_signature="%s%%26%s"'
             % (
-                self.consumer_secret,
+                self.schoology_secret,
                 "",
             ),
         )
@@ -101,35 +98,41 @@ class RequestClient:
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
-    def get(self, url: str) -> dict:
+    def get(self, resource: str) -> dict:
         """
         Send an HTTP GET request.
 
         Parameters
         ----------
-        url : string
-            The endpoint that you want to request.
+        resource : string
+            The resource endpoint that you want to request.
 
         Returns
         -------
         dict
             A parsed response from the server
-
         """
-        assert isinstance(url, str), "Argument `url` should be of type `str`."
+        assert isinstance(resource, str), "Argument `resource` should be of type `str`."
+        assert isinstance(
+            self.base_url, str
+        ), "Property `base_url` should be of type `str`."
 
         response = self.oauth.get(
-            url=self.base_url + url,
+            url=self.base_url + resource,
             headers=self._request_header,
             auth=self.oauth.auth,
         )
 
         if response.status_code != 200:
-            raise RuntimeError(f"{response.reason} ({response.status_code}): {response.text}")
+            raise RuntimeError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
 
         return response.json()
 
-    def get_assignments_by_section_ids(self, section_ids: list) -> list:
+    def get_assignments_by_section_ids(
+        self, section_ids: List[str], page_size: int = DEFAULT_PAGE_SIZE
+    ) -> list:
         """
         Parameters
         ----------
@@ -176,7 +179,9 @@ class RequestClient:
 
         return assignments
 
-    def get_section_by_course_ids(self, course_ids: list) -> list:
+    def get_section_by_course_ids(
+        self, course_ids: list, page_size: int = DEFAULT_PAGE_SIZE
+    ) -> list:
         """
         Parameters
         ----------
@@ -185,7 +190,7 @@ class RequestClient:
 
         Returns
         -------
-        dict
+        List[object]
             A parsed response from the server
 
         Note
@@ -337,9 +342,7 @@ class RequestClient:
         url = f"roles?{self._build_query_params_for_first_page(page_size)}"
         response = self.get(url)
 
-        return PaginatedResult(
-            self, page_size, response, "role", self.base_url + url
-        )
+        return PaginatedResult(self, page_size, response, "role", self.base_url + url)
 
     def _build_query_params_for_first_page(self, page_size: int):
         assert isinstance(page_size, int)
