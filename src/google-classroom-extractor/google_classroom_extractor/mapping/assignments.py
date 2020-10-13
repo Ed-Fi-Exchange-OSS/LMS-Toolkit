@@ -29,6 +29,8 @@ def coursework_to_assignments_dfs(
     Dict[str, DataFrame]
         LMS UDM Assignment DataFrames grouped by source system section id
 
+    Notes
+    -----
     Assignment DataFrame columns are:
         AssignmentCategory: The category or type of assignment
         AssignmentDescription: The assignment description

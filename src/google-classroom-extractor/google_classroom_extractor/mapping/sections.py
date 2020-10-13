@@ -24,6 +24,8 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
     DataFrame
         a LMSSections DataFrame based on the given Courses API DataFrame
 
+    Notes
+    -----
     DataFrame columns are:
         EntityStatus: The status of the record
         LMSSectionStatus: The section status from the source system

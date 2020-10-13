@@ -31,6 +31,8 @@ def submissions_to_assignment_submissions_dfs(
         LMS UDM AssignmentSubmission DataFrames grouped by
             source system section id/assignment id tuple pairs
 
+    Notes
+    -----
     AssignmentSubmission DataFrame columns are:
         AssignmentIdentifier: A unique numeric identifier assigned to the assignment
         EarnedPoints: The points earned for the submission

@@ -32,6 +32,8 @@ def _students_or_teachers_to_users_df(
     DataFrame
         a LMSUsers DataFrame based on the given Students or Teachers API DataFrame
 
+    Notes
+    -----
     DataFrame columns are:
         EmailAddress: The primary e-mail address for the user
         EntityStatus: The status of the record
@@ -92,6 +94,8 @@ def students_and_teachers_to_users_df(
     DataFrame
         a LMSUsers DataFrame based on the given Teachers API DataFrame
 
+    Notes
+    -----
     DataFrame columns are:
         EmailAddress: The primary e-mail address for the user
         EntityStatus: The status of the record
