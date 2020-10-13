@@ -43,7 +43,6 @@ logger = logging.getLogger(__name__)
 grading_periods = schoology_grading_periods.split(",")
 request_client = RequestClient(schoology_key, schoology_secret)
 facade = Facade(logger, request_client, page_size)
-closure = {}
 
 
 def _create_file_from_dataframe(action: Callable, file_name):
@@ -58,6 +57,8 @@ def _create_file_from_dataframe(action: Callable, file_name):
         )
 
 
+# TODO: this method should disappear when we finish converting all of the output
+# to use the official CSV formats.
 def _create_file_from_list(action: Callable, file_name):
     logger.info(f"Exporting {file_name}")
     try:
@@ -70,27 +71,36 @@ def _create_file_from_list(action: Callable, file_name):
         )
 
 
-def _export_sections():
+def _get_users():
+    return facade.get_users()
+
+
+# This variable facilitates temporary storage of output results from one GET
+# request that need to be used for creating another GET request.
+closure = {}
+
+
+def _get_sections():
     sections = facade.get_sections()
     closure["sections"] = sections
     return sections
 
 
-def _export_assignments():
+def _get_assignments():
     assignments = facade.get_assignments(closure["sections"], grading_periods)
     closure["assignments"] = assignments
     return assignments
 
 
-def _export_submissions():
+def _get_submissions():
     return facade.get_submissions(closure["assignments"])
 
 
 def main():
-    _create_file_from_dataframe(facade.get_users, "users.csv")
-    _create_file_from_list(_export_sections, "sections.csv")
-    _create_file_from_list(_export_assignments, "assignments.csv")
-    _create_file_from_list(_export_submissions, "submissions.csv")
+    _create_file_from_dataframe(_get_users, "users.csv")
+    _create_file_from_list(_get_sections, "sections.csv")
+    _create_file_from_list(_get_assignments, "assignments.csv")
+    _create_file_from_list(_get_submissions, "submissions.csv")
 
 
 if __name__ == "__main__":
