@@ -78,6 +78,8 @@ def request_latest_submissions_as_df(
     DataFrame
         a Coursework API DataFrame with the fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         courseId: Identifier of the course
         courseWorkId: Identifier for the course work this corresponds to
@@ -135,6 +137,8 @@ def request_all_submissions_as_df(
     DataFrame
         a Coursework API DataFrame with the fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         courseId: Identifier of the course
         courseWorkId: Identifier for the course work this corresponds to

@@ -5,7 +5,7 @@
 
 from typing import Dict
 from unittest.mock import patch
-import pandas as pd
+from pandas import DataFrame, read_csv
 from google_classroom_extractor.api.submissions import request_all_submissions_as_df
 from tests.helper import merged_dict
 
@@ -43,7 +43,7 @@ def describe_when_overlap_removal_is_needed():
         mock_latest_submissions_df, test_db_fixture
     ):
         # 1st pull: 17 rows
-        mock_latest_submissions_df.return_value = pd.read_csv(
+        mock_latest_submissions_df.return_value = read_csv(
             "tests/api/submissions/submissions-1st.csv"
         )
         first_submissions_df = request_all_submissions_as_df(
@@ -54,7 +54,7 @@ def describe_when_overlap_removal_is_needed():
         assert db_ending_user_id(test_db_fixture) == 60912479
 
         # 2nd pull: 58 rows, overlaps 7
-        mock_latest_submissions_df.return_value = pd.read_csv(
+        mock_latest_submissions_df.return_value = read_csv(
             "tests/api/submissions/submissions-2nd-overlaps-1st.csv"
         )
         second_submissions_df = request_all_submissions_as_df(
@@ -67,7 +67,7 @@ def describe_when_overlap_removal_is_needed():
         assert db_ending_user_id(test_db_fixture) == 57180732
 
         # 3rd pull: 98 rows, overlaps 43
-        mock_latest_submissions_df.return_value = pd.read_csv(
+        mock_latest_submissions_df.return_value = read_csv(
             "tests/api/submissions/submissions-3rd-overlaps-1st-and-2nd.csv"
         )
         third_submissions_df = request_all_submissions_as_df(
@@ -103,7 +103,7 @@ def describe_when_pulls_of_same_submission_differ_in_assigned_grade():
     def it_should_replace_old_grade_with_new(
         mock_latest_submissions_df, test_db_fixture
     ):
-        mock_latest_submissions_df.return_value = pd.DataFrame.from_dict(
+        mock_latest_submissions_df.return_value = DataFrame.from_dict(
             [merged_dict(consistent_rows, {"assignedGrade": initial_grade})]
         )
 
@@ -116,7 +116,7 @@ def describe_when_pulls_of_same_submission_differ_in_assigned_grade():
         assert db_assigned_grade_by_id(test_db_fixture, submission_id) == initial_grade
 
         # same submission, with grade updated
-        mock_latest_submissions_df.return_value = pd.DataFrame.from_dict(
+        mock_latest_submissions_df.return_value = DataFrame.from_dict(
             [merged_dict(consistent_rows, {"assignedGrade": update_grade})]
         )
 

@@ -5,7 +5,7 @@
 
 from typing import Dict
 from unittest.mock import patch
-import pandas as pd
+from pandas import DataFrame, read_csv
 from google_classroom_extractor.api.coursework import request_all_coursework_as_df
 from tests.helper import merged_dict
 
@@ -39,7 +39,7 @@ def describe_when_overlap_removal_is_needed():
         mock_latest_coursework_df, test_db_fixture
     ):
         # 1st pull: 17 rows, last row id is 87699559
-        mock_latest_coursework_df.return_value = pd.read_csv(
+        mock_latest_coursework_df.return_value = read_csv(
             "tests/api/coursework/coursework-1st.csv"
         )
         first_coursework_df = request_all_coursework_as_df(
@@ -50,7 +50,7 @@ def describe_when_overlap_removal_is_needed():
         assert db_ending_id(test_db_fixture) == 87699559
 
         # 2nd pull: 39 rows, overlaps 7, last row id is 87025291
-        mock_latest_coursework_df.return_value = pd.read_csv(
+        mock_latest_coursework_df.return_value = read_csv(
             "tests/api/coursework/coursework-2nd-overlaps-1st.csv"
         )
         second_coursework_df = request_all_coursework_as_df(
@@ -63,7 +63,7 @@ def describe_when_overlap_removal_is_needed():
         assert db_ending_id(test_db_fixture) == 87025291
 
         # 3rd pull: 98 rows, overlaps 43, last row id is 15461200
-        mock_latest_coursework_df.return_value = pd.read_csv(
+        mock_latest_coursework_df.return_value = read_csv(
             "tests/api/coursework/coursework-3rd-overlaps-1st-and-2nd.csv"
         )
         third_coursework_df = request_all_coursework_as_df(
@@ -101,7 +101,7 @@ def describe_when_two_pulls_of_same_coursework_data_differ_in_state():
         mock_latest_coursework_df, test_db_fixture
     ):
         # original coursework
-        mock_latest_coursework_df.return_value = pd.DataFrame.from_dict(
+        mock_latest_coursework_df.return_value = DataFrame.from_dict(
             [merged_dict(consistent_rows, {"state": initial_state})]
         )
 
@@ -116,7 +116,7 @@ def describe_when_two_pulls_of_same_coursework_data_differ_in_state():
         )
 
         # same coursework, with state updated
-        mock_latest_coursework_df.return_value = pd.DataFrame.from_dict(
+        mock_latest_coursework_df.return_value = DataFrame.from_dict(
             [merged_dict(consistent_rows, {"state": update_state})]
         )
 

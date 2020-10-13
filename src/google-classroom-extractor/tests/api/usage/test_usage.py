@@ -5,7 +5,7 @@
 
 from typing import Dict
 from unittest.mock import patch
-import pandas as pd
+from pandas import DataFrame, read_csv
 from google_classroom_extractor.api.usage import request_all_usage_as_df
 from tests.helper import merged_dict
 
@@ -36,14 +36,14 @@ def describe_when_overlap_removal_is_needed():
         mock_latest_usage_df, test_db_fixture
     ):
         # 1st pull: 17 rows
-        mock_latest_usage_df.return_value = pd.read_csv("tests/api/usage/usage-1st.csv")
+        mock_latest_usage_df.return_value = read_csv("tests/api/usage/usage-1st.csv")
         first_usage_df = request_all_usage_as_df(None, test_db_fixture)
         assert dataframe_row_count(first_usage_df) == 17
         assert db_row_count(test_db_fixture) == 17
         assert db_ending_email(test_db_fixture) == "luislopez@conrad-turner.com"
 
         # 2nd pull: 49 rows, overlaps 7
-        mock_latest_usage_df.return_value = pd.read_csv(
+        mock_latest_usage_df.return_value = read_csv(
             "tests/api/usage/usage-2nd-overlaps-1st.csv"
         )
         second_usage_df = request_all_usage_as_df(None, test_db_fixture)
@@ -54,7 +54,7 @@ def describe_when_overlap_removal_is_needed():
         assert db_ending_email(test_db_fixture) == "xavierlopez@hotmail.com"
 
         # 3rd pull: 98 rows, overlaps 49
-        mock_latest_usage_df.return_value = pd.read_csv(
+        mock_latest_usage_df.return_value = read_csv(
             "tests/api/usage/usage-3rd-overlaps-1st-and-2nd.csv"
         )
         third_usage_df = request_all_usage_as_df(None, test_db_fixture)
@@ -85,7 +85,7 @@ def describe_when_pulls_of_same_usage_data_differ_in_number_of_posts():
     def it_should_replace_old_post_count_with_new(
         mock_latest_usage_df, test_db_fixture
     ):
-        mock_latest_usage_df.return_value = pd.DataFrame.from_dict(
+        mock_latest_usage_df.return_value = DataFrame.from_dict(
             [merged_dict(consistent_rows, {"numberOfPosts": initial_posts})]
         )
 
@@ -96,7 +96,7 @@ def describe_when_pulls_of_same_usage_data_differ_in_number_of_posts():
         assert db_posts_by_name_date(test_db_fixture, name_date) == initial_posts
 
         # same student, with email updated
-        mock_latest_usage_df.return_value = pd.DataFrame.from_dict(
+        mock_latest_usage_df.return_value = DataFrame.from_dict(
             [merged_dict(consistent_rows, {"numberOfPosts": update_posts})]
         )
 

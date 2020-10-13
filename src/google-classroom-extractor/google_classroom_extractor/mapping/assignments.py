@@ -5,7 +5,7 @@
 
 from typing import Dict, Optional
 from datetime import datetime
-import pandas as pd
+from pandas import DataFrame, to_numeric
 from google_classroom_extractor.mapping.constants import (
     SOURCE_SYSTEM,
     ENTITY_STATUS_ACTIVE,
@@ -13,8 +13,8 @@ from google_classroom_extractor.mapping.constants import (
 
 
 def coursework_to_assignments_dfs(
-    coursework_df: pd.DataFrame,
-) -> Dict[str, pd.DataFrame]:
+    coursework_df: DataFrame,
+) -> Dict[str, DataFrame]:
     """
     Convert a Coursework API DataFrame to a Dict of Assignment UDM DataFrames
     grouped by source system section id pairs
@@ -44,7 +44,7 @@ def coursework_to_assignments_dfs(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(coursework_df, pd.DataFrame)
+    assert isinstance(coursework_df, DataFrame)
     assert "courseId" in coursework_df.columns
     assert "id" in coursework_df.columns
     assert "workType" in coursework_df.columns
@@ -60,7 +60,7 @@ def coursework_to_assignments_dfs(
         "dueTime.hours",
         "dueTime.minutes",
     }.issubset(coursework_df.columns):
-        due_date_df: pd.DataFrame = coursework_df[
+        due_date_df: DataFrame = coursework_df[
             [
                 "dueDate.year",
                 "dueDate.month",
@@ -69,11 +69,11 @@ def coursework_to_assignments_dfs(
                 "dueTime.minutes",
             ]
         ]
-        filled_df: Optional[pd.DataFrame] = due_date_df.fillna("0")
+        filled_df: Optional[DataFrame] = due_date_df.fillna("0")
         if filled_df is None:
             raise ValueError  # fillna will never return None in this usage
         coursework_df["DueDateTime"] = filled_df.apply(
-            lambda date_element: datetime(*pd.to_numeric(date_element, downcast="integer")),
+            lambda date_element: datetime(*to_numeric(date_element, downcast="integer")),
             axis=1,
         )
     else:
@@ -83,7 +83,7 @@ def coursework_to_assignments_dfs(
         "-".join, axis=1
     )
 
-    assignments_df: pd.DataFrame = coursework_df[
+    assignments_df: DataFrame = coursework_df[
         [
             "courseId",
             "workType",
@@ -116,7 +116,7 @@ def coursework_to_assignments_dfs(
     assignments_df["EndDateTime"] = ""  # No EndDateTime available from API
 
     # group by section id as a Dict of DataFrames
-    result: Dict[str, pd.DataFrame] = dict(
+    result: Dict[str, DataFrame] = dict(
         tuple(assignments_df.groupby(["SourceSystemSectionIdentifier"]))
     )
 

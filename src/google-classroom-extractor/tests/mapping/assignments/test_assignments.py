@@ -6,7 +6,7 @@
 from typing import Dict
 import pytest
 from datetime import datetime
-import pandas as pd
+from pandas import DataFrame
 from google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
 from google_classroom_extractor.mapping.constants import (
     SOURCE_SYSTEM,
@@ -39,9 +39,9 @@ TOPIC_ID = "19"
 
 def describe_when_a_single_coursework_with_unique_fields_is_mapped():
     @pytest.fixture
-    def assignments_dicts() -> Dict[str, pd.DataFrame]:
+    def assignments_dicts() -> Dict[str, DataFrame]:
         # arrange
-        coursework_df = pd.DataFrame(
+        coursework_df = DataFrame(
             {
                 "courseId": [COURSE_ID],
                 "id": [ID],
@@ -72,14 +72,14 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
     def it_should_have_correct_shape(assignments_dicts):
         assert len(assignments_dicts) == 1
 
-        assignments_df: pd.DataFrame = assignments_dicts[COURSE_ID]
+        assignments_df: DataFrame = assignments_dicts[COURSE_ID]
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
         assert column_count == 12
 
     def it_should_map_fields_correctly(assignments_dicts):
-        assignments_df: pd.DataFrame = assignments_dicts[COURSE_ID]
+        assignments_df: DataFrame = assignments_dicts[COURSE_ID]
         row_dict = assignments_df.to_dict(orient="records")[0]
 
         assert row_dict["AssignmentCategory"] == WORK_TYPE
@@ -128,7 +128,7 @@ def describe_when_multiple_assignments_are_in_same_section():
     coursework2_title = "coursework2_title"
 
     @pytest.fixture
-    def assignments_dict() -> Dict[str, pd.DataFrame]:
+    def assignments_dict() -> Dict[str, DataFrame]:
         # arrange
         coursework1: Dict[str, str] = {
             "courseId": COURSE_ID,
@@ -142,7 +142,7 @@ def describe_when_multiple_assignments_are_in_same_section():
             "title": coursework2_title,
         }
 
-        coursework_df = pd.DataFrame.from_dict(
+        coursework_df = DataFrame.from_dict(
             [
                 merged_dict(coursework1, BOILERPLATE),
                 merged_dict(coursework2, BOILERPLATE),
@@ -156,7 +156,7 @@ def describe_when_multiple_assignments_are_in_same_section():
         assert len(assignments_dict) == 1
 
     def it_should_have_two_rows_in_same_assignment(assignments_dict):
-        assignments_df: pd.DataFrame = assignments_dict[COURSE_ID]
+        assignments_df: DataFrame = assignments_dict[COURSE_ID]
         row_count, _ = assignments_df.shape
 
         assert row_count == 2
@@ -181,7 +181,7 @@ def describe_when_multiple_assignments_are_in_different_sections():
     coursework2_title = "coursework2_title"
 
     @pytest.fixture
-    def assignments_dict() -> Dict[str, pd.DataFrame]:
+    def assignments_dict() -> Dict[str, DataFrame]:
         # arrange
         coursework1: Dict[str, str] = {
             "courseId": COURSE_ID,
@@ -195,7 +195,7 @@ def describe_when_multiple_assignments_are_in_different_sections():
             "title": coursework2_title,
         }
 
-        coursework_df = pd.DataFrame.from_dict(
+        coursework_df = DataFrame.from_dict(
             [
                 merged_dict(coursework1, BOILERPLATE),
                 merged_dict(coursework2, BOILERPLATE),
@@ -209,7 +209,7 @@ def describe_when_multiple_assignments_are_in_different_sections():
         assert len(assignments_dict) == 2
 
     def it_should_have_one_row_in_first_assignment(assignments_dict):
-        assignments_df: pd.DataFrame = assignments_dict[COURSE_ID]
+        assignments_df: DataFrame = assignments_dict[COURSE_ID]
         row_count, _ = assignments_df.shape
         assert row_count == 1
 
@@ -219,7 +219,7 @@ def describe_when_multiple_assignments_are_in_different_sections():
         assert coursework_dict["Title"] == TITLE
 
     def it_should_have_one_row_in_second_assignment(assignments_dict):
-        assignments_df: pd.DataFrame = assignments_dict[coursework2_course_id]
+        assignments_df: DataFrame = assignments_dict[coursework2_course_id]
         row_count, _ = assignments_df.shape
         assert row_count == 1
 

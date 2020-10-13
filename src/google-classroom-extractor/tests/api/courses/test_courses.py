@@ -5,7 +5,7 @@
 
 from typing import Dict
 from unittest.mock import patch
-import pandas as pd
+from pandas import DataFrame, read_csv
 from google_classroom_extractor.api.courses import request_all_courses_as_df
 from tests.helper import merged_dict
 
@@ -36,7 +36,7 @@ def describe_when_overlap_removal_is_needed():
         mock_latest_courses_df, test_db_fixture
     ):
         # 1st pull: courses-1st.csv is 17 rows ending with "Julia Harding"
-        mock_latest_courses_df.return_value = pd.read_csv(
+        mock_latest_courses_df.return_value = read_csv(
             "tests/api/courses/courses-1st.csv"
         )
         first_courses_df = request_all_courses_as_df(None, test_db_fixture)
@@ -45,7 +45,7 @@ def describe_when_overlap_removal_is_needed():
         assert db_ending_name(test_db_fixture) == "Julia Harding"
 
         # 2nd pull: courses-2nd-overlaps-1st is 59 rows with 5 overlapping ending with "Maurice Hatfield"
-        mock_latest_courses_df.return_value = pd.read_csv(
+        mock_latest_courses_df.return_value = read_csv(
             "tests/api/courses/courses-2nd-overlaps-1st.csv"
         )
         second_courses_df = request_all_courses_as_df(None, test_db_fixture)
@@ -56,7 +56,7 @@ def describe_when_overlap_removal_is_needed():
         assert db_ending_name(test_db_fixture) == "Maurice Hatfield"
 
         # 3rd pull: courses-3rd-overlaps-1st-and-2nd is 87 rows with 5 overlapping ending with "Troy Greene"
-        mock_latest_courses_df.return_value = pd.read_csv(
+        mock_latest_courses_df.return_value = read_csv(
             "tests/api/courses/courses-3rd-overlaps-1st-and-2nd.csv"
         )
         third_courses_df = request_all_courses_as_df(None, test_db_fixture)
@@ -91,7 +91,7 @@ def describe_when_pulls_of_same_course_data_differ_in_room_id():
 
     @patch("google_classroom_extractor.api.courses.request_latest_courses_as_df")
     def it_should_replace_old_room_id_with_new(mock_latest_courses_df, test_db_fixture):
-        mock_latest_courses_df.return_value = pd.DataFrame.from_dict(
+        mock_latest_courses_df.return_value = DataFrame.from_dict(
             [merged_dict(consistent_rows, {"room": initial_room_id})]
         )
 
@@ -102,7 +102,7 @@ def describe_when_pulls_of_same_course_data_differ_in_room_id():
         assert db_room_by_course_id(test_db_fixture, course_id) == initial_room_id
 
         # same course, with room updated
-        mock_latest_courses_df.return_value = pd.DataFrame.from_dict(
+        mock_latest_courses_df.return_value = DataFrame.from_dict(
             [merged_dict(consistent_rows, {"room": update_room_id})]
         )
 

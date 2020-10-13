@@ -5,7 +5,7 @@
 
 from typing import Dict, Tuple
 import pytest
-import pandas as pd
+from pandas import DataFrame
 from google_classroom_extractor.mapping.assignment_submissions import (
     submissions_to_assignment_submissions_dfs,
 )
@@ -34,9 +34,9 @@ SUBMISSION_HISTORY = "14"
 
 def describe_when_a_single_submission_with_unique_fields_is_mapped():
     @pytest.fixture
-    def assignment_submissions_dicts() -> Dict[Tuple[str, str], pd.DataFrame]:
+    def assignment_submissions_dicts() -> Dict[Tuple[str, str], DataFrame]:
         # arrange
-        submissions_df = pd.DataFrame(
+        submissions_df = DataFrame(
             {
                 "courseId": [COURSE_ID],
                 "courseWorkId": [COURSEWORK_ID],
@@ -61,7 +61,7 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
     def it_should_have_correct_shape(assignment_submissions_dicts):
         assert len(assignment_submissions_dicts) == 1
 
-        submissions_df: pd.DataFrame = assignment_submissions_dicts[
+        submissions_df: DataFrame = assignment_submissions_dicts[
             (COURSE_ID, f"{COURSE_ID}-{COURSEWORK_ID}")
         ]
         row_count, column_count = submissions_df.shape
@@ -70,7 +70,7 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         assert column_count == 13
 
     def it_should_map_fields_correctly(assignment_submissions_dicts):
-        submissions_df: pd.DataFrame = assignment_submissions_dicts[
+        submissions_df: DataFrame = assignment_submissions_dicts[
             (COURSE_ID, f"{COURSE_ID}-{COURSEWORK_ID}")
         ]
         row_dict = submissions_df.to_dict(orient="records")[0]
@@ -108,7 +108,7 @@ def describe_when_multiple_submissions_for_the_same_assignment_are_mapped():
     submission2_id = "submission2_id"
 
     @pytest.fixture
-    def assignment_submissions_dicts() -> Dict[Tuple[str, str], pd.DataFrame]:
+    def assignment_submissions_dicts() -> Dict[Tuple[str, str], DataFrame]:
         # arrange
         submission1: Dict[str, str] = {
             "id": ID,
@@ -122,7 +122,7 @@ def describe_when_multiple_submissions_for_the_same_assignment_are_mapped():
             "courseWorkId": COURSEWORK_ID,
         }
 
-        submissions_df = pd.DataFrame.from_dict(
+        submissions_df = DataFrame.from_dict(
             [
                 merged_dict(submission1, BOILERPLATE),
                 merged_dict(submission2, BOILERPLATE),
@@ -135,7 +135,7 @@ def describe_when_multiple_submissions_for_the_same_assignment_are_mapped():
         assert len(assignment_submissions_dicts) == 1
 
     def it_should_have_first_row_in_same_assignment(assignment_submissions_dicts):
-        assignment_submissions_df: pd.DataFrame = assignment_submissions_dicts[
+        assignment_submissions_df: DataFrame = assignment_submissions_dicts[
             (COURSE_ID, f"{COURSE_ID}-{COURSEWORK_ID}")
         ]
         coursework1_dict = assignment_submissions_df.to_dict(orient="records")[0]
@@ -146,7 +146,7 @@ def describe_when_multiple_submissions_for_the_same_assignment_are_mapped():
         )
 
     def it_should_have_second_row_in_same_assignment(assignment_submissions_dicts):
-        assignment_submissions_df: pd.DataFrame = assignment_submissions_dicts[
+        assignment_submissions_df: DataFrame = assignment_submissions_dicts[
             (COURSE_ID, f"{COURSE_ID}-{COURSEWORK_ID}")
         ]
         coursework2_dict = assignment_submissions_df.to_dict(orient="records")[1]
@@ -162,7 +162,7 @@ def describe_when_submissions_in_different_assignments_are_mapped():
     coursework2_id = "coursework2_id"
 
     @pytest.fixture
-    def assignment_submissions_dicts() -> Dict[Tuple[str, str], pd.DataFrame]:
+    def assignment_submissions_dicts() -> Dict[Tuple[str, str], DataFrame]:
         # arrange
         submission1: Dict[str, str] = {
             "id": ID,
@@ -176,7 +176,7 @@ def describe_when_submissions_in_different_assignments_are_mapped():
             "courseWorkId": coursework2_id,
         }
 
-        submissions_df = pd.DataFrame.from_dict(
+        submissions_df = DataFrame.from_dict(
             [
                 merged_dict(submission1, BOILERPLATE),
                 merged_dict(submission2, BOILERPLATE),
@@ -191,7 +191,7 @@ def describe_when_submissions_in_different_assignments_are_mapped():
     def it_should_have_one_submission_for_first_assignment(
         assignment_submissions_dicts,
     ):
-        submissions_df: pd.DataFrame = assignment_submissions_dicts[
+        submissions_df: DataFrame = assignment_submissions_dicts[
             (COURSE_ID, f"{COURSE_ID}-{COURSEWORK_ID}")
         ]
         row_count, _ = submissions_df.shape
@@ -201,7 +201,7 @@ def describe_when_submissions_in_different_assignments_are_mapped():
     def it_should_have_one_submission_for_second_assignment(
         assignment_submissions_dicts,
     ):
-        submissions_df: pd.DataFrame = assignment_submissions_dicts[
+        submissions_df: DataFrame = assignment_submissions_dicts[
             (COURSE_ID, f"{COURSE_ID}-{coursework2_id}")
         ]
         row_count, _ = submissions_df.shape
@@ -211,7 +211,7 @@ def describe_when_submissions_in_different_assignments_are_mapped():
     def it_should_have_correct_submission_id_in_first_assignment(
         assignment_submissions_dicts,
     ):
-        assignment_submissions_df: pd.DataFrame = assignment_submissions_dicts[
+        assignment_submissions_df: DataFrame = assignment_submissions_dicts[
             (COURSE_ID, f"{COURSE_ID}-{COURSEWORK_ID}")
         ]
         coursework1_dict = assignment_submissions_df.to_dict(orient="records")[0]
@@ -224,7 +224,7 @@ def describe_when_submissions_in_different_assignments_are_mapped():
     def it_should_have_correct_submission_id_in_second_assignment(
         assignment_submissions_dicts,
     ):
-        assignment_submissions_df: pd.DataFrame = assignment_submissions_dicts[
+        assignment_submissions_df: DataFrame = assignment_submissions_dicts[
             (COURSE_ID, f"{COURSE_ID}-{coursework2_id}")
         ]
         coursework2_dict = assignment_submissions_df.to_dict(orient="records")[0]

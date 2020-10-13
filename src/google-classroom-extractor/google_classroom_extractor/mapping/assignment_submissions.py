@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Dict, Tuple
-import pandas as pd
+from pandas import DataFrame
 from google_classroom_extractor.mapping.constants import (
     SOURCE_SYSTEM,
     ENTITY_STATUS_ACTIVE,
@@ -14,8 +14,8 @@ TURNED_IN_STATE = "TURNED_IN"
 
 
 def submissions_to_assignment_submissions_dfs(
-    submissions_df: pd.DataFrame,
-) -> Dict[Tuple[str, str], pd.DataFrame]:
+    submissions_df: DataFrame,
+) -> Dict[Tuple[str, str], DataFrame]:
     """
     Convert a Submission API DataFrame to a Dict of AssignmentSubmission UDM DataFrames
     grouped by source system section id/assignment id tuple pairs
@@ -46,7 +46,7 @@ def submissions_to_assignment_submissions_dfs(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(submissions_df, pd.DataFrame)
+    assert isinstance(submissions_df, DataFrame)
     assert "courseId" in submissions_df.columns
     assert "courseWorkId" in submissions_df.columns
     assert "id" in submissions_df.columns
@@ -72,7 +72,7 @@ def submissions_to_assignment_submissions_dfs(
         axis=1,
     )
 
-    assignment_submissions_df: pd.DataFrame = submissions_df[
+    assignment_submissions_df: DataFrame = submissions_df[
         [
             "SourceSystemIdentifier",
             "AssignmentIdentifier",
@@ -105,7 +105,7 @@ def submissions_to_assignment_submissions_dfs(
     assignment_submissions_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
 
     # group by section id and assignment id as a Dict of DataFrames
-    result: Dict[Tuple[str, str], pd.DataFrame] = dict(
+    result: Dict[Tuple[str, str], DataFrame] = dict(
         tuple(
             assignment_submissions_df.groupby(
                 [
