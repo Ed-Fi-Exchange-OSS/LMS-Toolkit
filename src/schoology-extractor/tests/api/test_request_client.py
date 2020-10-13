@@ -4,7 +4,6 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import pytest
-from requests.exceptions import HTTPError
 
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.api.paginated_result import PaginatedResult
@@ -75,9 +74,8 @@ class TestRequestClient:
                 default_request_client.get(FAKE_ENDPOINT_URL)
 
                 raise RuntimeError("expected an error to occur")
-            except HTTPError as ex:
-                assert ex.code == 400
-                assert ex.reason == "BadRequest (400): no good"
+            except RuntimeError as ex:
+                assert str(ex) == "BadRequest (400): no good"
 
         def test_given_no_parameters_passed_then_throw_assert_exception(
             self, default_request_client

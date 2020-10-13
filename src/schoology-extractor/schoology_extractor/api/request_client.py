@@ -125,12 +125,7 @@ class RequestClient:
         )
 
         if response.status_code != 200:
-            error = HTTPError()
-            error.code = response.status_code
-            error.reason = (
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
-            raise error
+            raise RuntimeError(f"{response.reason} ({response.status_code}): {response.text}")
 
         return response.json()
 
