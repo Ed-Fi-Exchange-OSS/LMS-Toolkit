@@ -84,6 +84,8 @@ def request_latest_coursework_as_df(
     DataFrame
         a Coursework API DataFrame with the fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         courseId: Identifier of the course
         id: Classroom-assigned identifier of this course work, unique per course
@@ -143,6 +145,8 @@ def request_all_coursework_as_df(
     DataFrame
         a Coursework API DataFrame with the current and previously fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         courseId: Identifier of the course
         id: Classroom-assigned identifier of this course work, unique per course

@@ -12,11 +12,14 @@ from tail_recursive import tail_recursive
 
 ResourceType = namedtuple("ValidSdkFunction", ["courses", "userUsageReport"])
 
+MAX_TOTAL_CALLS = 4
+RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
+
 
 @retry(
     retry_on_exceptions=(IOError, RequestException),
-    max_calls_total=4,
-    retry_window_after_first_call_in_seconds=60,
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
 )
 def _execute(executable_resource):
     """

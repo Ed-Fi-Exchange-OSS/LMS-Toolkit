@@ -5,15 +5,47 @@
 
 import logging
 from typing import List, Dict, Optional, cast
-import pandas as pd
+from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
+
+REQUIRED_COLUMNS = [
+    "courseId",
+    "courseWorkId",
+    "id",
+    "userId",
+    "creationTime",
+    "updateTime",
+    "state",
+    "late",
+    "draftGrade",
+    "assignedGrade",
+    "alternateLink",
+    "courseWorkType",
+    "associatedWithDeveloper",
+    "submissionHistory",
+]
 
 
 def request_submissions(
     resource: Optional[Resource], course_id: str
 ) -> List[Dict[str, str]]:
+    """
+    Fetch Student Submissions API data for all submissions for a coursework,
+    and return a list of submissions data
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource
+
+    Returns
+    -------
+    List[Dict[str, str]]
+        a list of Google Classroom StudentSubmissions resources,
+            see https://developers.google.com/classroom/reference/rest/v1/courses.courseWork.studentSubmissions
+    """
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_id, str)
 
@@ -29,7 +61,47 @@ def request_submissions(
 
 def request_latest_submissions_as_df(
     resource: Optional[Resource], course_ids: List[str]
-) -> pd.DataFrame:
+) -> DataFrame:
+    """
+    Fetch StudentSubmissions API data for the given coursework
+        and return a StudentSubmissions API DataFrame
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource
+    course_ids: List[str]
+        a list of course ids to retrieve coursework for
+
+    Returns
+    -------
+    DataFrame
+        a Coursework API DataFrame with the fetched data
+
+    Notes
+    -----
+    DataFrame columns are:
+        courseId: Identifier of the course
+        courseWorkId: Identifier for the course work this corresponds to
+        id: Classroom-assigned Identifier for the student submission, unique
+        per coursework
+        userId: Identifier for the student that owns this submission
+        creationTime: Creation time of this submission
+        updateTime: Last update time of this submission
+        title: Title of this course work
+        description: Optional description of this course work
+        state: Status of this submission
+        late: Whether this submission is late
+        draftGrade: Optional pending grade. If unset, no grade was set. Decimal
+            values are allowed.
+        assignedGrade: Optional grade. If unset, no grade was set. Decimal
+            values are allowed.
+        alternateLink: Absolute link to this course work in the Classroom web UI
+        courseWorkType: Type of course work this submission is for
+        associatedWithDeveloper: Whether this student submission is associated with the
+            Developer Console project making the request
+        submissionHistory: The history of the submission as JSON
+    """
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_ids, list)
 
@@ -38,19 +110,60 @@ def request_latest_submissions_as_df(
     for course_id in course_ids:
         submissions.extend(request_submissions(resource, course_id))
 
-    return pd.json_normalize(submissions).astype("string")
+    json_df: DataFrame = json_normalize(submissions).astype("string")
+    return json_df.reindex(
+        json_df.columns.union(REQUIRED_COLUMNS, sort=False), axis=1, fill_value=""
+    )
 
 
 def request_all_submissions_as_df(
     resource: Optional[Resource],
     course_ids: List[str],
     sync_db: sqlalchemy.engine.base.Engine,
-) -> pd.DataFrame:
+) -> DataFrame:
+    """
+    Fetch StudentSubmissions API data for the given coursework
+        and return a StudentSubmissions API DataFrame
+
+    Parameters
+    ----------
+    resource: Optional[Resource]
+        a Google Classroom SDK Resource
+    course_ids: List[str]
+        a list of course ids to retrieve coursework for
+
+    Returns
+    -------
+    DataFrame
+        a Coursework API DataFrame with the fetched data
+
+    Notes
+    -----
+    DataFrame columns are:
+        courseId: Identifier of the course
+        courseWorkId: Identifier for the course work this corresponds to
+        id: Classroom-assigned Identifier for the student submission, unique
+        per coursework
+        userId: Identifier for the student that owns this submission
+        creationTime: Creation time of this submission
+        updateTime: Last update time of this submission
+        state: Status of this submission
+        late: Whether this submission is late
+        draftGrade: Optional pending grade. If unset, no grade was set. Decimal
+            values are allowed.
+        assignedGrade: Optional grade. If unset, no grade was set. Decimal
+            values are allowed.
+        alternateLink: Absolute link to this course work in the Classroom web UI
+        courseWorkType: Type of course work this submission is for
+        associatedWithDeveloper: Whether this student submission is associated with the
+            Developer Console project making the request
+        submissionHistory: The history of the submission as JSON
+    """
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(course_ids, list)
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
-    submissions_df: pd.DataFrame = request_latest_submissions_as_df(
+    submissions_df: DataFrame = request_latest_submissions_as_df(
         resource, course_ids
     )
 

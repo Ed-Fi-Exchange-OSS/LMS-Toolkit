@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import List
-import pandas as pd
+from pandas import DataFrame
 from googleapiclient.discovery import Resource
 import sqlalchemy
 
@@ -44,7 +44,7 @@ def request_all(
     assert isinstance(reports_resource, Resource)
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
-    courses_df: pd.DataFrame = request_all_courses_as_df(classroom_resource, sync_db)
+    courses_df: DataFrame = request_all_courses_as_df(classroom_resource, sync_db)
     course_ids: List[str] = courses_df["id"].tolist()
 
     return Result(

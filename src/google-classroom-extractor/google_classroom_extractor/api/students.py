@@ -5,7 +5,7 @@
 
 import logging
 from typing import List, Dict, Optional, cast
-import pandas as pd
+from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
@@ -46,7 +46,7 @@ def request_students(
 
 def request_latest_students_as_df(
     resource: Optional[Resource], course_ids: List[str]
-) -> pd.DataFrame:
+) -> DataFrame:
     """
     Fetch Students API data for a range of courses and return a Students API DataFrame
 
@@ -62,6 +62,8 @@ def request_latest_students_as_df(
     DataFrame
         a Students API DataFrame with the fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         courseId: Identifier of the course
         userId: Identifier of the user
@@ -80,14 +82,14 @@ def request_latest_students_as_df(
     for course_id in course_ids:
         students.extend(request_students(resource, course_id))
 
-    return pd.json_normalize(students).astype("string")
+    return json_normalize(students).astype("string")
 
 
 def request_all_students_as_df(
     resource: Optional[Resource],
     course_ids: List[str],
     sync_db: sqlalchemy.engine.base.Engine,
-) -> pd.DataFrame:
+) -> DataFrame:
     """
     Fetch Students API data for a range of courses and return a Students API DataFrame
     with current and previously fetched data
@@ -106,6 +108,8 @@ def request_all_students_as_df(
     DataFrame
         a Students API DataFrame with the current and previously fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         courseId: Identifier of the course
         userId: Identifier of the user
@@ -120,7 +124,7 @@ def request_all_students_as_df(
     assert isinstance(course_ids, list)
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
-    students_df: pd.DataFrame = request_latest_students_as_df(resource, course_ids)
+    students_df: DataFrame = request_latest_students_as_df(resource, course_ids)
 
     # append everything from API call
     students_df.to_sql(
