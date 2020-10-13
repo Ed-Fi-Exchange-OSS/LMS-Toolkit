@@ -3,21 +3,30 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+import os
 import time
 import random
 from typing import List
 
+from opnieuw import retry
+from requests.exceptions import ConnectionError, HTTPError, Timeout
+from requests.packages.urllib3.exceptions import ProtocolError  # type: ignore
 from requests_oauthlib import OAuth1Session  # type: ignore
 
 from .paginated_result import PaginatedResult
 
 
-DEFAULT_URL = "https://api.schoology.com/v1/"
+DEFAULT_URL = os.environ.get("SCHOOLOGY_BASE_URL") or "https://api.schoology.com/v1/"
 DEFAULT_PAGE_SIZE = 20
+
+REQUEST_RETRY_COUNT = int(os.environ.get("REQUEST_RETRY_COUNT") or 4)
+REQUEST_RETRY_TIMEOUT_SECONDS = int(
+    os.environ.get("REQUEST_RETRY_TIMEOUT_SECONDS") or 60
+)
 
 
 class RequestClient:
-    '''
+    """
     The RequestClient class wraps all the configuration complexity related
     to authentication and http requests for Schoology API
 
@@ -34,13 +43,20 @@ class RequestClient:
     ----------
     oauth : OAuth1Session
         The two-legged authenticated OAuth1 session.
-    '''
+    """
 
     def __init__(
         self, schoology_key: str, schoology_secret: str, base_url: str = DEFAULT_URL
     ):
-        assert isinstance(schoology_key, str), "Argument `schoology_key` should be of type `str`."
-        assert isinstance(schoology_secret, str), "Argument `schoology_secret` should be of type `str`."
+
+        # TODO: look into moving these asserts to the point at which the value
+        # is used and then look into making this a dataclass
+        assert isinstance(
+            schoology_key, str
+        ), "Argument `schoology_key` should be of type `str`."
+        assert isinstance(
+            schoology_secret, str
+        ), "Argument `schoology_secret` should be of type `str`."
         assert isinstance(base_url, str), "Argument `base_url` should be of type `str`."
 
         self.oauth = OAuth1Session(schoology_key, schoology_secret)
@@ -80,6 +96,11 @@ class RequestClient:
             "Content-Type": "application/json",
         }
 
+    @retry(
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        max_calls_total=REQUEST_RETRY_COUNT,
+        retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
+    )
     def get(self, url: str) -> dict:
         """
         Send an HTTP GET request.
@@ -102,6 +123,15 @@ class RequestClient:
             headers=self._request_header,
             auth=self.oauth.auth,
         )
+
+        if response.status_code != 200:
+            error = HTTPError()
+            error.code = response.status_code
+            error.reason = (
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
+            raise error
+
         return response.json()
 
     def get_assignments_by_section_ids(self, section_ids: list) -> list:
@@ -123,7 +153,9 @@ class RequestClient:
         a simple list of items, instead of a list with PaginatedResults
 
         """
-        assert isinstance(section_ids, list), "Argument `section_ids` should be of type `list`."
+        assert isinstance(
+            section_ids, list
+        ), "Argument `section_ids` should be of type `list`."
 
         assignments: List[object] = []
         for section_id in section_ids:
@@ -131,7 +163,11 @@ class RequestClient:
             url = f"sections/{section_id}/assignments?{params}"
 
             assignments_per_section = PaginatedResult(
-                self, DEFAULT_PAGE_SIZE, self.get(url), "assignment", self.base_url + url
+                self,
+                DEFAULT_PAGE_SIZE,
+                self.get(url),
+                "assignment",
+                self.base_url + url,
             )
             while True:
                 current_page_assignments = assignments_per_section.current_page_items
@@ -163,7 +199,9 @@ class RequestClient:
         and it will handle paging for each request by itself in order to just return
         a simple list of items, instead of a list with PaginatedResults
         """
-        assert isinstance(course_ids, list), "Argument `course_ids` should be of type `list`."
+        assert isinstance(
+            course_ids, list
+        ), "Argument `course_ids` should be of type `list`."
 
         sections: List[object] = []
         for course_id in course_ids:
@@ -197,9 +235,15 @@ class RequestClient:
             A parsed response from the server
 
         """
-        assert isinstance(section_id, str), "Argument `section_id` should be of type `str`."
-        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
-        assert isinstance(grade_item_id, str), "Argument `grade_item_id` should be of type `str`."
+        assert isinstance(
+            section_id, str
+        ), "Argument `section_id` should be of type `str`."
+        assert isinstance(
+            page_size, int
+        ), "Argument `page_size` should be of type `int`."
+        assert isinstance(
+            grade_item_id, str
+        ), "Argument `grade_item_id` should be of type `str`."
 
         url = f"sections/{section_id}/submissions/{grade_item_id}"
 
@@ -223,14 +267,18 @@ class RequestClient:
             A parsed response from the server
 
         """
-        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
+        assert isinstance(
+            page_size, int
+        ), "Argument `page_size` should be of type `int`."
         url = f"users?{self._build_query_params_for_first_page(page_size)}"
 
         return PaginatedResult(
             self, page_size, self.get(url), "user", self.base_url + url
         )
 
-    def get_grading_periods(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
+    def get_grading_periods(
+        self, page_size: int = DEFAULT_PAGE_SIZE
+    ) -> PaginatedResult:
         """
         Gets all the grading periods from the Schoology API
 
@@ -245,7 +293,9 @@ class RequestClient:
             A parsed response from the server
 
         """
-        assert isinstance(page_size, int), "Argument `section_id` should be of type `int`."
+        assert isinstance(
+            page_size, int
+        ), "Argument `section_id` should be of type `int`."
 
         url = f"gradingperiods?{self._build_query_params_for_first_page(page_size)}"
         response = self.get(url)
@@ -272,9 +322,7 @@ class RequestClient:
         url = f"courses?{self._build_query_params_for_first_page(page_size)}"
         response = self.get(url)
 
-        return PaginatedResult(
-            self, page_size, response, "course", self.base_url + url
-        )
+        return PaginatedResult(self, page_size, response, "course", self.base_url + url)
 
     def get_roles(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
         """
