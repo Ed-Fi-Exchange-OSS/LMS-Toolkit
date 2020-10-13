@@ -10,20 +10,44 @@ and submissions for the desired grading period(s).
 
 ## Configuration
 
-Configuration is via `.env` file or directly with environment variables listed
-below. User's API key and secret are managed at https://app.schoology.com/api.
-The grading periods list helps determine which grading periods are of interest -
-for example, an organization with school years in one Schoology account would
-only want to list the grading periods for the current school year. Run `poetry run python schoology_extractor/grading_periods.py` to get a list of grading periods (requires that
-the `.env` file has the key and secret values already configured).
+Environment variables can be defined via cli args or .env file. To use the .env
+variables, you should copy the `.env.example` file into `.env` and update the
+values.
 
--   `SCHOOLOGY_KEY=<administrator's API key>`
--   `SCHOOLOGY_SECRET=<administrator's API secret>`
--   `SCHOOLOGY_OUTPUT_PATH=<output directory>`
--   `SCHOOLOGY_GRADING_PERIODS=<csv list of grading period ids>`
+User's API key and secret are managed at https://app.schoology.com/api. The
+grading periods list helps determine which grading periods are of interest - for
+example, an organization with school years in one Schoology account would only
+want to list the grading periods for the current school year. To get a list of
+grading periods, if you are using CLI args, run:
 
+```bash
+poetry run python schoology_extractor/grading_periods.py -k your-schoology-client-key -s your-schoology-client-secret
+```
+
+For detailed help, execute
+
+```bash
+poetry run python schoology_extractor/grading_periods.py -h
+```
+
+If you are using .env variables, run:
+
+```bash
+poetry run python schoology_extractor/grading_periods.py
+```
 
 ## Execution
+
+With cli args:
+
+```bash
+poetry install
+poetry run python.exe schoology_extractor/main.py -k your-schoology-client-key -s your-schoology-client-secret  -g csv-of-grading-periods
+```
+
+For detailed help, execute `poetry run python schoology_extractor/main.py -h`.
+
+With .env variables:
 
 ```bash
 poetry install
@@ -34,13 +58,12 @@ poetry run python.exe schoology_extractor/main.py
 
 ```bash
 poetry run coverage run -m pytest
-
 poetry run coverage report
 ```
 
 ## Output
 
-Four files in the `./output` directory:
+Four files in the project(or the specified output) directory:
 
 -   `users.csv`
 -   `sections.csv`
