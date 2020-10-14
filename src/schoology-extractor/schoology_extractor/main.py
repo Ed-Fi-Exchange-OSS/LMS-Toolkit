@@ -10,10 +10,10 @@ import sys
 
 from dotenv import load_dotenv
 
-from helpers import export_data
-from api.request_client import RequestClient
-from helpers import arg_parser
-from schoology_request_service import SchoologyRequestService
+from schoology_extractor.helpers import export_data
+from schoology_extractor.api.request_client import RequestClient
+from schoology_extractor.helpers import arg_parser
+from schoology_extractor.schoology_request_service import SchoologyRequestService
 
 # Load configuration
 load_dotenv()

@@ -7,8 +7,8 @@ import logging
 from typing import Any, List
 import sys
 
-from helpers import export_data, arg_parser
-from api.request_client import RequestClient
+from schoology_extractor.helpers import export_data, arg_parser
+from schoology_extractor.api.request_client import RequestClient
 
 # Parse arguments
 arguments = arg_parser.parse_grading_periods_arguments(sys.argv[1:])
