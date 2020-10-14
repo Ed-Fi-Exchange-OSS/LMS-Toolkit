@@ -14,7 +14,7 @@ from mapping import users as usersMap
 
 
 @dataclass
-class Facade:
+class SchoologyRequestService:
     logger: Logger
     request_client: RequestClient
     page_size: int
@@ -39,6 +39,7 @@ class Facade:
         self._logger.debug("Exporting users: get users")
         users_response = self._client.get_users(self._page_size)
         users_list: List[Any] = []
+
         while True:
             users_list = users_list + users_response.current_page_items
             if users_response.get_next_page() is None:

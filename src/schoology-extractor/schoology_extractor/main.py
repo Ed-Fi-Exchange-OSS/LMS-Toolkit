@@ -5,7 +5,7 @@
 
 import logging
 import os
-from typing import Callable
+from typing import Callable, Dict
 import sys
 
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from helpers import export_data
 from api.request_client import RequestClient
 from helpers import arg_parser
-from facade import Facade
+from schoology_request_service import SchoologyRequestService
 
 # Load configuration
 load_dotenv()
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 grading_periods = schoology_grading_periods.split(",")
 request_client = RequestClient(schoology_key, schoology_secret)
-facade = Facade(logger, request_client, page_size)
+service = SchoologyRequestService(logger, request_client, page_size)
 
 
 def _create_file_from_dataframe(action: Callable, file_name):
@@ -72,28 +72,28 @@ def _create_file_from_list(action: Callable, file_name):
 
 
 def _get_users():
-    return facade.get_users()
+    return service.get_users()
 
 
 # This variable facilitates temporary storage of output results from one GET
 # request that need to be used for creating another GET request.
-closure = {}
+result_bucket: Dict[str, list] = {}
 
 
-def _get_sections():
-    sections = facade.get_sections()
-    closure["sections"] = sections
+def _get_sections() -> list:
+    sections = service.get_sections()
+    result_bucket["sections"] = sections
     return sections
 
 
-def _get_assignments():
-    assignments = facade.get_assignments(closure["sections"], grading_periods)
-    closure["assignments"] = assignments
+def _get_assignments() -> list:
+    assignments = service.get_assignments(result_bucket["sections"], grading_periods)
+    result_bucket["assignments"] = assignments
     return assignments
 
 
-def _get_submissions():
-    return facade.get_submissions(closure["assignments"])
+def _get_submissions() -> list:
+    return service.get_submissions(result_bucket["assignments"])
 
 
 def main():
