@@ -80,6 +80,8 @@ class SchoologyRequestService:
     def get_assignments(
         self, sections: List[Dict[str, Any]], grading_periods: List[str]
     ) -> list:
+
+        # NOTE: this call handles paging on its own
         assignments = self._client.get_assignments_by_section_ids(
             [s["id"] for s in sections], self._page_size
         )
