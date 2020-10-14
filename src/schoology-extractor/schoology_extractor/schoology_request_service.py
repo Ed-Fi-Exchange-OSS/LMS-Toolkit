@@ -9,8 +9,8 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
-from api.request_client import RequestClient
-from mapping import users as usersMap
+from .api.request_client import RequestClient
+from .mapping import users as usersMap
 
 
 @dataclass
@@ -39,7 +39,6 @@ class SchoologyRequestService:
         self._logger.debug("Exporting users: get users")
         users_response = self._client.get_users(self._page_size)
         users_list: List[Any] = []
-
         while True:
             users_list = users_list + users_response.current_page_items
             if users_response.get_next_page() is None:
@@ -69,6 +68,13 @@ class SchoologyRequestService:
                 break
 
         self._logger.debug("Exporting sections: get sections for active courses")
+
+        # TODO: inconsistency - in this case the pagination is handled inside of
+        # the client, instead of being handled here. Arguably there should be
+        # some other thing, neither this service nor the client, that handles
+        # the paging. As BB said in a pr comment, perhaps it should be handled
+        # in a decorator. This works but we should consider refactoring to a
+        # cleaner approach.
         return self._client.get_section_by_course_ids([c["id"] for c in courses_list])
 
     def get_assignments(
