@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from schoology_extractor.helpers import export_data
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.helpers import arg_parser
-from schoology_extractor.schoology_request_service import SchoologyRequestService
+from schoology_extractor.schoology_request_service import SchoologyExtractFacade
 
 # Load configuration
 load_dotenv()
@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 grading_periods = schoology_grading_periods.split(",")
 request_client = RequestClient(schoology_key, schoology_secret)
-service = SchoologyRequestService(logger, request_client, page_size)
+service = SchoologyExtractFacade(logger, request_client, page_size)
 
 
 def _create_file_from_dataframe(action: Callable, file_name):

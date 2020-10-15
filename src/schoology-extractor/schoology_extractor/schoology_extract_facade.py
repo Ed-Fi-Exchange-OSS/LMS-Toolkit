@@ -14,7 +14,7 @@ from .mapping import users as usersMap
 
 
 @dataclass
-class SchoologyRequestService:
+class SchoologyExtractFacade:
     """
     Provides business logic to orchestrate retrieval of data from the LMS and
     reshape it into the Ed-Fi LMS Unified Data Model (UDM).

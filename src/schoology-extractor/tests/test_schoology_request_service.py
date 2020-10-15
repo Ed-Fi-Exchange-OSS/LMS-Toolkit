@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 from unittest.mock import Mock
 
-from schoology_extractor.schoology_request_service import SchoologyRequestService
+from schoology_extractor.schoology_request_service import SchoologyExtractFacade
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.api.paginated_result import PaginatedResult
 from schoology_extractor.mapping import users as usersMap
@@ -46,7 +46,7 @@ def describe_when_getting_users():
             usersMap.map_to_udm = Mock()
             usersMap.map_to_udm.return_value = pd.DataFrame()
 
-            service = SchoologyRequestService(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
             result = service.get_users()
@@ -94,7 +94,7 @@ def describe_when_getting_users():
             usersMap.map_to_udm.return_value = pd.DataFrame()
 
             # Arrange
-            service = SchoologyRequestService(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
             result = service.get_users()
@@ -148,7 +148,7 @@ def describe_when_getting_sections():
             get_sections_mock.return_value = sections
 
             # Arrange
-            service = SchoologyRequestService(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
             result = service.get_sections()
@@ -190,7 +190,7 @@ def describe_when_getting_sections():
             get_sections_mock.return_value = sections
 
             # Arrange
-            service = SchoologyRequestService(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
             result = service.get_sections()
@@ -231,7 +231,7 @@ def describe_when_getting_assignments():
             sections = [{"id": 1234}]
 
             # Arrange
-            service = SchoologyRequestService(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
             result = service.get_assignments(sections, grading_periods)
@@ -264,7 +264,7 @@ def describe_when_getting_assignments():
             sections = [{"id": 1234}, {"id": 987}]
 
             # Arrange
-            service = SchoologyRequestService(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
             result = service.get_assignments(sections, grading_periods)
@@ -312,7 +312,7 @@ def describe_when_getting_submissions():
                 submissions_page
             )
 
-            service = SchoologyRequestService(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
             result = service.get_submissions(assignments)
@@ -353,7 +353,7 @@ def describe_when_getting_submissions():
                 submissions_queue
             )
 
-            service = SchoologyRequestService(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
             result = service.get_submissions(assignments)
