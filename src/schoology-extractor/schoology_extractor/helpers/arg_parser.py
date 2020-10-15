@@ -73,7 +73,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
 
     parser.add(  # type: ignore
         '-g',
-        '--grading-period',
+        '--grading-periods',
         required=True,
         help='CSV with the grading periods.',
         type=str,
@@ -95,7 +95,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         help='The log level for the tool.',
         choices=constants.LOG_LEVELS,
         type=str,
-        default="INFO",
+        default="WARNING",
         env_var="SCHOOLOGY_LOG_LEVEL")
 
     parser.add(  # type: ignore
