@@ -7,8 +7,8 @@ import logging
 from typing import Any, List
 import sys
 
-from helpers import export_data, arg_parser
-from api.request_client import RequestClient
+from schoology_extractor.helpers import export_data, arg_parser
+from schoology_extractor.api.request_client import RequestClient
 
 # Parse arguments
 arguments = arg_parser.parse_grading_periods_arguments(sys.argv[1:])
@@ -25,7 +25,7 @@ logging.basicConfig(
         logging.StreamHandler(sys.stdout),
     ],
     format=logFormatter,
-    level=log_level
+    level=log_level,
 )
 logger = logging.getLogger(__name__)
 
@@ -33,13 +33,18 @@ logger.info("Ed-Fi LMS Schoology Extractor - Grading Periods")
 request_client = RequestClient(schoology_key, schoology_secret)
 
 logger.info("Getting grading periods")
+
 try:
+
     grading_periods_list: List[Any] = []
     grading_periods_response = request_client.get_grading_periods()
     while True:
-        grading_periods_list = grading_periods_list + grading_periods_response.current_page_items
+        grading_periods_list = (
+            grading_periods_list + grading_periods_response.current_page_items
+        )
         if grading_periods_response.get_next_page() is None:
             break
     print(export_data.to_string(grading_periods_list))
+
 except Exception as ex:
-    logger.error('An exception occurred while getting the Grading Periods: %s', ex)
+    logger.error("An exception occurred while getting the Grading Periods: %s", ex)

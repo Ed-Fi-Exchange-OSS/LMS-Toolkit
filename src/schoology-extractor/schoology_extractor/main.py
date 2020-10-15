@@ -5,137 +5,104 @@
 
 import logging
 import os
-from typing import Any, List
+from typing import Callable, Dict
 import sys
 
-import pandas as pd
 from dotenv import load_dotenv
 
-from helpers import export_data
-from api.request_client import RequestClient
-from helpers import arg_parser
-from mapping import users as usersMap
+from schoology_extractor.helpers import export_data
+from schoology_extractor.api.request_client import RequestClient
+from schoology_extractor.helpers import arg_parser
+from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
 
-# Parse arguments
+# Load configuration
 load_dotenv()
+
 arguments = arg_parser.parse_main_arguments(sys.argv[1:])
 # Parameters are validated in the parse_main_arguments function
 schoology_key = arguments.client_key
 schoology_secret = arguments.client_secret
 schoology_output_path = arguments.output_directory
-schoology_grading_periods = arguments.grading_period
+schoology_grading_periods = arguments.grading_periods
 log_level = arguments.log_level
 page_size = arguments.page_size
 
-
 # Configure logging
-logFormatter = '%(asctime)s - %(levelname)s - %(message)s'
+logFormatter = "%(asctime)s - %(levelname)s - %(message)s"
 
 logging.basicConfig(
     handlers=[
         logging.StreamHandler(sys.stdout),
     ],
     format=logFormatter,
-    level=log_level
+    level=log_level,
 )
 
 logger = logging.getLogger(__name__)
-logger.info("Starting Ed-Fi LMS Schoology Extractor")
 
-# Init variables
-grading_periods_array = schoology_grading_periods.split(",")
+grading_periods = schoology_grading_periods.split(",")
 request_client = RequestClient(schoology_key, schoology_secret)
+service = SchoologyExtractFacade(logger, request_client, page_size)
 
 
-# Export users
-logger.info("Exporting users")
-try:
-    users_response = request_client.get_users(page_size)
-    users_list: List[Any] = []
-    while True:
-        users_list = users_list + users_response.current_page_items
-        if users_response.get_next_page() is None:
-            break
-
-    roles_list: List[Any] = []
-    roles_response = request_client.get_roles()
-    while True:
-        roles_list = roles_list + roles_response.current_page_items
-        if roles_response.get_next_page() is None:
-            break
-
-    users_df = pd.DataFrame(users_list)
-    roles_df = pd.DataFrame(roles_list)
-
-    udm_users = usersMap.map_to_udm(users_df, roles_df)
-
-    export_data.df_to_csv(udm_users, os.path.join(schoology_output_path, "users.csv"))
-except Exception as ex:
-    logger.error('An exception has occurred in the process of generating the users.csv file: %s', ex)
-
-
-# Export sections
-logger.info("Exporting sections")
-sections_list = []
-try:
-    # first we need to get a list of courses
-    logger.info("Exporting sections - Getting courses")
-    courses_response = request_client.get_courses(page_size)
-    courses_list: List[Any] = []
-    while True:
-        courses_list = courses_list + courses_response.current_page_items
-        if courses_response.get_next_page() is None:
-            break
-
-    # now we can get a list of sections
-    course_ids = map(lambda x: x["id"], courses_list)
-    sections_list = request_client.get_section_by_course_ids(list(course_ids))
-    export_data.to_csv(sections_list, os.path.join(schoology_output_path, "sections.csv"))
-except Exception as ex:
-    logger.error('An exception has occurred in the process of generating the sections.csv file: %s', ex)
-
-
-# Export assigments
-logger.info("Exporting assigments")
-assignments = []
-try:
-    section_ids = map(lambda x: x["id"], sections_list)
-
-    assignments = request_client.get_assignments_by_section_ids(list(section_ids))
-
-    filtered_assignments = [
-        assignment
-        for assignment in assignments
-        if assignment["grading_period"] in grading_periods_array
-    ]
-
-    export_data.to_csv(
-        filtered_assignments, os.path.join(schoology_output_path, "assignments.csv")
-    )
-except Exception as ex:
-    logger.error('An exception has occurred in the process of generating the assigments.csv file: %s', ex)
-
-
-# Export submissions
-logger.info("Exporting submissions")
-try:
-    submissions_list: List[Any] = []
-
-    for assignment in assignments:
-        submissions_response = (
-            request_client.get_submissions_by_section_id_and_grade_item_id(
-                assignment["section_id"],
-                str(assignment["grade_item_id"]),
-                page_size
-            )
+def _create_file_from_dataframe(action: Callable, file_name):
+    logger.info(f"Exporting {file_name}")
+    try:
+        data = action()
+        export_data.df_to_csv(data, os.path.join(schoology_output_path, file_name))
+    except Exception as ex:
+        logger.error(
+            f"An exception occurred while generating {file_name} : %s",
+            ex,
         )
-        while True:
-            submissions_list = submissions_list + submissions_response.current_page_items
-            if submissions_response.get_next_page() is None:
-                break
 
-    export_data.to_csv(
-        submissions_list, os.path.join(schoology_output_path, "submissions.csv")
-    )
-except Exception as ex:
-    logger.error('An exception has occurred in the process of generating the submissions.csv file: %s', ex)
+
+# TODO: this method should disappear when we finish converting all of the output
+# to use the official CSV formats.
+def _create_file_from_list(action: Callable, file_name):
+    logger.info(f"Exporting {file_name}")
+    try:
+        data = action()
+        export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
+    except Exception as ex:
+        logger.error(
+            f"An exception occurred while generating {file_name} : %s",
+            ex,
+        )
+
+
+def _get_users():
+    return service.get_users()
+
+
+# This variable facilitates temporary storage of output results from one GET
+# request that need to be used for creating another GET request.
+result_bucket: Dict[str, list] = {}
+
+
+def _get_sections() -> list:
+    sections = service.get_sections()
+    result_bucket["sections"] = sections
+    return sections
+
+
+def _get_assignments() -> list:
+    assignments = service.get_assignments(result_bucket["sections"], grading_periods)
+    result_bucket["assignments"] = assignments
+    return assignments
+
+
+def _get_submissions() -> list:
+    return service.get_submissions(result_bucket["assignments"])
+
+
+def main():
+    _create_file_from_dataframe(_get_users, "users.csv")
+    _create_file_from_list(_get_sections, "sections.csv")
+    _create_file_from_list(_get_assignments, "assignments.csv")
+    _create_file_from_list(_get_submissions, "submissions.csv")
+
+
+if __name__ == "__main__":
+    logger.info("Starting Ed-Fi LMS Schoology Extractor")
+    main()
