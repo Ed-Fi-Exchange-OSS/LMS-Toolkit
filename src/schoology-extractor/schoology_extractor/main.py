@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from schoology_extractor.helpers import export_data
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.helpers import arg_parser
-from schoology_extractor.schoology_request_service import SchoologyExtractFacade
+from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
 
 # Load configuration
 load_dotenv()
