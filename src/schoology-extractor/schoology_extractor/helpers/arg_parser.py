@@ -21,7 +21,7 @@ class MainArguments:
         Schoology client key.
     client_secret: str
         Schoology client secret.
-    grading_period: str
+    grading_periods: str
         CSV with the grading periods.
     output_directory: str
         The output directory for the generated csv files.
@@ -33,7 +33,7 @@ class MainArguments:
 
     client_key: str
     client_secret: str
-    grading_period: str
+    grading_periods: str
     output_directory: str
     log_level: str
     page_size: int
@@ -123,8 +123,8 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         args_parsed.client_secret, str
     ), "Argument `client-secret` must be a string."
     assert isinstance(
-        args_parsed.grading_period, str
-    ), "Argument `grading-period` must be a string."
+        args_parsed.grading_periods, str
+    ), "Argument `grading-periods` must be a string."
 
     # Optional
     assert isinstance(
@@ -140,7 +140,7 @@ def parse_main_arguments(args_in: list) -> MainArguments:
     arguments = MainArguments(
         client_key=args_parsed.client_key,
         client_secret=args_parsed.client_secret,
-        grading_period=args_parsed.grading_period,
+        grading_periods=args_parsed.grading_periods,
         output_directory=args_parsed.output_directory,
         log_level=args_parsed.log_level,
         page_size=args_parsed.page_size,

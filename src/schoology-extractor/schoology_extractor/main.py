@@ -23,7 +23,7 @@ arguments = arg_parser.parse_main_arguments(sys.argv[1:])
 schoology_key = arguments.client_key
 schoology_secret = arguments.client_secret
 schoology_output_path = arguments.output_directory
-schoology_grading_periods = arguments.grading_period
+schoology_grading_periods = arguments.grading_periods
 log_level = arguments.log_level
 page_size = arguments.page_size
 
