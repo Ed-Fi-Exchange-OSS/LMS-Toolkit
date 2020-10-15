@@ -25,7 +25,7 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | ----------- | -------- | --------------------- | -------------------- |
 | Schoology API Key | yes | -k or --client-key | SCHOOLOGY_KEY |
 | Schoology API Secret | yes |  -s or --client-secret | SCHOOLOGY_SECRET |
-| List of Grading Periods | yes | -g or --grading-periods | SCHOOLOGY_GRADIN_PERIODS |
+| List of Grading Periods | yes | -g or --grading-periods | SCHOOLOGY_GRADING_PERIODS |
 | Output Directory | no (default: working directory) | -o or --output-directory | SCHOOLOGY_OUTPUT_PATH |
 | Log level | no (default: WARNING) | -l or --log-level | SCHOOLOGY_LOG_LEVEL |
 | Page size | no (default: 20) | -p or --page-size | PAGE_SIZE |
