@@ -15,6 +15,17 @@ from .mapping import users as usersMap
 
 @dataclass
 class SchoologyRequestService:
+    """
+    Provides business logic to orchestrate retrieval of data from the LMS and
+    reshape it into the Ed-Fi LMS Unified Data Model (UDM).
+
+    Parameters
+    ----------
+    logger : Logger Standard Python logger request_client : RequestClient
+        Instance of a Schoology request client page_size : int Number of records
+        to retrieve with each API call
+    """
+
     logger: Logger
     request_client: RequestClient
     page_size: int
@@ -35,6 +46,13 @@ class SchoologyRequestService:
         return self.page_size
 
     def get_users(self) -> pd.DataFrame:
+        """
+        Gets all Schoology users.
+
+        Returns
+        -------
+        pd.DataFrame
+        """
 
         self._logger.debug("Exporting users: get users")
         users_response = self._client.get_users(self._page_size)
@@ -58,6 +76,13 @@ class SchoologyRequestService:
         return usersMap.map_to_udm(users_df, roles_df)
 
     def get_sections(self) -> list:
+        """
+        Gets all Schoology users.
+
+        Returns
+        -------
+        list
+        """
 
         self._logger.debug("Exporting sections: get active courses")
         courses_response = self._client.get_courses(self._page_size)
@@ -80,6 +105,13 @@ class SchoologyRequestService:
     def get_assignments(
         self, sections: List[Dict[str, Any]], grading_periods: List[str]
     ) -> list:
+        """
+        Gets all Schoology users.
+
+        Returns
+        -------
+        list
+        """
 
         # NOTE: this call handles paging on its own
         assignments = self._client.get_assignments_by_section_ids(
@@ -93,6 +125,14 @@ class SchoologyRequestService:
         ]
 
     def get_submissions(self, assignments) -> list:
+        """
+        Gets all Schoology users.
+
+        Returns
+        -------
+        list
+        """
+
         submissions: List[Dict[str, Any]] = []
 
         for assignment in assignments:
