@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 from unittest.mock import Mock
 
-from schoology_extractor.schoology_request_service import SchoologyExtractFacade
+from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.api.paginated_result import PaginatedResult
 from schoology_extractor.mapping import users as usersMap
