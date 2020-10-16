@@ -14,6 +14,8 @@ from schoology_extractor.helpers import export_data
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.helpers import arg_parser
 from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
+import schoology_extractor.lms_filesystem as lms
+
 
 # Load configuration
 load_dotenv()
@@ -49,7 +51,7 @@ def _create_file_from_dataframe(action: Callable, file_name):
     logger.info(f"Exporting {file_name}")
     try:
         data = action()
-        export_data.df_to_csv(data, os.path.join(schoology_output_path, file_name))
+        export_data.df_to_csv(data, file_name)
     except Exception as ex:
         logger.error(
             f"An exception occurred while generating {file_name} : %s",
@@ -97,7 +99,7 @@ def _get_submissions() -> list:
 
 
 def main():
-    _create_file_from_dataframe(_get_users, "users.csv")
+    _create_file_from_dataframe(_get_users, lms.get_user_file_path(schoology_output_path))
     _create_file_from_list(_get_sections, "sections.csv")
     _create_file_from_list(_get_assignments, "assignments.csv")
     _create_file_from_list(_get_submissions, "submissions.csv")
