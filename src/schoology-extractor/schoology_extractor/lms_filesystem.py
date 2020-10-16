@@ -8,6 +8,7 @@ import os
 
 USERS = "users"
 SECTION = "section"
+ASSIGNMENTS = "assignments"
 
 
 def _get_file_name() -> str:
@@ -21,6 +22,8 @@ def _create_directory_if_it_does_not_exist(dir: str):
 
 def get_assignment_file_path(output_directory: str, section_id: int) -> str:
     base_dir = os.path.join(output_directory, f"{SECTION}={section_id}")
+    _create_directory_if_it_does_not_exist(base_dir)
+    base_dir = os.path.join(base_dir, ASSIGNMENTS)
     _create_directory_if_it_does_not_exist(base_dir)
 
     return os.path.join(base_dir, _get_file_name())
