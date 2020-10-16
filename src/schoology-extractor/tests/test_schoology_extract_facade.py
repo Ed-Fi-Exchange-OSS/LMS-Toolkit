@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from logging import Logger
-from typing import Dict, Tuple
+from typing import Tuple
 
 import pandas as pd
 import pytest

@@ -5,7 +5,7 @@
 
 import logging
 import os
-from typing import Callable, Dict, Union
+from typing import Callable, Dict
 import sys
 
 from dotenv import load_dotenv
