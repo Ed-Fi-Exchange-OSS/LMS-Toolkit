@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from logging import Logger
-from typing import Tuple
+from typing import Dict, Tuple
 
 import pandas as pd
 import pytest
@@ -216,77 +216,36 @@ def describe_when_getting_sections():
 
 
 def describe_when_getting_assignments():
-    def describe_given_one_section_with_one_assignment_and_it_is_in_the_grading_periods_list():
+    def describe_given_a_section_has_one_assignment():
         @pytest.fixture
-        def system() -> Tuple[list, Mock]:
+        def system() -> Tuple[pd.DataFrame, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             page_size = 22
-            grading_periods = ["331"]
+            section_id = 1234
 
-            assignments = [{"id": 3333, "grading_period": grading_periods[0]}]
-            get_assignments_mock = request_client.get_assignments_by_section_ids
+            assignments = [{"id": 3333}]
+            get_assignments_mock = request_client.get_assignments
             get_assignments_mock.return_value = assignments
-
-            sections = [{"id": 1234}]
 
             # Arrange
             service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
-            result = service.get_assignments(sections, grading_periods)
+            result = service.get_assignments(section_id)
 
             return result, get_assignments_mock
 
-        def it_should_return_the_assignments_list(system):
+        def it_should_return_the_assignments_list_as_data_frame(system):
             result, _ = system
 
-            assert result[0]["id"] == 3333
+            assert result["id"][0] == 3333
 
-        def it_should_only_query_for_the_given_section(system):
+        def it_should_query_for_the_given_section(system):
             _, get_assignments_mock = system
 
             args = get_assignments_mock.call_args
-            assert 1234 in args[0][0]
-
-    def describe_given_two_sections_with_one_assignment_and_that_is_not_in_the_grading_periods_list():
-        @pytest.fixture
-        def system() -> Tuple[list, Mock]:
-            logger = Mock(spec=Logger)
-            request_client = Mock(spec=RequestClient)
-            page_size = 22
-            grading_periods = ["331"]
-
-            assignments = [{"id": 3333, "grading_period": None}]
-            get_assignments_mock = request_client.get_assignments_by_section_ids
-            get_assignments_mock.return_value = assignments
-
-            sections = [{"id": 1234}, {"id": 987}]
-
-            # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size)
-
-            # Act
-            result = service.get_assignments(sections, grading_periods)
-
-            return result, get_assignments_mock
-
-        def it_should_an_empty_list(system):
-            result, _ = system
-
-            assert len(result) == 0
-
-        def it_should_query_with_the_first_section(system):
-            _, get_assignments_mock = system
-
-            args = get_assignments_mock.call_args
-            assert 1234 in args[0][0]
-
-        def it_should_query_with_the_second_section(system):
-            _, get_assignments_mock = system
-
-            args = get_assignments_mock.call_args
-            assert 987 in args[0][0]
+            assert 1234 == args[0][0]
 
 
 def describe_when_getting_submissions():
@@ -297,7 +256,7 @@ def describe_when_getting_submissions():
             request_client = Mock(spec=RequestClient)
             page_size = 22
 
-            assignments = [{"section_id": 123, "grade_item_id": 345}]
+            assignments = pd.DataFrame([{"section_id": 123, "grade_item_id": 345}])
             submissions = {
                 "revision": [{"id": 1234}],
                 "total": 1,
@@ -329,7 +288,12 @@ def describe_when_getting_submissions():
             request_client = Mock(spec=RequestClient)
             page_size = 22
 
-            assignments = [{"section_id": 123, "grade_item_id": 345}, {"section_id": 124, "grade_item_id": 346}]
+            assignments = pd.DataFrame(
+                [
+                    {"section_id": 123, "grade_item_id": 345},
+                    {"section_id": 124, "grade_item_id": 346},
+                ]
+            )
             submissions_1 = {
                 "revision": [{"id": 1234}],
                 "total": 1,

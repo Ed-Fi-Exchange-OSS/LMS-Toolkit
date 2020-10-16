@@ -78,53 +78,69 @@ class TestRequestClient:
             with pytest.raises(AssertionError):
                 default_request_client.get(None)
 
-    class Test_when_get_assignments_by_section_ids_method_is_called:
-        def test_given_no_parameters_passed_then_throw_assert_exception(
-            self, default_request_client
-        ):
-            with pytest.raises(AssertionError):
-                default_request_client.get_assignments_by_section_ids(None)
+    class Test_when_getting_assignments:
+        class Test_given_there_is_one_assignments:
+            @pytest.fixture
+            def result(self, default_request_client, requests_mock):
+                section_id = 3324
+                page_size = 435
+                expected_url_1 = "https://api.schoology.com/v1/sections/3324/assignments?start=0&limit=435"
 
-        def test_given_an_array_of_ids_then_make_a_call_per_item_in_array(
-            self, default_request_client, requests_mock
-        ):
-            array_of_ids = ["1", "2", "3"]
-            expected_url_1 = "https://api.schoology.com/v1/sections/1/assignments?start=0&limit=20"
-            expected_url_2 = "https://api.schoology.com/v1/sections/2/assignments?start=0&limit=20"
-            expected_url_3 = "https://api.schoology.com/v1/sections/3/assignments?start=0&limit=20"
+                # Arrange
+                text = '{"assignment": [{"id":"b"}]}'
+                called = set()
 
-            # Arrange
-            text = '{"assignment": [{"a":"b"}]}'
-            called = set()
+                def callback(request, context):
+                    called.add(request.url)
+                    return text
 
-            def callback(request, context):
-                called.add(request.url)
-                return text
+                requests_mock.get(expected_url_1, reason="OK", status_code=200, text=callback)
 
-            requests_mock.get(expected_url_1, reason="OK", status_code=200, text=callback)
-            requests_mock.get(expected_url_2, reason="OK", status_code=200, text=callback)
-            requests_mock.get(expected_url_3, reason="OK", status_code=200, text=callback)
+                # Act
+                result = default_request_client.get_assignments(section_id, page_size)
 
-            # Act
-            response = default_request_client.get_assignments_by_section_ids(array_of_ids)
+                return result
 
-            # Assert
-            assert len(called) == len(array_of_ids)
-            assert expected_url_1 in called, "URL 1 not called"
-            assert expected_url_2 in called, "URL 2 not called"
-            assert expected_url_3 in called, "URL 3 not called"
+            # def test_then_it_should_return_the_assignment(self, result, requests_mock):
+            #     assert result["id"] == "b"
 
-            assert isinstance(response, list), "expected response to be a list"
-            assert len(response) == 3, "expected three results"
+        class Test_given_two_pages_of_assignments:
+            @pytest.fixture
+            def result(self, default_request_client, requests_mock):
+                section_id = 3324
+                page_size = 1
+                expected_url_1 = "https://api.schoology.com/v1/sections/3324/assignments?start=0&limit=1"
+                expected_url_2 = "https://api.schoology.com/v1/sections/3324/assignments?start=1&limit=1"
 
-        def test_given_an_empty_array_of_ids_then_do_not_make_any_calls(
-            self, default_request_client
-        ):
-            # Act
-            default_request_client.get_assignments_by_section_ids([])
+                # Arrange
+                text_1 = '{"assignment": [{"id":"b"}], "links":{"next":"'+expected_url_2+'"}}'
+                text_2 = '{"assignment": [{"id":"c"}]}'
+                called = set()
 
-            # If a request were made, then it would fail since the mock wasn't
-            # setup.
+                def callback(request, context):
+                    called.add(request.url)
+
+                    if request.url == expected_url_1:
+                        return text_1
+                    else:
+                        return text_2
+
+                requests_mock.get(expected_url_1, reason="OK", status_code=200, text=callback)
+                requests_mock.get(expected_url_2, reason="OK", status_code=200, text=callback)
+
+                # Act
+                result = default_request_client.get_assignments(section_id, page_size)
+
+                return result
+
+            def test_then_it_should_return_two_assignment(self, result, requests_mock):
+                assert len(result) == 2
+
+            def test_result_should_contain_first_assignment(self, result, requests_mock):
+                assert len([1 for r in result if r["id"] == "b"]) == 1
+
+            def test_result_should_contain_second_assignment(self, result, requests_mock):
+                assert len([1 for r in result if r["id"] == "c"]) == 1
 
     class Test_when_get_section_by_course_ids_method_is_called:
         def test_given_no_parameters_passed_then_throw_assert_exception(

@@ -5,10 +5,11 @@
 
 import logging
 import os
-from typing import Callable, Dict
+from typing import Callable, Dict, Union
 import sys
 
 from dotenv import load_dotenv
+import pandas as pd
 
 from schoology_extractor.helpers import export_data
 from schoology_extractor.api.request_client import RequestClient
@@ -79,30 +80,39 @@ def _get_users():
 
 # This variable facilitates temporary storage of output results from one GET
 # request that need to be used for creating another GET request.
-result_bucket: Dict[str, list] = {}
+result_bucket: Dict[str, pd.DataFrame] = {}
 
 
 def _get_sections() -> list:
     sections = service.get_sections()
-    result_bucket["sections"] = sections
+    result_bucket["sections"] = pd.DataFrame(sections)
     return sections
 
 
-def _get_assignments() -> list:
-    assignments = service.get_assignments(result_bucket["sections"], grading_periods)
-    result_bucket["assignments"] = assignments
-    return assignments
+def _get_assignments(section_id) -> Callable:
+    def __get_assignments():
+        assignments = service.get_assignments(section_id)
+        result_bucket["assignments"] = assignments
+        return assignments
+
+    return __get_assignments
 
 
 def _get_submissions() -> list:
-    return service.get_submissions(result_bucket["assignments"])
+    assignments_df: pd.DataFrame = result_bucket["assignments"]
+    return service.get_submissions(assignments_df)
 
 
 def main():
     _create_file_from_dataframe(_get_users, lms.get_user_file_path(schoology_output_path))
     _create_file_from_list(_get_sections, "sections.csv")
-    _create_file_from_list(_get_assignments, "assignments.csv")
-    _create_file_from_list(_get_submissions, "submissions.csv")
+
+    for section_id in result_bucket["sections"]["id"].values:
+        file_path = lms.get_assignment_file_path(schoology_output_path, section_id)
+        _create_file_from_dataframe(_get_assignments(section_id), file_path)
+
+        # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
+        _create_file_from_list(_get_submissions, "submissions.csv")
 
 
 if __name__ == "__main__":
