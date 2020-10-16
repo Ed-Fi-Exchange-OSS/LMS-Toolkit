@@ -11,6 +11,7 @@ import pandas as pd
 
 from .api.request_client import RequestClient
 from .mapping import users as usersMap
+from .mapping import assignments as assignmentsMap
 
 
 @dataclass
@@ -117,7 +118,7 @@ class SchoologyExtractFacade:
         df = pd.DataFrame(assignments)
         df["section_id"] = section_id
 
-        return df
+        return assignmentsMap.map_to_udm(df)
 
     def get_submissions(self, assignments: pd.DataFrame) -> list:
         """
