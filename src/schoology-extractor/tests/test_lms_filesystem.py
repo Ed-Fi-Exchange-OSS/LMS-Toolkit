@@ -41,6 +41,9 @@ def describe_when_getting_the_assignment_file_name():
     def it_should_use_timestamp_for_file_name(result):
         assert result.endswith(FILE_NAME)
 
+    def it_should_create_the_section_directory(result, fs):
+        assert os.path.exists("./output/section=123")
+
 
 def describe_when_getting_the_user_file_name():
 
