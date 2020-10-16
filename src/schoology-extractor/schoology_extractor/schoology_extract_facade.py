@@ -8,7 +8,11 @@ from logging import Logger
 from typing import Any, Dict, List, Union
 
 import pandas as pd
+import sqlalchemy
 
+from .helpers.sync import sync_resource
+from .helpers import sync_column_types
+from .helpers.constants import RESOURCE_NAMES
 from .api.request_client import RequestClient
 from .mapping import users as usersMap
 from .mapping import assignments as assignmentsMap
@@ -23,14 +27,20 @@ class SchoologyExtractFacade:
 
     Parameters
     ----------
-    logger : Logger Standard Python logger request_client : RequestClient
-        Instance of a Schoology request client page_size : int Number of records
-        to retrieve with each API call
+    logger : Logger
+        Standard Python logger
+    request_client : RequestClient
+        Instance of a Schoology request client
+    page_size : int
+        Number of records to retrieve with each API call
+    db_engine : sqlalchemy.engine.base.Engine
+        Database connectivity for sync process
     """
 
     logger: Logger
     request_client: RequestClient
     page_size: int
+    db_engine: sqlalchemy.engine.base.Engine
 
     @property
     def _logger(self):
@@ -46,6 +56,11 @@ class SchoologyExtractFacade:
     def _page_size(self):
         assert isinstance(self.page_size, int)
         return self.page_size
+
+    @property
+    def _db_engine(self):
+        assert isinstance(self.db_engine, sqlalchemy.engine.base.Engine)
+        return self.db_engine
 
     def get_users(self) -> pd.DataFrame:
         """
@@ -72,8 +87,12 @@ class SchoologyExtractFacade:
             if roles_response.get_next_page() is None:
                 break
 
-        users_df = pd.DataFrame(users_list)
-        roles_df = pd.DataFrame(roles_list)
+        users_df = sync_resource(RESOURCE_NAMES.USER, self._db_engine, users_list)
+        roles_df = sync_resource(
+            RESOURCE_NAMES.ROLE,
+            self._db_engine,
+            roles_list,
+            sync_column_types.ROLE_COLUMN_TYPES_MAPPING)
 
         return usersMap.map_to_udm(users_df, roles_df)
 

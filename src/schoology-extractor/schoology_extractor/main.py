@@ -10,6 +10,7 @@ import sys
 
 from dotenv import load_dotenv
 import pandas as pd
+from pandas.core.frame import DataFrame
 
 from schoology_extractor.helpers import export_data
 from schoology_extractor.api.request_client import RequestClient
@@ -17,6 +18,7 @@ from schoology_extractor.helpers import arg_parser
 from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
 import schoology_extractor.lms_filesystem as lms
 
+from schoology_extractor.helpers.sync import get_sync_db_engine
 
 # Load configuration
 load_dotenv()
@@ -45,7 +47,9 @@ logger = logging.getLogger(__name__)
 
 grading_periods = schoology_grading_periods.split(",")
 request_client = RequestClient(schoology_key, schoology_secret)
-service = SchoologyExtractFacade(logger, request_client, page_size)
+db_engine = get_sync_db_engine()
+
+service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
 
 def _create_file_from_dataframe(action: Callable, file_name):
@@ -63,7 +67,7 @@ def _create_file_from_dataframe(action: Callable, file_name):
 
 # TODO: this method should disappear when we finish converting all of the output
 # to use the official CSV formats.
-def _create_file_from_list(action: Callable, file_name):
+def _create_file_from_list(action: Callable, file_name: str):
     logger.info(f"Exporting {file_name}")
     try:
         data = action()
@@ -76,7 +80,7 @@ def _create_file_from_list(action: Callable, file_name):
         )
 
 
-def _get_users():
+def _get_users() -> DataFrame:
     return service.get_users()
 
 

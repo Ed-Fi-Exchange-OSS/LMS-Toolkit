@@ -15,7 +15,7 @@ from requests.packages.urllib3.exceptions import ProtocolError  # type: ignore
 from requests_oauthlib import OAuth1Session  # type: ignore
 
 from .paginated_result import PaginatedResult
-
+from schoology_extractor.helpers.constants import RESOURCE_NAMES
 
 DEFAULT_URL = os.environ.get("SCHOOLOGY_BASE_URL") or "https://api.schoology.com/v1/"
 DEFAULT_PAGE_SIZE = 20
@@ -164,7 +164,7 @@ class RequestClient:
                 self,
                 page_size,
                 self.get(url),
-                "assignment",
+                RESOURCE_NAMES.ASSIGNMENT,
                 self.base_url + url,
             )
             while True:
@@ -246,7 +246,10 @@ class RequestClient:
         for course_id in course_ids:
             url = f"courses/{course_id}/sections"
             sections_per_course = PaginatedResult(
-                self, page_size, self.get(url), "section", self.base_url + url
+                self, page_size,
+                self.get(url),
+                RESOURCE_NAMES.SECTION,
+                self.base_url + url
             )
             while True:
                 sections = sections + sections_per_course.current_page_items
@@ -289,7 +292,11 @@ class RequestClient:
 
         response = self.get(url)
         return PaginatedResult(
-            self, page_size, response, "revision", self.base_url + url
+            self,
+            page_size,
+            response,
+            RESOURCE_NAMES.REVISION,
+            self.base_url + url
         )
 
     def get_users(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
@@ -362,7 +369,12 @@ class RequestClient:
         url = f"courses?{self._build_query_params_for_first_page(page_size)}"
         response = self.get(url)
 
-        return PaginatedResult(self, page_size, response, "course", self.base_url + url)
+        return PaginatedResult(
+            self,
+            page_size,
+            response,
+            RESOURCE_NAMES.COURSE,
+            self.base_url + url)
 
     def get_roles(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
         """
@@ -382,7 +394,12 @@ class RequestClient:
         url = f"roles?{self._build_query_params_for_first_page(page_size)}"
         response = self.get(url)
 
-        return PaginatedResult(self, page_size, response, "role", self.base_url + url)
+        return PaginatedResult(
+            self,
+            page_size,
+            response,
+            RESOURCE_NAMES.ROLE,
+            self.base_url + url)
 
     def _build_query_params_for_first_page(self, page_size: int):
         assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."

@@ -9,6 +9,7 @@ from typing import Tuple
 import pandas as pd
 import pytest
 from unittest.mock import Mock
+import sqlalchemy
 
 from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
 from schoology_extractor.api.request_client import RequestClient
@@ -23,6 +24,7 @@ def describe_when_getting_users():
         def result() -> pd.DataFrame:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
 
             users = {
@@ -47,7 +49,7 @@ def describe_when_getting_users():
             usersMap.map_to_udm = Mock()
             usersMap.map_to_udm.return_value = pd.DataFrame()
 
-            service = SchoologyExtractFacade(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             result = service.get_users()
@@ -62,6 +64,7 @@ def describe_when_getting_users():
         def system() -> Tuple[pd.DataFrame, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 1
 
             users = {
@@ -95,7 +98,7 @@ def describe_when_getting_users():
             usersMap.map_to_udm.return_value = pd.DataFrame()
 
             # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             result = service.get_users()
@@ -132,6 +135,7 @@ def describe_when_getting_sections():
         def system() -> Tuple[pd.DataFrame, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
 
             courses = {
@@ -154,7 +158,7 @@ def describe_when_getting_sections():
             get_sections_mock.return_value = sections
 
             # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             result = service.get_sections()
@@ -176,6 +180,7 @@ def describe_when_getting_sections():
         def system() -> Tuple[pd.DataFrame, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 1
 
             courses = {
@@ -206,7 +211,7 @@ def describe_when_getting_sections():
             get_sections_mock.return_value = sections
 
             # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             result = service.get_sections()
@@ -232,6 +237,7 @@ def describe_when_getting_assignments():
         def system() -> Tuple[pd.DataFrame, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
             section_id = 1234
 
@@ -250,7 +256,7 @@ def describe_when_getting_assignments():
             get_assignments_mock.return_value = assignments
 
             # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             result = service.get_assignments(section_id)
@@ -309,6 +315,7 @@ def describe_when_getting_submissions():
         def result() -> list:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
 
             assignments = pd.DataFrame([{"section_id": 123, "grade_item_id": 345}])
@@ -326,7 +333,7 @@ def describe_when_getting_submissions():
                 submissions_page
             )
 
-            service = SchoologyExtractFacade(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             result = service.get_submissions(assignments)
@@ -341,6 +348,7 @@ def describe_when_getting_submissions():
         def result() -> list:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
 
             assignments = pd.DataFrame(
@@ -372,7 +380,7 @@ def describe_when_getting_submissions():
                 submissions_queue
             )
 
-            service = SchoologyExtractFacade(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             result = service.get_submissions(assignments)
