@@ -27,7 +27,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         assignment = {
             "id": 123355,
             "title": "The title",
-            "type": "assignment type",
+            "type": "assignment",
             "description": "The description",
             "due": "8/21/2020  11:59:00 PM",
             "max_points": 52,
@@ -63,3 +63,15 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
 
     def it_should_have_active_as_EntityStatus(result):
         assert result["EntityStatus"].iloc[0] == "active"
+
+    def it_should_map_type_to_AssignmentCategory(result):
+        assert result["AssignmentCategory"].iloc[0] == "assignment"
+
+    def it_should_have_empty_CreateDate(result):
+        assert result["CreateDate"].iloc[0] is None
+
+    def it_should_have_empty_LastModifieDate(result):
+        assert result["LastModifiedDate"].iloc[0] is None
+
+    def it_should_have_empty_SubmissionType(result):
+        assert result["SubmissionType"].iloc[0] is None

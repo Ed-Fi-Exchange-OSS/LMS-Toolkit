@@ -49,7 +49,8 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
             "description",
             "due",
             "max_points",
-            "section_id"
+            "section_id",
+            "type"
         ]
     ].copy()
 
@@ -63,11 +64,16 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
             "description": "AssignmentDescription",
             "max_points": "MaxPoints",
             "section_id": "LMSSectionSourceSystemIdentifier",
+            "type": "AssignmentCategory"
         },
         inplace=True,
     )
 
     df["DueDateTime"] = df["due"].apply(lambda x: datetime.strptime(x, "%m/%d/%Y  %I:%M:%S %p").strftime("%Y-%m-%d %H:%M:%S"))
     df.drop(columns=["due"], inplace=True)
+
+    df["SubmissionType"] = None
+    df["CreateDate"] = None
+    df["LastModifiedDate"] = None
 
     return df

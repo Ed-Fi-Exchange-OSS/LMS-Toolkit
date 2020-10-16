@@ -224,7 +224,16 @@ def describe_when_getting_assignments():
             page_size = 22
             section_id = 1234
 
-            assignments = [{"id": 3333, "due": "1/2/3456 01:23:45 PM", "description": "", "max_points": 4, "title": "1"}]
+            assignments = [
+                {
+                    "id": 3333,
+                    "due": "1/2/3456 01:23:45 PM",
+                    "description": "",
+                    "max_points": 4,
+                    "title": "1",
+                    "type": "assignment",
+                }
+            ]
             get_assignments_mock = request_client.get_assignments
             get_assignments_mock.return_value = assignments
 
