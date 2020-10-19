@@ -11,6 +11,7 @@ import pandas as pd
 
 from .api.request_client import RequestClient
 from .mapping import users as usersMap
+from .mapping import assignments as assignmentsMap
 
 
 @dataclass
@@ -102,29 +103,24 @@ class SchoologyExtractFacade:
         # cleaner approach.
         return self._client.get_section_by_course_ids([c["id"] for c in courses_list])
 
-    def get_assignments(
-        self, sections: List[Dict[str, Any]], grading_periods: List[str]
-    ) -> list:
+    def get_assignments(self, section_id: int) -> pd.DataFrame:
         """
-        Gets all Schoology users.
+        Gets all Schoology assignments for the given sections, with separate
+        DataFrame output for each section.
 
         Returns
         -------
-        list
+        pd.DataFrame
+            DataFrame with all assignment data, in the unified data model format.
         """
 
-        # NOTE: this call handles paging on its own
-        assignments = self._client.get_assignments_by_section_ids(
-            [s["id"] for s in sections], self._page_size
-        )
+        assignments = self._client.get_assignments(section_id, self._page_size)
+        df = pd.DataFrame(assignments)
+        df["section_id"] = section_id
 
-        return [
-            assignment
-            for assignment in assignments
-            if assignment["grading_period"] in grading_periods
-        ]
+        return assignmentsMap.map_to_udm(df)
 
-    def get_submissions(self, assignments) -> list:
+    def get_submissions(self, assignments: pd.DataFrame) -> list:
         """
         Gets all Schoology users.
 
@@ -135,11 +131,14 @@ class SchoologyExtractFacade:
 
         submissions: List[Dict[str, Any]] = []
 
-        for assignment in assignments:
+        for _, assignment in assignments.iterrows():
+            section_id = assignment["section_id"]
+            grade_item_id = str(assignment["grade_item_id"])
+
             submissions_response = (
                 self._client.get_submissions_by_section_id_and_grade_item_id(
-                    assignment["section_id"],
-                    str(assignment["grade_item_id"]),
+                    section_id,
+                    grade_item_id,
                     self._page_size,
                 )
             )

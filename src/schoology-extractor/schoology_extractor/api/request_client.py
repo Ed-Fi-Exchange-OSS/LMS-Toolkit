@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import os
 import time
 import random
-from typing import List
+from typing import List, Union
 
 from opnieuw import retry
 from requests.exceptions import ConnectionError, HTTPError, Timeout
@@ -131,7 +131,7 @@ class RequestClient:
         return response.json()
 
     def get_assignments_by_section_ids(
-        self, section_ids: List[str], page_size: int = DEFAULT_PAGE_SIZE
+        self, section_ids: Union[List[str], List[int]], page_size: int = DEFAULT_PAGE_SIZE
     ) -> list:
         """
         Parameters
@@ -176,6 +176,45 @@ class RequestClient:
 
                 if assignments_per_section.get_next_page() is None:
                     break
+
+        return assignments
+
+    def get_assignments(
+        self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
+    ) -> list:
+        """
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+
+        Returns
+        -------
+        dict
+            A parsed response from the server
+        """
+
+        assignments: List[object] = []
+
+        params = self._build_query_params_for_first_page(page_size)
+        url = f"sections/{section_id}/assignments?{params}"
+
+        assignments_per_section = PaginatedResult(
+            self,
+            page_size,
+            self.get(url),
+            "assignment",
+            self.base_url + url,
+        )
+        while True:
+            current_page_assignments = assignments_per_section.current_page_items
+
+            for assignment in current_page_assignments:
+                assignment["section_id"] = section_id
+            assignments = assignments + current_page_assignments
+
+            if assignments_per_section.get_next_page() is None:
+                break
 
         return assignments
 
