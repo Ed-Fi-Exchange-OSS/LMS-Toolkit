@@ -25,6 +25,8 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
     DataFrame
         A LMSUsers-formatted DataFrame
 
+    Notes
+    -----
     DataFrame columns are:
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source system
         SourceSystem: The system code or name providing the user data
