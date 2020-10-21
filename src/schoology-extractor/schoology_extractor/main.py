@@ -51,8 +51,9 @@ service = SchoologyExtractFacade(logger, request_client, page_size)
 def _create_file_from_dataframe(action: Callable, file_name):
     logger.info(f"Exporting {file_name}")
     try:
-        data = action()
-        export_data.df_to_csv(data, file_name)
+        data: pd.DataFrame = action()
+        if data is not None:
+            export_data.df_to_csv(data, file_name)
     except Exception as ex:
         logger.error(
             f"An exception occurred while generating {file_name} : %s",
@@ -66,7 +67,8 @@ def _create_file_from_list(action: Callable, file_name):
     logger.info(f"Exporting {file_name}")
     try:
         data = action()
-        export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
+        if data is not None:
+            export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
     except Exception as ex:
         logger.error(
             f"An exception occurred while generating {file_name} : %s",
@@ -93,7 +95,7 @@ def _get_assignments(section_id) -> Callable:
     def __get_assignments():
         assignments = service.get_assignments(section_id)
         result_bucket["assignments"] = assignments
-        return assignments
+        return service.map_assignments_to_udm(assignments, section_id) if not assignments.empty else None
 
     return __get_assignments
 
