@@ -254,8 +254,9 @@ def describe_when_getting_assignments():
 
             # Act
             result = service.get_assignments(section_id)
+            mapped_result = service.map_assignments_to_udm(result, section_id)
 
-            return result, get_assignments_mock
+            return mapped_result, get_assignments_mock
 
         def it_should_query_for_the_given_section(system):
             _, get_assignments_mock = system
