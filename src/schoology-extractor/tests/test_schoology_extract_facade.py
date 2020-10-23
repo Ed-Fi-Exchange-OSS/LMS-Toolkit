@@ -7,6 +7,7 @@ from logging import Logger
 from typing import Tuple
 
 import pandas as pd
+from pandas.core.frame import DataFrame
 import pytest
 from unittest.mock import Mock
 import sqlalchemy
@@ -16,6 +17,7 @@ from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.api.paginated_result import PaginatedResult
 from schoology_extractor.mapping import users as usersMap
 from schoology_extractor.mapping import sections as sectionsMap
+from schoology_extractor.helpers import sync
 
 
 def describe_when_getting_users():
@@ -48,6 +50,9 @@ def describe_when_getting_users():
             # Also want to mock the UDM mapper function, since it is well-tested elsewhere
             usersMap.map_to_udm = Mock()
             usersMap.map_to_udm.return_value = pd.DataFrame()
+
+            # This method will be tested in a different test
+            sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
 
             service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
@@ -277,6 +282,7 @@ def describe_when_mapping_assignments():
         def system() -> Tuple[pd.DataFrame, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
             section_id = 1234
 
@@ -295,7 +301,7 @@ def describe_when_mapping_assignments():
             get_assignments_mock.return_value = assignments
 
             # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size)
+            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             mapped_result = service.map_assignments_to_udm(

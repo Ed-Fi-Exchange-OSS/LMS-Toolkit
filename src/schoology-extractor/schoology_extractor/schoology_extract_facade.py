@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Union
 import pandas as pd
 import sqlalchemy
 
-from .helpers.sync import sync_resource
+from .helpers import sync
 from .helpers import sync_column_types
 from .helpers.constants import RESOURCE_NAMES
 from .api.request_client import RequestClient
@@ -87,8 +87,8 @@ class SchoologyExtractFacade:
             if roles_response.get_next_page() is None:
                 break
 
-        users_df = sync_resource(RESOURCE_NAMES.USER, self._db_engine, users_list)
-        roles_df = sync_resource(
+        users_df = sync.sync_resource(RESOURCE_NAMES.USER, self._db_engine, users_list)
+        roles_df = sync.sync_resource(
             RESOURCE_NAMES.ROLE,
             self._db_engine,
             roles_list,
