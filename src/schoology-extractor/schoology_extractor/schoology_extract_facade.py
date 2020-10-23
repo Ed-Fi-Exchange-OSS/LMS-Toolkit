@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 from logging import Logger
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import pandas as pd
 
@@ -113,12 +113,11 @@ class SchoologyExtractFacade:
         pd.DataFrame
             DataFrame with all assignment data, in the unified data model format.
         """
+        return pd.DataFrame(self._client.get_assignments(section_id, self._page_size))
 
-        assignments = self._client.get_assignments(section_id, self._page_size)
-        df = pd.DataFrame(assignments)
-        df["section_id"] = section_id
-
-        return assignmentsMap.map_to_udm(df)
+    def map_assignments_to_udm(self, assignments: pd.DataFrame, section_id: Union[int, str]):
+        assignments["section_id"] = section_id
+        return assignmentsMap.map_to_udm(assignments)
 
     def get_submissions(self, assignments: pd.DataFrame) -> list:
         """

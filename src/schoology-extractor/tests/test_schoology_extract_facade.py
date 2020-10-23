@@ -232,6 +232,7 @@ def describe_when_getting_assignments():
                     "max_points": 4,
                     "title": "1",
                     "type": "assignment",
+                    "section_id": section_id
                 }
             ]
             get_assignments_mock = request_client.get_assignments
@@ -245,16 +246,48 @@ def describe_when_getting_assignments():
 
             return result, get_assignments_mock
 
-        def it_should_return_the_assignments_list_as_data_frame(system):
-            result, _ = system
-
-            assert result["SourceSystemIdentifier"][0] == 3333
-
         def it_should_query_for_the_given_section(system):
             _, get_assignments_mock = system
 
             args = get_assignments_mock.call_args
             assert 1234 == args[0][0]
+
+
+def describe_when_mapping_assignments():
+    def describe_given_a_section_has_one_assignment():
+        @pytest.fixture
+        def system() -> Tuple[pd.DataFrame, Mock]:
+            logger = Mock(spec=Logger)
+            request_client = Mock(spec=RequestClient)
+            page_size = 22
+            section_id = 1234
+
+            assignments = [
+                {
+                    "id": 3333,
+                    "due": "1/2/3456 01:23:45 PM",
+                    "description": "",
+                    "max_points": 4,
+                    "title": "1",
+                    "type": "assignment",
+                    "section_id": section_id
+                }
+            ]
+            get_assignments_mock = request_client.get_assignments
+            get_assignments_mock.return_value = assignments
+
+            # Arrange
+            service = SchoologyExtractFacade(logger, request_client, page_size)
+
+            # Act
+            mapped_result = service.map_assignments_to_udm(pd.DataFrame(assignments), section_id)
+
+            return mapped_result, get_assignments_mock
+
+        def it_should_return_the_assignments_list_as_data_frame(system):
+            result, _ = system
+
+            assert result["SourceSystemIdentifier"][0] == 3333
 
 
 def describe_when_getting_submissions():
