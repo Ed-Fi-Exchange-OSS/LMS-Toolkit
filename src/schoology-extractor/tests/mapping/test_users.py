@@ -15,9 +15,9 @@ class Test_mapping_schoology_users_to_udm:
     def setup_class(cls):
 
         # Arrange
-        users_csv = """uid,id,school_id,synced,school_uid,name_title,name_title_show,name_first,name_first_preferred,use_preferred_first_name,name_middle,name_middle_show,name_last,name_display,username,primary_email,picture_url,gender,position,grad_year,password,role_id,tz_offset,tz_name,parents,child_uids,language,additional_buildings
-100032890,100032890,2908525646,0,604863,,0,Mary,,1,Catherine,0,Archer,Mary Archer Display Name,mary.archer,mary.archer@studentgps.org,https://asset-cdn.schoology.com/system/files/imagecache/profile_reg/sites/all/themes/schoology_theme/images/user-default.gif,,,,,123456,-5,America/Chicago,,,,
-99785799,99785799,2908525646,0,222222,,0,Brad,,1,,0,Banister,Brad Banister,brad.banister,brad@doublelinepartners.com,https://asset-cdn.schoology.com/system/files/imagecache/profile_reg/sites/all/themes/schoology_theme/images/user-default.gif,,,,,123457,-5,America/Chicago,,,,"""
+        users_csv = """uid,id,school_id,synced,school_uid,name_title,name_title_show,name_first,name_first_preferred,use_preferred_first_name,name_middle,name_middle_show,name_last,name_display,username,primary_email,picture_url,gender,position,grad_year,password,role_id,tz_offset,tz_name,parents,child_uids,language,additional_buildings,CreateDate,LastModifiedDate
+100032890,100032890,2908525646,0,604863,,0,Mary,,1,Catherine,0,Archer,Mary Archer Display Name,mary.archer,mary.archer@studentgps.org,https://asset-cdn.schoology.com/system/files/imagecache/profile_reg/sites/all/themes/schoology_theme/images/user-default.gif,,,,,123456,-5,America/Chicago,,,,,2020-10-23 16:31:28,2020-10-23 16:31:28
+99785799,99785799,2908525646,0,222222,,0,Brad,,1,,0,Banister,Brad Banister,brad.banister,brad@doublelinepartners.com,https://asset-cdn.schoology.com/system/files/imagecache/profile_reg/sites/all/themes/schoology_theme/images/user-default.gif,,,,,123457,-5,America/Chicago,,,,,2020-10-23 16:31:28,2020-10-23 16:31:28"""
         lines = users_csv.split("\n")
         users_df = pd.DataFrame(
             [x.split(",") for x in lines[1:]], columns=lines[0].split(",")
