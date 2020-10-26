@@ -9,7 +9,6 @@ import pytest
 from schoology_extractor.mapping.assignments import map_to_udm
 
 
-# TODO: I forgot to put "assignments" dir in the output path!
 
 
 def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
