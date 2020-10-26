@@ -66,8 +66,6 @@ class Test_mapping_schoology_users_to_udm:
         assert self.result.at[0, "SourceSystem"] == "Schoology"
 
     def test_then_user_role_is_mapped(self):
-        # TODO: change the code upstream from here to insert the "role_title" in place of the "role_id",
-        # using a lookup to https://api.schoology.com/v1/roles to determine the role mappings.
         assert self.result.at[0, "UserRole"] == "student"
 
     def test_then_local_user_identifier_is_mapped(self):
@@ -84,3 +82,6 @@ class Test_mapping_schoology_users_to_udm:
 
     def test_then_email_address_is_mapped(self):
         assert self.result.at[0, "EmailAddress"] == "mary.archer@studentgps.org"
+
+    def test_then_entity_status_is_mapped_inactive(self):
+        assert self.result.at[0, "EntityStatus"] == "active"
