@@ -26,7 +26,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             "title": "The title",
             "type": "assignment",
             "description": "The description",
-            "due": "8/21/2020  11:59:00 PM",
+            "due": "2020-08-21 23:59:00",
             "max_points": 52,
             "section_id": 42,
         }
