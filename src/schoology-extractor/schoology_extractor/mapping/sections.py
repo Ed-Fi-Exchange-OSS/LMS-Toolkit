@@ -62,7 +62,7 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
     )
 
     df["Term"] = None
-    df["LMSSectionStatus"] = df["active"].apply(lambda x: constants.ACTIVE if x == "1" else constants.INACTIVE)
+    df["LMSSectionStatus"] = df["active"].apply(lambda x: constants.ACTIVE if x == 1 else constants.INACTIVE)
 
     df.drop(columns=["active"], inplace=True)
 

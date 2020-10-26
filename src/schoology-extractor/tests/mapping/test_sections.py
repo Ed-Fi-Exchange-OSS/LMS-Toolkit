@@ -23,6 +23,7 @@ class Test_mapping_schoology_sections_to_udm:
         sections_df = pd.DataFrame(
             [x.split(",") for x in lines[1:]], columns=lines[0].split(",")
         )
+        sections_df["active"] = sections_df["active"].apply(int)
 
         # Act
         cls.result = map_to_udm(sections_df)
