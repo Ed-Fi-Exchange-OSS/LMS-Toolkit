@@ -18,14 +18,19 @@ from google_classroom_extractor.result import Result
 from google_classroom_extractor.config import get_credentials, get_sync_db_engine
 from google_classroom_extractor.request import request_all
 from google_classroom_extractor.mapping.users import students_and_teachers_to_users_df
+from google_classroom_extractor.mapping.user_section_associations import students_and_teachers_to_user_section_associations_dfs
 from google_classroom_extractor.mapping.sections import courses_to_sections_df
 from google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
+from google_classroom_extractor.mapping.assignment_submissions import submissions_to_assignment_submissions_dfs
 from google_classroom_extractor.csv_generation.write import (
     write_csv,
     write_multi_csv,
+    write_multi_tuple_csv,
     USERS_ROOT_DIRECTORY,
     SECTIONS_ROOT_DIRECTORY,
+    SECTION_ASSOCIATIONS_ROOT_DIRECTORY,
     ASSIGNMENT_ROOT_DIRECTORY,
+    SUBMISSION_ROOT_DIRECTORY,
 )
 
 
@@ -73,9 +78,23 @@ if __name__ == "__main__":
         SECTIONS_ROOT_DIRECTORY,
     )
 
+    logging.info("Writing LMS UDM UserSectionAssociations to CSV files")
+    write_multi_csv(
+        students_and_teachers_to_user_section_associations_dfs(result_dfs.students_df, result_dfs.teachers_df),
+        datetime.now(),
+        SECTION_ASSOCIATIONS_ROOT_DIRECTORY,
+    )
+
     logging.info("Writing LMS UDM Assignments to CSV files")
     write_multi_csv(
         coursework_to_assignments_dfs(result_dfs.coursework_df),
         datetime.now(),
         ASSIGNMENT_ROOT_DIRECTORY,
+    )
+
+    logging.info("Writing LMS UDM AssignmentSubmissions to CSV files")
+    write_multi_tuple_csv(
+        submissions_to_assignment_submissions_dfs(result_dfs.submissions_df),
+        datetime.now(),
+        SUBMISSION_ROOT_DIRECTORY,
     )

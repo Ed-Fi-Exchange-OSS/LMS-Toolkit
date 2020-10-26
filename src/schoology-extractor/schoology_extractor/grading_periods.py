@@ -4,19 +4,20 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-import os
 from typing import Any, List
 import sys
 
-from dotenv import load_dotenv
+from schoology_extractor.helpers import export_data, arg_parser
+from schoology_extractor.api.request_client import RequestClient
 
-from helpers import export_data
-from api.request_client import RequestClient
+# Parse arguments
+arguments = arg_parser.parse_grading_periods_arguments(sys.argv[1:])
+# Parameters are validated in the parse_grading_periods_arguments function
+schoology_key = arguments.client_key
+schoology_secret = arguments.client_secret
+log_level = arguments.log_level
 
-load_dotenv()
-# Configure logger
-log_level = os.getenv("SCHOOLOGY_LOG_LEVEL", "INFO")
-assert log_level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], "The specified `SCHOOLOGY_LOG_LEVEL` is not valid"
+# Configure logging
 logFormatter = '%(asctime)s - %(levelname)s - %(message)s'
 
 logging.basicConfig(
@@ -24,29 +25,26 @@ logging.basicConfig(
         logging.StreamHandler(sys.stdout),
     ],
     format=logFormatter,
-    level=log_level
+    level=log_level,
 )
 logger = logging.getLogger(__name__)
 
-logger.debug("Loading and processing environment variables")
-schoology_key = os.getenv("SCHOOLOGY_KEY")
-schoology_secret = os.getenv("SCHOOLOGY_SECRET")
-schoology_section_ids = os.getenv("SCHOOLOGY_SECTION_IDS")
-schoology_output_path = os.getenv("SCHOOLOGY_OUTPUT_PATH")
-
-assert schoology_key is not None, "A `SCHOOLOGY_KEY` must be present in the .env file and it was not found."
-assert schoology_secret is not None, "A `SCHOOLOGY_SECRET` must be present in the .env file and it was not found."
-
+logger.info("Ed-Fi LMS Schoology Extractor - Grading Periods")
 request_client = RequestClient(schoology_key, schoology_secret)
 
 logger.info("Getting grading periods")
+
 try:
+
     grading_periods_list: List[Any] = []
     grading_periods_response = request_client.get_grading_periods()
     while True:
-        grading_periods_list = grading_periods_list + grading_periods_response.current_page_items
+        grading_periods_list = (
+            grading_periods_list + grading_periods_response.current_page_items
+        )
         if grading_periods_response.get_next_page() is None:
             break
     print(export_data.to_string(grading_periods_list))
+
 except Exception as ex:
-    logger.error('An exception occurred while getting the Grading Periods: %s', ex)
+    logger.error("An exception occurred while getting the Grading Periods: %s", ex)

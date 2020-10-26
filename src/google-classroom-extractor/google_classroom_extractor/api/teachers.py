@@ -5,7 +5,7 @@
 
 import logging
 from typing import List, Dict, Optional, cast
-import pandas as pd
+from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
@@ -29,15 +29,6 @@ def request_teachers(
     List[Dict[str, str]]
         a list of Google Classroom Teacher resources,
             see https://developers.google.com/classroom/reference/rest/v1/courses.teachers
-
-    DataFrame columns are:
-        courseId: Identifier of the course
-        userId: Identifier of the user
-        profile.id: Identifier of the user
-        profile.name.givenName: The user's first name
-        profile.name.familyName: The user's last name
-        profile.name.fullName: The user's full name formed by concatenating the first and last name values
-        profile.emailAddress: Email address of the user
     """
 
     assert isinstance(resource, Resource) or resource is None
@@ -55,7 +46,7 @@ def request_teachers(
 
 def request_latest_teachers_as_df(
     resource: Optional[Resource], course_ids: List[str]
-) -> pd.DataFrame:
+) -> DataFrame:
     """
     Fetch Teachers API data for a range of courses and return a Teachers API DataFrame
 
@@ -71,6 +62,8 @@ def request_latest_teachers_as_df(
     DataFrame
         a Teachers API DataFrame with the fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         courseId: Identifier of the course
         userId: Identifier of the user
@@ -89,14 +82,14 @@ def request_latest_teachers_as_df(
     for course_id in course_ids:
         teachers.extend(request_teachers(resource, course_id))
 
-    return pd.json_normalize(teachers).astype("string")
+    return json_normalize(teachers).astype("string")
 
 
 def request_all_teachers_as_df(
     resource: Optional[Resource],
     course_ids: List[str],
     sync_db: sqlalchemy.engine.base.Engine,
-) -> pd.DataFrame:
+) -> DataFrame:
     """
     Fetch Teachers API data for a range of courses and return a Teachers API DataFrame
     with current and previously fetched data
@@ -115,6 +108,8 @@ def request_all_teachers_as_df(
     DataFrame
         a Teachers API DataFrame with the current and previously fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         courseId: Identifier of the course
         userId: Identifier of the user
@@ -129,7 +124,7 @@ def request_all_teachers_as_df(
     assert isinstance(course_ids, list)
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
-    teachers_df: pd.DataFrame = request_latest_teachers_as_df(resource, course_ids)
+    teachers_df: DataFrame = request_latest_teachers_as_df(resource, course_ids)
 
     # append everything from API call
     teachers_df.to_sql(

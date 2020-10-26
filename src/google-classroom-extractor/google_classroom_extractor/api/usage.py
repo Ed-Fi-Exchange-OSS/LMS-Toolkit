@@ -8,7 +8,7 @@ import logging
 import os
 from typing import List, Dict, Optional, Any, cast
 from dateutil.parser import parse as date_parse
-import pandas as pd
+from pandas import DataFrame, json_normalize, read_sql, date_range
 from sqlalchemy.exc import OperationalError
 import sqlalchemy
 from googleapiclient.discovery import Resource
@@ -38,7 +38,7 @@ def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]
 
     with sync_db.connect() as con:
         try:
-            usage_df = pd.read_sql("SELECT asOfDate FROM Usage", con)
+            usage_df = read_sql("SELECT asOfDate FROM Usage", con)
             if usage_df["asOfDate"].count() == 0:
                 return None
             return date_parse(usage_df["asOfDate"].max())
@@ -68,7 +68,7 @@ def end_date() -> datetime:
 
 def request_latest_usage_as_df(
     resource: Optional[Resource], start: datetime, end: datetime
-) -> pd.DataFrame:
+) -> DataFrame:
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(start, datetime)
     assert isinstance(end, datetime)
@@ -79,7 +79,7 @@ def request_latest_usage_as_df(
         logging.warning("Usage data end time is before start time.")
 
     reports: List[Any] = []
-    for date in pd.date_range(start=start, end=end):
+    for date in date_range(start=start, end=end):
         reports.extend(request_usage(resource, date.strftime("%Y-%m-%d")))
 
     usage: List[Dict[str, str]] = []
@@ -100,7 +100,7 @@ def request_latest_usage_as_df(
                 row["lastLoginTime"] = parameter.get("datetimeValue")
         usage.append(row)
 
-    usage_df: pd.DataFrame = pd.json_normalize(usage)
+    usage_df: DataFrame = json_normalize(usage)
     if usage_df.empty:
         return usage_df
 
@@ -124,11 +124,11 @@ def request_latest_usage_as_df(
 
 def request_all_usage_as_df(
     resource: Optional[Resource], sync_db: sqlalchemy.engine.base.Engine
-) -> pd.DataFrame:
+) -> DataFrame:
     assert isinstance(resource, Resource) or resource is None
     assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
-    usage_df: pd.DataFrame = request_latest_usage_as_df(
+    usage_df: DataFrame = request_latest_usage_as_df(
         resource, start_date(sync_db), end_date()
     )
     if usage_df.empty:

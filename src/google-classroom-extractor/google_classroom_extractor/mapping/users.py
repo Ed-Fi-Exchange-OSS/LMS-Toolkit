@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-import pandas as pd
+from pandas import DataFrame, concat
 from google_classroom_extractor.mapping.constants import (
     SOURCE_SYSTEM,
     ENTITY_STATUS_ACTIVE,
@@ -15,8 +15,8 @@ TEACHER_USER_ROLE = "Teacher"
 
 
 def _students_or_teachers_to_users_df(
-    students_or_teachers_df: pd.DataFrame, lms_udm_user_role: str
-) -> pd.DataFrame:
+    students_or_teachers_df: DataFrame, lms_udm_user_role: str
+) -> DataFrame:
     """
     Convert a Students or Teachers API DataFrame to a LMSUsers DataFrame
 
@@ -32,6 +32,8 @@ def _students_or_teachers_to_users_df(
     DataFrame
         a LMSUsers DataFrame based on the given Students or Teachers API DataFrame
 
+    Notes
+    -----
     DataFrame columns are:
         EmailAddress: The primary e-mail address for the user
         EntityStatus: The status of the record
@@ -44,12 +46,12 @@ def _students_or_teachers_to_users_df(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(students_or_teachers_df, pd.DataFrame)
+    assert isinstance(students_or_teachers_df, DataFrame)
     assert "userId" in students_or_teachers_df.columns
     assert "profile.name.fullName" in students_or_teachers_df.columns
     assert "profile.emailAddress" in students_or_teachers_df.columns
 
-    result: pd.DataFrame = students_or_teachers_df[
+    result: DataFrame = students_or_teachers_df[
         ["userId", "profile.name.fullName", "profile.emailAddress"]
     ]
     result = result.rename(
@@ -75,8 +77,8 @@ def _students_or_teachers_to_users_df(
 
 
 def students_and_teachers_to_users_df(
-    students_df: pd.DataFrame, teachers_df: pd.DataFrame
-) -> pd.DataFrame:
+    students_df: DataFrame, teachers_df: DataFrame
+) -> DataFrame:
     """
     Convert Students and Teachers API DataFrames to an LMS UDM DataFrame
 
@@ -92,6 +94,8 @@ def students_and_teachers_to_users_df(
     DataFrame
         a LMSUsers DataFrame based on the given Teachers API DataFrame
 
+    Notes
+    -----
     DataFrame columns are:
         EmailAddress: The primary e-mail address for the user
         EntityStatus: The status of the record
@@ -101,8 +105,8 @@ def students_and_teachers_to_users_df(
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source system
     """
-    assert isinstance(students_df, pd.DataFrame)
-    assert isinstance(teachers_df, pd.DataFrame)
+    assert isinstance(students_df, DataFrame)
+    assert isinstance(teachers_df, DataFrame)
 
     assert "userId" in students_df.columns
     assert "profile.name.fullName" in students_df.columns
@@ -112,13 +116,13 @@ def students_and_teachers_to_users_df(
     assert "profile.name.fullName" in teachers_df.columns
     assert "profile.emailAddress" in teachers_df.columns
 
-    users_from_students_df: pd.DataFrame = _students_or_teachers_to_users_df(
+    users_from_students_df: DataFrame = _students_or_teachers_to_users_df(
         students_df, STUDENT_USER_ROLE
     )
-    users_from_teachers_df: pd.DataFrame = _students_or_teachers_to_users_df(
+    users_from_teachers_df: DataFrame = _students_or_teachers_to_users_df(
         teachers_df, TEACHER_USER_ROLE
     )
 
-    return pd.concat(
+    return concat(
         [users_from_students_df, users_from_teachers_df], ignore_index=True, sort=False
     )

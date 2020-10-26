@@ -5,7 +5,7 @@
 
 import logging
 from typing import List, Dict, Optional, cast
-import pandas as pd
+from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
@@ -39,7 +39,7 @@ def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
     )
 
 
-def request_latest_courses_as_df(resource: Optional[Resource]) -> pd.DataFrame:
+def request_latest_courses_as_df(resource: Optional[Resource]) -> DataFrame:
     """
     Fetch Course API data for all courses and return a Courses API DataFrame
 
@@ -53,6 +53,8 @@ def request_latest_courses_as_df(resource: Optional[Resource]) -> pd.DataFrame:
     DataFrame
         a Courses API DataFrame with the fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         id: Identifier for this course assigned by Classroom
         name: Name of the course
@@ -75,12 +77,12 @@ def request_latest_courses_as_df(resource: Optional[Resource]) -> pd.DataFrame:
 
     logging.info("Pulling course data")
     courses: List[Dict[str, str]] = request_courses(resource)
-    return pd.json_normalize(courses)
+    return json_normalize(courses)
 
 
 def request_all_courses_as_df(
     resource: Optional[Resource], sync_db: sqlalchemy.engine.base.Engine
-) -> pd.DataFrame:
+) -> DataFrame:
     """
     Fetch Course API data for all courses and return a Courses API DataFrame
 
@@ -96,6 +98,8 @@ def request_all_courses_as_df(
     DataFrame
         a Courses API DataFrame with the current and previously fetched data
 
+    Notes
+    -----
     DataFrame columns are:
         id: Identifier for this course assigned by Classroom
         name: Name of the course
