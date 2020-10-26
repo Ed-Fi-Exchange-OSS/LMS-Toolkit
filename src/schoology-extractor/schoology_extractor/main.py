@@ -5,7 +5,7 @@
 
 import logging
 import os
-from typing import Callable, Dict
+from typing import Callable, Dict, Optional
 import sys
 
 from dotenv import load_dotenv
@@ -92,7 +92,8 @@ def _get_sections() -> pd.DataFrame:
 
 
 def _get_assignments(section_id) -> Callable:
-    def __get_assignments():
+    # This nested function provides "closure" over `section_id`
+    def __get_assignments() -> Optional[pd.DataFrame]:
         assignments = service.get_assignments(section_id)
         result_bucket["assignments"] = assignments
         return (
