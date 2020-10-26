@@ -60,8 +60,7 @@ def _table_exist(
             return False
         if result.first() is None:
             return False
-
-    return True
+        return True
 
 
 def _remove_duplicates(
@@ -102,13 +101,14 @@ def sync_resource(
 ) -> DataFrame:
     df_data = DataFrame(data)
     table_exist = _table_exist(resource_name, db_engine)
+    current_date_with_format = _get_current_date_with_format()
 
     if table_exist:
         df_data["CreateDate"] = df_data[id_column].apply(lambda x: _get_created_date(resource_name, db_engine, id_column, x))
     else:
-        df_data["CreateDate"] = _get_current_date_with_format()
+        df_data["CreateDate"] = current_date_with_format
 
-    df_data["LastModifiedDate"] = _get_current_date_with_format()
+    df_data["LastModifiedDate"] = current_date_with_format
 
     _write_resource_to_db(resource_name, db_engine, df_data, column_mapping)
     _remove_duplicates(resource_name, db_engine, id_column)
