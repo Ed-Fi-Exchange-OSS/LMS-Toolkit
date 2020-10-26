@@ -62,7 +62,9 @@ class Test_mapping_schoology_sections_to_udm:
         assert self.result.at[0, "Title"] == "Section 2"
 
     def test_then_section_description_is_mapped(self):
-        assert self.result.at[0, "SectionDescription"] == "This is the section description"
+        assert (
+            self.result.at[0, "SectionDescription"] == "This is the section description"
+        )
 
     def test_then_term_is_mapped(self):
         # Schoology doesn't have a concept that we can translate into a term

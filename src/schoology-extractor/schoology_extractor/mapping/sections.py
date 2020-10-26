@@ -40,14 +40,7 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
         LastModifieDate: datetime when the record was modified, or when first retrieved
     """
 
-    df = sections_df[
-        [
-            "id",
-            "section_title",
-            "description",
-            "active"
-        ]
-    ].copy()
+    df = sections_df[["id", "section_title", "description", "active"]].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
@@ -56,13 +49,15 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
         columns={
             "id": "SourceSystemIdentifier",
             "section_title": "Title",
-            "description": "SectionDescription"
+            "description": "SectionDescription",
         },
         inplace=True,
     )
 
     df["Term"] = None
-    df["LMSSectionStatus"] = df["active"].apply(lambda x: constants.ACTIVE if x == 1 else constants.INACTIVE)
+    df["LMSSectionStatus"] = df["active"].apply(
+        lambda x: constants.ACTIVE if x == 1 else constants.INACTIVE
+    )
 
     df.drop(columns=["active"], inplace=True)
 

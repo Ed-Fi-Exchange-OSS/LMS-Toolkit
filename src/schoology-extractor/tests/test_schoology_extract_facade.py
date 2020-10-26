@@ -243,7 +243,7 @@ def describe_when_getting_assignments():
                     "max_points": 4,
                     "title": "1",
                     "type": "assignment",
-                    "section_id": section_id
+                    "section_id": section_id,
                 }
             ]
             get_assignments_mock = request_client.get_assignments
@@ -281,7 +281,7 @@ def describe_when_mapping_assignments():
                     "max_points": 4,
                     "title": "1",
                     "type": "assignment",
-                    "section_id": section_id
+                    "section_id": section_id,
                 }
             ]
             get_assignments_mock = request_client.get_assignments
@@ -291,7 +291,9 @@ def describe_when_mapping_assignments():
             service = SchoologyExtractFacade(logger, request_client, page_size)
 
             # Act
-            mapped_result = service.map_assignments_to_udm(pd.DataFrame(assignments), section_id)
+            mapped_result = service.map_assignments_to_udm(
+                pd.DataFrame(assignments), section_id
+            )
 
             return mapped_result, get_assignments_mock
 

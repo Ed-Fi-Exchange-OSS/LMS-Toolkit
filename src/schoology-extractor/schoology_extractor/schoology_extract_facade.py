@@ -102,7 +102,9 @@ class SchoologyExtractFacade:
         # the paging. As BB said in a pr comment, perhaps it should be handled
         # in a decorator. This works but we should consider refactoring to a
         # cleaner approach.
-        sections = pd.DataFrame(self._client.get_section_by_course_ids([c["id"] for c in courses_list]))
+        sections = pd.DataFrame(
+            self._client.get_section_by_course_ids([c["id"] for c in courses_list])
+        )
 
         return sectionsMap.map_to_udm(sections)
 
@@ -118,7 +120,9 @@ class SchoologyExtractFacade:
         """
         return pd.DataFrame(self._client.get_assignments(section_id, self._page_size))
 
-    def map_assignments_to_udm(self, assignments: pd.DataFrame, section_id: Union[int, str]):
+    def map_assignments_to_udm(
+        self, assignments: pd.DataFrame, section_id: Union[int, str]
+    ):
         assignments["section_id"] = section_id
         return assignmentsMap.map_to_udm(assignments)
 
