@@ -9,8 +9,6 @@ import pytest
 from schoology_extractor.mapping.assignments import map_to_udm
 
 
-
-
 def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
     @pytest.fixture
     def result() -> pd.DataFrame:
