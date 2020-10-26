@@ -5,3 +5,4 @@
 
 SOURCE_SYSTEM = "Schoology"
 ACTIVE = "active"
+INACTIVE = "inactive"
