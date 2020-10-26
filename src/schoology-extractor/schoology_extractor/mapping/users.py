@@ -103,7 +103,7 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
     # Note: a Schoology user who has been marked as "inactive" does not show up
     # in the API request results, thus everyone available at this point is an
     # active user.
-    df["EntityStatus"] = "Active"
+    df["EntityStatus"] = constants.ACTIVE
 
     df["CreateDate"] = None
     df["LastModifiedDate"] = None

@@ -9,6 +9,7 @@ import os
 USERS = "users"
 SECTION = "section"
 ASSIGNMENTS = "assignments"
+SECTIONS = "sections"
 
 
 def _get_file_name() -> str:
@@ -31,6 +32,13 @@ def get_assignment_file_path(output_directory: str, section_id: int) -> str:
 
 def get_user_file_path(output_directory: str) -> str:
     base_dir = os.path.join(output_directory, USERS)
+    _create_directory_if_it_does_not_exist(base_dir)
+
+    return os.path.join(base_dir, _get_file_name())
+
+
+def get_section_file_path(output_directory: str) -> str:
+    base_dir = os.path.join(output_directory, SECTIONS)
     _create_directory_if_it_does_not_exist(base_dir)
 
     return os.path.join(base_dir, _get_file_name())

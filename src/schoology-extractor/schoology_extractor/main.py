@@ -5,7 +5,7 @@
 
 import logging
 import os
-from typing import Callable, Dict
+from typing import Callable, Dict, Optional
 import sys
 
 from dotenv import load_dotenv
@@ -85,17 +85,22 @@ def _get_users():
 result_bucket: Dict[str, pd.DataFrame] = {}
 
 
-def _get_sections() -> list:
+def _get_sections() -> pd.DataFrame:
     sections = service.get_sections()
-    result_bucket["sections"] = pd.DataFrame(sections)
+    result_bucket["sections"] = sections
     return sections
 
 
 def _get_assignments(section_id) -> Callable:
-    def __get_assignments():
+    # This nested function provides "closure" over `section_id`
+    def __get_assignments() -> Optional[pd.DataFrame]:
         assignments = service.get_assignments(section_id)
         result_bucket["assignments"] = assignments
-        return service.map_assignments_to_udm(assignments, section_id) if not assignments.empty else None
+        return (
+            service.map_assignments_to_udm(assignments, section_id)
+            if not assignments.empty
+            else None
+        )
 
     return __get_assignments
 
@@ -106,10 +111,14 @@ def _get_submissions() -> list:
 
 
 def main():
-    _create_file_from_dataframe(_get_users, lms.get_user_file_path(schoology_output_path))
-    _create_file_from_list(_get_sections, "sections.csv")
+    _create_file_from_dataframe(
+        _get_users, lms.get_user_file_path(schoology_output_path)
+    )
+    _create_file_from_dataframe(
+        _get_sections, lms.get_section_file_path(schoology_output_path)
+    )
 
-    for section_id in result_bucket["sections"]["id"].values:
+    for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
         file_path = lms.get_assignment_file_path(schoology_output_path, section_id)
         _create_file_from_dataframe(_get_assignments(section_id), file_path)
 
