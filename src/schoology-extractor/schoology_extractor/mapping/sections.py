@@ -21,7 +21,7 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
     Returns
     -------
     DataFrame
-        A LMSUsers-formatted DataFrame
+        A LMS-Sections-formatted DataFrame
 
     Notes
     -----
@@ -52,6 +52,7 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
         inplace=True,
     )
 
+    # Schoology does not have a concept matching to "term"
     df["Term"] = None
     df["LMSSectionStatus"] = df["active"].apply(
         lambda x: constants.ACTIVE if x == 1 else constants.INACTIVE
@@ -59,6 +60,7 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
 
     df.drop(columns=["active"], inplace=True)
 
+    # TODO: FIZZ-125
     df["CreateDate"] = None
     df["LastModifiedDate"] = None
 
