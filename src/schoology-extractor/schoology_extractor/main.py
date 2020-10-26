@@ -9,11 +9,14 @@ from typing import Callable, Dict
 import sys
 
 from dotenv import load_dotenv
+import pandas as pd
 
 from schoology_extractor.helpers import export_data
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.helpers import arg_parser
 from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
+import schoology_extractor.lms_filesystem as lms
+
 
 # Load configuration
 load_dotenv()
@@ -48,8 +51,9 @@ service = SchoologyExtractFacade(logger, request_client, page_size)
 def _create_file_from_dataframe(action: Callable, file_name):
     logger.info(f"Exporting {file_name}")
     try:
-        data = action()
-        export_data.df_to_csv(data, os.path.join(schoology_output_path, file_name))
+        data: pd.DataFrame = action()
+        if data is not None:
+            export_data.df_to_csv(data, file_name)
     except Exception as ex:
         logger.error(
             f"An exception occurred while generating {file_name} : %s",
@@ -63,7 +67,8 @@ def _create_file_from_list(action: Callable, file_name):
     logger.info(f"Exporting {file_name}")
     try:
         data = action()
-        export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
+        if data is not None:
+            export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
     except Exception as ex:
         logger.error(
             f"An exception occurred while generating {file_name} : %s",
@@ -77,30 +82,39 @@ def _get_users():
 
 # This variable facilitates temporary storage of output results from one GET
 # request that need to be used for creating another GET request.
-result_bucket: Dict[str, list] = {}
+result_bucket: Dict[str, pd.DataFrame] = {}
 
 
 def _get_sections() -> list:
     sections = service.get_sections()
-    result_bucket["sections"] = sections
+    result_bucket["sections"] = pd.DataFrame(sections)
     return sections
 
 
-def _get_assignments() -> list:
-    assignments = service.get_assignments(result_bucket["sections"], grading_periods)
-    result_bucket["assignments"] = assignments
-    return assignments
+def _get_assignments(section_id) -> Callable:
+    def __get_assignments():
+        assignments = service.get_assignments(section_id)
+        result_bucket["assignments"] = assignments
+        return service.map_assignments_to_udm(assignments, section_id) if not assignments.empty else None
+
+    return __get_assignments
 
 
 def _get_submissions() -> list:
-    return service.get_submissions(result_bucket["assignments"])
+    assignments_df: pd.DataFrame = result_bucket["assignments"]
+    return service.get_submissions(assignments_df)
 
 
 def main():
-    _create_file_from_dataframe(_get_users, "users.csv")
+    _create_file_from_dataframe(_get_users, lms.get_user_file_path(schoology_output_path))
     _create_file_from_list(_get_sections, "sections.csv")
-    _create_file_from_list(_get_assignments, "assignments.csv")
-    _create_file_from_list(_get_submissions, "submissions.csv")
+
+    for section_id in result_bucket["sections"]["id"].values:
+        file_path = lms.get_assignment_file_path(schoology_output_path, section_id)
+        _create_file_from_dataframe(_get_assignments(section_id), file_path)
+
+        # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
+        _create_file_from_list(_get_submissions, "submissions.csv")
 
 
 if __name__ == "__main__":
