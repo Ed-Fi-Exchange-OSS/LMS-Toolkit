@@ -14,6 +14,7 @@ from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.api.paginated_result import PaginatedResult
 from schoology_extractor.mapping import users as usersMap
+from schoology_extractor.mapping import sections as sectionsMap
 
 
 def describe_when_getting_users():
@@ -128,7 +129,7 @@ def describe_when_getting_users():
 def describe_when_getting_sections():
     def describe_given_one_course_with_one_section():
         @pytest.fixture
-        def system() -> Tuple[list, Mock]:
+        def system() -> Tuple[pd.DataFrame, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             page_size = 22
@@ -143,6 +144,11 @@ def describe_when_getting_sections():
             )
             request_client.get_courses.return_value = courses_page
 
+            # Also want to mock the UDM mapper function, since it is well-tested
+            # elsewhere
+            sectionsMap.map_to_udm = Mock()
+            sectionsMap.map_to_udm.return_value = pd.DataFrame()
+
             sections = [{"id": 1234}]
             get_sections_mock = request_client.get_section_by_course_ids
             get_sections_mock.return_value = sections
@@ -153,16 +159,21 @@ def describe_when_getting_sections():
             # Act
             result = service.get_sections()
 
-            return result, get_sections_mock
+            return result, sectionsMap.map_to_udm
 
-        def it_should_return_the_sections_list(system):
+        def it_should_return_a_data_frame(system):
             result, _ = system
 
-            assert result[0]["id"] == 1234
+            assert isinstance(result, pd.DataFrame)
+
+        def it_should_map_to_the_udm(system):
+            _, map_to_udm = system
+
+            map_to_udm.assert_called_once()
 
     def describe_given_two_pages_of_courses():
         @pytest.fixture
-        def system() -> Tuple[list, Mock]:
+        def system() -> Tuple[pd.DataFrame, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             page_size = 1
@@ -185,6 +196,11 @@ def describe_when_getting_sections():
             request_client.base_url = ""
             request_client.get.return_value = courses_2
 
+            # Also want to mock the UDM mapper function, since it is well-tested
+            # elsewhere
+            sectionsMap.map_to_udm = Mock()
+            sectionsMap.map_to_udm.return_value = pd.DataFrame()
+
             sections = [{"id": 1234}]
             get_sections_mock = request_client.get_section_by_course_ids
             get_sections_mock.return_value = sections
@@ -196,11 +212,6 @@ def describe_when_getting_sections():
             result = service.get_sections()
 
             return result, get_sections_mock
-
-        def it_should_return_the_sections_list(system):
-            result, _ = system
-
-            assert result[0]["id"] == 1234
 
         def it_should_use_first_course_when_getting_sections(system):
             _, get_sections_mock = system

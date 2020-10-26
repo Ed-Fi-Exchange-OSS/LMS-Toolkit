@@ -12,6 +12,7 @@ import pandas as pd
 from .api.request_client import RequestClient
 from .mapping import users as usersMap
 from .mapping import assignments as assignmentsMap
+from .mapping import sections as sectionsMap
 
 
 @dataclass
@@ -76,7 +77,7 @@ class SchoologyExtractFacade:
 
         return usersMap.map_to_udm(users_df, roles_df)
 
-    def get_sections(self) -> list:
+    def get_sections(self) -> pd.DataFrame:
         """
         Gets all Schoology users.
 
@@ -101,7 +102,9 @@ class SchoologyExtractFacade:
         # the paging. As BB said in a pr comment, perhaps it should be handled
         # in a decorator. This works but we should consider refactoring to a
         # cleaner approach.
-        return self._client.get_section_by_course_ids([c["id"] for c in courses_list])
+        sections = pd.DataFrame(self._client.get_section_by_course_ids([c["id"] for c in courses_list]))
+
+        return sectionsMap.map_to_udm(sections)
 
     def get_assignments(self, section_id: int) -> pd.DataFrame:
         """
