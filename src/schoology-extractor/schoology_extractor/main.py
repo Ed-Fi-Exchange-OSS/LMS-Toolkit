@@ -85,9 +85,9 @@ def _get_users():
 result_bucket: Dict[str, pd.DataFrame] = {}
 
 
-def _get_sections() -> list:
+def _get_sections() -> pd.DataFrame:
     sections = service.get_sections()
-    result_bucket["sections"] = pd.DataFrame(sections)
+    result_bucket["sections"] = sections
     return sections
 
 
@@ -107,9 +107,9 @@ def _get_submissions() -> list:
 
 def main():
     _create_file_from_dataframe(_get_users, lms.get_user_file_path(schoology_output_path))
-    _create_file_from_list(_get_sections, "sections.csv")
+    _create_file_from_dataframe(_get_sections, lms.get_section_file_path(schoology_output_path))
 
-    for section_id in result_bucket["sections"]["id"].values:
+    for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
         file_path = lms.get_assignment_file_path(schoology_output_path, section_id)
         _create_file_from_dataframe(_get_assignments(section_id), file_path)
 
