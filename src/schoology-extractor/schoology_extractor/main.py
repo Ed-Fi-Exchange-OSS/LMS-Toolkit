@@ -10,7 +10,6 @@ import sys
 
 from dotenv import load_dotenv
 import pandas as pd
-from pandas.core.frame import DataFrame
 
 from schoology_extractor.helpers import export_data
 from schoology_extractor.api.request_client import RequestClient
@@ -80,7 +79,7 @@ def _create_file_from_list(action: Callable, file_name: str):
         )
 
 
-def _get_users() -> DataFrame:
+def _get_users() -> pd.DataFrame:
     return service.get_users()
 
 
