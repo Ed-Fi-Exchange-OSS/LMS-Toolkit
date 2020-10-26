@@ -88,8 +88,11 @@ def _get_created_date(
             f"SELECT CreateDate from {resource_name} "
             f"WHERE {unique_id_column} == {id}"
         )
-        create_date = result.first()
-    return create_date[0] if create_date is not None else _get_current_date_with_format()
+        if result is not None:
+            create_date = result.first()
+            return create_date[0] if create_date is not None else _get_current_date_with_format()
+
+        return _get_current_date_with_format()
 
 
 def sync_resource(

@@ -7,10 +7,14 @@ from datetime import datetime
 from pandas.core.frame import DataFrame
 import pytest
 from unittest.mock import MagicMock, Mock
+from freezegun import freeze_time
 
 import sqlalchemy
 
 from schoology_extractor.helpers import sync
+
+
+DATE_TIME_INPUT_STRING = "2020-10-16 1:00:01 PM"
 
 
 @pytest.fixture
@@ -105,6 +109,26 @@ class Test_when__get_created_date_is_called:
             query = "SELECT CreateDate from fake_table_name WHERE fake_column_id == 3"
 
             execute_mock.execute.assert_called_with(query)
+
+        @freeze_time(DATE_TIME_INPUT_STRING)
+        def test_return_current_date_if_there_is_no_record(self):
+            execute_mock = Mock()
+            execute_mock.execute.return_value = None
+
+            mock_connection = Mock()
+            mock_connection.__enter__ = Mock(return_value=execute_mock)
+            mock_connection.__exit__ = Mock()
+
+            mock_db_engine = Mock()
+            mock_db_engine.connect.return_value = mock_connection
+
+            result = sync._get_created_date(
+                "fake_table_name",
+                mock_db_engine,
+                "fake_column_id",
+                3)
+
+            assert str(result) == "2020-10-16 13:00:01"
 
 
 def mock_sync_internal_functions(sync):
