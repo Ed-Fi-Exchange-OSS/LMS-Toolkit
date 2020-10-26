@@ -99,6 +99,27 @@ def sync_resource(
     column_mapping: Optional[dict] = None,
     id_column: str = "id"
 ) -> DataFrame:
+    """
+    Writes data to the local db and sets both CreateDate and LastModifiedDate.
+
+    Parameters
+    ----------
+    resource_name: str
+        Name of the resource that you want to sync
+    db_engine: sqlalchemy.engine.base.Engine
+        The dbEngine for the sync process.
+    data: list,
+        The data that you are going to sync.
+    column_mapping: Optional[dict] = None
+        Used for specifying column types when required for the syncDB.
+    id_column: str = "id"
+        The column where the id of the resource is contained.
+
+    Returns
+    -------
+    df_data  : DataFrame
+        A populated `DataFrame` with the elements from the original list.
+    """
     df_data = DataFrame(data)
     table_exist = _table_exist(resource_name, db_engine)
     current_date_with_format = _get_current_date_with_format()

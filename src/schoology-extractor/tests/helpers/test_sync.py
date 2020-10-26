@@ -4,8 +4,9 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from datetime import datetime
+from pandas.core.frame import DataFrame
 import pytest
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 import sqlalchemy
 
@@ -84,12 +85,43 @@ class Test_when__remove_duplicates_is_called:
 
 class Test_when__get_created_date_is_called:
     class Test_given_db_execute_method_is_called():
-        def test_then_query_is_built_correctly(self, db_engine_mock_returns_value):
-            sync._remove_duplicates(
+        def test_then_query_is_built_correctly(self):
+            execute_mock = Mock()
+            execute_mock.execute.return_value = MagicMock()
+
+            mock_connection = Mock()
+            mock_connection.__enter__ = Mock(return_value=execute_mock)
+            mock_connection.__exit__ = Mock()
+
+            mock_db_engine = Mock()
+            mock_db_engine.connect.return_value = mock_connection
+
+            sync._get_created_date(
                 "fake_table_name",
-                db_engine_mock_returns_value,
-                "fake_column_id")
+                mock_db_engine,
+                "fake_column_id",
+                3)
 
-            query = "DELETE from fake_table_name WHERE rowid not in (select max(rowid) FROM fake_table_name GROUP BY fake_column_id)"
+            query = "SELECT CreateDate from fake_table_name WHERE fake_column_id == 3"
 
-            db_engine_mock_returns_value.connect().__enter__().execute.assert_called_with(query)
+            execute_mock.execute.assert_called_with(query)
+
+
+def mock_sync_internal_functions(sync):
+    sync._table_exist = Mock(return_value=True)
+    sync._write_resource_to_db = Mock()
+    sync._remove_duplicates = Mock()
+    sync._get_created_date = Mock()
+
+
+class Test_given_sync_resource_is_called:
+    def test_then_returns_dataframe(self, db_engine_mock_returns_none):
+        mock_sync_internal_functions(sync)
+        result = sync.sync_resource(
+            "fake_resource_name",
+            db_engine_mock_returns_none,
+            [
+                {"fake_column": 'fake_value', "id": 'fake_id'},
+                {"fake_column": 'fake_value', "id": 'fake_id'}
+            ])
+        assert isinstance(result, DataFrame)
