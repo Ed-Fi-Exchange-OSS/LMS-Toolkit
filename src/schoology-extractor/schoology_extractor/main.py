@@ -94,7 +94,7 @@ def _get_sections() -> pd.DataFrame:
     return sections
 
 
-def _get_assignments(section_id) -> Callable:
+def _get_assignments(section_id: int) -> Callable:
     # This nested function provides "closure" over `section_id`
     def __get_assignments() -> Optional[pd.DataFrame]:
         assignments = service.get_assignments(section_id)
@@ -113,6 +113,13 @@ def _get_submissions() -> list:
     return service.get_submissions(assignments_df)
 
 
+def _get_section_associations(section_id: int) -> Callable:
+    def __get_section_associations() -> pd.DataFrame:
+        return service.get_section_associations(section_id)
+
+    return __get_section_associations
+
+
 def main():
     _create_file_from_dataframe(
         _get_users, lms.get_user_file_path(schoology_output_path)
@@ -127,6 +134,11 @@ def main():
 
         # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
         _create_file_from_list(_get_submissions, "submissions.csv")
+
+        file_path = lms.get_section_association_file_path(
+            schoology_output_path, section_id
+        )
+        _create_file_from_dataframe(_get_section_associations(section_id), file_path)
 
 
 if __name__ == "__main__":
