@@ -17,6 +17,7 @@ from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.api.paginated_result import PaginatedResult
 from schoology_extractor.mapping import users as usersMap
 from schoology_extractor.mapping import sections as sectionsMap
+from schoology_extractor.mapping import section_associations as sectionAssocMap
 from schoology_extractor.helpers import sync
 
 
@@ -399,3 +400,50 @@ def describe_when_getting_submissions():
 
         def it_should_return_the_submission_for_assignment_2(result):
             assert result[1]["id"] == 1235
+
+
+def describe_when_getting_section_associations():
+    @pytest.fixture
+    def system() -> Tuple[pd.DataFrame, Mock]:
+        logger = Mock(spec=Logger)
+        request_client = Mock(spec=RequestClient)
+        page_size = 1
+
+        # Also want to mock the UDM mapper function, since it is well-tested
+        # elsewhere
+        sectionAssocMap.map_to_udm = Mock()
+        sectionAssocMap.map_to_udm.return_value = pd.DataFrame()
+
+        section_id = 1234
+        get_sections_mock = request_client.get_enrollments
+        get_sections_mock.return_value = [{"id": 1}, {"id": 2}]
+
+        # Arrange
+        service = SchoologyExtractFacade(logger, request_client, page_size)
+
+        # Act
+        result = service.get_section_associations(section_id)
+
+        return result, sectionAssocMap.map_to_udm
+
+    def it_should_return_a_data_frame(system):
+        result, _ = system
+
+        assert isinstance(result, pd.DataFrame)
+
+    def it_should_map_to_the_udm(system):
+        _, mapper = system
+
+        mapper.assert_called_once()
+
+    def it_should_map_first_enrollment(system):
+        _, mapper = system
+
+        df = mapper.call_args[0][0]
+        assert df["id"].iloc[0] == 1
+
+    def it_should_map_second_enrollment(system):
+        _, mapper = system
+
+        df = mapper.call_args[0][0]
+        assert df["id"].iloc[1] == 2
