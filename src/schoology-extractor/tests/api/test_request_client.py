@@ -176,7 +176,7 @@ class TestRequestClient:
             assert len(response) == 2, "expected three results"
 
     class Test_when_get_submissions_by_section_id_and_grade_item_id_method_is_called:
-         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
+        def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
             self, default_request_client, requests_mock
         ):
             expected_url_1 = "https://api.schoology.com/v1/sections/1/submissions/1234564"

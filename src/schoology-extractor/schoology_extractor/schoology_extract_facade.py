@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 from logging import Logger
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 import pandas as pd
 import sqlalchemy
