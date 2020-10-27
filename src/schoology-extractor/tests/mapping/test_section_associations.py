@@ -8,9 +8,6 @@ import pytest
 
 from schoology_extractor.mapping.section_associations import map_to_udm
 
-# TODO: it looks like "enrollments" includes the teacher. Confirm that and then
-# make sure that teachers are filtered out.
-
 
 def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
     # Note: The `EnrollmentStatus` column is tested in another test fixture
@@ -18,13 +15,19 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
     @pytest.fixture
     def result() -> pd.DataFrame:
 
-        section_association = {"id": 123355, "uid": 588525, "status": 1}
+        section_associations = [
+            {"id": 43333, "uid": 39303, "status": 1, "admin": 1},
+            {"id": 123355, "uid": 588525, "status": 1, "admin": 0},
+        ]
 
         # Arrange
-        schoology_df = pd.DataFrame([section_association])
+        schoology_df = pd.DataFrame(section_associations)
 
         # Act
         return map_to_udm(schoology_df, 234234)
+
+    def it_should_ignore_admin_users(result):
+        assert result.shape[0] == 1
 
     def it_should_have_schoology_as_source_system(result):
         assert result["SourceSystem"].iloc[0] == "Schoology"
@@ -67,7 +70,7 @@ def describe_when_mapping_Schoology_enrollment_status_to_string_value():
         ],
     )
     def it_should_translate_status_code_to_string(status_code, status_string):
-        section_association = {"id": 123355, "uid": 588525, "status": status_code}
+        section_association = {"id": 123355, "uid": 588525, "status": status_code, "admin": 0}
 
         # Arrange
         schoology_df = pd.DataFrame([section_association])

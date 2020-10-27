@@ -52,7 +52,8 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         LastModifieDate: Date/time when the record was modified, or when first retrieved
     """
 
-    df = enrollments_df[["id", "uid", "status"]].copy()
+    # Schoology section associations contain the teacher with {admin: 1}. Remove them.
+    df = enrollments_df[enrollments_df["admin"] == 0][["id", "uid", "status"]].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
