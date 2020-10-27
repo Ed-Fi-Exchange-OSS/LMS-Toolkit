@@ -249,7 +249,7 @@ def describe_when_getting_assignments():
             assignments = [
                 {
                     "id": 3333,
-                    "due": "1/2/3456 01:23:45 PM",
+                    "due": "3456-1-2 01:23:45",
                     "description": "",
                     "max_points": 4,
                     "title": "1",
@@ -289,7 +289,7 @@ def describe_when_mapping_assignments():
             assignments = [
                 {
                     "id": 3333,
-                    "due": "1/2/3456 01:23:45 PM",
+                    "due": "3456-1-2 01:23:45",
                     "description": "",
                     "max_points": 4,
                     "title": "1",

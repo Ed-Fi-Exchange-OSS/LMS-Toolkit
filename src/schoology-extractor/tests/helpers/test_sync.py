@@ -131,11 +131,58 @@ class Test_when__get_created_date_is_called:
             assert str(result) == "2020-10-16 13:00:01"
 
 
+@pytest.fixture
+def db_engine_mock_returns_fake_resource():
+    # [(key0, value0), (key1, value1)]
+    row = Mock()
+    row.items.return_value = [
+        ('id', 1),
+        ('name', 'fake_name')
+    ]
+    execute_mock = Mock()
+    execute_mock.execute.return_value = [row]
+
+    mock_connection = Mock()
+    mock_connection.__enter__ = Mock(return_value=execute_mock)
+    mock_connection.__exit__ = Mock()
+
+    mock_db_engine = Mock()
+    mock_db_engine.connect.return_value = mock_connection
+    return mock_db_engine
+
+
+class Test_given__resource_has_changed_is_called:
+    class Test_given_resource_has_changed:
+        def test_then_returns_true(self, db_engine_mock_returns_fake_resource):
+            result = sync._resource_has_changed(
+                {
+                    'id': 1,
+                    'name': 'fake_name_modified'
+                },
+                'fake_resource_name',
+                db_engine_mock_returns_fake_resource)
+
+            assert result is True
+
+    class Test_given_resource_has_not_changed:
+        def test_then_returns_false(self, db_engine_mock_returns_fake_resource):
+            result = sync._resource_has_changed(
+                {
+                    'id': 1,
+                    'name': 'fake_name'
+                },
+                'fake_resource_name',
+                db_engine_mock_returns_fake_resource)
+
+            assert result is False
+
+
 def mock_sync_internal_functions(sync):
     sync._table_exist = Mock(return_value=True)
     sync._write_resource_to_db = Mock()
     sync._remove_duplicates = Mock()
     sync._get_created_date = Mock()
+    sync._resource_has_changed = Mock()
 
 
 class Test_given_sync_resource_is_called:
