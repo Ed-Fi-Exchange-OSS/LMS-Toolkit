@@ -131,6 +131,30 @@ class Test_when__get_created_date_is_called:
             assert str(result) == "2020-10-16 13:00:01"
 
 
+class Test_when__get_last_modified_date_is_called:
+    class Test_given_db_execute_method_is_called():
+        def test_then_query_is_built_correctly(self):
+            execute_mock = Mock()
+            execute_mock.execute.return_value = MagicMock()
+
+            mock_connection = Mock()
+            mock_connection.__enter__ = Mock(return_value=execute_mock)
+            mock_connection.__exit__ = Mock()
+
+            mock_db_engine = Mock()
+            mock_db_engine.connect.return_value = mock_connection
+
+            sync._get_last_modified_date(
+                "fake_table_name",
+                mock_db_engine,
+                "fake_column_id",
+                3)
+
+            query = "SELECT LastModifiedDate from fake_table_name WHERE fake_column_id == 3"
+
+            execute_mock.execute.assert_called_with(query)
+
+
 @pytest.fixture
 def db_engine_mock_returns_fake_resource():
     # [(key0, value0), (key1, value1)]
