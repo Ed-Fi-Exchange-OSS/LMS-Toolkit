@@ -18,6 +18,7 @@ from schoology_extractor.api.paginated_result import PaginatedResult
 from schoology_extractor.mapping import users as usersMap
 from schoology_extractor.mapping import sections as sectionsMap
 from schoology_extractor.mapping import section_associations as sectionAssocMap
+from schoology_extractor.mapping import assignments as assignmentsMap
 from schoology_extractor.helpers import sync
 
 
@@ -240,7 +241,7 @@ def describe_when_getting_sections():
 def describe_when_getting_assignments():
     def describe_given_a_section_has_one_assignment():
         @pytest.fixture
-        def system() -> Tuple[pd.DataFrame, Mock]:
+        def system() -> Tuple[pd.DataFrame, Mock, Mock]:
             logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
@@ -258,63 +259,42 @@ def describe_when_getting_assignments():
                     "section_id": section_id,
                 }
             ]
+
+            # Arrange
             get_assignments_mock = request_client.get_assignments
             get_assignments_mock.return_value = assignments
 
-            # Arrange
+            # Mock the UDM mapper
+            assignmentsMap.map_to_udm = Mock()
+            assignmentsMap.map_to_udm.return_value = pd.DataFrame()
+
             service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
             # Act
             result = service.get_assignments(section_id)
-            mapped_result = service.map_assignments_to_udm(result, section_id)
 
-            return mapped_result, get_assignments_mock
+            return result, get_assignments_mock, assignmentsMap.map_to_udm
+
+        def it_should_return_a_DataFrame(system):
+            result, _, _ = system
+            assert isinstance(result, pd.DataFrame)
 
         def it_should_query_for_the_given_section(system):
-            _, get_assignments_mock = system
+            _, get_assignments_mock, _ = system
 
             args = get_assignments_mock.call_args
             assert 1234 == args[0][0]
 
+        def it_should_map_results_to_the_udm(system):
+            _, _, mapper = system
 
-def describe_when_mapping_assignments():
-    def describe_given_a_section_has_one_assignment():
-        @pytest.fixture
-        def system() -> Tuple[pd.DataFrame, Mock]:
-            logger = Mock(spec=Logger)
-            request_client = Mock(spec=RequestClient)
-            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
-            page_size = 22
-            section_id = 1234
+            mapper.assert_called_once()
 
-            assignments = [
-                {
-                    "id": 3333,
-                    "due": "3456-1-2 01:23:45",
-                    "description": "",
-                    "max_points": 4,
-                    "title": "1",
-                    "type": "assignment",
-                    "section_id": section_id,
-                }
-            ]
-            get_assignments_mock = request_client.get_assignments
-            get_assignments_mock.return_value = assignments
+        def it_should_map_first_assignment(system):
+            _, _, mapper = system
 
-            # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
-
-            # Act
-            mapped_result = service.map_assignments_to_udm(
-                pd.DataFrame(assignments), section_id
-            )
-
-            return mapped_result, get_assignments_mock
-
-        def it_should_return_the_assignments_list_as_data_frame(system):
-            result, _ = system
-
-            assert result["SourceSystemIdentifier"][0] == 3333
+            df = mapper.call_args[0][0]
+            assert df["id"].iloc[0] == 3333
 
 
 def describe_when_getting_submissions():
@@ -326,7 +306,7 @@ def describe_when_getting_submissions():
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
 
-            assignments = pd.DataFrame([{"section_id": 123, "grade_item_id": 345}])
+            assignments = pd.DataFrame([{"SourceSystemIdentifier": 345, "LMSSectionSourceSystemIdentifier": 123}])
             submissions = {
                 "revision": [{"id": 1234}],
                 "total": 1,
@@ -361,8 +341,8 @@ def describe_when_getting_submissions():
 
             assignments = pd.DataFrame(
                 [
-                    {"section_id": 123, "grade_item_id": 345},
-                    {"section_id": 124, "grade_item_id": 346},
+                    {"SourceSystemIdentifier": 345, "LMSSectionSourceSystemIdentifier": 123},
+                    {"SourceSystemIdentifier": 346, "LMSSectionSourceSystemIdentifier": 124},
                 ]
             )
             submissions_1 = {

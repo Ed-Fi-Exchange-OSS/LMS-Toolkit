@@ -143,13 +143,10 @@ class SchoologyExtractFacade:
         pd.DataFrame
             DataFrame with all assignment data, in the unified data model format.
         """
-        return pd.DataFrame(self._client.get_assignments(section_id, self._page_size))
 
-    def map_assignments_to_udm(
-        self, assignments: pd.DataFrame, section_id: Union[int, str]
-    ):
-        assignments["section_id"] = section_id
-        return assignmentsMap.map_to_udm(assignments)
+        assignments = pd.DataFrame(self._client.get_assignments(section_id, self._page_size))
+
+        return assignmentsMap.map_to_udm(assignments, section_id)
 
     def get_submissions(self, assignments: pd.DataFrame) -> list:
         """
@@ -169,8 +166,8 @@ class SchoologyExtractFacade:
         submissions: List[Dict[str, Any]] = []
 
         for _, assignment in assignments.iterrows():
-            section_id = assignment["section_id"]
-            grade_item_id = str(assignment["grade_item_id"])
+            section_id = assignment["LMSSectionSourceSystemIdentifier"]
+            grade_item_id = assignment["SourceSystemIdentifier"]
 
             submissions_response = (
                 self._client.get_submissions_by_section_id_and_grade_item_id(

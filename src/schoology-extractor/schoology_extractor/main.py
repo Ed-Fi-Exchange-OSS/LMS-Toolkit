@@ -99,11 +99,8 @@ def _get_assignments(section_id: int) -> Callable:
     def __get_assignments() -> Optional[pd.DataFrame]:
         assignments = service.get_assignments(section_id)
         result_bucket["assignments"] = assignments
-        return (
-            service.map_assignments_to_udm(assignments, section_id)
-            if not assignments.empty
-            else None
-        )
+
+        return assignments
 
     return __get_assignments
 
