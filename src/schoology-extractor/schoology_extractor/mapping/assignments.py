@@ -10,7 +10,7 @@ import pandas as pd
 from . import constants
 
 
-def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
+def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     """
     Maps a DataFrame containing Schoology assignments into the Ed-Fi LMS Unified Data
     Model (UDM) format.
@@ -19,6 +19,8 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
     ----------
     assignments_df: DataFrame
         Pandas DataFrame containing Schoology assignments for a section
+    section_id: int
+        The Section ID to which the assignments belong
 
     Returns
     -------
@@ -51,7 +53,6 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
             "description",
             "due",
             "max_points",
-            "section_id",
             "type"
         ]
     ].copy()
@@ -65,7 +66,6 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
             "title": "Title",
             "description": "AssignmentDescription",
             "max_points": "MaxPoints",
-            "section_id": "LMSSectionSourceSystemIdentifier",
             "type": "AssignmentCategory",
             "due": "DueDateTime"
         },
@@ -73,6 +73,7 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
     )
 
     df["DueDateTime"] = df["DueDateTime"].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
+    df["LMSSectionSourceSystemIdentifier"] = section_id
 
     df["SubmissionType"] = None
     df["CreateDate"] = None
