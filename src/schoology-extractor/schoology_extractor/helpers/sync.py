@@ -115,6 +115,21 @@ def _get_created_date(
         return _get_current_date_with_format()
 
 
+def _get_last_modified_date(
+    resource_name: str,
+    db_engine: sqlalchemy.engine.base.Engine,
+    unique_id_column: str,
+    id: Union[str, int]
+) -> str:
+    with db_engine.connect() as con:
+        result: Union[ResultProxy, None] = con.execute(
+            f"SELECT LastModifiedDate from {resource_name} "
+            f"WHERE {unique_id_column} == {id}"
+        )
+        last_modified = result.first()
+        return last_modified[0]
+
+
 def sync_resource(
     resource_name: str,
     db_engine: sqlalchemy.engine.base.Engine,
@@ -144,23 +159,17 @@ def sync_resource(
         A populated `DataFrame` with the elements from the original list.
     """
     table_exist = _table_exist(resource_name, db_engine)
-
-    if table_exist:
-        df_data = DataFrame(row for row in data if _resource_has_changed(row, resource_name, db_engine, id_column))
-    else:
-        df_data = DataFrame(data)
-
-    if df_data.empty:
-        return df_data
     current_date_with_format = _get_current_date_with_format()
 
-    if table_exist:
-        df_data["CreateDate"] = df_data[id_column].apply(lambda x: _get_created_date(resource_name, db_engine, id_column, x))
-    else:
-        df_data["CreateDate"] = current_date_with_format
+    if len(data) == 0:
+        return DataFrame()
 
-    df_data["LastModifiedDate"] = current_date_with_format
+    for row in data:
+        hasChanged = _resource_has_changed(row, resource_name, db_engine, id_column) if table_exist else True
+        row["CreateDate"] = _get_created_date(resource_name, db_engine, id_column, row[id_column]) if table_exist else current_date_with_format
+        row["LastModifiedDate"] = current_date_with_format if hasChanged else _get_last_modified_date(resource_name, db_engine, id_column, row[id_column])
 
+    df_data = DataFrame(data)
     _write_resource_to_db(resource_name, db_engine, df_data, column_mapping)
     _remove_duplicates(resource_name, db_engine, id_column)
 
