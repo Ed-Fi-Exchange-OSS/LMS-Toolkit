@@ -93,6 +93,10 @@ class RequestClient:
             "Content-Type": "application/json",
         }
 
+    def _build_query_params_for_first_page(self, page_size: int):
+        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
+        return f"start=0&limit={page_size}"
+
     @retry(
         retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
         max_calls_total=REQUEST_RETRY_COUNT,
@@ -401,6 +405,39 @@ class RequestClient:
             RESOURCE_NAMES.ROLE,
             self.base_url + url)
 
-    def _build_query_params_for_first_page(self, page_size: int):
-        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
-        return f"start=0&limit={page_size}"
+    def get_enrollments(
+        self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
+    ) -> list:
+        """
+        Retrieves enrollment data for a section
+
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+
+        Returns
+        -------
+        list
+            A list of all parsed results from the server, for all pages
+        """
+
+        enrollments: List[object] = []
+
+        params = self._build_query_params_for_first_page(page_size)
+        url = f"sections/{section_id}/enrollments?{params}"
+
+        enrollments_page = PaginatedResult(
+            self,
+            page_size,
+            self.get(url),
+            "enrollment",
+            self.base_url + url,
+        )
+        while True:
+            enrollments = enrollments + enrollments_page.current_page_items
+
+            if enrollments_page.get_next_page() is None:
+                break
+
+        return enrollments
