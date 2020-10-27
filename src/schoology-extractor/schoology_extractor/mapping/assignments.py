@@ -3,6 +3,8 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from datetime import datetime
+
 import pandas as pd
 
 from . import constants
@@ -70,8 +72,7 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
         inplace=True,
     )
 
-    df["DueDateTime"] = df["due"].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
-    df.drop(columns=["due"], inplace=True)
+    df["DueDateTime"] = df["DueDateTime"].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
 
     df["SubmissionType"] = None
     df["CreateDate"] = None
