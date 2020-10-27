@@ -9,3 +9,14 @@ LOG_LEVELS = [
     "ERROR",
     "CRITICAL"
 ]
+
+
+class RESOURCE_NAMES:
+    ASSIGNMENT = 'assignment'
+    SECTION = 'section'
+    REVISION = 'revision'
+    USER = 'user'
+    GRADING_PERIODS = 'gradingperiods'
+    COURSE = 'course'
+    ROLE = 'role'
+    SUBMISSION = 'submissions'

@@ -26,7 +26,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             "title": "The title",
             "type": "assignment",
             "description": "The description",
-            "due": "2020-08-21 23:59:00",
+            "due": "2020-8-21 23:59:00",
             "max_points": 52,
             "section_id": 42,
         }
@@ -50,7 +50,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         assert result["AssignmentDescription"].iloc[0] == "The description"
 
     def it_should_map_due_to_DueDateTime(result):
-        assert result["DueDateTime"].iloc[0] == "2020-08-21 23:59:00"
+        assert str(result["DueDateTime"].iloc[0]) == "2020-08-21 23:59:00"
 
     def it_should_map_max_points_to_MaxPoints(result):
         assert result["MaxPoints"].iloc[0] == 52

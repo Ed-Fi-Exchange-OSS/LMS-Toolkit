@@ -3,7 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-
 import pandas as pd
 
 from . import constants
@@ -79,6 +78,8 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
             "name_last",
             "username",
             "primary_email",
+            "CreateDate",
+            "LastModifiedDate"
         ]
     ].copy()
 
@@ -105,8 +106,6 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
     # active user.
     df["EntityStatus"] = constants.ACTIVE
 
-    df["CreateDate"] = None
-    df["LastModifiedDate"] = None
     df.drop(
         columns=["name_first", "name_middle", "name_last", "role_id", "id"],
         inplace=True,
