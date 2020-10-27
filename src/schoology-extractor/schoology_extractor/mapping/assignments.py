@@ -70,6 +70,9 @@ def map_to_udm(assignments_df: pd.DataFrame) -> pd.DataFrame:
         inplace=True,
     )
 
+    df["DueDateTime"] = df["due"].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
+    df.drop(columns=["due"], inplace=True)
+
     df["SubmissionType"] = None
     df["CreateDate"] = None
     df["LastModifiedDate"] = None

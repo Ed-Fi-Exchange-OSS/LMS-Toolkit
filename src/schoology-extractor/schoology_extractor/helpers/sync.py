@@ -34,6 +34,26 @@ def _get_current_date_with_format() -> str:
     return datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
 
 
+def _resource_has_changed(
+    resource: dict,
+    resource_name: str,
+    db_engine:  sqlalchemy.engine.base.Engine,
+    id_column: str = "id"
+) -> bool:
+    query = f"SELECT * FROM {resource_name} where {id_column} = {resource[id_column]} limit 1;"
+    with db_engine.connect() as con:
+        result: Union[ResultProxy, None] = con.execute(query)
+        if result is None:
+            return True
+        for row in result:
+            for column, value in row.items():
+                if column != "CreateDate" and column != "LastModifiedDate":
+                    if resource[column] != value:
+                        return True
+
+    return False
+
+
 def _write_resource_to_db(
     resource_name: str,
     db_engine: sqlalchemy.engine.base.Engine,
@@ -123,7 +143,9 @@ def sync_resource(
     df_data  : DataFrame
         A populated `DataFrame` with the elements from the original list.
     """
-    df_data = DataFrame(data)
+    df_data = DataFrame(row for row in data if _resource_has_changed(row, resource_name, db_engine, id_column))
+    if df_data.empty:
+        return df_data
     table_exist = _table_exist(resource_name, db_engine)
     current_date_with_format = _get_current_date_with_format()
 

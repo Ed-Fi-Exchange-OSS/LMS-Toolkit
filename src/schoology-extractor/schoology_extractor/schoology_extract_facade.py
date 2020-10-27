@@ -94,7 +94,7 @@ class SchoologyExtractFacade:
             roles_list,
             sync_column_types.ROLE_COLUMN_TYPES_MAPPING)
 
-        return usersMap.map_to_udm(users_df, roles_df)
+        return usersMap.map_to_udm(users_df, roles_df) if not users_df.empty else pd.DataFrame()
 
     def get_sections(self) -> pd.DataFrame:
         """
