@@ -126,8 +126,11 @@ def _get_last_modified_date(
             f"SELECT LastModifiedDate from {resource_name} "
             f"WHERE {unique_id_column} == {id}"
         )
-        last_modified = result.first()
-        return last_modified[0]
+        if result is not None:
+            modified_date = result.first()
+            return modified_date[0] if modified_date is not None else _get_current_date_with_format()
+
+    return _get_current_date_with_format()
 
 
 def sync_resource(
