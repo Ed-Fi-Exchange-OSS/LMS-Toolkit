@@ -143,10 +143,15 @@ def sync_resource(
     df_data  : DataFrame
         A populated `DataFrame` with the elements from the original list.
     """
-    df_data = DataFrame(row for row in data if _resource_has_changed(row, resource_name, db_engine, id_column))
+    table_exist = _table_exist(resource_name, db_engine)
+
+    if table_exist:
+        df_data = DataFrame(row for row in data if _resource_has_changed(row, resource_name, db_engine, id_column))
+    else:
+        df_data = DataFrame(data)
+
     if df_data.empty:
         return df_data
-    table_exist = _table_exist(resource_name, db_engine)
     current_date_with_format = _get_current_date_with_format()
 
     if table_exist:
