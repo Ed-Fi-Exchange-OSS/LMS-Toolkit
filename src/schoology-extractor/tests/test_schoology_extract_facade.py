@@ -398,8 +398,10 @@ def describe_when_getting_section_associations():
         get_sections_mock = request_client.get_enrollments
         get_sections_mock.return_value = [{"id": 1}, {"id": 2}]
 
+        db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
+
         # Arrange
-        service = SchoologyExtractFacade(logger, request_client, page_size)
+        service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
         # Act
         result = service.get_section_associations(section_id)
