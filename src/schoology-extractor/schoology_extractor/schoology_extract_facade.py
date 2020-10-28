@@ -122,9 +122,11 @@ class SchoologyExtractFacade:
         # the paging. As BB said in a pr comment, perhaps it should be handled
         # in a decorator. This works but we should consider refactoring to a
         # cleaner approach.
-        sections = pd.DataFrame(
-            self._client.get_section_by_course_ids([c["id"] for c in courses_list])
-        )
+        sections = sync.sync_resource(
+            RESOURCE_NAMES.SECTION,
+            self._db_engine,
+            self._client.get_section_by_course_ids([c["id"] for c in courses_list]),
+            sync_column_types.SECTION_COLUMN_TYPES_MAPPING)
 
         return sectionsMap.map_to_udm(sections)
 

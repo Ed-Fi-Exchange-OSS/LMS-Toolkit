@@ -46,10 +46,21 @@ def _resource_has_changed(
         if result is None:
             return True
         for row in result:
-            for column, value in row.items():
-                if column != "CreateDate" and column != "LastModifiedDate":
-                    if resource[column] != value:
-                        return True
+            for column, db_value in row.items():
+                if column == "CreateDate" or column == "LastModifiedDate":
+                    continue
+
+                api_value = resource[column]
+
+                if isinstance(api_value, dict) or isinstance(api_value, list):
+                    api_value = str(api_value).replace("'", '"')
+                    db_value = str(db_value).replace("'", '"')
+
+                if db_value != api_value:
+                    print(f"{db_value} - {api_value} different: {str(db_value) != str(api_value)} db type:{type(db_value)} api value type:{type(api_value)}")
+
+                if str(db_value) != str(api_value):
+                    return True
 
     return False
 
@@ -60,8 +71,9 @@ def _write_resource_to_db(
     data: DataFrame,
     column_mapping: Optional[dict] = None
 ):
+    column_mapping_parameter = column_mapping if column_mapping is not None else dict()
     data.to_sql(
-        resource_name, db_engine, if_exists="append", index=False, chunksize=500, dtype=column_mapping
+        resource_name, db_engine, if_exists="append", index=False, chunksize=500, dtype=column_mapping_parameter
     )
 
 
