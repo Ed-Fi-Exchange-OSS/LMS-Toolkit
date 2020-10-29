@@ -9,6 +9,13 @@ import pytest
 from schoology_extractor.mapping.attendance import map_to_udm
 
 
+def describe_when_mapping_empty_list():
+    def it_should_return_empty_DataFrame():
+        result = map_to_udm(list(), pd.DataFrame())
+
+        assert result.empty
+
+
 def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
     @pytest.fixture
     def result() -> pd.DataFrame:
@@ -18,33 +25,35 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "status": [
                     {
                         "status_code": 1,
-                        "attendance": [
-                            {
-                                "enrollment_id": 12345,
-                                # This year is deliberately different from the one above, only for testing purposes
-                                "date": "2021-08-28",
-                                "status": 1,
-                                "comment": "",
-                            },
-                            {
-                                "enrollment_id": 12346,
-                                "date": "2022-08-28",
-                                "status": 2,
-                                "comment": "",
-                            },
-                            {
-                                "enrollment_id": 12347,
-                                "date": "2023-08-28",
-                                "status": 3,
-                                "comment": "",
-                            },
-                            {
-                                "enrollment_id": 12348,
-                                "date": "2024-08-28",
-                                "status": 4,
-                                "comment": "",
-                            },
-                        ],
+                        "attendances": {
+                            "attendance": [
+                                {
+                                    "enrollment_id": 12345,
+                                    # This year is deliberately different from the one above, only for testing purposes
+                                    "date": "2021-08-28",
+                                    "status": 1,
+                                    "comment": "",
+                                },
+                                {
+                                    "enrollment_id": 12346,
+                                    "date": "2022-08-28",
+                                    "status": 2,
+                                    "comment": "",
+                                },
+                                {
+                                    "enrollment_id": 12347,
+                                    "date": "2023-08-28",
+                                    "status": 3,
+                                    "comment": "",
+                                },
+                                {
+                                    "enrollment_id": 12348,
+                                    "date": "2024-08-28",
+                                    "status": 4,
+                                    "comment": "",
+                                },
+                            ]
+                        }
                     }
                 ]
             },
@@ -53,23 +62,51 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
         section_associations = [
             {
                 "SourceSystemIdentifier": 12345,
-                "LMSUserSourceSystemIdentifier": 5678,
+                "LMSUserSourceSystemIdentifier": 5678, # UserSourceSystemIdentifier
                 "LMSSectionSourceSystemIdentifier": 555,
+                "EnrollmentStatus": "active",
+                "SourceSystem": "Schoology",
+                "EntityStatus": "active",
+                "StartDate": None,
+                "EndDate": None,
+                "CreateDate": None,
+                "LastModifiedDate": None
             },
             {
                 "SourceSystemIdentifier": 12346,
                 "LMSUserSourceSystemIdentifier": 5677,
                 "LMSSectionSourceSystemIdentifier": 555,
+                "EnrollmentStatus": "active",
+                "SourceSystem": "Schoology",
+                "EntityStatus": "active",
+                "StartDate": None,
+                "EndDate": None,
+                "CreateDate": None,
+                "LastModifiedDate": None
             },
             {
                 "SourceSystemIdentifier": 12347,
                 "LMSUserSourceSystemIdentifier": 5676,
                 "LMSSectionSourceSystemIdentifier": 555,
+                "EnrollmentStatus": "active",
+                "SourceSystem": "Schoology",
+                "EntityStatus": "active",
+                "StartDate": None,
+                "EndDate": None,
+                "CreateDate": None,
+                "LastModifiedDate": None
             },
             {
                 "SourceSystemIdentifier": 12348,
                 "LMSUserSourceSystemIdentifier": 5675,
                 "LMSSectionSourceSystemIdentifier": 555,
+                "EnrollmentStatus": "active",
+                "SourceSystem": "Schoology",
+                "EntityStatus": "active",
+                "StartDate": None,
+                "EndDate": None,
+                "CreateDate": None,
+                "LastModifiedDate": None
             },
         ]
 

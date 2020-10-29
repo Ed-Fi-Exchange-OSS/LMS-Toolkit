@@ -16,7 +16,7 @@ def _flatten_into_dataframe(attendance: list) -> pd.DataFrame:
             continue
 
         for item in date_node["statuses"]["status"]:
-            if "attendance" not in item:
+            if "attendances" not in item or "attendance" not in item["attendances"]:
                 continue
 
             reshape = pd.DataFrame(
@@ -26,13 +26,13 @@ def _flatten_into_dataframe(attendance: list) -> pd.DataFrame:
                         "EventDate": date_node["date"],
                         "AttendanceStatus": a["status"],
                     }
-                    for a in item["attendance"]
+                    for a in item["attendances"]["attendance"]
                 ]
             )
 
             df = df.append(reshape)
 
-    return df
+    return df.convert_dtypes()
 
 
 def __get_status(status_code: int) -> str:
@@ -40,9 +40,7 @@ def __get_status(status_code: int) -> str:
     return switcher.get(status_code, f"Unknown status: {status_code}")
 
 
-def map_to_udm(
-    attendance: list, section_associations: pd.DataFrame
-) -> pd.DataFrame:
+def map_to_udm(attendance: list, section_associations: pd.DataFrame) -> pd.DataFrame:
     """
     Maps a DataFrame containing Schoology attendance events into the Ed-Fi LMS
     Unified Data Model (UDM) format.
@@ -72,6 +70,9 @@ def map_to_udm(
         CreateDate: datetime at which the record was first retrieved
         LastModifieDate: datetime when the record was modified, or when first retrieved
     """
+    if len(attendance) == 0:
+        return pd.DataFrame()
+
     df = _flatten_into_dataframe(attendance)
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
@@ -82,9 +83,37 @@ def map_to_udm(
 
     df["AttendanceStatus"] = df["AttendanceStatus"].apply(__get_status)
 
-    df = df.merge(section_associations, how="inner", left_on="enrollment_id", right_on="SourceSystemIdentifier", suffixes=("", "_r"))
+    sa = section_associations[
+        [
+            "SourceSystemIdentifier",
+            "LMSUserSourceSystemIdentifier",
+            "LMSSectionSourceSystemIdentifier",
+        ]
+    ].copy()
+    # This data type conversion was required because Schoology is returning
+    # enrollment Id as an integer in the Attendance endpoint, but as a string
+    # with the Enrollment endpoint.
+    sa["SourceSystemIdentifier"] = sa["SourceSystemIdentifier"].apply(int)
 
-    df.drop(columns=["enrollment_id", "SourceSystemIdentifier_r"], inplace=True)
+    df = df.merge(
+        sa,
+        how="inner",
+        left_on="enrollment_id",
+        right_on="SourceSystemIdentifier",
+        suffixes=("", "_r"),
+    )
+
+    df = df[
+        [
+            "SourceSystem",
+            "SourceSystemIdentifier",
+            "EntityStatus",
+            "AttendanceStatus",
+            "EventDate",
+            "LMSUserSourceSystemIdentifier",
+            "LMSSectionSourceSystemIdentifier",
+        ]
+    ]
 
     df["CreateDate"] = None
     df["LastModifiedDate"] = None
