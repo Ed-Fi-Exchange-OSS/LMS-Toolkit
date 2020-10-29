@@ -2,10 +2,11 @@
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
+import json
 from datetime import datetime
 import os
 import logging
-from typing import Optional, Union
+from typing import Union
 
 from pandas import DataFrame
 import sqlalchemy
@@ -40,27 +41,31 @@ def _resource_has_changed(
     db_engine:  sqlalchemy.engine.base.Engine,
     id_column: str = "id"
 ) -> bool:
-    query = f"SELECT * FROM {resource_name} where {id_column} = {resource[id_column]} limit 1;"
+    query = f"SELECT * FROM {resource_name} where SourceId = {resource[id_column]} limit 1;"
+    db_item = {}
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
         if result is None:
             return True
         for row in result:
             for column, db_value in row.items():
-                if column == "CreateDate" or column == "LastModifiedDate":
-                    continue
+                db_item = {**db_item, column: db_value}
+    json_response = r"%s" % db_item["JsonResponse"]
+    db_parsed_item = json.loads(json_response)
 
-                api_value = resource[column]
+    for key in db_parsed_item:
+        api_value = resource[key]
+        db_value = db_parsed_item[key]
 
-                if isinstance(api_value, dict) or isinstance(api_value, list):
-                    api_value = str(api_value).replace("'", '"')
-                    db_value = str(db_value).replace("'", '"')
+        if isinstance(api_value, dict) or isinstance(api_value, list):
+            api_value = str(api_value).replace("'", '"')
+            db_value = str(db_value).replace("'", '"')
 
-                if db_value != api_value:
-                    print(f"{db_value} - {api_value} different: {str(db_value) != str(api_value)} db type:{type(db_value)} api value type:{type(api_value)}")
+        if db_value != api_value:
+            print(f"{db_value} - {api_value} different: {str(db_value) != str(api_value)} db type:{type(db_value)} api value type:{type(api_value)}")
 
-                if str(db_value) != str(api_value):
-                    return True
+        if str(db_value) != str(api_value):
+            return True
 
     return False
 
@@ -68,13 +73,9 @@ def _resource_has_changed(
 def _write_resource_to_db(
     resource_name: str,
     db_engine: sqlalchemy.engine.base.Engine,
-    data: DataFrame,
-    column_mapping: Optional[dict] = None
+    data: DataFrame
 ):
-    column_mapping_parameter = column_mapping if column_mapping is not None else dict()
-    data.to_sql(
-        resource_name, db_engine, if_exists="append", index=False, chunksize=500, dtype=column_mapping_parameter
-    )
+    data.to_sql(resource_name, db_engine, if_exists="append", index=False, chunksize=500)
 
 
 def _table_exist(
@@ -97,28 +98,26 @@ def _table_exist(
 
 def _remove_duplicates(
     resource_name: str,
-    db_engine: sqlalchemy.engine.base.Engine,
-    unique_id_column: str
+    db_engine: sqlalchemy.engine.base.Engine
 ):
     with db_engine.connect() as con:
         con.execute(
             f"DELETE from {resource_name} "
             "WHERE rowid not in (select max(rowid) "
             f"FROM {resource_name} "
-            f"GROUP BY {unique_id_column})"
+            f"GROUP BY SourceId)"
         )
 
 
 def _get_created_date(
     resource_name: str,
     db_engine: sqlalchemy.engine.base.Engine,
-    unique_id_column: str,
     id: Union[str, int]
 ):
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(
             f"SELECT CreateDate from {resource_name} "
-            f"WHERE {unique_id_column} == {id}"
+            f"WHERE SourceId == {id}"
         )
         if result is not None:
             create_date = result.first()
@@ -130,13 +129,12 @@ def _get_created_date(
 def _get_last_modified_date(
     resource_name: str,
     db_engine: sqlalchemy.engine.base.Engine,
-    unique_id_column: str,
     id: Union[str, int]
 ) -> str:
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(
             f"SELECT LastModifiedDate from {resource_name} "
-            f"WHERE {unique_id_column} == {id}"
+            f"WHERE SourceId == {id}"
         )
         if result is not None:
             modified_date = result.first()
@@ -149,7 +147,6 @@ def sync_resource(
     resource_name: str,
     db_engine: sqlalchemy.engine.base.Engine,
     data: list,
-    column_mapping: Optional[dict] = None,
     id_column: str = "id"
 ) -> DataFrame:
     """
@@ -173,6 +170,8 @@ def sync_resource(
     df_data  : DataFrame
         A populated `DataFrame` with the elements from the original list.
     """
+
+    data_to_write = []
     table_exist = _table_exist(resource_name, db_engine)
     current_date_with_format = _get_current_date_with_format()
 
@@ -181,11 +180,20 @@ def sync_resource(
 
     for row in data:
         hasChanged = _resource_has_changed(row, resource_name, db_engine, id_column) if table_exist else True
-        row["CreateDate"] = _get_created_date(resource_name, db_engine, id_column, row[id_column]) if table_exist else current_date_with_format
-        row["LastModifiedDate"] = current_date_with_format if hasChanged else _get_last_modified_date(resource_name, db_engine, id_column, row[id_column])
+        create_date = _get_created_date(resource_name, db_engine, row[id_column]) if table_exist else current_date_with_format
+        last_modified_date = current_date_with_format if hasChanged else _get_last_modified_date(resource_name, db_engine, row[id_column])
+        record = dict(
+            CreateDate=create_date,
+            LastModifiedDate=last_modified_date,
+            SourceId=row[id_column],
+            JsonResponse=json.dumps(row)
+        )
+        data_to_write.append(record)
+        row["CreateDate"] = create_date
+        row["LastModifiedDate"] = last_modified_date
 
-    df_data = DataFrame(data)
-    _write_resource_to_db(resource_name, db_engine, df_data, column_mapping)
-    _remove_duplicates(resource_name, db_engine, id_column)
+    df_data = DataFrame(data_to_write)
+    _write_resource_to_db(resource_name, db_engine, df_data)
+    _remove_duplicates(resource_name, db_engine)
 
-    return df_data
+    return DataFrame(data)
