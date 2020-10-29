@@ -23,6 +23,9 @@ def df_to_csv(df: pd.DataFrame, output_path: str):
     assert isinstance(output_path, str), "Argument `output_path` should be a string"
     assert len(output_path.strip()) > 0, "Argument `output_path` should not be whitespaces"
 
+    if df.empty:
+        return
+
     df.to_csv(output_path, index=False)
     logging.info("The file has been generated => %s" % output_path)
 
