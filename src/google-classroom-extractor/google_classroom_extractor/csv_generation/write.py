@@ -14,6 +14,7 @@ SECTIONS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/sections/"
 SECTION_ASSOCIATIONS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/section-associations/"
 ASSIGNMENT_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/assignments/"
 SUBMISSION_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id1}/assignment={id2}/submissions/"
+USER_ACTIVITY_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/user-activities/"
 
 
 def write_csv(df_to_write: DataFrame, output_date: datetime, directory: str):
