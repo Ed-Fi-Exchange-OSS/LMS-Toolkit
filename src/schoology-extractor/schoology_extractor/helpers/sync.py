@@ -42,7 +42,7 @@ def _resource_has_changed(
     id_column: str = "id"
 ) -> bool:
     query = f"SELECT * FROM {resource_name} where SourceId = {resource[id_column]} limit 1;"
-    db_item = {}
+    db_item: dict = {}
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
         if result is None:
