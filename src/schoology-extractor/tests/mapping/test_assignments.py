@@ -9,6 +9,12 @@ import pytest
 from schoology_extractor.mapping.assignments import map_to_udm
 
 
+def describe_when_mapping_empty_DataFrame():
+    def it_should_return_empty_DataFrame():
+        df = map_to_udm(pd.DataFrame(), 1234)
+        assert (df == pd.DataFrame()).all().all()
+
+
 def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
     @pytest.fixture
     def result() -> pd.DataFrame:

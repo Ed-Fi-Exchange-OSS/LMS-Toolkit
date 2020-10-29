@@ -46,6 +46,9 @@ def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         LastModifieDate: datetime when the record was modified, or when first retrieved
     """
 
+    if assignments_df.empty:
+        return assignments_df
+
     df = assignments_df[
         [
             "id",
