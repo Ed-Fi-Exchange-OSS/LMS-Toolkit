@@ -11,6 +11,7 @@ SECTION = "section"
 ASSIGNMENTS = "assignments"
 SECTIONS = "sections"
 SECTION_ASSOCIATIONS = "section-associations"
+ATTENDANCE = "attendance"
 
 
 def _get_file_name() -> str:
@@ -54,6 +55,14 @@ def get_section_file_path(output_directory: str) -> str:
 def get_section_association_file_path(output_directory: str, section_id: int) -> str:
     base_dir = _get_section_directory(output_directory, section_id)
     base_dir = os.path.join(base_dir, SECTION_ASSOCIATIONS)
+    _create_directory_if_it_does_not_exist(base_dir)
+
+    return os.path.join(base_dir, _get_file_name())
+
+
+def get_attendance_events_file_path(output_directory: str, section_id: int) -> str:
+    base_dir = _get_section_directory(output_directory, section_id)
+    base_dir = os.path.join(base_dir, ATTENDANCE)
     _create_directory_if_it_does_not_exist(base_dir)
 
     return os.path.join(base_dir, _get_file_name())
