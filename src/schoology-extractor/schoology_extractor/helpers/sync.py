@@ -61,9 +61,6 @@ def _resource_has_changed(
             api_value = str(api_value).replace("'", '"')
             db_value = str(db_value).replace("'", '"')
 
-        if db_value != api_value:
-            print(f"{db_value} - {api_value} different: {str(db_value) != str(api_value)} db type:{type(db_value)} api value type:{type(api_value)}")
-
         if str(db_value) != str(api_value):
             return True
 
