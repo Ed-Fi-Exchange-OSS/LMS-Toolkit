@@ -19,6 +19,7 @@ from schoology_extractor.mapping import users as usersMap
 from schoology_extractor.mapping import sections as sectionsMap
 from schoology_extractor.mapping import section_associations as sectionAssocMap
 from schoology_extractor.mapping import assignments as assignmentsMap
+from schoology_extractor.mapping import attendance as attendanceMap
 from schoology_extractor.helpers import sync
 
 
@@ -429,3 +430,62 @@ def describe_when_getting_section_associations():
 
         df = mapper.call_args[0][0]
         assert df["id"].iloc[1] == 2
+
+
+def describe_when_getting_attendance_events():
+    @pytest.fixture
+    def system() -> Tuple[pd.DataFrame, Mock]:
+        logger = Mock(spec=Logger)
+        request_client = Mock(spec=RequestClient)
+        page_size = 1
+
+        # Also want to mock the UDM mapper function, since it is well-tested
+        # elsewhere
+        attendanceMap.map_to_udm = Mock()
+        attendanceMap.map_to_udm.return_value = pd.DataFrame()
+
+        section_id = 1234
+        get_attendance_mock = request_client.get_attendance
+        get_attendance_mock.return_value = [{"enrollment_id": 1}, {"enrollment_id": 2}]
+
+        db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
+
+        # Actual section associations are irrelevant for these tests - just need
+        # to ensure that the object is passed around correctly.
+        section_associations = pd.DataFrame({"id": 123})
+
+        # Arrange
+        service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+
+        # Act
+        result = service.get_attendance_events(section_id, section_associations)
+
+        return result, attendanceMap.map_to_udm
+
+    def it_should_return_a_data_frame(system):
+        result, _ = system
+
+        assert isinstance(result, pd.DataFrame)
+
+    def it_should_map_to_the_udm(system):
+        _, mapper = system
+
+        mapper.assert_called_once()
+
+    def it_should_map_first_event(system):
+        _, mapper = system
+
+        df = mapper.call_args[0][0]
+        assert df["enrollment_id"].iloc[0] == 1
+
+    def it_should_map_second_event(system):
+        _, mapper = system
+
+        df = mapper.call_args[0][0]
+        assert df["enrollment_id"].iloc[1] == 2
+
+    def it_should_pass_the_section_associations_into_the_mapper(system):
+        _, mapper = system
+
+        df = mapper.call_args[0][1]
+        assert df["id"].iloc[0] == 123
