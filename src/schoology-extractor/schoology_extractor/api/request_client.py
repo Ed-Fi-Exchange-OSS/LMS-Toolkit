@@ -398,7 +398,7 @@ class RequestClient:
         self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
     ) -> list:
         """
-        Retrieves enrollment data for a section
+        Retrieves enrollment data for a section, with support for paging.
 
         Parameters
         ----------

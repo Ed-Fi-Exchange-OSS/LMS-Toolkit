@@ -53,7 +53,8 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     """
 
     # Schoology section associations contain the teacher with {admin: 1}. Remove them.
-    df = enrollments_df[enrollments_df["admin"] == 0][["id", "uid", "status"]].copy()
+    filter = enrollments_df["admin"] == 0
+    df = enrollments_df[filter][["id", "uid", "status"]].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
@@ -72,7 +73,7 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         lambda x: _map_status_code_to_string(int(x))
     )
 
-    # TODO: set these via the sync process
+    # TODO: set these via the sync process, FIZZ-126
     df["StartDate"] = None
     df["EndDate"] = None
     df["CreateDate"] = None
