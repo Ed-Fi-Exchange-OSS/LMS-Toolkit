@@ -93,6 +93,10 @@ class RequestClient:
             "Content-Type": "application/json",
         }
 
+    def _build_query_params_for_first_page(self, page_size: int):
+        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
+        return f"start=0&limit={page_size}"
+
     @retry(
         retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
         max_calls_total=REQUEST_RETRY_COUNT,
@@ -207,11 +211,7 @@ class RequestClient:
             self.base_url + url,
         )
         while True:
-            current_page_assignments = assignments_per_section.current_page_items
-
-            for assignment in current_page_assignments:
-                assignment["section_id"] = section_id
-            assignments = assignments + current_page_assignments
+            assignments = assignments + assignments_per_section.current_page_items
 
             if assignments_per_section.get_next_page() is None:
                 break
@@ -259,17 +259,19 @@ class RequestClient:
         return sections
 
     def get_submissions_by_section_id_and_grade_item_id(
-        self, section_id: str, grade_item_id: str, page_size: int = DEFAULT_PAGE_SIZE
+        self, section_id: int, grade_item_id: int, page_size: int = DEFAULT_PAGE_SIZE
     ) -> PaginatedResult:
         """
+        Retrieves submissions for assignments or discussions in a section.
+
         Parameters
         ----------
-        section_id : str
-            The id of the section.
-        grade_item_id : str
-            Grade item id.
+        section_id : int
+            The id of the section
+        grade_item_id : int
+            Grade Item Id, which can either be an Assignment ID or a Discussion ID
         page_size : int
-            Number of items per page.
+            Number of items per page
 
         Returns
         -------
@@ -277,15 +279,6 @@ class RequestClient:
             A parsed response from the server
 
         """
-        assert isinstance(
-            section_id, str
-        ), "Argument `section_id` should be of type `str`."
-        assert isinstance(
-            page_size, int
-        ), "Argument `page_size` should be of type `int`."
-        assert isinstance(
-            grade_item_id, str
-        ), "Argument `grade_item_id` should be of type `str`."
 
         query_params = self._build_query_params_for_first_page(page_size)
         url = f"sections/{section_id}/submissions/{grade_item_id}?{query_params}"
@@ -401,6 +394,39 @@ class RequestClient:
             RESOURCE_NAMES.ROLE,
             self.base_url + url)
 
-    def _build_query_params_for_first_page(self, page_size: int):
-        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
-        return f"start=0&limit={page_size}"
+    def get_enrollments(
+        self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
+    ) -> list:
+        """
+        Retrieves enrollment data for a section, with support for paging.
+
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+
+        Returns
+        -------
+        list
+            A list of all parsed results from the server, for all pages
+        """
+
+        enrollments: List[object] = []
+
+        params = self._build_query_params_for_first_page(page_size)
+        url = f"sections/{section_id}/enrollments?{params}"
+
+        enrollments_page = PaginatedResult(
+            self,
+            page_size,
+            self.get(url),
+            "enrollment",
+            self.base_url + url,
+        )
+        while True:
+            enrollments = enrollments + enrollments_page.current_page_items
+
+            if enrollments_page.get_next_page() is None:
+                break
+
+        return enrollments

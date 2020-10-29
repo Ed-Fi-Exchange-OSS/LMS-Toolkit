@@ -13,6 +13,7 @@ from schoology_extractor.lms_filesystem import (
     get_assignment_file_path,
     get_user_file_path,
     get_section_file_path,
+    get_section_association_file_path
 )
 
 
@@ -88,3 +89,23 @@ def describe_when_getting_the_section_file_name():
 
     def it_should_create_the_sections_directory(result, fs):
         assert os.path.exists("./output/sections")
+
+
+def describe_when_getting_the_section_associations_file_name():
+    @pytest.fixture
+    @freeze_time(DATE_TIME_INPUT_STRING)
+    def result(fs):
+        _setup_filesystem(fs)
+
+        return get_section_association_file_path(OUTPUT_DIRECTORY, SECTION_ID)
+
+    def it_should_use_the_lms_filesystem_path_for_the_section(result, fs):
+        assert (
+            re.match(r"./output/section=123/section-associations/[^/]+\.csv", result) is not None
+        ), f"actual: {result}"
+
+    def it_should_use_timestamp_for_file_name(result):
+        assert result.endswith(FILE_NAME)
+
+    def it_should_create_the_section_directory(result, fs):
+        assert os.path.exists("./output/section=123/section-associations")

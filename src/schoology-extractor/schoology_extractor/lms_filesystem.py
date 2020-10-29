@@ -10,6 +10,7 @@ USERS = "users"
 SECTION = "section"
 ASSIGNMENTS = "assignments"
 SECTIONS = "sections"
+SECTION_ASSOCIATIONS = "section-associations"
 
 
 def _get_file_name() -> str:
@@ -21,9 +22,15 @@ def _create_directory_if_it_does_not_exist(dir: str):
         os.mkdir(dir)
 
 
-def get_assignment_file_path(output_directory: str, section_id: int) -> str:
+def _get_section_directory(output_directory: str, section_id: int) -> str:
     base_dir = os.path.join(output_directory, f"{SECTION}={section_id}")
     _create_directory_if_it_does_not_exist(base_dir)
+
+    return base_dir
+
+
+def get_assignment_file_path(output_directory: str, section_id: int) -> str:
+    base_dir = _get_section_directory(output_directory, section_id)
     base_dir = os.path.join(base_dir, ASSIGNMENTS)
     _create_directory_if_it_does_not_exist(base_dir)
 
@@ -39,6 +46,14 @@ def get_user_file_path(output_directory: str) -> str:
 
 def get_section_file_path(output_directory: str) -> str:
     base_dir = os.path.join(output_directory, SECTIONS)
+    _create_directory_if_it_does_not_exist(base_dir)
+
+    return os.path.join(base_dir, _get_file_name())
+
+
+def get_section_association_file_path(output_directory: str, section_id: int) -> str:
+    base_dir = _get_section_directory(output_directory, section_id)
+    base_dir = os.path.join(base_dir, SECTION_ASSOCIATIONS)
     _create_directory_if_it_does_not_exist(base_dir)
 
     return os.path.join(base_dir, _get_file_name())

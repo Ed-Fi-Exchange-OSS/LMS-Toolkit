@@ -143,3 +143,6 @@ mypy.xml
 
 # Cython debug symbols
 cython_debug/
+
+# Embedded databases
+*.sqlite

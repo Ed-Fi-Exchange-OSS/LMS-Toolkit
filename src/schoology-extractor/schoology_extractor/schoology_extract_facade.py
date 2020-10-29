@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 from logging import Logger
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 import pandas as pd
 import sqlalchemy
@@ -17,6 +17,7 @@ from .api.request_client import RequestClient
 from .mapping import users as usersMap
 from .mapping import assignments as assignmentsMap
 from .mapping import sections as sectionsMap
+from .mapping import section_associations as sectionAssocMap
 
 
 @dataclass
@@ -132,33 +133,41 @@ class SchoologyExtractFacade:
         Gets all Schoology assignments for the given sections, with separate
         DataFrame output for each section.
 
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+
         Returns
         -------
         pd.DataFrame
             DataFrame with all assignment data, in the unified data model format.
         """
-        return pd.DataFrame(self._client.get_assignments(section_id, self._page_size))
 
-    def map_assignments_to_udm(
-        self, assignments: pd.DataFrame, section_id: Union[int, str]
-    ):
-        assignments["section_id"] = section_id
-        return assignmentsMap.map_to_udm(assignments)
+        assignments = pd.DataFrame(self._client.get_assignments(section_id, self._page_size))
+
+        return assignmentsMap.map_to_udm(assignments, section_id)
 
     def get_submissions(self, assignments: pd.DataFrame) -> list:
         """
-        Gets all Schoology users.
+        Gets all Schoology submissions for the given assignments.
+
+        Parameters
+        ----------
+        assignments: pd.DataFrame
+            A DataFrame containing assignment data
 
         Returns
         -------
         list
+            List of submission dictionaries
         """
 
         submissions: List[Dict[str, Any]] = []
 
         for _, assignment in assignments.iterrows():
-            section_id = assignment["section_id"]
-            grade_item_id = str(assignment["grade_item_id"])
+            section_id = assignment["LMSSectionSourceSystemIdentifier"]
+            grade_item_id = assignment["SourceSystemIdentifier"]
 
             submissions_response = (
                 self._client.get_submissions_by_section_id_and_grade_item_id(
@@ -174,3 +183,22 @@ class SchoologyExtractFacade:
                     break
 
         return submissions
+
+    def get_section_associations(self, section_id: int) -> pd.DataFrame:
+        """
+        Gets all Schoology enrollments (section associations) for the given section.
+
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame with all assignment data, in the unified data model format.
+        """
+
+        enrollments = self._client.get_enrollments(section_id)
+
+        return sectionAssocMap.map_to_udm(pd.DataFrame(enrollments), section_id)

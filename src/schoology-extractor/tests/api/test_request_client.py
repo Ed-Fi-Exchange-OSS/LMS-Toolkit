@@ -115,11 +115,8 @@ class TestRequestClient:
                 # Arrange
                 text_1 = '{"assignment": [{"id":"b"}], "links":{"next":"'+expected_url_2+'"}}'
                 text_2 = '{"assignment": [{"id":"c"}]}'
-                called = set()
 
                 def callback(request, context):
-                    called.add(request.url)
-
                     if request.url == expected_url_1:
                         return text_1
                     else:
@@ -179,22 +176,6 @@ class TestRequestClient:
             assert len(response) == 2, "expected three results"
 
     class Test_when_get_submissions_by_section_id_and_grade_item_id_method_is_called:
-        def test_given_no_section_id_passed_then_throw_assert_exception(
-            self, default_request_client
-        ):
-            with pytest.raises(AssertionError):
-                default_request_client.get_submissions_by_section_id_and_grade_item_id(
-                    None, "grade_item_id"
-                )
-
-        def test_given_no_grade_item_id_passed_then_throw_assert_exception(
-            self, default_request_client
-        ):
-            with pytest.raises(AssertionError):
-                default_request_client.get_submissions_by_section_id_and_grade_item_id(
-                    "2", None
-                )
-
         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
             self, default_request_client, requests_mock
         ):
@@ -320,3 +301,45 @@ class TestRequestClient:
             assert isinstance(response, PaginatedResult)
             assert len(response.current_page_items) == 1
             assert response.current_page_items[0]["id"] == 100032890
+
+
+def describe_when_getting_enrollments_with_two_pages():
+    @pytest.fixture
+    def result(requests_mock):
+        section_id = 3324
+        page_size = 1
+        expected_url_1 = "https://api.schoology.com/v1/sections/3324/enrollments?start=0&limit=1"
+        expected_url_2 = "https://api.schoology.com/v1/sections/3324/enrollments?start=1&limit=1"
+
+        enrollments_1 = '[{"id": 12345}]'
+        response_1 = '{"enrollment": '+enrollments_1+',"total": "2","links": {"self": "...","next": "'+expected_url_2+'"}}'
+
+        enrollments_2 = '[{"id": 99999}]'
+        response_2 = '{"enrollment": '+enrollments_2+', "total": "2", "links": {"self": "..."}}'
+
+        # Arrange
+
+        def callback(request, context):
+            if request.url == expected_url_1:
+                return response_1
+            else:
+                return response_2
+
+        requests_mock.get(expected_url_1, reason="OK", status_code=200, text=callback)
+        requests_mock.get(expected_url_2, reason="OK", status_code=200, text=callback)
+
+        client = RequestClient(FAKE_KEY, FAKE_SECRET)
+
+        # Act
+        result = client.get_enrollments(section_id, page_size)
+
+        return result
+
+    def it_should_return_two_enrollments(result):
+        assert len(result) == 2
+
+    def it_should_contain_the_first_enrollment(result):
+        assert len([1 for r in result if r["id"] == 12345]) == 1
+
+    def it_should_contain_the_second_enrollment(result):
+        assert len([1 for r in result if r["id"] == 99999]) == 1
