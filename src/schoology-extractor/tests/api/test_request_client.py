@@ -343,3 +343,26 @@ def describe_when_getting_enrollments_with_two_pages():
 
     def it_should_contain_the_second_enrollment(result):
         assert len([1 for r in result if r["id"] == 99999]) == 1
+
+
+def describe_when_getting_attendance():
+    @pytest.fixture
+    def result(requests_mock):
+        section_id = 3324
+        expected_url_1 = "https://api.schoology.com/v1/sections/3324/attendance"
+
+        event_1 = '[{"id": 12345}]'
+        response_1 = '{"date": '+event_1+',"totals": { "total": [{"status":1,"count":1 }]}}'
+
+        # Arrange
+        requests_mock.get(expected_url_1, reason="OK", status_code=200, text=response_1)
+
+        client = RequestClient(FAKE_KEY, FAKE_SECRET)
+
+        # Act
+        result = client.get_attendance(section_id)
+
+        return result
+
+    def it_should_return_one_event(result):
+        assert len(result) == 1
