@@ -452,7 +452,7 @@ def describe_when_getting_attendance_events():
 
         # Actual section associations are irrelevant for these tests - just need
         # to ensure that the object is passed around correctly.
-        section_associations = pd.DataFrame({"id": 123})
+        section_associations = pd.DataFrame([{"id": 123}])
 
         # Arrange
         service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
@@ -472,17 +472,11 @@ def describe_when_getting_attendance_events():
 
         mapper.assert_called_once()
 
-    def it_should_map_first_event(system):
+    def it_should_pass_the_api_response_into_the_mapper(system):
         _, mapper = system
 
         df = mapper.call_args[0][0]
-        assert df["enrollment_id"].iloc[0] == 1
-
-    def it_should_map_second_event(system):
-        _, mapper = system
-
-        df = mapper.call_args[0][0]
-        assert df["enrollment_id"].iloc[1] == 2
+        assert df[0]["enrollment_id"] == 1
 
     def it_should_pass_the_section_associations_into_the_mapper(system):
         _, mapper = system
