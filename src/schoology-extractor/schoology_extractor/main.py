@@ -5,8 +5,9 @@
 
 import logging
 import os
-from typing import Callable, Dict, Optional
 import sys
+import traceback
+from typing import Callable, Dict, Optional
 
 from dotenv import load_dotenv
 import pandas as pd
@@ -63,6 +64,7 @@ def _create_file_from_dataframe(action: Callable, file_name) -> bool:
             f"An exception of type %s occurred while generating {file_name}: %s",
             type(ex), ex,
         )
+        logger.debug(traceback.format_exc())
         return False
 
 
@@ -80,6 +82,7 @@ def _create_file_from_list(action: Callable, file_name: str) -> bool:
             f"An exception occurred while generating {file_name} : %s",
             ex,
         )
+        logger.debug(traceback.format_exc())
         return False
 
 
@@ -116,9 +119,22 @@ def _get_submissions() -> list:
 
 def _get_section_associations(section_id: int) -> Callable:
     def __get_section_associations() -> pd.DataFrame:
-        return service.get_section_associations(section_id)
+        section_associations = service.get_section_associations(section_id)
+        result_bucket["section_associations"] = section_associations
+
+        return section_associations
 
     return __get_section_associations
+
+
+def _get_attendance_events(section_id: int) -> Callable:
+    def __get_attendance_events() -> pd.DataFrame:
+        section_associations = result_bucket["section_associations"]
+        attendance_events = service.get_attendance_events(section_id, section_associations)
+
+        return attendance_events
+
+    return __get_attendance_events
 
 
 def main():
@@ -149,6 +165,11 @@ def main():
 
         # TODO: When merging with the work to create attendance events, should skip the attendance
         # if section associations failed.
+
+        file_path = lms.get_attendance_events_file_path(
+            schoology_output_path, section_id
+        )
+        _create_file_from_dataframe(_get_attendance_events(section_id), file_path)
 
 
 if __name__ == "__main__":
