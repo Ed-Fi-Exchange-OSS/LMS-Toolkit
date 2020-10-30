@@ -13,6 +13,9 @@ import sqlalchemy
 from sqlalchemy.engine import ResultProxy
 
 SYNC_DATABASE_LOCATION_SUFFIX = "data"
+COLUMN_MAPPING = {
+    'SourceId': sqlalchemy.types.String
+}
 
 
 def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
@@ -41,15 +44,15 @@ def _resource_has_changed(
     db_engine:  sqlalchemy.engine.base.Engine,
     id_column: str = "id"
 ) -> bool:
-    query = f"SELECT * FROM {resource_name} where SourceId = {resource[id_column]} limit 1;"
-    db_item: dict = {}
+    query = f"SELECT * FROM {resource_name} where SourceId = '{resource[id_column]}' limit 1;"
+    db_item = dict()
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
         if result is None:
             return True
         for row in result:
             for column, db_value in row.items():
-                db_item = {**db_item, column: db_value}
+                db_item[column] = db_value
     json_response = r"%s" % db_item["JsonResponse"]
     db_parsed_item = json.loads(json_response)
 
@@ -72,7 +75,7 @@ def _write_resource_to_db(
     db_engine: sqlalchemy.engine.base.Engine,
     data: DataFrame
 ):
-    data.to_sql(resource_name, db_engine, if_exists="append", index=False, chunksize=500)
+    data.to_sql(resource_name, db_engine, if_exists="append", index=False, chunksize=500, dtype=COLUMN_MAPPING)
 
 
 def _table_exist(
@@ -114,7 +117,7 @@ def _get_created_date(
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(
             f"SELECT CreateDate from {resource_name} "
-            f"WHERE SourceId == {id}"
+            f"WHERE SourceId == '{id}'"
         )
         if result is not None:
             create_date = result.first()
@@ -131,7 +134,7 @@ def _get_last_modified_date(
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(
             f"SELECT LastModifiedDate from {resource_name} "
-            f"WHERE SourceId == {id}"
+            f"WHERE SourceId == '{id}'"
         )
         if result is not None:
             modified_date = result.first()

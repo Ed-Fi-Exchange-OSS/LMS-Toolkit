@@ -104,7 +104,7 @@ class Test_when__get_created_date_is_called:
                 mock_db_engine,
                 3)
 
-            query = "SELECT CreateDate from fake_table_name WHERE SourceId == 3"
+            query = "SELECT CreateDate from fake_table_name WHERE SourceId == '3'"
 
             execute_mock.execute.assert_called_with(query)
 
@@ -146,7 +146,7 @@ class Test_when__get_last_modified_date_is_called:
                 mock_db_engine,
                 3)
 
-            query = "SELECT LastModifiedDate from fake_table_name WHERE SourceId == 3"
+            query = "SELECT LastModifiedDate from fake_table_name WHERE SourceId == '3'"
 
             execute_mock.execute.assert_called_with(query)
 
