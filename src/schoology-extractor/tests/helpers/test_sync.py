@@ -218,6 +218,36 @@ class Test_given__resource_has_changed_is_called:
             assert result is False
 
 
+def describe_when_checking_if_resource_has_changed():
+    def describe_given_new_resource():
+        @pytest.fixture
+        def db_engine() -> Mock:
+            row = Mock()
+            row.items.return_value = []
+            execute_mock = Mock()
+            execute_mock.execute.return_value = [row]
+
+            mock_connection = Mock()
+            mock_connection.__enter__ = Mock(return_value=execute_mock)
+            mock_connection.__exit__ = Mock()
+
+            mock_db_engine = Mock()
+            mock_db_engine.connect.return_value = mock_connection
+
+            return mock_db_engine
+
+        def it_should_return_false(db_engine: Mock):
+            result = sync._resource_has_changed(
+                {
+                    'id': 1,
+                    'name': 'fake_name'
+                },
+                'fake_resource_name',
+                db_engine)
+
+            assert not result
+
+
 def mock_sync_internal_functions(sync):
     sync._table_exist = Mock(return_value=True)
     sync._write_resource_to_db = Mock()

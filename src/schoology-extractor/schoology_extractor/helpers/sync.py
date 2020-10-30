@@ -53,6 +53,11 @@ def _resource_has_changed(
         for row in result:
             for column, db_value in row.items():
                 db_item[column] = db_value
+
+    if "JsonResponse" not in db_item:
+        # Implies this is a new record that is not yet in the database.
+        return False
+
     json_response = r"%s" % db_item["JsonResponse"]
     db_parsed_item = json.loads(json_response)
 
