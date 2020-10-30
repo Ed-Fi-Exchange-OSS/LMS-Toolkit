@@ -93,7 +93,7 @@ def map_to_udm(attendance: list, section_associations: pd.DataFrame) -> pd.DataF
     # This data type conversion was required because Schoology is returning
     # enrollment Id as an integer in the Attendance endpoint, but as a string
     # with the Enrollment endpoint.
-    sa = sa.astype({'SourceSystemIdentifier': 'int32'})
+    sa = sa.astype({'SourceSystemIdentifier': 'int64'})
 
     df = df.merge(
         sa,
