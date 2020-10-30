@@ -35,7 +35,7 @@ def _flatten_into_dataframe(attendance: list) -> pd.DataFrame:
     return df.convert_dtypes()
 
 
-def __get_status(status_code: int) -> str:
+def _get_status(status_code: int) -> str:
     switcher = {1: "present", 2: "absent", 3: "late", 4: "excused"}
     return switcher.get(status_code, f"Unknown status: {status_code}")
 
@@ -81,7 +81,7 @@ def map_to_udm(attendance: list, section_associations: pd.DataFrame) -> pd.DataF
         lambda row: f"{row['enrollment_id']}#{row['EventDate']}", axis=1
     )
 
-    df["AttendanceStatus"] = df["AttendanceStatus"].apply(__get_status)
+    df["AttendanceStatus"] = df["AttendanceStatus"].apply(_get_status)
 
     sa = section_associations[
         [
@@ -93,7 +93,7 @@ def map_to_udm(attendance: list, section_associations: pd.DataFrame) -> pd.DataF
     # This data type conversion was required because Schoology is returning
     # enrollment Id as an integer in the Attendance endpoint, but as a string
     # with the Enrollment endpoint.
-    sa["SourceSystemIdentifier"] = sa["SourceSystemIdentifier"].apply(int)
+    sa = sa.astype({'SourceSystemIdentifier': 'int32'})
 
     df = df.merge(
         sa,
