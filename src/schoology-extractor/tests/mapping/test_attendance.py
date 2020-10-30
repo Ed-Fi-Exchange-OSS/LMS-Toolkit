@@ -62,7 +62,7 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
         section_associations = [
             {
                 "SourceSystemIdentifier": 12345,
-                "LMSUserSourceSystemIdentifier": 5678, # UserSourceSystemIdentifier
+                "LMSUserSourceSystemIdentifier": 5678,
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
