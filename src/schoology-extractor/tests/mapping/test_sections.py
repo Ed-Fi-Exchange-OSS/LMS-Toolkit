@@ -15,9 +15,9 @@ class Test_mapping_schoology_sections_to_udm:
     def setup_class(cls):
 
         # Arrange
-        sections_csv = """id,course_title,course_code,course_id,school_id,section_title,section_code,section_school_code,active,description,grading_periods
-2975852079,Algebra I,ALG-1,2942191514,2908525646,Section 2,ALG-1-2,123456,1,This is the section description,[825792]
-2942191527,Algebra I,ALG-1,2942191514,2908525646,Algebra I,ALG-1-1,,0,,[822639]"""
+        sections_csv = """id,course_title,course_code,course_id,school_id,section_title,section_code,section_school_code,active,description,grading_periods,CreateDate,LastModifiedDate
+2975852079,Algebra I,ALG-1,2942191514,2908525646,Section 2,ALG-1-2,123456,1,This is the section description,[825792],2020-10-30 11:40:50,2020-10-30 11:40:50
+2942191527,Algebra I,ALG-1,2942191514,2908525646,Algebra I,ALG-1-1,,0,,[822639],2020-10-30 11:40:50,2020-10-30 11:40:50"""
 
         lines = sections_csv.split("\n")
         sections_df = pd.DataFrame(
@@ -82,8 +82,8 @@ class Test_mapping_schoology_sections_to_udm:
 
     # TODO: FIZZ-125
     def test_then_create_date_is_mapped(self):
-        assert self.result.at[0, "CreateDate"] is None
+        assert self.result.at[0, "CreateDate"] == "2020-10-30 11:40:50"
 
     # TODO: FIZZ-125
     def test_then_last_modified_date_is_mapped(self):
-        assert self.result.at[0, "LastModifiedDate"] is None
+        assert self.result.at[0, "LastModifiedDate"] == "2020-10-30 11:40:50"

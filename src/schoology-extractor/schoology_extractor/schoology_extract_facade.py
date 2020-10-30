@@ -11,7 +11,6 @@ import pandas as pd
 import sqlalchemy
 
 from .helpers import sync
-from .helpers import sync_column_types
 from .helpers.constants import RESOURCE_NAMES
 from .api.request_client import RequestClient
 from .mapping import users as usersMap
@@ -92,8 +91,8 @@ class SchoologyExtractFacade:
         roles_df = sync.sync_resource(
             RESOURCE_NAMES.ROLE,
             self._db_engine,
-            roles_list,
-            sync_column_types.ROLE_COLUMN_TYPES_MAPPING)
+            roles_list
+            )
 
         return usersMap.map_to_udm(users_df, roles_df) if not users_df.empty else pd.DataFrame()
 
@@ -122,9 +121,11 @@ class SchoologyExtractFacade:
         # the paging. As BB said in a pr comment, perhaps it should be handled
         # in a decorator. This works but we should consider refactoring to a
         # cleaner approach.
-        sections = pd.DataFrame(
+        sections = sync.sync_resource(
+            RESOURCE_NAMES.SECTION,
+            self._db_engine,
             self._client.get_section_by_course_ids([c["id"] for c in courses_list])
-        )
+            )
 
         return sectionsMap.map_to_udm(sections)
 

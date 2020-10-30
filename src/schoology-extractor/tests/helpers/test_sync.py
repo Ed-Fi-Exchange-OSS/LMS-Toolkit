@@ -79,10 +79,9 @@ class Test_when__remove_duplicates_is_called:
         def test_then_query_is_built_correctly(self, db_engine_mock_returns_value):
             sync._remove_duplicates(
                 "fake_table_name",
-                db_engine_mock_returns_value,
-                "fake_column_id")
+                db_engine_mock_returns_value)
 
-            query = "DELETE from fake_table_name WHERE rowid not in (select max(rowid) FROM fake_table_name GROUP BY fake_column_id)"
+            query = "DELETE from fake_table_name WHERE rowid not in (select max(rowid) FROM fake_table_name GROUP BY SourceId)"
 
             db_engine_mock_returns_value.connect().__enter__().execute.assert_called_with(query)
 
@@ -103,10 +102,9 @@ class Test_when__get_created_date_is_called:
             sync._get_created_date(
                 "fake_table_name",
                 mock_db_engine,
-                "fake_column_id",
                 3)
 
-            query = "SELECT CreateDate from fake_table_name WHERE fake_column_id == 3"
+            query = "SELECT CreateDate from fake_table_name WHERE SourceId == '3'"
 
             execute_mock.execute.assert_called_with(query)
 
@@ -125,7 +123,6 @@ class Test_when__get_created_date_is_called:
             result = sync._get_created_date(
                 "fake_table_name",
                 mock_db_engine,
-                "fake_column_id",
                 3)
 
             assert str(result) == "2020-10-16 13:00:01"
@@ -147,10 +144,9 @@ class Test_when__get_last_modified_date_is_called:
             sync._get_last_modified_date(
                 "fake_table_name",
                 mock_db_engine,
-                "fake_column_id",
                 3)
 
-            query = "SELECT LastModifiedDate from fake_table_name WHERE fake_column_id == 3"
+            query = "SELECT LastModifiedDate from fake_table_name WHERE SourceId == '3'"
 
             execute_mock.execute.assert_called_with(query)
 
@@ -169,7 +165,6 @@ class Test_when__get_last_modified_date_is_called:
             result = sync._get_last_modified_date(
                 "fake_table_name",
                 mock_db_engine,
-                "fake_column_id",
                 3)
 
             assert str(result) == "2020-10-16 13:00:01"
@@ -177,11 +172,13 @@ class Test_when__get_last_modified_date_is_called:
 
 @pytest.fixture
 def db_engine_mock_returns_fake_resource():
-    # [(key0, value0), (key1, value1)]
     row = Mock()
     row.items.return_value = [
-        ('id', 1),
-        ('name', 'fake_name')
+        ('JsonResponse',
+            r"""{
+                "id": 1,
+                "name": "fake_name"
+            }""")
     ]
     execute_mock = Mock()
     execute_mock.execute.return_value = [row]
@@ -219,6 +216,36 @@ class Test_given__resource_has_changed_is_called:
                 db_engine_mock_returns_fake_resource)
 
             assert result is False
+
+
+def describe_when_checking_if_resource_has_changed():
+    def describe_given_new_resource():
+        @pytest.fixture
+        def db_engine() -> Mock:
+            row = Mock()
+            row.items.return_value = []
+            execute_mock = Mock()
+            execute_mock.execute.return_value = [row]
+
+            mock_connection = Mock()
+            mock_connection.__enter__ = Mock(return_value=execute_mock)
+            mock_connection.__exit__ = Mock()
+
+            mock_db_engine = Mock()
+            mock_db_engine.connect.return_value = mock_connection
+
+            return mock_db_engine
+
+        def it_should_return_false(db_engine: Mock):
+            result = sync._resource_has_changed(
+                {
+                    'id': 1,
+                    'name': 'fake_name'
+                },
+                'fake_resource_name',
+                db_engine)
+
+            assert not result
 
 
 def mock_sync_internal_functions(sync):

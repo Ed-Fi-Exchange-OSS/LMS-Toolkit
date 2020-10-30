@@ -51,32 +51,36 @@ db_engine = get_sync_db_engine()
 service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
 
 
-def _create_file_from_dataframe(action: Callable, file_name):
+def _create_file_from_dataframe(action: Callable, file_name) -> bool:
     logger.info(f"Exporting {file_name}")
     try:
         data: pd.DataFrame = action()
         if data is not None:
             export_data.df_to_csv(data, file_name)
+        return True
     except Exception as ex:
         logger.error(
-            f"An exception occurred while generating {file_name} : %s",
-            ex,
+            f"An exception of type %s occurred while generating {file_name}: %s",
+            type(ex), ex,
         )
+        return False
 
 
 # TODO: this method should disappear when we finish converting all of the output
 # to use the official CSV formats.
-def _create_file_from_list(action: Callable, file_name: str):
+def _create_file_from_list(action: Callable, file_name: str) -> bool:
     logger.info(f"Exporting {file_name}")
     try:
         data = action()
         if data is not None:
             export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
+        return True
     except Exception as ex:
         logger.error(
             f"An exception occurred while generating {file_name} : %s",
             ex,
         )
+        return False
 
 
 def _get_users() -> pd.DataFrame:
@@ -121,21 +125,30 @@ def main():
     _create_file_from_dataframe(
         _get_users, lms.get_user_file_path(schoology_output_path)
     )
-    _create_file_from_dataframe(
+    succeeded = _create_file_from_dataframe(
         _get_sections, lms.get_section_file_path(schoology_output_path)
     )
 
+    # Cannot proceed with section-related files if the sections extract did not
+    # succeed.
+    if not succeeded:
+        sys.exit(-1)
+
     for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
         file_path = lms.get_assignment_file_path(schoology_output_path, section_id)
-        _create_file_from_dataframe(_get_assignments(section_id), file_path)
+        succeeded = _create_file_from_dataframe(_get_assignments(section_id), file_path)
 
-        # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
-        _create_file_from_list(_get_submissions, "submissions.csv")
+        if succeeded:
+            # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
+            _create_file_from_list(_get_submissions, "submissions.csv")
 
         file_path = lms.get_section_association_file_path(
             schoology_output_path, section_id
         )
-        _create_file_from_dataframe(_get_section_associations(section_id), file_path)
+        succeeded = _create_file_from_dataframe(_get_section_associations(section_id), file_path)
+
+        # TODO: When merging with the work to create attendance events, should skip the attendance
+        # if section associations failed.
 
 
 if __name__ == "__main__":
