@@ -133,9 +133,7 @@ def _run_typecheck():
     _run_command([
         "poetry",
         "run",
-        "mypy",
-        "--config-file",
-        ".mypi.ini"
+        "mypy"
     ])
 
 
@@ -144,8 +142,6 @@ def _run_typecheck_xml():
         "poetry",
         "run",
         "mypy",
-        "--config-file",
-        ".mypi.ini",
         "--junit-xml",
         "mypy.xml"
     ])
