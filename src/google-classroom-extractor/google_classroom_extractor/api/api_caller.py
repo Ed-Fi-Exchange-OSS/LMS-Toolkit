@@ -73,10 +73,6 @@ def _call_api_recursive(
     list
         a list of dicts of the API response property requested
     """
-    assert callable(resource_method)
-    assert isinstance(resource_parameters, dict)
-    assert isinstance(response_property, str)
-    assert isinstance(results, list) or results is None
 
     current_results: List[Dict[str, str]] = [] if results is None else results
     response = _execute(resource_method(**resource_parameters))
@@ -123,9 +119,5 @@ def call_api(
     list
         a list of dicts of the API response property requested
     """
-    assert callable(resource_method)
-    assert isinstance(resource_parameters, dict)
-    assert isinstance(response_property, str)
-    assert isinstance(results, list) or results is None
 
     return _call_api_recursive(resource_method, resource_parameters, response_property, results)

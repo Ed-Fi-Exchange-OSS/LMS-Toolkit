@@ -31,9 +31,6 @@ def request_teachers(
             see https://developers.google.com/classroom/reference/rest/v1/courses.teachers
     """
 
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_id, str)
-
     if resource is None:
         return []
 
@@ -73,9 +70,6 @@ def request_latest_teachers_as_df(
         profile.name.fullName: The user's full name formed by concatenating the first and last name values
         profile.emailAddress: Email address of the user
     """
-
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_ids, list)
 
     logging.info("Pulling teacher data")
     teachers: List[Dict[str, str]] = []
@@ -119,10 +113,6 @@ def request_all_teachers_as_df(
         profile.name.fullName: The user's full name formed by concatenating the first and last name values
         profile.emailAddress: Email address of the user
     """
-
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_ids, list)
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
     teachers_df: DataFrame = request_latest_teachers_as_df(resource, course_ids)
 

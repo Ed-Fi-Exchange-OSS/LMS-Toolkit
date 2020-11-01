@@ -8,7 +8,7 @@ from typing import List, Dict, Optional, cast
 from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
-from .api_caller import call_api, ResourceType
+from google_classroom_extractor.api.api_caller import call_api, ResourceType
 
 
 def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
@@ -26,8 +26,6 @@ def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
         a list of Google Classroom Course resources,
             see https://developers.google.com/classroom/reference/rest/v1/courses
     """
-
-    assert isinstance(resource, Resource) or resource is None
 
     if resource is None:
         return []
@@ -73,7 +71,6 @@ def request_latest_courses_as_df(resource: Optional[Resource]) -> DataFrame:
         guardiansEnabled: Whether or not guardian notifications are enabled for this course
         calendarId: The Calendar ID for a calendar that all course members can see
     """
-    assert isinstance(resource, Resource) or resource is None
 
     logging.info("Pulling course data")
     courses: List[Dict[str, str]] = request_courses(resource)
@@ -118,8 +115,6 @@ def request_all_courses_as_df(
         guardiansEnabled: Whether or not guardian notifications are enabled for this course
         calendarId: The Calendar ID for a calendar that all course members can see
     """
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
     courses_df = request_latest_courses_as_df(resource)
 

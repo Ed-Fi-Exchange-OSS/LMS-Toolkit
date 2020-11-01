@@ -102,6 +102,60 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         assert row_dict["LastModifiedDate"] == UPDATE_TIME
 
 
+def describe_when_a_single_coursework_without_due_date_info_is_mapped():
+    @pytest.fixture
+    def assignments_dicts() -> Dict[str, DataFrame]:
+        # arrange
+        coursework_df = DataFrame(
+            {
+                "courseId": [COURSE_ID],
+                "id": [ID],
+                "title": [TITLE],
+                "description": [DESCRIPTION],
+                "state": [STATE],
+                "alternateLink": [ALTERNATE_LINK],
+                "creationTime": [CREATION_TIME],
+                "updateTime": [UPDATE_TIME],
+                "maxPoints": [MAX_POINTS],
+                "workType": [WORK_TYPE],
+                "submissionModificationMode": [SUBMISSION_MODIFICATION_MODE],
+                "assigneeMode": [ASSIGNEE_MODE],
+                "creatorUserId": [CREATOR_USER_ID],
+                "scheduledTime": [SCHEDULED_TIME],
+                "topicId": [TOPIC_ID],
+            }
+        )
+
+        # act
+        return coursework_to_assignments_dfs(coursework_df)
+
+    def it_should_have_correct_shape(assignments_dicts):
+        assert len(assignments_dicts) == 1
+
+        assignments_df: DataFrame = assignments_dicts[COURSE_ID]
+        row_count, column_count = assignments_df.shape
+
+        assert row_count == 1
+        assert column_count == 12
+
+    def it_should_map_fields_correctly_with_empty_duedate(assignments_dicts):
+        assignments_df: DataFrame = assignments_dicts[COURSE_ID]
+        row_dict = assignments_df.to_dict(orient="records")[0]
+
+        assert row_dict["AssignmentCategory"] == WORK_TYPE
+        assert row_dict["AssignmentDescription"] == DESCRIPTION
+        assert row_dict["DueDateTime"] == ""
+        assert row_dict["EndDateTime"] == ""
+        assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
+        assert row_dict["MaxPoints"] == MAX_POINTS
+        assert row_dict["SourceSystem"] == SOURCE_SYSTEM
+        assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{ID}"
+        assert row_dict["StartDateTime"] == SCHEDULED_TIME
+        assert row_dict["Title"] == TITLE
+        assert row_dict["CreateDate"] == CREATION_TIME
+        assert row_dict["LastModifiedDate"] == UPDATE_TIME
+
+
 BOILERPLATE: Dict[str, str] = {
     "description": DESCRIPTION,
     "state": STATE,

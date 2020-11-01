@@ -49,7 +49,6 @@ def submissions_to_user_submission_activities_dfs(
         LMSUserIdentifier: A unique numeric identifier assigned to the user
         LMSUserActivityIdentifier: A unique numeric identifier assigned to the user activity
     """
-    assert isinstance(submissions_df, DataFrame)
     assert "submissionHistory" in submissions_df.columns
     assert "id" in submissions_df.columns
     assert "courseId" in submissions_df.columns

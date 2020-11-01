@@ -16,8 +16,6 @@ from .api_caller import call_api, ResourceType
 
 
 def request_usage(resource: Optional[Resource], date: str) -> List[Dict[str, str]]:
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(date, str)
 
     if resource is None:
         return []
@@ -34,8 +32,6 @@ def request_usage(resource: Optional[Resource], date: str) -> List[Dict[str, str
 
 
 def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]:
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
-
     with sync_db.connect() as con:
         try:
             usage_df = read_sql("SELECT asOfDate FROM Usage", con)
@@ -48,8 +44,6 @@ def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]
 
 
 def start_date(sync_db: sqlalchemy.engine.base.Engine) -> datetime:
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
-
     last_date: Optional[datetime] = last_sync_date(sync_db)
     if last_date is not None:
         return last_date + timedelta(days=1)
@@ -69,10 +63,6 @@ def end_date() -> datetime:
 def request_latest_usage_as_df(
     resource: Optional[Resource], start: datetime, end: datetime
 ) -> DataFrame:
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(start, datetime)
-    assert isinstance(end, datetime)
-
     logging.info("Pulling usage data")
 
     if end < start:
@@ -125,9 +115,6 @@ def request_latest_usage_as_df(
 def request_all_usage_as_df(
     resource: Optional[Resource], sync_db: sqlalchemy.engine.base.Engine
 ) -> DataFrame:
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
-
     usage_df: DataFrame = request_latest_usage_as_df(
         resource, start_date(sync_db), end_date()
     )

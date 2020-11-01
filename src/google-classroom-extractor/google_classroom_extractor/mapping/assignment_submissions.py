@@ -48,7 +48,6 @@ def submissions_to_assignment_submissions_dfs(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(submissions_df, DataFrame)
     assert "courseId" in submissions_df.columns
     assert "courseWorkId" in submissions_df.columns
     assert "id" in submissions_df.columns

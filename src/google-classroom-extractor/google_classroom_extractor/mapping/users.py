@@ -46,7 +46,6 @@ def _students_or_teachers_to_users_df(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(students_or_teachers_df, DataFrame)
     assert "userId" in students_or_teachers_df.columns
     assert "profile.name.fullName" in students_or_teachers_df.columns
     assert "profile.emailAddress" in students_or_teachers_df.columns
@@ -105,9 +104,6 @@ def students_and_teachers_to_users_df(
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source system
     """
-    assert isinstance(students_df, DataFrame)
-    assert isinstance(teachers_df, DataFrame)
-
     assert "userId" in students_df.columns
     assert "profile.name.fullName" in students_df.columns
     assert "profile.emailAddress" in students_df.columns

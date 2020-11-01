@@ -46,8 +46,6 @@ def request_submissions(
         a list of Google Classroom StudentSubmissions resources,
             see https://developers.google.com/classroom/reference/rest/v1/courses.courseWork.studentSubmissions
     """
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_id, str)
 
     if resource is None:
         return []
@@ -102,8 +100,6 @@ def request_latest_submissions_as_df(
             Developer Console project making the request
         submissionHistory: The history of the submission as JSON
     """
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_ids, list)
 
     logging.info("Pulling student submission data")
     submissions: List[Dict[str, str]] = []
@@ -159,9 +155,6 @@ def request_all_submissions_as_df(
             Developer Console project making the request
         submissionHistory: The history of the submission as JSON
     """
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_ids, list)
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
     submissions_df: DataFrame = request_latest_submissions_as_df(
         resource, course_ids

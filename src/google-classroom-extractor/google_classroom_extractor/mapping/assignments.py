@@ -46,7 +46,6 @@ def coursework_to_assignments_dfs(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(coursework_df, DataFrame)
     assert "courseId" in coursework_df.columns
     assert "id" in coursework_df.columns
     assert "workType" in coursework_df.columns

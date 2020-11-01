@@ -52,8 +52,6 @@ def request_coursework(
         a list of Google Classroom Coursework resources,
             see https://developers.google.com/classroom/reference/rest/v1/courses.courseWork
     """
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_id, str)
 
     if resource is None:
         return []
@@ -109,8 +107,6 @@ def request_latest_coursework_as_df(
         scheduledTime: Optional timestamp when this course work is scheduled to be published
         topicId: Identifier for the topic that this coursework is associated with
     """
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_ids, list)
 
     logging.info("Pulling coursework data")
     coursework: List[Dict[str, str]] = []
@@ -170,9 +166,6 @@ def request_all_coursework_as_df(
         scheduledTime: Optional timestamp when this course work is scheduled to be published
         topicId: Identifier for the topic that this coursework is associated with
     """
-    assert isinstance(resource, Resource) or resource is None
-    assert isinstance(course_ids, list)
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
 
     coursework_df: DataFrame = request_latest_coursework_as_df(resource, course_ids)
 

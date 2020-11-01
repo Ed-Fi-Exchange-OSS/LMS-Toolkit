@@ -47,7 +47,6 @@ def _students_or_teachers_to_user_section_associations_df(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(students_or_teachers_df, DataFrame)
     assert "userId" in students_or_teachers_df.columns
     assert "courseId" in students_or_teachers_df.columns
 
@@ -129,10 +128,8 @@ def students_and_teachers_to_user_section_associations_dfs(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(students_df, DataFrame)
     assert "userId" in students_df.columns
     assert "courseId" in students_df.columns
-    assert isinstance(teachers_df, DataFrame)
     assert "userId" in teachers_df.columns
     assert "courseId" in teachers_df.columns
 
