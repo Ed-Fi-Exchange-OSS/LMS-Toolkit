@@ -17,6 +17,7 @@ from .mapping import users as usersMap
 from .mapping import assignments as assignmentsMap
 from .mapping import sections as sectionsMap
 from .mapping import section_associations as sectionAssocMap
+from .mapping import attendance as attendanceMap
 
 
 @dataclass
@@ -92,9 +93,13 @@ class SchoologyExtractFacade:
             RESOURCE_NAMES.ROLE,
             self._db_engine,
             roles_list
-            )
+        )
 
-        return usersMap.map_to_udm(users_df, roles_df) if not users_df.empty else pd.DataFrame()
+        return (
+            usersMap.map_to_udm(users_df, roles_df)
+            if not users_df.empty
+            else pd.DataFrame()
+        )
 
     def get_sections(self) -> pd.DataFrame:
         """
@@ -145,7 +150,9 @@ class SchoologyExtractFacade:
             DataFrame with all assignment data, in the unified data model format.
         """
 
-        assignments = pd.DataFrame(self._client.get_assignments(section_id, self._page_size))
+        assignments = pd.DataFrame(
+            self._client.get_assignments(section_id, self._page_size)
+        )
 
         return assignmentsMap.map_to_udm(assignments, section_id)
 
@@ -203,3 +210,29 @@ class SchoologyExtractFacade:
         enrollments = self._client.get_enrollments(section_id)
 
         return sectionAssocMap.map_to_udm(pd.DataFrame(enrollments), section_id)
+
+    def get_attendance_events(
+        self, section_id: int, section_associations: pd.DataFrame
+    ) -> pd.DataFrame:
+        """
+        Gets all Schoology attendance events for a section, in the Ed-Fi UDM format.
+
+        Parameters
+        ----------
+        section_id: int
+            Schoology section identifiers
+        section_associations: pd.DataFrame
+            DataFrame containing Section Associations in the UDM format, used to
+            traverse enrollment information to find the correct User and Section
+            identifiers
+
+        Returns
+        -------
+        DataFrame containing the attendance events
+        """
+
+        events = self._client.get_attendance(section_id)
+
+        events_df = attendanceMap.map_to_udm(events, section_associations)
+
+        return events_df

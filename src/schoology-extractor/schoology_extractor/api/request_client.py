@@ -430,3 +430,27 @@ class RequestClient:
                 break
 
         return enrollments
+
+    def get_attendance(
+        self, section_id: int
+    ) -> list:
+        """
+        Retrieves attendance event data for a section. Note: attendance does
+        not support paging.
+
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+
+        Returns
+        -------
+        list
+            A list of all parsed results from the server
+        """
+
+        url = f"sections/{section_id}/attendance"
+
+        result = self.get(url)
+
+        return result["date"]

@@ -39,7 +39,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         assert result["EntityStatus"].iloc[0] == "active"
 
     def it_should_map_id_to_user_source_system_identifier(result):
-        assert result["UserSourceSystemIdentifier"].iloc[0] == 588525
+        assert result["LMSUserSourceSystemIdentifier"].iloc[0] == 588525
 
     def it_should_map_input_section_id_to_lms_section_source_system_identifier(result):
         assert result["LMSSectionSourceSystemIdentifier"].iloc[0] == 234234

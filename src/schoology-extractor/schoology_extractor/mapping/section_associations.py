@@ -43,7 +43,7 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         EnrollmentStatus: Possible values are Active, Expired, Invite pending, Request Pending, Archived
         StartDate: Date when the section-association becomes Active
         EndDate: Date when the section-association changes from Active to another status
-        UserSourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source
+        LMSUserSourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source
             system
         LMSSectionSourceSystemIdentifier: A unique number or alphanumeric code assigned to a section by the
             source system
@@ -63,7 +63,7 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     df.rename(
         columns={
             "id": "SourceSystemIdentifier",
-            "uid": "UserSourceSystemIdentifier",
+            "uid": "LMSUserSourceSystemIdentifier",
             "status": "EnrollmentStatus",
         },
         inplace=True,
