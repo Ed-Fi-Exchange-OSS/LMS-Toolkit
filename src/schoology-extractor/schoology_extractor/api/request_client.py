@@ -482,7 +482,7 @@ class RequestClient:
         self, section_id: int, discussion_id: Union[int, str]
     ) -> list:
         """
-        Retrieves disucssions list for a section.
+        Retrieves discussion list for a section.
 
         Parameters
         ----------
@@ -499,5 +499,5 @@ class RequestClient:
         url = f"sections/{section_id}/discussions/{discussion_id}/comments"
 
         result = self.get(url)
-
+        # This endpoint does not support pagination
         return result["comment"]
