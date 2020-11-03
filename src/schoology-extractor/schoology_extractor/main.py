@@ -112,6 +112,17 @@ def _get_assignments(section_id: int) -> Callable:
     return __get_assignments
 
 
+def _get_user_activities(section_id: int) -> Callable:
+    # This nested function provides "closure" over `section_id`
+    def __get_user_activities() -> Optional[pd.DataFrame]:
+        user_activities = service.get_user_activities(section_id)
+        result_bucket["user_activities"] = user_activities
+
+        return user_activities
+
+    return __get_user_activities
+
+
 def _get_submissions() -> list:
     assignments_df: pd.DataFrame = result_bucket["assignments"]
     return service.get_submissions(assignments_df)
@@ -151,12 +162,16 @@ def main():
         sys.exit(-1)
 
     for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
-        file_path = lms.get_assignment_file_path(schoology_output_path, section_id)
-        succeeded = _create_file_from_dataframe(_get_assignments(section_id), file_path)
+
+        assignment_file_path = lms.get_assignment_file_path(schoology_output_path, section_id)
+        succeeded = _create_file_from_dataframe(_get_assignments(section_id), assignment_file_path)
 
         if succeeded:
             # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
             _create_file_from_list(_get_submissions, "submissions.csv")
+
+        user_activities_file_path = lms.get_user_activities_file_path(schoology_output_path, section_id)
+        _create_file_from_dataframe(_get_user_activities(section_id), user_activities_file_path)
 
         file_path = lms.get_section_association_file_path(
             schoology_output_path, section_id

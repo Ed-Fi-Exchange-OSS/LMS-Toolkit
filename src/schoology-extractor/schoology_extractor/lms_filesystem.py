@@ -9,6 +9,7 @@ import os
 USERS = "users"
 SECTION = "section"
 ASSIGNMENTS = "assignments"
+USER_ACTIVITY = "user-activities"
 SECTIONS = "sections"
 SECTION_ASSOCIATIONS = "section-associations"
 ATTENDANCE = "attendance"
@@ -48,6 +49,29 @@ def get_assignment_file_path(output_directory: str, section_id: int) -> str:
     """
     base_dir = _get_section_directory(output_directory, section_id)
     base_dir = os.path.join(base_dir, ASSIGNMENTS)
+    _create_directory_if_it_does_not_exist(base_dir)
+
+    return os.path.join(base_dir, _get_file_name())
+
+
+def get_user_activities_file_path(output_directory: str, section_id: int) -> str:
+    """
+    Builds the expected filesystem path (directory + file name) for a new
+    Discussions file.
+
+    Parameters
+    ----------
+    output_directory: str
+        Base output directory
+    section_id: int
+        Identifier the section for which attendance will is being exported
+
+    Returns
+    -------
+    full path with file name
+    """
+    base_dir = _get_section_directory(output_directory, section_id)
+    base_dir = os.path.join(base_dir, USER_ACTIVITY)
     _create_directory_if_it_does_not_exist(base_dir)
 
     return os.path.join(base_dir, _get_file_name())

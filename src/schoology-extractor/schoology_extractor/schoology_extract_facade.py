@@ -18,6 +18,7 @@ from .mapping import assignments as assignmentsMap
 from .mapping import sections as sectionsMap
 from .mapping import section_associations as sectionAssocMap
 from .mapping import attendance as attendanceMap
+from .mapping import discussion_replies as discussionRepliesMap
 
 
 @dataclass
@@ -236,3 +237,30 @@ class SchoologyExtractFacade:
         events_df = attendanceMap.map_to_udm(events, section_associations)
 
         return events_df
+
+    def get_user_activities(self, section_id: int) -> pd.DataFrame:
+        """
+        Gets all Schoology user-activities for a section, in the Ed-Fi UDM format.
+
+        Parameters
+        ----------
+        section_id: int
+            Schoology section identifiers
+
+        Returns
+        -------
+        DataFrame containing the user activities
+        """
+
+        discussions = self._client.get_discussions(section_id)
+        replies = []
+        for discussion in discussions:
+            discussion_id = discussion["id"]
+            current_replies = self._client.get_discussion_replies(section_id, discussion_id)
+            current_replies = [{**reply, 'discussion_id': discussion_id} for reply in current_replies]
+            replies = replies + current_replies
+
+        if len(replies) == 0:
+            return pd.DataFrame()
+
+        return discussionRepliesMap.map_to_udm(pd.DataFrame(replies), section_id)
