@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Dict, Tuple
+from typing import Dict
 import pytest
 from pandas import DataFrame
 from google_classroom_extractor.mapping.user_section_associations import (
@@ -23,7 +23,7 @@ TEACHER_USER_ID = "3"
 
 def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapped():
     @pytest.fixture
-    def associations_dicts() -> Dict[Tuple[str, str], DataFrame]:
+    def associations_dicts() -> Dict[str, DataFrame]:
         # arrange
         students_df = DataFrame(
             {
@@ -96,7 +96,7 @@ def describe_when_users_in_different_courses_are_mapped():
     course2_id = "course2_id"
 
     @pytest.fixture
-    def associations_dicts() -> Dict[Tuple[str, str], DataFrame]:
+    def associations_dicts() -> Dict[str, DataFrame]:
         # arrange
         students_df = DataFrame(
             {

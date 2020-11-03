@@ -22,6 +22,7 @@ from google_classroom_extractor.mapping.user_section_associations import student
 from google_classroom_extractor.mapping.sections import courses_to_sections_df
 from google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
 from google_classroom_extractor.mapping.assignment_submissions import submissions_to_assignment_submissions_dfs
+from google_classroom_extractor.mapping.user_submission_activities import submissions_to_user_submission_activities_dfs
 from google_classroom_extractor.csv_generation.write import (
     write_csv,
     write_multi_csv,
@@ -31,6 +32,7 @@ from google_classroom_extractor.csv_generation.write import (
     SECTION_ASSOCIATIONS_ROOT_DIRECTORY,
     ASSIGNMENT_ROOT_DIRECTORY,
     SUBMISSION_ROOT_DIRECTORY,
+    USER_ACTIVITY_ROOT_DIRECTORY,
 )
 
 
@@ -97,4 +99,11 @@ if __name__ == "__main__":
         submissions_to_assignment_submissions_dfs(result_dfs.submissions_df),
         datetime.now(),
         SUBMISSION_ROOT_DIRECTORY,
+    )
+
+    logging.info("Writing LMS UDM User Activities to CSV files")
+    write_multi_csv(
+        submissions_to_user_submission_activities_dfs(result_dfs.submissions_df),
+        datetime.now(),
+        USER_ACTIVITY_ROOT_DIRECTORY,
     )

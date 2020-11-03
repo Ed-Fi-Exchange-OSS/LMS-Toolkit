@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Any
 from pandas import DataFrame
 from google_classroom_extractor.mapping.constants import (
     SOURCE_SYSTEM,
@@ -48,7 +48,6 @@ def submissions_to_assignment_submissions_dfs(
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(submissions_df, DataFrame)
     assert "courseId" in submissions_df.columns
     assert "courseWorkId" in submissions_df.columns
     assert "id" in submissions_df.columns
@@ -107,7 +106,7 @@ def submissions_to_assignment_submissions_dfs(
     assignment_submissions_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
 
     # group by section id and assignment id as a Dict of DataFrames
-    result: Dict[Tuple[str, str], DataFrame] = dict(
+    result: Dict[Any, DataFrame] = dict(  # Any because Pylance doesn't believe Tuple[str, str]
         tuple(
             assignment_submissions_df.groupby(
                 [

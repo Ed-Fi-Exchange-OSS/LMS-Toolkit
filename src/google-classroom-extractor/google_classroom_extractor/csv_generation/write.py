@@ -14,6 +14,7 @@ SECTIONS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/sections/"
 SECTION_ASSOCIATIONS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/section-associations/"
 ASSIGNMENT_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/assignments/"
 SUBMISSION_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id1}/assignment={id2}/submissions/"
+USER_ACTIVITY_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/user-activities/"
 
 
 def write_csv(df_to_write: DataFrame, output_date: datetime, directory: str):
@@ -29,10 +30,6 @@ def write_csv(df_to_write: DataFrame, output_date: datetime, directory: str):
     directory: str
         is the directory the file will go in
     """
-    assert isinstance(df_to_write, DataFrame)
-    assert isinstance(output_date, datetime)
-    assert isinstance(directory, str)
-
     os.makedirs(directory, exist_ok=True)
     filename: str = output_date.strftime("%Y-%m-%d-%H-%M-%S")
     df_to_write.to_csv(os.path.join(directory, f"{filename}.csv"), index=False)
@@ -53,9 +50,6 @@ def write_multi_csv(
     directory_template: str
         is the directory the file will go in, with an {id} placeholder
     """
-    assert isinstance(dfs_to_write, dict)
-    assert isinstance(output_date, datetime)
-    assert isinstance(directory_template, str)
     assert "{id}" in directory_template
 
     for id_placeholder, df_to_write in dfs_to_write.items():
@@ -78,9 +72,6 @@ def write_multi_tuple_csv(
     directory_template: str
         is the directory the file will go in, with an {id1} and an {id2} placeholder
     """
-    assert isinstance(dfs_to_write, dict)
-    assert isinstance(output_date, datetime)
-    assert isinstance(directory_template, str)
     assert "{id1}" in directory_template
     assert "{id2}" in directory_template
 

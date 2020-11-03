@@ -38,7 +38,6 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
-    assert isinstance(courses_df, DataFrame)
     assert "id" in courses_df.columns
     assert "courseState" in courses_df.columns
     assert "descriptionHeading" in courses_df.columns

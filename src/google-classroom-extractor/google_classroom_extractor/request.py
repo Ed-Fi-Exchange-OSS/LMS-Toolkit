@@ -39,11 +39,6 @@ def request_all(
     Result
         a simple collection of all fetched API DataFrames
     """
-
-    assert isinstance(classroom_resource, Resource)
-    assert isinstance(reports_resource, Resource)
-    assert isinstance(sync_db, sqlalchemy.engine.base.Engine)
-
     courses_df: DataFrame = request_all_courses_as_df(classroom_resource, sync_db)
     course_ids: List[str] = courses_df["id"].tolist()
 
