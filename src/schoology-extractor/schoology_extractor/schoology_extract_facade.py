@@ -253,7 +253,7 @@ class SchoologyExtractFacade:
         """
 
         discussions = self._client.get_discussions(section_id)
-        replies = []
+        replies: list = []
         for discussion in discussions:
             discussion_id = discussion["id"]
             current_replies = self._client.get_discussion_replies(section_id, discussion_id)
