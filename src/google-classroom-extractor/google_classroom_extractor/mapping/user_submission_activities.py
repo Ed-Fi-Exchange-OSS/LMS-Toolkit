@@ -43,11 +43,10 @@ def submissions_to_user_submission_activities_dfs(
         Content: Content associated with the activity
         EntityStatus: The status of the record
         LMSSectionIdentifier: A unique numeric identifier assigned to the section
-        SourceSystem: The system code or name providing the user data
+        SourceSystem: The system code or name providing the user activity data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a
-            user by the source system
+            user activity by the source system
         LMSUserIdentifier: A unique numeric identifier assigned to the user
-        LMSUserActivityIdentifier: A unique numeric identifier assigned to the user activity
     """
     assert "submissionHistory" in submissions_df.columns
     assert "id" in submissions_df.columns
@@ -139,7 +138,6 @@ def submissions_to_user_submission_activities_dfs(
     user_submission_df.drop_duplicates(subset=["SourceSystemIdentifier"], inplace=True)
 
     # finish with common columns
-    user_submission_df["LMSUserActivityIdentifier"] = user_submission_df["SourceSystemIdentifier"]
     user_submission_df["ActivityTimeInMinutes"] = ""
     user_submission_df["Content"] = ""
     user_submission_df["EntityStatus"] = ENTITY_STATUS_ACTIVE

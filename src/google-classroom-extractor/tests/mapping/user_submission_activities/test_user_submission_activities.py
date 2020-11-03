@@ -72,7 +72,7 @@ def describe_when_a_single_state_submission_with_unique_fields_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 1
-        assert column_count == 12
+        assert column_count == 11
 
     def it_should_map_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]
@@ -92,10 +92,6 @@ def describe_when_a_single_state_submission_with_unique_fields_is_mapped():
         assert state_row["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert state_row["LMSSectionIdentifier"] == COURSE_ID
         assert state_row["LMSUserIdentifier"] == ACTOR_USER_ID
-        assert (
-            state_row["LMSUserActivityIdentifier"]
-            == f"S-{COURSE_ID}-{COURSEWORK_ID}-{ID}-{STATE_TIMESTAMP}"
-        )
 
 
 def describe_when_a_state_and_a_grade_submission_is_mapped():
@@ -133,7 +129,7 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 2
-        assert column_count == 12
+        assert column_count == 11
 
     def it_should_map_state_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]
@@ -153,10 +149,6 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
         assert state_row["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert state_row["LMSSectionIdentifier"] == COURSE_ID
         assert state_row["LMSUserIdentifier"] == ACTOR_USER_ID
-        assert (
-            state_row["LMSUserActivityIdentifier"]
-            == f"S-{COURSE_ID}-{COURSEWORK_ID}-{ID}-{STATE_TIMESTAMP}"
-        )
 
     def it_should_map_grade_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]
@@ -176,7 +168,3 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
         assert grade_row["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert grade_row["LMSSectionIdentifier"] == COURSE_ID
         assert grade_row["LMSUserIdentifier"] == ACTOR_USER_ID
-        assert (
-            grade_row["LMSUserActivityIdentifier"]
-            == f"G-{COURSE_ID}-{COURSEWORK_ID}-{ID}-{GRADE_TIMESTAMP}"
-        )
