@@ -151,9 +151,11 @@ class SchoologyExtractFacade:
             DataFrame with all assignment data, in the unified data model format.
         """
 
-        assignments = pd.DataFrame(
+        assignments = sync.sync_resource(
+            RESOURCE_NAMES.ASSIGNMENT,
+            self._db_engine,
             self._client.get_assignments(section_id, self._page_size)
-        )
+            )
 
         return assignmentsMap.map_to_udm(assignments, section_id)
 
