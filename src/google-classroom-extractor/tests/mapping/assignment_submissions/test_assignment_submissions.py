@@ -67,7 +67,7 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 1
-        assert column_count == 13
+        assert column_count == 12
 
     def it_should_map_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[
@@ -79,7 +79,6 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         assert row_dict["EarnedPoints"] == ASSIGNED_GRADE
         assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert row_dict["Grade"] == ASSIGNED_GRADE
-        assert row_dict["LMSGradeIdentifier"] == f"{COURSE_ID}-{COURSEWORK_ID}-{ID}"
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{COURSEWORK_ID}-{ID}"
         assert row_dict["Status"] == STATE

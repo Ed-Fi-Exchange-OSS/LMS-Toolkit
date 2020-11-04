@@ -42,8 +42,6 @@ def _students_or_teachers_to_user_section_associations_df(
             assigned to a user by the source system
         StartDate: Month, day, and year of the user's entry or assignment to the section
         LMSUserIdentifier: A unique numeric identifier assigned to the user
-        LMSUserLMSSectionAssociationIdentifier: A unique numeric identifier assigned to
-            the user section association
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """
@@ -66,9 +64,6 @@ def _students_or_teachers_to_user_section_associations_df(
 
     user_section_associations_df[
         "SourceSystemIdentifier"
-    ] = user_section_associations_df["LMSUserIdentifier"]
-    user_section_associations_df[
-        "LMSUserLMSSectionAssociationIdentifier"
     ] = user_section_associations_df[["LMSUserIdentifier", "LMSSectionIdentifier"]].agg(
         "-".join, axis=1
     )
@@ -123,8 +118,6 @@ def students_and_teachers_to_user_section_associations_dfs(
             assigned to a user by the source system
         StartDate: Month, day, and year of the user's entry or assignment to the section
         LMSUserIdentifier: A unique numeric identifier assigned to the user
-        LMSUserLMSSectionAssociationIdentifier: A unique numeric identifier assigned to
-            the user section association
         CreateDate: Date this record was created
         LastModifiedDate: Date this record was last updated
     """

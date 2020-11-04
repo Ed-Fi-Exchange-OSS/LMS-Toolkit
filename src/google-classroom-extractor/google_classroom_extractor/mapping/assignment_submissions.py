@@ -38,7 +38,6 @@ def submissions_to_assignment_submissions_dfs(
         EarnedPoints: The points earned for the submission
         EntityStatus: The status of the record
         Grade: The grade received for the submission
-        LMSGradeIdentifier: A unique numeric identifier assigned to the AssignmentSubmission
         SourceSystem: The system code or name providing the AssignmentSubmission data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to
             an AssignmentSubmission by the source system
@@ -67,7 +66,6 @@ def submissions_to_assignment_submissions_dfs(
     ].agg("-".join, axis=1)
 
     submissions_df["Grade"] = submissions_df["assignedGrade"]
-    submissions_df["LMSGradeIdentifier"] = submissions_df["SourceSystemIdentifier"]
     submissions_df["SubmissionDateTime"] = submissions_df.apply(
         lambda row: row["updateTime"] if row["state"] == TURNED_IN_STATE else "",
         axis=1,
@@ -78,7 +76,6 @@ def submissions_to_assignment_submissions_dfs(
             "SourceSystemIdentifier",
             "AssignmentIdentifier",
             "Grade",
-            "LMSGradeIdentifier",
             "SubmissionDateTime",
             "assignedGrade",
             "userId",
