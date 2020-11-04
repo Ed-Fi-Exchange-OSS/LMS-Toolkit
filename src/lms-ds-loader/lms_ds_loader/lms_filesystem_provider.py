@@ -15,14 +15,18 @@ class LmsFilesystemProvider:
 
     base_path/
       section=<identifier>/
+        activities/
+            <files>
         assignment=<identifer>/
           submissions/
             <files>
         assignments/
           <files>
-        enrollments/
+        attendance/
           <files>
         grades/
+          <files>
+        section-associations/
           <files>
       sections/
         <files>
