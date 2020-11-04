@@ -20,6 +20,7 @@ from schoology_extractor.mapping import sections as sectionsMap
 from schoology_extractor.mapping import section_associations as sectionAssocMap
 from schoology_extractor.mapping import assignments as assignmentsMap
 from schoology_extractor.mapping import attendance as attendanceMap
+from schoology_extractor.mapping import discussion_replies as discussionRepliesMap
 from schoology_extractor.helpers import sync
 
 
@@ -483,3 +484,41 @@ def describe_when_getting_attendance_events():
 
         df = mapper.call_args[0][1]
         assert df["id"].iloc[0] == 123
+
+
+def describe_when_getting_user_activities():
+    @pytest.fixture
+    def system() -> Tuple[pd.DataFrame, Mock]:
+        logger = Mock(spec=Logger)
+        request_client = Mock(spec=RequestClient)
+        page_size = 1
+
+        discussionRepliesMap.map_to_udm = Mock()
+        discussionRepliesMap.map_to_udm.return_value = pd.DataFrame()
+
+        section_id = 1234
+        get_discussions_mock = request_client.get_discussions
+        get_discussions_mock.return_value = [{"id": 1}, {"id": 2}]
+
+        get_discussion_replies_mock = request_client.get_discussion_replies
+        get_discussion_replies_mock.return_value = [{"fake_dict_attrib": 1}, {"fake_dict_attrib": 2}]
+
+        db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
+
+        # Arrange
+        service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+
+        # Act
+        result = service.get_user_activities(section_id)
+
+        return result, discussionRepliesMap.map_to_udm
+
+    def it_should_return_a_data_frame(system):
+        result, _ = system
+
+        assert isinstance(result, pd.DataFrame)
+
+    def it_should_map_to_the_udm(system):
+        _, mapper = system
+
+        mapper.assert_called_once()

@@ -454,3 +454,50 @@ class RequestClient:
         result = self.get(url)
 
         return result["date"]
+
+    def get_discussions(
+        self, section_id: int
+    ) -> list:
+        """
+        Retrieves disucssions list for a section.
+
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+
+        Returns
+        -------
+        list
+            A list of all parsed results from the server
+        """
+
+        url = f"sections/{section_id}/discussions"
+
+        result = self.get(url)
+
+        return result["discussion"]
+
+    def get_discussion_replies(
+        self, section_id: int, discussion_id: Union[int, str]
+    ) -> list:
+        """
+        Retrieves discussion list for a section.
+
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+        discussion_id : Union[int, str]
+            The Id of the discussion
+        Returns
+        -------
+        list
+            A list of all parsed results from the server
+        """
+
+        url = f"sections/{section_id}/discussions/{discussion_id}/comments"
+
+        result = self.get(url)
+        # This endpoint does not support pagination
+        return result["comment"]
