@@ -56,7 +56,9 @@ def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
             "description",
             "due",
             "max_points",
-            "type"
+            "type",
+            "CreateDate",
+            "LastModifiedDate"
         ]
     ].copy()
 
@@ -79,7 +81,5 @@ def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     df["LMSSectionSourceSystemIdentifier"] = section_id
 
     df["SubmissionType"] = None
-    df["CreateDate"] = None
-    df["LastModifiedDate"] = None
 
     return df

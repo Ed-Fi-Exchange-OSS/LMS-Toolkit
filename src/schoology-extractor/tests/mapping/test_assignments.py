@@ -25,7 +25,9 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             "type": "assignment",
             "description": "The description",
             "due": "2020-08-21 23:59:00",
-            "max_points": 52
+            "max_points": 52,
+            "CreateDate": "2020-11-04 09:46:45",
+            "LastModifiedDate": "2020-11-04 09:46:45",
         }
         section_id = 42
 
@@ -63,10 +65,10 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         assert result["AssignmentCategory"].iloc[0] == "assignment"
 
     def it_should_have_empty_CreateDate(result):
-        assert result["CreateDate"].iloc[0] is None
+        assert result["CreateDate"].iloc[0] == "2020-11-04 09:46:45"
 
     def it_should_have_empty_LastModifieDate(result):
-        assert result["LastModifiedDate"].iloc[0] is None
+        assert result["LastModifiedDate"].iloc[0] == "2020-11-04 09:46:45"
 
     def it_should_have_empty_SubmissionType(result):
         assert result["SubmissionType"].iloc[0] is None
