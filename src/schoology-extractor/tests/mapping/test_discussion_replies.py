@@ -17,9 +17,9 @@ class Test_mapping_schoology_users_to_udm:
     def setup_class(cls):
 
         # Arrange
-        responses_csv = '''id,uid,comment,created,parent_id,status,likes,user_like_action,links,discussion_id
-824849694,100032890,Mary Archer's response to ""First Algebra Discussion Topic."",1604351930,0,1,0,False,{'self': 'https://api.schoology.com/v1/sections/2942191527/discussions/3278946222/comments/824849694'},3278946222
-824853919,100032891,Kyle Hughes's reply to Mary Archer's response to ""First Algebra Discussion Topic."",1604352056,824849694,1,0,False,{'self': 'https://api.schoology.com/v1/sections/2942191527/discussions/3278946222/comments/824853919'},3278946222'''
+        responses_csv = '''id,uid,comment,created,parent_id,status,likes,user_like_action,links
+824849694,100032890,Mary Archer's response to ""First Algebra Discussion Topic."",1604351930,0,1,0,False,{'self': 'https://api.schoology.com/v1/sections/2942191527/discussions/3278946222/comments/824849694'}
+824853919,100032891,Kyle Hughes's reply to Mary Archer's response to ""First Algebra Discussion Topic."",1604352056,824849694,1,0,False,{'self': 'https://api.schoology.com/v1/sections/2942191527/discussions/3278946222/comments/824853919'}'''
         lines = responses_csv.split("\n")
         responses_df = pd.DataFrame(
             [x.split(",") for x in lines[1:]], columns=lines[0].split(",")
@@ -44,7 +44,6 @@ class Test_mapping_schoology_users_to_udm:
             "ActivityStatus",
             "ActivityType",
             "Content",
-            "LMSUserActivityIdentifier",
             "AssignmentIdentifier",
             "ActivityTimeInMinutes",
             "CreateDate",
@@ -80,6 +79,3 @@ class Test_mapping_schoology_users_to_udm:
 
     def test_then_content_is_mapped(self):
         assert self.result.at[0, "Content"] == '''Mary Archer's response to ""First Algebra Discussion Topic.""'''
-
-    def test_then_user_activity_identifier_is_mapped(self):
-        assert self.result.at[0, "LMSUserActivityIdentifier"] == "3278946222"

@@ -41,8 +41,6 @@ def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int) -> pd.DataF
         ActivityStatus: The status for the reply
         ActivityType: The type of activity: `Discussion reply`
         Content: The comment text.
-        LMSUserActivityIdentifier: A unique numeric identifier assigned to the user activity:
-            `discussion_id`.
         AssignmentIdentifier: A unique numeric identifier assigned to the assignment.
         ActivityTimeInMinutes: The total activity time in minutes.
         CreateDate: Date/time at which the record was first retrieved
@@ -53,8 +51,7 @@ def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int) -> pd.DataF
         "status",
         "comment",
         "uid",
-        "id",
-        "discussion_id"
+        "id"
         ]].copy()
 
     df["created"] = df["created"].apply(lambda x: datetime.fromtimestamp(int(x)).strftime("%Y-%m-%d %H:%M:%S"))
@@ -74,8 +71,7 @@ def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int) -> pd.DataF
             "status": "ActivityStatus",
             "comment": "Content",
             "id": "SourceSystemIdentifier",
-            "uid": "LMSUserIdentifier",
-            "discussion_id": "LMSUserActivityIdentifier"
+            "uid": "LMSUserIdentifier"
         },
         inplace=True,
     )

@@ -256,9 +256,7 @@ class SchoologyExtractFacade:
         replies: list = []
         for discussion in discussions:
             discussion_id = discussion["id"]
-            current_replies = self._client.get_discussion_replies(section_id, discussion_id)
-            current_replies = [{**reply, 'discussion_id': discussion_id} for reply in current_replies]
-            replies = replies + current_replies
+            replies = replies + self._client.get_discussion_replies(section_id, discussion_id)
 
         if len(replies) == 0:
             return pd.DataFrame()
