@@ -43,7 +43,6 @@ def write_csv(df_to_write: DataFrame, output_date: datetime, directory: str):
         logger.info(f"Generated file => {path}")
     except Exception:
         logger.exception("An exception occurred while writing file %s", path)
-        raise
 
 
 def write_multi_csv(
