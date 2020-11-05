@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+import logging
 from typing import Dict, Tuple
 import os
 from datetime import datetime
@@ -15,6 +16,8 @@ SECTION_ASSOCIATIONS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/section-a
 ASSIGNMENT_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/assignments/"
 SUBMISSION_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id1}/assignment={id2}/submissions/"
 USER_ACTIVITY_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/user-activities/"
+
+logger = logging.getLogger(__name__)
 
 
 def write_csv(df_to_write: DataFrame, output_date: datetime, directory: str):
@@ -30,9 +33,16 @@ def write_csv(df_to_write: DataFrame, output_date: datetime, directory: str):
     directory: str
         is the directory the file will go in
     """
-    os.makedirs(directory, exist_ok=True)
     filename: str = output_date.strftime("%Y-%m-%d-%H-%M-%S")
-    df_to_write.to_csv(os.path.join(directory, f"{filename}.csv"), index=False)
+    path = os.path.join(directory, f"{filename}.csv")
+
+    try:
+        os.makedirs(directory, exist_ok=True)
+        df_to_write.to_csv(path, index=False)
+
+        logger.info(f"Generated file => {path}")
+    except Exception:
+        logger.exception("An exception occurred while writing file %s", path)
 
 
 def write_multi_csv(

@@ -33,6 +33,8 @@ REQUIRED_COLUMNS = [
     "topicId",
 ]
 
+logger = logging.getLogger(__name__)
+
 
 def request_coursework(
     resource: Optional[Resource], course_id: str
@@ -108,7 +110,7 @@ def request_latest_coursework_as_df(
         topicId: Identifier for the topic that this coursework is associated with
     """
 
-    logging.info("Pulling coursework data")
+    logger.info("Pulling coursework data")
     coursework: List[Dict[str, str]] = []
     for course_id in course_ids:
         coursework.extend(request_coursework(resource, course_id))

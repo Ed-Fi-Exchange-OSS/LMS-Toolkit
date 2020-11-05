@@ -6,6 +6,8 @@
 import pandas as pd
 import logging
 
+logger = logging.getLogger(__name__)
+
 
 def df_to_csv(df: pd.DataFrame, output_path: str):
     """
@@ -27,7 +29,7 @@ def df_to_csv(df: pd.DataFrame, output_path: str):
         return
 
     df.to_csv(output_path, index=False)
-    logging.info("The file has been generated => %s" % output_path)
+    logger.info("The file has been generated => %s" % output_path)
 
 
 def to_csv(data: list, output_path: str):

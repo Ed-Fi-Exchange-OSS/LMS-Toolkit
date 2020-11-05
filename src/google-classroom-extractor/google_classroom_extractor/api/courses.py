@@ -10,6 +10,8 @@ import sqlalchemy
 from googleapiclient.discovery import Resource
 from google_classroom_extractor.api.api_caller import call_api, ResourceType
 
+logger = logging.getLogger(__name__)
+
 
 def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
     """
@@ -72,7 +74,7 @@ def request_latest_courses_as_df(resource: Optional[Resource]) -> DataFrame:
         calendarId: The Calendar ID for a calendar that all course members can see
     """
 
-    logging.info("Pulling course data")
+    logger.info("Pulling course data")
     courses: List[Dict[str, str]] = request_courses(resource)
     return json_normalize(courses)
 

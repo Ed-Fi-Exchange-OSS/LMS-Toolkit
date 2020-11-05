@@ -10,6 +10,7 @@ from pandas import DataFrame
 from google_classroom_extractor.csv_generation.write import (
     write_multi_csv,
     write_multi_tuple_csv,
+    write_csv
 )
 
 
@@ -92,3 +93,15 @@ def describe_when_calling_write_multi_tuple_csv_with_two_dataframes():
             call(DF1_TO_WRITE, OUTPUT_DATE, f"{ID1_VALUE}{ID2_VALUE}"),
             call(DF2_TO_WRITE, OUTPUT_DATE, f"{ID2_VALUE}{ID1_VALUE}")
         ]
+
+
+def describe_when_writing_csv_to_file():
+    def it_should_handle_exceptions():
+        df_to_write = DF1_TO_WRITE
+        output_date = OUTPUT_DATE
+        directory = "this:is:invalid:will:cause:exception"
+
+        write_csv(df_to_write, output_date, directory)
+
+        # if we make it this far without an exception, then the exception caused
+        # by the bad directory must have been handled correctly.

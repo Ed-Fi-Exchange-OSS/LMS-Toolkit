@@ -12,6 +12,8 @@ import sqlalchemy
 
 SYNC_DATABASE_LOCATION_SUFFIX = "data"
 
+logger = logging.getLogger(__name__)
+
 
 def _is_running_in_notebook() -> bool:
     """
@@ -36,13 +38,13 @@ def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
         a SQL Alchemy Engine
     """
     running_in_notebook: bool = _is_running_in_notebook()
-    logging.debug("Running in Jupyter Notebook: %s", running_in_notebook)
+    logger.debug("Running in Jupyter Notebook: %s", running_in_notebook)
     sync_database_directory = (
         os.path.join("..", SYNC_DATABASE_LOCATION_SUFFIX)
         if running_in_notebook
         else SYNC_DATABASE_LOCATION_SUFFIX
     )
-    logging.debug("Ensuring database directory at %s", os.path.abspath(sync_database_directory))
+    logger.debug("Ensuring database directory at %s", os.path.abspath(sync_database_directory))
     os.makedirs(sync_database_directory, exist_ok=True)
     return create_engine(f"sqlite:///{sync_database_directory}/sync.sqlite")
 

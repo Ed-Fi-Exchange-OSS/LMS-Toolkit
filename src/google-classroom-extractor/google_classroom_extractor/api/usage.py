@@ -14,6 +14,8 @@ import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
 
+logger = logging.getLogger(__name__)
+
 
 def request_usage(resource: Optional[Resource], date: str) -> List[Dict[str, str]]:
 
@@ -39,7 +41,7 @@ def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]
                 return None
             return date_parse(usage_df["asOfDate"].max())
         except OperationalError:
-            logging.debug("No Usage table yet")
+            logger.debug("No Usage table yet")
             return None
 
 
@@ -63,10 +65,10 @@ def end_date() -> datetime:
 def request_latest_usage_as_df(
     resource: Optional[Resource], start: datetime, end: datetime
 ) -> DataFrame:
-    logging.info("Pulling usage data")
+    logger.info("Pulling usage data")
 
     if end < start:
-        logging.warning("Usage data end time is before start time.")
+        logger.info("Usage data end time is before start time.")
 
     reports: List[Any] = []
     for date in date_range(start=start, end=end):

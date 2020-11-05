@@ -15,6 +15,8 @@ ResourceType = namedtuple("ValidSdkFunction", ["courses", "userUsageReport"])
 MAX_TOTAL_CALLS = 4
 RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
 
+logger = logging.getLogger(__name__)
+
 
 @retry(
     retry_on_exceptions=(IOError, RequestException),
@@ -79,7 +81,7 @@ def _call_api_recursive(
     try:
         current_results.extend(response.get(response_property, []))
     except (IOError, RequestException):
-        logging.exception("Error during API call after retries.  Will try to continue.")
+        logger.exception("Error during API call after retries.  Will try to continue.")
         return current_results
 
     next_page_token = response.get("nextPageToken", None)
