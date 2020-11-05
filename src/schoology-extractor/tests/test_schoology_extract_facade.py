@@ -378,7 +378,7 @@ def describe_when_getting_submissions():
 
 def describe_when_getting_section_associations():
     @pytest.fixture
-    def system() -> Tuple[pd.DataFrame, Mock]:
+    def system() -> Tuple[pd.DataFrame, Mock, Mock]:
         request_client = Mock(spec=RequestClient)
         page_size = 1
 
@@ -387,9 +387,13 @@ def describe_when_getting_section_associations():
         sectionAssocMap.map_to_udm = Mock()
         sectionAssocMap.map_to_udm.return_value = pd.DataFrame()
 
+        # Mock the API calls
         section_id = 1234
         get_sections_mock = request_client.get_enrollments
         get_sections_mock.return_value = [{"id": 1}, {"id": 2}]
+
+        # Mock the Sync process
+        sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
 
         db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
 
@@ -399,29 +403,33 @@ def describe_when_getting_section_associations():
         # Act
         result = service.get_section_associations(section_id)
 
-        return result, sectionAssocMap.map_to_udm
+        return result, sectionAssocMap.map_to_udm, sync.sync_resource
 
     def it_should_return_a_data_frame(system):
-        result, _ = system
+        result, _, _ = system
 
         assert isinstance(result, pd.DataFrame)
 
     def it_should_map_to_the_udm(system):
-        _, mapper = system
+        _, mapper, _ = system
 
         mapper.assert_called_once()
 
     def it_should_map_first_enrollment(system):
-        _, mapper = system
+        _, mapper, _ = system
 
         df = mapper.call_args[0][0]
         assert df["id"].iloc[0] == 1
 
     def it_should_map_second_enrollment(system):
-        _, mapper = system
+        _, mapper, _ = system
 
         df = mapper.call_args[0][0]
         assert df["id"].iloc[1] == 2
+
+    def it_should_use_the_sync_process(system):
+        _, _, sync_mock = system
+        sync_mock.assert_called_once()
 
 
 def describe_when_getting_attendance_events():

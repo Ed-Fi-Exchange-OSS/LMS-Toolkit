@@ -20,3 +20,4 @@ class RESOURCE_NAMES:
     COURSE = 'course'
     ROLE = 'role'
     SUBMISSION = 'submissions'
+    ENROLLMENT = "enrollment"
