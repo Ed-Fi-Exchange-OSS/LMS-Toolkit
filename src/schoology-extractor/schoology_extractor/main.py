@@ -19,6 +19,7 @@ import schoology_extractor.lms_filesystem as lms
 
 from schoology_extractor.helpers.sync import get_sync_db_engine
 
+
 # Load configuration
 load_dotenv()
 
@@ -32,7 +33,7 @@ log_level = arguments.log_level
 page_size = arguments.page_size
 
 # Configure logging
-logFormatter = "%(asctime)s - %(levelname)s - %(message)s"
+logFormatter = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
 
 logging.basicConfig(
     handlers=[
@@ -48,7 +49,7 @@ grading_periods = schoology_grading_periods.split(",")
 request_client = RequestClient(schoology_key, schoology_secret)
 db_engine = get_sync_db_engine()
 
-service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
 
 def _create_file_from_dataframe(action: Callable, file_name) -> bool:
@@ -59,10 +60,7 @@ def _create_file_from_dataframe(action: Callable, file_name) -> bool:
             export_data.df_to_csv(data, file_name)
         return True
     except Exception:
-        logger.exception(
-            "An exception occurred while generating %s",
-            file_name
-        )
+        logger.exception("An exception occurred while generating %s", file_name)
         return False
 
 
@@ -76,10 +74,7 @@ def _create_file_from_list(action: Callable, file_name: str) -> bool:
             export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
         return True
     except Exception:
-        logger.exception(
-            "An exception occurred while generating %s",
-            file_name
-        )
+        logger.exception("An exception occurred while generating %s", file_name)
         return False
 
 
@@ -138,7 +133,9 @@ def _get_section_associations(section_id: int) -> Callable:
 def _get_attendance_events(section_id: int) -> Callable:
     def __get_attendance_events() -> pd.DataFrame:
         section_associations = result_bucket["section_associations"]
-        attendance_events = service.get_attendance_events(section_id, section_associations)
+        attendance_events = service.get_attendance_events(
+            section_id, section_associations
+        )
 
         return attendance_events
 
@@ -160,20 +157,30 @@ def main():
 
     for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
 
-        assignment_file_path = lms.get_assignment_file_path(schoology_output_path, section_id)
-        succeeded = _create_file_from_dataframe(_get_assignments(section_id), assignment_file_path)
+        assignment_file_path = lms.get_assignment_file_path(
+            schoology_output_path, section_id
+        )
+        succeeded = _create_file_from_dataframe(
+            _get_assignments(section_id), assignment_file_path
+        )
 
         if succeeded:
             # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
             _create_file_from_list(_get_submissions, "submissions.csv")
 
-        user_activities_file_path = lms.get_user_activities_file_path(schoology_output_path, section_id)
-        _create_file_from_dataframe(_get_user_activities(section_id), user_activities_file_path)
+        user_activities_file_path = lms.get_user_activities_file_path(
+            schoology_output_path, section_id
+        )
+        _create_file_from_dataframe(
+            _get_user_activities(section_id), user_activities_file_path
+        )
 
         file_path = lms.get_section_association_file_path(
             schoology_output_path, section_id
         )
-        succeeded = _create_file_from_dataframe(_get_section_associations(section_id), file_path)
+        succeeded = _create_file_from_dataframe(
+            _get_section_associations(section_id), file_path
+        )
 
         # TODO: When merging with the work to create attendance events, should skip the attendance
         # if section associations failed.
