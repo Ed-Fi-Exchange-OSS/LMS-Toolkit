@@ -54,7 +54,7 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
 
     # Schoology section associations contain the teacher with {admin: 1}. Remove them.
     filter = enrollments_df["admin"] == 0
-    df = enrollments_df[filter][["id", "uid", "status"]].copy()
+    df = enrollments_df[filter][["id", "uid", "status", "CreateDate", "LastModifiedDate"]].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
@@ -73,10 +73,12 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         lambda x: _map_status_code_to_string(int(x))
     )
 
-    # TODO: set these via the sync process, FIZZ-126
+    # Schoology does not provide starting and ending dates for their
+    # enrollments. We may try to interpolate them using the sync process to
+    # compare "today's status" to "yesterday's status", but that has not been
+    # decided. Therefore create these columns so that they show up in the final
+    # CSV output, but they will not be populated.
     df["StartDate"] = None
     df["EndDate"] = None
-    df["CreateDate"] = None
-    df["LastModifiedDate"] = None
 
     return df
