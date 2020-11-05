@@ -93,7 +93,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         )
         assert row_dict["EndDateTime"] == ""
         assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
-        assert row_dict["LMSSectionIdentifier"] == COURSE_ID
+        assert row_dict["LMSSectionSourceSystemIdentifier"] == COURSE_ID
         assert row_dict["MaxPoints"] == MAX_POINTS
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{ID}"
@@ -148,7 +148,7 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         assert row_dict["DueDateTime"] == ""
         assert row_dict["EndDateTime"] == ""
         assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
-        assert row_dict["LMSSectionIdentifier"] == COURSE_ID
+        assert row_dict["LMSSectionSourceSystemIdentifier"] == COURSE_ID
         assert row_dict["MaxPoints"] == MAX_POINTS
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{ID}"
