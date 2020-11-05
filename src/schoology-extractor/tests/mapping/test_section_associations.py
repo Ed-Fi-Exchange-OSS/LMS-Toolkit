@@ -16,8 +16,22 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
     def result() -> pd.DataFrame:
 
         section_associations = [
-            {"id": 43333, "uid": 39303, "status": 1, "admin": 1},
-            {"id": 123355, "uid": 588525, "status": 1, "admin": 0},
+            {
+                "id": 43333,
+                "uid": 39303,
+                "status": 1,
+                "admin": 1,
+                "CreateDate": "a",
+                "LastModifiedDate": "b",
+            },
+            {
+                "id": 123355,
+                "uid": 588525,
+                "status": 1,
+                "admin": 0,
+                "CreateDate": "c",
+                "LastModifiedDate": "d",
+            },
         ]
 
         # Arrange
@@ -44,12 +58,11 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
     def it_should_map_input_section_id_to_lms_section_source_system_identifier(result):
         assert result["LMSSectionSourceSystemIdentifier"].iloc[0] == 234234
 
-    # Can't add these next four until we have the sync process
-    def it_should_have_empty_create_date(result):
-        assert result["CreateDate"].iloc[0] is None
+    def it_should_have_preserve_received_create_date(result):
+        assert result["CreateDate"].iloc[0] == "c"
 
-    def it_should_have_empty_last_modifie_date(result):
-        assert result["LastModifiedDate"].iloc[0] is None
+    def it_should_preserve_received_last_modified_date(result):
+        assert result["LastModifiedDate"].iloc[0] == "d"
 
     def it_should_have_empty_start_date(result):
         assert result["StartDate"].iloc[0] is None
@@ -70,7 +83,14 @@ def describe_when_mapping_Schoology_enrollment_status_to_string_value():
         ],
     )
     def it_should_translate_status_code_to_string(status_code, status_string):
-        section_association = {"id": 123355, "uid": 588525, "status": status_code, "admin": 0}
+        section_association = {
+            "id": 123355,
+            "uid": 588525,
+            "status": status_code,
+            "admin": 0,
+            "CreateDate": "a",
+            "LastModifiedDate": "b"
+        }
 
         # Arrange
         schoology_df = pd.DataFrame([section_association])

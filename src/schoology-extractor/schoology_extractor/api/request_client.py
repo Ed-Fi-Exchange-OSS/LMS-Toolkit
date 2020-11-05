@@ -459,7 +459,7 @@ class RequestClient:
         self, section_id: int
     ) -> list:
         """
-        Retrieves disucssions list for a section.
+        Retrieves discussions list for a section.
 
         Parameters
         ----------
