@@ -6,7 +6,6 @@
 import logging
 import os
 import sys
-import traceback
 from typing import Callable, Dict, Optional
 
 from dotenv import load_dotenv
@@ -59,12 +58,11 @@ def _create_file_from_dataframe(action: Callable, file_name) -> bool:
         if data is not None:
             export_data.df_to_csv(data, file_name)
         return True
-    except Exception as ex:
-        logger.error(
-            f"An exception of type %s occurred while generating {file_name}: %s",
-            type(ex), ex,
+    except Exception:
+        logger.exception(
+            "An exception occurred while generating %s",
+            file_name
         )
-        logger.debug(traceback.format_exc())
         return False
 
 
@@ -77,12 +75,11 @@ def _create_file_from_list(action: Callable, file_name: str) -> bool:
         if data is not None:
             export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
         return True
-    except Exception as ex:
-        logger.error(
-            f"An exception occurred while generating {file_name} : %s",
-            ex,
+    except Exception:
+        logger.exception(
+            "An exception occurred while generating %s",
+            file_name
         )
-        logger.debug(traceback.format_exc())
         return False
 
 
