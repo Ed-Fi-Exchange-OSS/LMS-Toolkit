@@ -27,6 +27,8 @@ REQUIRED_COLUMNS = [
     "submissionHistory",
 ]
 
+logger = logging.getLogger(__name__)
+
 
 def request_submissions(
     resource: Optional[Resource], course_id: str
@@ -101,7 +103,7 @@ def request_latest_submissions_as_df(
         submissionHistory: The history of the submission as JSON
     """
 
-    logging.info("Pulling student submission data")
+    logger.info("Pulling student submission data")
     submissions: List[Dict[str, str]] = []
     for course_id in course_ids:
         submissions.extend(request_submissions(resource, course_id))

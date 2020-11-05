@@ -10,6 +10,7 @@ import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
 
+logger = logging.getLogger(__name__)
 
 def request_teachers(
     resource: Optional[Resource], course_id: str
@@ -71,7 +72,7 @@ def request_latest_teachers_as_df(
         profile.emailAddress: Email address of the user
     """
 
-    logging.info("Pulling teacher data")
+    logger.info("Pulling teacher data")
     teachers: List[Dict[str, str]] = []
     for course_id in course_ids:
         teachers.extend(request_teachers(resource, course_id))
