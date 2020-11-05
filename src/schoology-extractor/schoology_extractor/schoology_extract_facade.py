@@ -44,7 +44,6 @@ class SchoologyExtractFacade:
     page_size: int
     db_engine: sqlalchemy.engine.base.Engine
 
-
     @property
     def _client(self):
         assert isinstance(self.request_client, RequestClient)
