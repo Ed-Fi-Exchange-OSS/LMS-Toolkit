@@ -17,6 +17,7 @@ RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
 
 logger = logging.getLogger(__name__)
 
+
 @retry(
     retry_on_exceptions=(IOError, RequestException),
     max_calls_total=MAX_TOTAL_CALLS,

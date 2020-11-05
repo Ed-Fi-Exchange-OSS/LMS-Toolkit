@@ -12,6 +12,7 @@ from .api_caller import call_api, ResourceType
 
 logger = logging.getLogger(__name__)
 
+
 def request_teachers(
     resource: Optional[Resource], course_id: str
 ) -> List[Dict[str, str]]:
