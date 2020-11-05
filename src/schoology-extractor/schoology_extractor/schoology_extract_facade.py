@@ -154,7 +154,7 @@ class SchoologyExtractFacade:
 
         return assignmentsMap.map_to_udm(assignments, section_id)
 
-    def get_submissions(self, assignments: pd.DataFrame) -> list:
+    def get_submissions(self, assignments: pd.DataFrame) -> pd.DataFrame:
         """
         Gets all Schoology submissions for the given assignments.
 
@@ -184,11 +184,22 @@ class SchoologyExtractFacade:
             )
 
             while True:
-                submissions = submissions + submissions_response.current_page_items
+                submissions_with_id = [
+                    {
+                        **row,
+                        'id': f'{section_id}#{grade_item_id}#{row["uid"]}'
+                    }
+                    for row in submissions_response.current_page_items
+                ]
+                submissions = submissions + submissions_with_id
                 if submissions_response.get_next_page() is None:
                     break
 
-        return submissions
+        return sync.sync_resource(
+            RESOURCE_NAMES.SUBMISSION,
+            self._db_engine,
+            submissions
+            )
 
     def get_section_associations(self, section_id: int) -> pd.DataFrame:
         """

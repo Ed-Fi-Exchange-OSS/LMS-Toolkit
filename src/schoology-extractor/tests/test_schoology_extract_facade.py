@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from logging import Logger
 from typing import Tuple
 
 import pandas as pd
@@ -296,14 +297,22 @@ def describe_when_getting_assignments():
 def describe_when_getting_submissions():
     def describe_given_one_assignment_and_one_submission():
         @pytest.fixture
-        def result() -> list:
+        def result() -> DataFrame:
+            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
+            # This method will be tested in a different test
+            sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
             page_size = 22
 
             assignments = pd.DataFrame([{"SourceSystemIdentifier": 345, "LMSSectionSourceSystemIdentifier": 123}])
             submissions = {
-                "revision": [{"id": 1234}],
+                "revision": [
+                    {
+                        "revision_id": 1,
+                        "uid": 100032890,
+                    }
+                ],
                 "total": 1,
                 "links": {"self": "ignore"},
             }
@@ -323,14 +332,17 @@ def describe_when_getting_submissions():
 
             return result
 
-        def it_should_return_the_submission(result):
-            assert result[0]["id"] == 1234
+        def it_should_return_the_submission(result: DataFrame):
+            assert result["revision_id"][0] == 1
 
     def describe_given_two_assignment_and_one_submission_each():
         @pytest.fixture
-        def result() -> list:
+        def result() -> DataFrame:
+            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
+            # This method will be tested in a different test
+            sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
             page_size = 22
 
             assignments = pd.DataFrame(
@@ -340,7 +352,11 @@ def describe_when_getting_submissions():
                 ]
             )
             submissions_1 = {
-                "revision": [{"id": 1234}],
+                "revision": [
+                    {
+                        "revision_id": 1,
+                        "uid": 100032890,
+                    }],
                 "total": 1,
                 "links": {"self": "ignore"},
             }
@@ -348,7 +364,11 @@ def describe_when_getting_submissions():
                 request_client, page_size, submissions_1, "revision", "ignore me"
             )
             submissions_2 = {
-                "revision": [{"id": 1235}],
+                "revision": [
+                    {
+                        "revision_id": 2,
+                        "uid": 100032890,
+                    }],
                 "total": 1,
                 "links": {"self": "ignore"},
             }
@@ -370,10 +390,10 @@ def describe_when_getting_submissions():
             return result
 
         def it_should_return_the_submission_for_assignment_1(result):
-            assert result[0]["id"] == 1234
+            assert result["revision_id"][0] == 1
 
         def it_should_return_the_submission_for_assignment_2(result):
-            assert result[1]["id"] == 1235
+            assert result["revision_id"][1] == 2
 
 
 def describe_when_getting_section_associations():
