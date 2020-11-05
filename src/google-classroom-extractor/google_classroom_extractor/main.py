@@ -48,16 +48,17 @@ logger: logging.Logger
 def configure_logging():
     global logger
 
+    logger = logging.getLogger(__name__)
+
+    level = os.environ.get("LOGLEVEL", "INFO")
     logging.basicConfig(
         handlers=[
             logging.StreamHandler(sys.stdout),
         ],
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        level=os.environ.get("LOGLEVEL", "INFO"),
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        level=level,
     )
-    logging.getLogger("matplotlib").setLevel(logging.ERROR)
-    logging.getLogger("opnieuw").setLevel(logging.DEBUG)
-    logger = logging.getLogger(__name__)
+    logging.getLogger("opnieuw").setLevel(level)
 
 
 def request() -> Optional[Result]:
