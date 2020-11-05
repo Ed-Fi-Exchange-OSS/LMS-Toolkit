@@ -37,6 +37,7 @@ def coursework_to_assignments_dfs(
         DueDateTime: The date and time the assignment is due
         EndDateTime: The end date and time for the assignment
         EntityStatus: The status of the record
+        LMSSectionIdentifier: A unique numeric identifier assigned to the section
         MaxPoints: The maximum number of points a student may receive
         SourceSystem: The system code or name providing the assignment data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to
@@ -101,7 +102,7 @@ def coursework_to_assignments_dfs(
 
     assignments_df = assignments_df.rename(
         columns={
-            "courseId": "SourceSystemSectionIdentifier",
+            "courseId": "LMSSectionIdentifier",
             "workType": "AssignmentCategory",
             "description": "AssignmentDescription",
             "scheduledTime": "StartDateTime",
@@ -118,11 +119,7 @@ def coursework_to_assignments_dfs(
 
     # group by section id as a Dict of DataFrames
     result: Dict[str, DataFrame] = dict(
-        tuple(assignments_df.groupby(["SourceSystemSectionIdentifier"]))
+        tuple(assignments_df.groupby(["LMSSectionIdentifier"]))
     )
-
-    # no longer need group by column
-    for grouped_df in result.values():
-        grouped_df.drop(columns=["SourceSystemSectionIdentifier"], inplace=True)
 
     return result

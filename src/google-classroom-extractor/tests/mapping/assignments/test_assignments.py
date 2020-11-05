@@ -76,7 +76,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
-        assert column_count == 12
+        assert column_count == 13
 
     def it_should_map_fields_correctly(assignments_dicts):
         assignments_df: DataFrame = assignments_dicts[COURSE_ID]
@@ -93,6 +93,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         )
         assert row_dict["EndDateTime"] == ""
         assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
+        assert row_dict["LMSSectionIdentifier"] == COURSE_ID
         assert row_dict["MaxPoints"] == MAX_POINTS
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{ID}"
@@ -136,7 +137,7 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
-        assert column_count == 12
+        assert column_count == 13
 
     def it_should_map_fields_correctly_with_empty_duedate(assignments_dicts):
         assignments_df: DataFrame = assignments_dicts[COURSE_ID]
@@ -147,6 +148,7 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         assert row_dict["DueDateTime"] == ""
         assert row_dict["EndDateTime"] == ""
         assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
+        assert row_dict["LMSSectionIdentifier"] == COURSE_ID
         assert row_dict["MaxPoints"] == MAX_POINTS
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{ID}"
