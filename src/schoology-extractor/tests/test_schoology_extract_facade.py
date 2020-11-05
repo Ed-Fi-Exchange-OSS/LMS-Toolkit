@@ -3,7 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from logging import Logger
 from typing import Tuple
 
 import pandas as pd
@@ -28,7 +27,6 @@ def describe_when_getting_users():
     def describe_given_one_user():
         @pytest.fixture
         def result() -> pd.DataFrame:
-            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
@@ -58,7 +56,7 @@ def describe_when_getting_users():
             # This method will be tested in a different test
             sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
 
-            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+            service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_users()
@@ -71,7 +69,6 @@ def describe_when_getting_users():
     def describe_given_two_pages_of_users():
         @pytest.fixture
         def system() -> Tuple[pd.DataFrame, Mock]:
-            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 1
@@ -107,7 +104,7 @@ def describe_when_getting_users():
             usersMap.map_to_udm.return_value = pd.DataFrame()
 
             # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+            service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_users()
@@ -142,7 +139,6 @@ def describe_when_getting_sections():
     def describe_given_one_course_with_one_section():
         @pytest.fixture
         def system() -> Tuple[pd.DataFrame, Mock]:
-            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
@@ -167,7 +163,7 @@ def describe_when_getting_sections():
             get_sections_mock.return_value = sections
 
             # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+            service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_sections()
@@ -187,7 +183,6 @@ def describe_when_getting_sections():
     def describe_given_two_pages_of_courses():
         @pytest.fixture
         def system() -> Tuple[pd.DataFrame, Mock]:
-            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 1
@@ -220,7 +215,7 @@ def describe_when_getting_sections():
             get_sections_mock.return_value = sections
 
             # Arrange
-            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+            service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_sections()
@@ -244,7 +239,6 @@ def describe_when_getting_assignments():
     def describe_given_a_section_has_one_assignment():
         @pytest.fixture
         def system() -> Tuple[pd.DataFrame, Mock, Mock]:
-            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
@@ -270,7 +264,7 @@ def describe_when_getting_assignments():
             assignmentsMap.map_to_udm = Mock()
             assignmentsMap.map_to_udm.return_value = pd.DataFrame()
 
-            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+            service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_assignments(section_id)
@@ -303,7 +297,6 @@ def describe_when_getting_submissions():
     def describe_given_one_assignment_and_one_submission():
         @pytest.fixture
         def result() -> list:
-            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
@@ -323,7 +316,7 @@ def describe_when_getting_submissions():
                 submissions_page
             )
 
-            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+            service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_submissions(assignments)
@@ -336,7 +329,6 @@ def describe_when_getting_submissions():
     def describe_given_two_assignment_and_one_submission_each():
         @pytest.fixture
         def result() -> list:
-            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
@@ -370,7 +362,7 @@ def describe_when_getting_submissions():
                 submissions_queue
             )
 
-            service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+            service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_submissions(assignments)
@@ -387,7 +379,6 @@ def describe_when_getting_submissions():
 def describe_when_getting_section_associations():
     @pytest.fixture
     def system() -> Tuple[pd.DataFrame, Mock]:
-        logger = Mock(spec=Logger)
         request_client = Mock(spec=RequestClient)
         page_size = 1
 
@@ -403,7 +394,7 @@ def describe_when_getting_section_associations():
         db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
 
         # Arrange
-        service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+        service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
         # Act
         result = service.get_section_associations(section_id)
@@ -436,7 +427,6 @@ def describe_when_getting_section_associations():
 def describe_when_getting_attendance_events():
     @pytest.fixture
     def system() -> Tuple[pd.DataFrame, Mock]:
-        logger = Mock(spec=Logger)
         request_client = Mock(spec=RequestClient)
         page_size = 1
 
@@ -456,7 +446,7 @@ def describe_when_getting_attendance_events():
         section_associations = pd.DataFrame([{"id": 123}])
 
         # Arrange
-        service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+        service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
         # Act
         result = service.get_attendance_events(section_id, section_associations)
@@ -489,7 +479,6 @@ def describe_when_getting_attendance_events():
 def describe_when_getting_user_activities():
     @pytest.fixture
     def system() -> Tuple[pd.DataFrame, Mock]:
-        logger = Mock(spec=Logger)
         request_client = Mock(spec=RequestClient)
         page_size = 1
 
@@ -506,7 +495,7 @@ def describe_when_getting_user_activities():
         db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
 
         # Arrange
-        service = SchoologyExtractFacade(logger, request_client, page_size, db_engine)
+        service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
         # Act
         result = service.get_user_activities(section_id)
