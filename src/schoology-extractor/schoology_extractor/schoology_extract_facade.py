@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from dataclasses import dataclass
-from logging import Logger
+import logging
 from typing import Any, Dict, List
 
 import pandas as pd
@@ -21,6 +21,9 @@ from .mapping import attendance as attendanceMap
 from .mapping import discussion_replies as discussionRepliesMap
 
 
+logger = logging.getLogger(__name__)
+
+
 @dataclass
 class SchoologyExtractFacade:
     """
@@ -29,8 +32,6 @@ class SchoologyExtractFacade:
 
     Parameters
     ----------
-    logger : Logger
-        Standard Python logger
     request_client : RequestClient
         Instance of a Schoology request client
     page_size : int
@@ -39,15 +40,10 @@ class SchoologyExtractFacade:
         Database connectivity for sync process
     """
 
-    logger: Logger
     request_client: RequestClient
     page_size: int
     db_engine: sqlalchemy.engine.base.Engine
 
-    @property
-    def _logger(self):
-        assert isinstance(self.logger, Logger)
-        return self.logger
 
     @property
     def _client(self):
@@ -73,7 +69,7 @@ class SchoologyExtractFacade:
         pd.DataFrame
         """
 
-        self._logger.debug("Exporting users: get users")
+        logger.debug("Exporting users: get users")
         users_response = self._client.get_users(self._page_size)
         users_list: List[Any] = []
         while True:
@@ -81,7 +77,7 @@ class SchoologyExtractFacade:
             if users_response.get_next_page() is None:
                 break
 
-        self._logger.debug("Exporting users: get roles")
+        logger.debug("Exporting users: get roles")
         roles_list: List[Any] = []
         roles_response = self._client.get_roles(self._page_size)
         while True:
@@ -111,7 +107,7 @@ class SchoologyExtractFacade:
         list
         """
 
-        self._logger.debug("Exporting sections: get active courses")
+        logger.debug("Exporting sections: get active courses")
         courses_response = self._client.get_courses(self._page_size)
         courses_list: List[Any] = []
         while True:
@@ -119,7 +115,7 @@ class SchoologyExtractFacade:
             if courses_response.get_next_page() is None:
                 break
 
-        self._logger.debug("Exporting sections: get sections for active courses")
+        logger.debug("Exporting sections: get sections for active courses")
 
         # TODO: inconsistency - in this case the pagination is handled inside of
         # the client, instead of being handled here. Arguably there should be
