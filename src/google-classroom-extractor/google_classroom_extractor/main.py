@@ -58,7 +58,6 @@ def configure_logging():
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         level=level,
     )
-    logging.getLogger("opnieuw").setLevel(level)
 
 
 def request() -> Optional[Result]:
