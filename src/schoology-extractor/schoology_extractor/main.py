@@ -87,11 +87,6 @@ def _get_users() -> pd.DataFrame:
 result_bucket: Dict[str, pd.DataFrame] = {}
 
 
-# There are some methods that will need to share data in order to follow the
-# pattern used by the `_create_file_from_dataframe` method.
-shared_data: Dict = {}
-
-
 def _get_sections() -> pd.DataFrame:
     sections = service.get_sections()
     result_bucket["sections"] = sections
@@ -120,10 +115,11 @@ def _get_user_activities(section_id: int) -> Callable:
     return __get_user_activities
 
 
-def _get_submissions() -> pd.DataFrame:
-    assigment_id: int = shared_data["current_assignment_id"]
-    section_id: int = shared_data["current_section_id"]
-    return service.get_submissions(assigment_id, section_id)
+def _get_submissions(assigment_id: int, section_id: int) -> Callable:
+    def __get_submissions() -> Optional[pd.DataFrame]:
+        return service.get_submissions(assigment_id, section_id)
+
+    return __get_submissions
 
 
 def _get_section_associations(section_id: int) -> Callable:
@@ -174,11 +170,9 @@ def main():
             assignments : pd.DataFrame = result_bucket["assignments"]
 
             for assignment in assignments["SourceSystemIdentifier"].tolist():
-                shared_data["current_assignment_id"] = assignment
-                shared_data["current_section_id"] = section_id
                 assignment_id = int(assignment)
                 submission_file_name = lms.get_submissions_file_path(schoology_output_path, section_id, assignment_id)
-                _create_file_from_dataframe(_get_submissions, submission_file_name)
+                _create_file_from_dataframe(_get_submissions(assignment_id, section_id), submission_file_name)
 
         user_activities_file_path = lms.get_user_activities_file_path(
             schoology_output_path, section_id
