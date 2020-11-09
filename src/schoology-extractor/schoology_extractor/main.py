@@ -87,6 +87,11 @@ def _get_users() -> pd.DataFrame:
 result_bucket: Dict[str, pd.DataFrame] = {}
 
 
+# There are some methods that will need to share data in order to follow the
+# pattern used by the `_create_file_from_dataframe` method.
+shared_data: Dict = {}
+
+
 def _get_sections() -> pd.DataFrame:
     sections = service.get_sections()
     result_bucket["sections"] = sections
@@ -116,8 +121,9 @@ def _get_user_activities(section_id: int) -> Callable:
 
 
 def _get_submissions() -> pd.DataFrame:
-    assignments_df: pd.DataFrame = result_bucket["assignments"]
-    return service.get_submissions(assignments_df)
+    assigment_id: int = shared_data["current_assignment_id"]
+    section_id: int = shared_data["current_section_id"]
+    return service.get_submissions(assigment_id, section_id)
 
 
 def _get_section_associations(section_id: int) -> Callable:
@@ -165,8 +171,14 @@ def main():
         )
 
         if succeeded:
-            # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
-            _create_file_from_dataframe(_get_submissions, "submissions.csv")
+            assignments : pd.DataFrame = result_bucket["assignments"]
+
+            for assignment in assignments["SourceSystemIdentifier"].tolist():
+                shared_data["current_assignment_id"] = assignment
+                shared_data["current_section_id"] = section_id
+                assignment_id = int(assignment)
+                submission_file_name = lms.get_submissions_file_path(schoology_output_path, section_id, assignment_id)
+                _create_file_from_dataframe(_get_submissions, submission_file_name)
 
         user_activities_file_path = lms.get_user_activities_file_path(
             schoology_output_path, section_id

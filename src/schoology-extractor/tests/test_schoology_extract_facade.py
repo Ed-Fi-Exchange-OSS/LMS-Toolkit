@@ -305,7 +305,8 @@ def describe_when_getting_submissions():
             sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
             page_size = 22
 
-            assignments = pd.DataFrame([{"SourceSystemIdentifier": 345, "LMSSectionSourceSystemIdentifier": 123}])
+            assignment_id = 345
+            section_id = 123
             submissions = {
                 "revision": [
                     {
@@ -328,72 +329,12 @@ def describe_when_getting_submissions():
             service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
-            result = service.get_submissions(assignments)
+            result = service.get_submissions(assignment_id, section_id)
 
             return result
 
         def it_should_return_the_submission(result: DataFrame):
             assert result["revision_id"][0] == 1
-
-    def describe_given_two_assignment_and_one_submission_each():
-        @pytest.fixture
-        def result() -> DataFrame:
-            logger = Mock(spec=Logger)
-            request_client = Mock(spec=RequestClient)
-            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
-            # This method will be tested in a different test
-            sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
-            page_size = 22
-
-            assignments = pd.DataFrame(
-                [
-                    {"SourceSystemIdentifier": 345, "LMSSectionSourceSystemIdentifier": 123},
-                    {"SourceSystemIdentifier": 346, "LMSSectionSourceSystemIdentifier": 124},
-                ]
-            )
-            submissions_1 = {
-                "revision": [
-                    {
-                        "revision_id": 1,
-                        "uid": 100032890,
-                    }],
-                "total": 1,
-                "links": {"self": "ignore"},
-            }
-            submissions_page_1 = PaginatedResult(
-                request_client, page_size, submissions_1, "revision", "ignore me"
-            )
-            submissions_2 = {
-                "revision": [
-                    {
-                        "revision_id": 2,
-                        "uid": 100032890,
-                    }],
-                "total": 1,
-                "links": {"self": "ignore"},
-            }
-            submissions_page_2 = PaginatedResult(
-                request_client, page_size, submissions_2, "revision", "ignore me"
-            )
-            submissions_queue = [submissions_page_1, submissions_page_2]
-
-            # Arrange
-            request_client.get_submissions_by_section_id_and_grade_item_id.side_effect = (
-                submissions_queue
-            )
-
-            service = SchoologyExtractFacade(request_client, page_size, db_engine)
-
-            # Act
-            result = service.get_submissions(assignments)
-
-            return result
-
-        def it_should_return_the_submission_for_assignment_1(result):
-            assert result["revision_id"][0] == 1
-
-        def it_should_return_the_submission_for_assignment_2(result):
-            assert result["revision_id"][1] == 2
 
 
 def describe_when_getting_section_associations():

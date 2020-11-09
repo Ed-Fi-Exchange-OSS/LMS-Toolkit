@@ -8,11 +8,13 @@ import os
 
 USERS = "users"
 SECTION = "section"
+ASSIGNMENT = "assignment"
 ASSIGNMENTS = "assignments"
 USER_ACTIVITY = "user-activities"
 SECTIONS = "sections"
 SECTION_ASSOCIATIONS = "section-associations"
 ATTENDANCE = "attendance"
+SUBMISSIONS = "submissions"
 
 
 def _get_file_name() -> str:
@@ -158,6 +160,32 @@ def get_attendance_events_file_path(output_directory: str, section_id: int) -> s
     """
     base_dir = _get_section_directory(output_directory, section_id)
     base_dir = os.path.join(base_dir, ATTENDANCE)
+    _create_directory_if_it_does_not_exist(base_dir)
+
+    return os.path.join(base_dir, _get_file_name())
+
+
+def get_submissions_file_path(output_directory: str, section_id: int, assignment_id : int) -> str:
+    """
+    Builds the expected filesystem path (directory + file name) for a new
+    Submissions file.
+
+    Parameters
+    ----------
+    output_directory: str
+        Base output directory
+    section_id: int
+        Identifier the section for which attendance will is being exported
+
+    Returns
+    -------
+    full path with file name
+    """
+    # /ed-fi-udm-lms/section=<id>/assignment=<id>/submissions/<YYYY-mm-dd-HH-MM-SS>.csv
+    base_dir = _get_section_directory(output_directory, section_id)
+    base_dir = os.path.join(base_dir, f"{ASSIGNMENT}={str(assignment_id)}")
+    _create_directory_if_it_does_not_exist(base_dir)
+    base_dir = os.path.join(base_dir, SUBMISSIONS)
     _create_directory_if_it_does_not_exist(base_dir)
 
     return os.path.join(base_dir, _get_file_name())

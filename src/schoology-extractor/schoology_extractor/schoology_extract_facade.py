@@ -154,7 +154,7 @@ class SchoologyExtractFacade:
 
         return assignmentsMap.map_to_udm(assignments, section_id)
 
-    def get_submissions(self, assignments: pd.DataFrame) -> pd.DataFrame:
+    def get_submissions(self, assignment_id: int, section_id: int) -> pd.DataFrame:
         """
         Gets all Schoology submissions for the given assignments.
 
@@ -170,30 +170,25 @@ class SchoologyExtractFacade:
         """
 
         submissions: List[Dict[str, Any]] = []
-
-        for _, assignment in assignments.iterrows():
-            section_id = assignment["LMSSectionSourceSystemIdentifier"]
-            grade_item_id = assignment["SourceSystemIdentifier"]
-
-            submissions_response = (
-                self._client.get_submissions_by_section_id_and_grade_item_id(
-                    section_id,
-                    grade_item_id,
-                    self._page_size,
-                )
+        submissions_response = (
+            self._client.get_submissions_by_section_id_and_grade_item_id(
+                section_id,
+                assignment_id,
+                self._page_size,
             )
+        )
 
-            while True:
-                submissions_with_id = [
-                    {
-                        **row,
-                        'id': f'{section_id}#{grade_item_id}#{row["uid"]}'
-                    }
-                    for row in submissions_response.current_page_items
-                ]
-                submissions = submissions + submissions_with_id
-                if submissions_response.get_next_page() is None:
-                    break
+        while True:
+            submissions_with_id = [
+                {
+                    **row,
+                    'id': f'{section_id}#{assignment_id}#{row["uid"]}'
+                }
+                for row in submissions_response.current_page_items
+            ]
+            submissions = submissions + submissions_with_id
+            if submissions_response.get_next_page() is None:
+                break
 
         return sync.sync_resource(
             RESOURCE_NAMES.SUBMISSION,
