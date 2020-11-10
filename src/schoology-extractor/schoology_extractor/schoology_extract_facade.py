@@ -19,6 +19,7 @@ from .mapping import sections as sectionsMap
 from .mapping import section_associations as sectionAssocMap
 from .mapping import attendance as attendanceMap
 from .mapping import discussion_replies as discussionRepliesMap
+from .mapping import submissions as submissionsMap
 
 
 logger = logging.getLogger(__name__)
@@ -190,11 +191,12 @@ class SchoologyExtractFacade:
             if submissions_response.get_next_page() is None:
                 break
 
-        return sync.sync_resource(
+        data = sync.sync_resource(
             RESOURCE_NAMES.SUBMISSION,
             self._db_engine,
             submissions
-            )
+        )
+        return submissionsMap.map_to_udm(data)
 
     def get_section_associations(self, section_id: int) -> pd.DataFrame:
         """

@@ -3,7 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from logging import Logger
 from typing import Tuple
 
 import pandas as pd
@@ -19,6 +18,7 @@ from schoology_extractor.mapping import users as usersMap
 from schoology_extractor.mapping import sections as sectionsMap
 from schoology_extractor.mapping import section_associations as sectionAssocMap
 from schoology_extractor.mapping import assignments as assignmentsMap
+from schoology_extractor.mapping import submissions as submissionsMap
 from schoology_extractor.mapping import attendance as attendanceMap
 from schoology_extractor.mapping import discussion_replies as discussionRepliesMap
 from schoology_extractor.helpers import sync
@@ -298,11 +298,13 @@ def describe_when_getting_submissions():
     def describe_given_one_assignment_and_one_submission():
         @pytest.fixture
         def result() -> DataFrame:
-            logger = Mock(spec=Logger)
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             # This method will be tested in a different test
             sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
+            # Mock the UDM mapper
+            submissionsMap.map_to_udm = Mock()
+            submissionsMap.map_to_udm.side_effect = lambda x: x
             page_size = 22
 
             assignment_id = 345
