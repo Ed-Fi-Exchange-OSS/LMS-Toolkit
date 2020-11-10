@@ -18,6 +18,7 @@ from schoology_extractor.mapping import users as usersMap
 from schoology_extractor.mapping import sections as sectionsMap
 from schoology_extractor.mapping import section_associations as sectionAssocMap
 from schoology_extractor.mapping import assignments as assignmentsMap
+from schoology_extractor.mapping import submissions as submissionsMap
 from schoology_extractor.mapping import attendance as attendanceMap
 from schoology_extractor.mapping import discussion_replies as discussionRepliesMap
 from schoology_extractor.helpers import sync
@@ -296,14 +297,25 @@ def describe_when_getting_assignments():
 def describe_when_getting_submissions():
     def describe_given_one_assignment_and_one_submission():
         @pytest.fixture
-        def result() -> list:
+        def result() -> DataFrame:
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
+            # This method will be tested in a different test
+            sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
+            # Mock the UDM mapper
+            submissionsMap.map_to_udm = Mock()
+            submissionsMap.map_to_udm.side_effect = lambda x: x
             page_size = 22
 
-            assignments = pd.DataFrame([{"SourceSystemIdentifier": 345, "LMSSectionSourceSystemIdentifier": 123}])
+            assignment_id = 345
+            section_id = 123
             submissions = {
-                "revision": [{"id": 1234}],
+                "revision": [
+                    {
+                        "revision_id": 1,
+                        "uid": 100032890,
+                    }
+                ],
                 "total": 1,
                 "links": {"self": "ignore"},
             }
@@ -319,61 +331,12 @@ def describe_when_getting_submissions():
             service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
             # Act
-            result = service.get_submissions(assignments)
+            result = service.get_submissions(assignment_id, section_id)
 
             return result
 
-        def it_should_return_the_submission(result):
-            assert result[0]["id"] == 1234
-
-    def describe_given_two_assignment_and_one_submission_each():
-        @pytest.fixture
-        def result() -> list:
-            request_client = Mock(spec=RequestClient)
-            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
-            page_size = 22
-
-            assignments = pd.DataFrame(
-                [
-                    {"SourceSystemIdentifier": 345, "LMSSectionSourceSystemIdentifier": 123},
-                    {"SourceSystemIdentifier": 346, "LMSSectionSourceSystemIdentifier": 124},
-                ]
-            )
-            submissions_1 = {
-                "revision": [{"id": 1234}],
-                "total": 1,
-                "links": {"self": "ignore"},
-            }
-            submissions_page_1 = PaginatedResult(
-                request_client, page_size, submissions_1, "revision", "ignore me"
-            )
-            submissions_2 = {
-                "revision": [{"id": 1235}],
-                "total": 1,
-                "links": {"self": "ignore"},
-            }
-            submissions_page_2 = PaginatedResult(
-                request_client, page_size, submissions_2, "revision", "ignore me"
-            )
-            submissions_queue = [submissions_page_1, submissions_page_2]
-
-            # Arrange
-            request_client.get_submissions_by_section_id_and_grade_item_id.side_effect = (
-                submissions_queue
-            )
-
-            service = SchoologyExtractFacade(request_client, page_size, db_engine)
-
-            # Act
-            result = service.get_submissions(assignments)
-
-            return result
-
-        def it_should_return_the_submission_for_assignment_1(result):
-            assert result[0]["id"] == 1234
-
-        def it_should_return_the_submission_for_assignment_2(result):
-            assert result[1]["id"] == 1235
+        def it_should_return_the_submission(result: DataFrame):
+            assert result["revision_id"][0] == 1
 
 
 def describe_when_getting_section_associations():

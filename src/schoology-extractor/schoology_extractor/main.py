@@ -115,9 +115,11 @@ def _get_user_activities(section_id: int) -> Callable:
     return __get_user_activities
 
 
-def _get_submissions() -> list:
-    assignments_df: pd.DataFrame = result_bucket["assignments"]
-    return service.get_submissions(assignments_df)
+def _get_submissions(assigment_id: int, section_id: int) -> Callable:
+    def __get_submissions() -> Optional[pd.DataFrame]:
+        return service.get_submissions(assigment_id, section_id)
+
+    return __get_submissions
 
 
 def _get_section_associations(section_id: int) -> Callable:
@@ -165,8 +167,12 @@ def main():
         )
 
         if succeeded:
-            # TODO: use correct file path, and use DatFrame instead of list, in FIZZ-103
-            _create_file_from_list(_get_submissions, "submissions.csv")
+            assignments : pd.DataFrame = result_bucket["assignments"]
+
+            for assignment in assignments["SourceSystemIdentifier"].tolist():
+                assignment_id = int(assignment)
+                submission_file_name = lms.get_submissions_file_path(schoology_output_path, section_id, assignment_id)
+                _create_file_from_dataframe(_get_submissions(assignment_id, section_id), submission_file_name)
 
         user_activities_file_path = lms.get_user_activities_file_path(
             schoology_output_path, section_id
