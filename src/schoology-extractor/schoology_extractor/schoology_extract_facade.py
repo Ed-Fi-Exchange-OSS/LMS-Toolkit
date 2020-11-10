@@ -161,13 +161,14 @@ class SchoologyExtractFacade:
 
         Parameters
         ----------
-        assignments: pd.DataFrame
-            A DataFrame containing assignment data
-
+        assignment_id:
+            The id of the assignment
+        section_id:
+            The id of the section
         Returns
         -------
-        list
-            List of submission dictionaries
+        pd.DataFrame
+            List of submissions
         """
 
         submissions: List[Dict[str, Any]] = []
