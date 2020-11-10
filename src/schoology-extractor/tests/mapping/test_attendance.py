@@ -165,7 +165,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
                             "attendance": [
                                 {
                                     "enrollment_id": 12345,
-                                    # This year is deliberately different from the one above, only for testing purposes
                                     "date": "2021-08-28",
                                     "status": 1,
                                     "comment": "",
