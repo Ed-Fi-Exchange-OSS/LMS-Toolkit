@@ -3,12 +3,13 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from typing import Callable
 import pandas as pd
 
 from . import constants
 
 
-def _flatten_into_dataframe(attendance: list) -> pd.DataFrame:
+def _flatten_into_dataframe(attendance: list,) -> pd.DataFrame:
     df = pd.DataFrame(columns=["enrollment_id", "EventDate", "AttendanceStatus"])
 
     for date_node in attendance:
@@ -40,7 +41,7 @@ def _get_status(status_code: int) -> str:
     return switcher.get(status_code, f"Unknown status: {status_code}")
 
 
-def map_to_udm(attendance: list, section_associations: pd.DataFrame) -> pd.DataFrame:
+def map_to_udm(attendance: list, section_associations: pd.DataFrame, additional_mapping : Callable = None) -> pd.DataFrame:
     """
     Maps a DataFrame containing Schoology attendance events into the Ed-Fi LMS
     Unified Data Model (UDM) format.
@@ -111,11 +112,11 @@ def map_to_udm(attendance: list, section_associations: pd.DataFrame) -> pd.DataF
             "AttendanceStatus",
             "EventDate",
             "LMSUserSourceSystemIdentifier",
-            "LMSSectionSourceSystemIdentifier",
+            "LMSSectionSourceSystemIdentifier"
         ]
     ]
 
-    df["CreateDate"] = None
-    df["LastModifiedDate"] = None
+    if additional_mapping is not None:
+        additional_mapping(df)
 
     return df
