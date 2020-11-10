@@ -59,9 +59,15 @@ def map_to_udm(submissions_df: pd.DataFrame) -> pd.DataFrame:
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
     df["SubmissionStatus"] = 'on-time'
-    for index, row in df.iterrows():
-        row["SubmissionStatus"] = 'late' if row["late"] == 1 else row["SubmissionStatus"]
-        row["SubmissionStatus"] = 'draft' if row["draft"] == 1 else row["SubmissionStatus"]
+
+    def _get_status(row: pd.Series):
+        if row["late"] == 1:
+            return "late"
+        if row["draft"] == 1:
+            return "draft"
+        return "on-time"
+
+    df["SubmissionStatus"] = df.apply(_get_status, axis=1)
 
     df.drop(columns=["late", "draft"], inplace=True)
 
