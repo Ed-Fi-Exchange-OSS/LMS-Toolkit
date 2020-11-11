@@ -18,6 +18,7 @@ You can explore the work done by navigating across the sub-folders.
 
 1. Python 3.8
 1. Poetry 1.0.10
+1. [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 1. Optional: Latest version of VS Code
 
 ### Configuring Canvas
@@ -54,25 +55,11 @@ Follow these steps to install:
 
 ### PowerShell
 
-1. If using Windows Powershell, first switch to the virtual environment just
-    created:
-
-    ```powershell
-    cd src/canvas-extractor
-    .venv/scripts/activate.ps1
-    ```
-
-2. Run the script
+1. Run the script
 
     ```powershell
     poetry run python.exe ./data-extractor/main.py
     ```
-
-### Inside Visual Studio Code
-
-Type `ctrl`+`shift`+`p` and search for the command `Python: select interpreter`,
-then point it to your generated folder `src/canvas-extractor/.venv`. Run the command `poetry
-run python.exe ./data-extractor/main.py`
 
 
 
