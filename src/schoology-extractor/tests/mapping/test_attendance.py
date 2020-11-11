@@ -93,8 +93,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
-                "CreateDate": None,
-                "LastModifiedDate": None
             },
             {
                 "SourceSystemIdentifier": 12348,
@@ -105,8 +103,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
-                "CreateDate": None,
-                "LastModifiedDate": None
             },
         ]
 
@@ -116,8 +112,8 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
         # Act
         return map_to_udm(attendance_events, section_associations)
 
-    def it_should_have_nine_columns(result):
-        assert result.shape[1] == 9
+    def it_should_have_seven_columns(result):
+        assert result.shape[1] == 7
 
     def it_should_have_schoology_as_source_system(result):
         assert result["SourceSystem"].iloc[0] == "Schoology"
@@ -137,12 +133,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
     def it_should_map_attendance_status_1_to_present(result, index, expected):
         assert result["AttendanceStatus"].iloc[index] == expected
 
-    def it_should_have_no_create_date(result):
-        assert result["CreateDate"].iloc[0] is None
-
-    def it_should_have_no_last_modified_date(result):
-        assert result["LastModifiedDate"].iloc[0] is None
-
     @pytest.mark.parametrize(
         "index,expected", [(0, 5678), (1, 5677), (2, 5676), (3, 5675)]
     )
@@ -156,3 +146,104 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
         result, index, expected
     ):
         assert result["LMSSectionSourceSystemIdentifier"].iloc[index] == expected
+
+
+def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mapping():
+    def it_should_return_final_output_from_the_sync_method():
+        def mapper(df: pd.DataFrame) -> pd.DataFrame:
+            return pd.DataFrame([{"one": 1}])
+
+        attendance_events = [{
+            "date": "2020-08-28",
+            "statuses": {
+                "status": [
+                    {
+                        "status_code": 1,
+                        "attendances": {
+                            "attendance": [
+                                {
+                                    "enrollment_id": 12345,
+                                    "date": "2021-08-28",
+                                    "status": 1,
+                                    "comment": "",
+                                },
+                                {
+                                    "enrollment_id": 12346,
+                                    "date": "2022-08-28",
+                                    "status": 2,
+                                    "comment": "",
+                                },
+                                {
+                                    "enrollment_id": 12347,
+                                    "date": "2023-08-28",
+                                    "status": 3,
+                                    "comment": "",
+                                },
+                                {
+                                    "enrollment_id": 12348,
+                                    "date": "2024-08-28",
+                                    "status": 4,
+                                    "comment": "",
+                                },
+                            ]
+                        }
+                    }
+                ]
+            },
+        }]
+
+        section_associations = [
+            {
+                "SourceSystemIdentifier": 12345,
+                "LMSUserSourceSystemIdentifier": 5678,
+                "LMSSectionSourceSystemIdentifier": 555,
+                "EnrollmentStatus": "active",
+                "SourceSystem": "Schoology",
+                "EntityStatus": "active",
+                "StartDate": None,
+                "EndDate": None,
+                "CreateDate": None,
+                "LastModifiedDate": None
+            },
+            {
+                "SourceSystemIdentifier": 12346,
+                "LMSUserSourceSystemIdentifier": 5677,
+                "LMSSectionSourceSystemIdentifier": 555,
+                "EnrollmentStatus": "active",
+                "SourceSystem": "Schoology",
+                "EntityStatus": "active",
+                "StartDate": None,
+                "EndDate": None,
+                "CreateDate": None,
+                "LastModifiedDate": None
+            },
+            {
+                "SourceSystemIdentifier": 12347,
+                "LMSUserSourceSystemIdentifier": 5676,
+                "LMSSectionSourceSystemIdentifier": 555,
+                "EnrollmentStatus": "active",
+                "SourceSystem": "Schoology",
+                "EntityStatus": "active",
+                "StartDate": None,
+                "EndDate": None,
+            },
+            {
+                "SourceSystemIdentifier": 12348,
+                "LMSUserSourceSystemIdentifier": 5675,
+                "LMSSectionSourceSystemIdentifier": 555,
+                "EnrollmentStatus": "active",
+                "SourceSystem": "Schoology",
+                "EntityStatus": "active",
+                "StartDate": None,
+                "EndDate": None,
+            },
+        ]
+
+        # Arrange
+        section_associations = pd.DataFrame(section_associations)
+
+        # Act
+        result = map_to_udm(attendance_events, section_associations, mapper)
+
+        # Assert
+        assert result.iloc[0]["one"] == 1
