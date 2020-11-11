@@ -3,8 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License,  Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from unittest.mock import Mock
-
 import pandas as pd
 import pytest
 
@@ -151,10 +149,10 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
 
 
 def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mapping():
-    @pytest.fixture
-    def result() -> Mock:
-        additional_mapping = Mock()
-        additional_mapping.side_effect = lambda x: x
+    def it_should_return_final_output_from_the_sync_method():
+        def mapper(df: pd.DataFrame) -> pd.DataFrame:
+            return pd.DataFrame([{"one": 1}])
+
         attendance_events = [{
             "date": "2020-08-28",
             "statuses": {
@@ -245,8 +243,7 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
         section_associations = pd.DataFrame(section_associations)
 
         # Act
-        map_to_udm(attendance_events, section_associations, additional_mapping)
-        return additional_mapping
+        result = map_to_udm(attendance_events, section_associations, mapper)
 
-    def it_should_have_seven_columns(result: Mock):
-        assert result.called is True
+        # Assert
+        assert result.iloc[0]["one"] == 1

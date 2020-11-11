@@ -46,7 +46,7 @@ def _get_status(status_code: int) -> str:
 def map_to_udm(
     attendance: list,
     section_associations: pd.DataFrame,
-    additional_mapping: Callable = None,
+    sync_callback: Callable = None,
 ) -> pd.DataFrame:
     """
     Maps a DataFrame containing Schoology attendance events into the Ed-Fi LMS
@@ -58,6 +58,8 @@ def map_to_udm(
         List containing the API response from Schoology
     section_associations: DataFrame
         DataFrame containing UDM-mapped section associations
+    sync_callback: Callable
+        Function for injecting additional synchronization logic
 
     Returns
     -------
@@ -122,7 +124,7 @@ def map_to_udm(
         ]
     ]
 
-    if additional_mapping is not None:
-        additional_mapping(df)
+    if sync_callback is not None:
+        df = sync_callback(df)
 
     return df

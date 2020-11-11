@@ -245,7 +245,7 @@ class SchoologyExtractFacade:
         events = self._client.get_attendance(section_id)
 
         def _sync_wrapper(data: pd.DataFrame):
-            """ Attendance_events entity has a more complex mapping, for most
+            """ Attendance_events entity has a more complex mapping. For most
             entities, sync process running before mapping is fine, but considering
             the process involved for this entity, the mapper for attendance events
             will accept an additional callable for sync process that will run when
@@ -261,7 +261,7 @@ class SchoologyExtractFacade:
         events_df = attendanceMap.map_to_udm(
             events,
             section_associations,
-            additional_mapping=_sync_wrapper)
+            sync_callback=_sync_wrapper)
 
         return events_df
 
