@@ -9,7 +9,9 @@ import pandas as pd
 from . import constants
 
 
-def _flatten_into_dataframe(attendance: list,) -> pd.DataFrame:
+def _flatten_into_dataframe(
+    attendance: list,
+) -> pd.DataFrame:
     df = pd.DataFrame(columns=["enrollment_id", "EventDate", "AttendanceStatus"])
 
     for date_node in attendance:
@@ -41,7 +43,11 @@ def _get_status(status_code: int) -> str:
     return switcher.get(status_code, f"Unknown status: {status_code}")
 
 
-def map_to_udm(attendance: list, section_associations: pd.DataFrame, additional_mapping : Callable = None) -> pd.DataFrame:
+def map_to_udm(
+    attendance: list,
+    section_associations: pd.DataFrame,
+    additional_mapping: Callable = None,
+) -> pd.DataFrame:
     """
     Maps a DataFrame containing Schoology attendance events into the Ed-Fi LMS
     Unified Data Model (UDM) format.
@@ -94,7 +100,7 @@ def map_to_udm(attendance: list, section_associations: pd.DataFrame, additional_
     # This data type conversion was required because Schoology is returning
     # enrollment Id as an integer in the Attendance endpoint, but as a string
     # with the Enrollment endpoint.
-    sa = sa.astype({'SourceSystemIdentifier': 'int64'})
+    sa = sa.astype({"SourceSystemIdentifier": "int64"})
 
     df = df.merge(
         sa,
@@ -112,7 +118,7 @@ def map_to_udm(attendance: list, section_associations: pd.DataFrame, additional_
             "AttendanceStatus",
             "EventDate",
             "LMSUserSourceSystemIdentifier",
-            "LMSSectionSourceSystemIdentifier"
+            "LMSSectionSourceSystemIdentifier",
         ]
     ]
 
