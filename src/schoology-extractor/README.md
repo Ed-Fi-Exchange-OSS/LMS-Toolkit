@@ -3,6 +3,12 @@
 This script retrieves and writes out to CSV all students, sections, assignments,
 and submissions for the desired grading period(s).
 
+## Notes on Working With Schoology Data
+
+* The Schoology API handles _negative attendance_ events: if a student is marked
+  as present, or is not marked at all, then the system will not return a record
+  for that day.
+
 ## Requirements
 
 Requires Python 3.8 and [Poetry](https://python-poetry.org/). To get started,
