@@ -25,11 +25,14 @@ class MainArguments:
     grading_periods: str
         CSV with the grading periods.
     output_directory: str
-        The output directory for the generated csv files.
+        The output directory for the generated csv files. (optional)
     log_level: str
-        The log level for the tool.
+        The log level for the tool. (optional)
     page_size: int
-        The size of the page for paginated requests.
+        The size of the page for paginated requests. (optional)
+    input_directory: str
+        The input directory containing usage CSV files exported from the
+        Schoology site. (optional)
     """
 
     client_key: str
@@ -38,6 +41,7 @@ class MainArguments:
     output_directory: str
     log_level: str
     page_size: int
+    input_directory: str
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -114,6 +118,16 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="PAGE_SIZE",
     )
 
+    parser.add(  # type: ignore
+        "-i",
+        "--input-directory",
+        required=False,
+        help="Input directory for usage CSV files.",
+        type=str,
+        default=None,
+        env_var="SCHOOLOGY_INPUT_DIRECTORY"
+    )
+
     args_parsed = parser.parse_args(args_in)
     # Required
     assert isinstance(
@@ -144,6 +158,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         output_directory=args_parsed.output_directory,
         log_level=args_parsed.log_level,
         page_size=args_parsed.page_size,
+        input_directory=args_parsed.input_directory
     )
 
     return arguments

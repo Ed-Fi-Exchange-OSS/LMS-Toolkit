@@ -73,10 +73,15 @@ def describe_when_parsing_arguments():
                 "DEBUG",
                 "-p",
                 "30",
+                "-i",
+                "input_directory"
             ]
 
             # Act
             return parse_main_arguments(parameters)
+
+        def it_should_load_the_input_directory(result: MainArguments):
+            assert result.input_directory == "input_directory"
 
         def it_should_load_the_output_directory(result: MainArguments):
             assert result.output_directory == "output_directory"
