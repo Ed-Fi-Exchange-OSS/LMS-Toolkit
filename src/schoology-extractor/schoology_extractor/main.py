@@ -11,7 +11,7 @@ from typing import Callable, Dict, Optional
 from dotenv import load_dotenv
 import pandas as pd
 
-from schoology_extractor.helpers import export_data
+from schoology_extractor.helpers import csv_writer
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.helpers import arg_parser
 from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
@@ -57,7 +57,7 @@ def _create_file_from_dataframe(action: Callable, file_name) -> bool:
     try:
         data: pd.DataFrame = action()
         if data is not None:
-            export_data.df_to_csv(data, file_name)
+            csv_writer.df_to_csv(data, file_name)
         return True
     except Exception:
         logger.exception("An exception occurred while generating %s", file_name)
@@ -71,7 +71,7 @@ def _create_file_from_list(action: Callable, file_name: str) -> bool:
     try:
         data = action()
         if data is not None:
-            export_data.to_csv(data, os.path.join(schoology_output_path, file_name))
+            csv_writer.to_csv(data, os.path.join(schoology_output_path, file_name))
         return True
     except Exception:
         logger.exception("An exception occurred while generating %s", file_name)
