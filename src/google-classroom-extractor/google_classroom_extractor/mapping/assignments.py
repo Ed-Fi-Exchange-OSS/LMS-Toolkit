@@ -45,8 +45,8 @@ def coursework_to_assignments_dfs(
             an assignment by the source system
         StartDateTime: The start date and time for the assignment
         Title: The assignment title or name
-        CreateDate: Date this record was created
-        LastModifiedDate: Date this record was last updated
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
     assert "courseId" in coursework_df.columns
     assert "id" in coursework_df.columns
@@ -111,8 +111,8 @@ def coursework_to_assignments_dfs(
             "scheduledTime": "StartDateTime",
             "maxPoints": "MaxPoints",
             "title": "Title",
-            "creationTime": "CreateDate",
-            "updateTime": "LastModifiedDate",
+            "creationTime": "SourceCreateDate",
+            "updateTime": "SourceLastModifiedDate",
         }
     )
 

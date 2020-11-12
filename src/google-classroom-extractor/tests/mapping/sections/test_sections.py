@@ -67,8 +67,8 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         assert row_dict["LMSSectionStatus"] == COURSE_STATE
         assert row_dict["SectionDescription"] == DESCRIPTION_HEADING
         assert row_dict["Title"] == NAME
-        assert row_dict["CreateDate"] == CREATION_TIME
-        assert row_dict["LastModifiedDate"] == UPDATE_TIME
+        assert row_dict["SourceCreateDate"] == CREATION_TIME
+        assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert row_dict["SISSectionIdentifier"] == ""

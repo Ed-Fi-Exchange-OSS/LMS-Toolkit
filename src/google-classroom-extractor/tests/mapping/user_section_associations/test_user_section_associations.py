@@ -65,8 +65,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert row_dict["EnrollmentStatus"] == ENROLLMENT_STATUS_ACTIVE
         assert row_dict["StartDate"] == ""
         assert row_dict["EndDate"] == ""
-        assert row_dict["CreateDate"] == ""
-        assert row_dict["LastModifiedDate"] == ""
+        assert row_dict["SourceCreateDate"] == ""
+        assert row_dict["SourceLastModifiedDate"] == ""
 
     def it_should_map_teacher_fields_correctly(associations_dicts):
         association_df: DataFrame = associations_dicts[COURSE_ID]
@@ -80,8 +80,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert row_dict["EnrollmentStatus"] == ENROLLMENT_STATUS_ACTIVE
         assert row_dict["StartDate"] == ""
         assert row_dict["EndDate"] == ""
-        assert row_dict["CreateDate"] == ""
-        assert row_dict["LastModifiedDate"] == ""
+        assert row_dict["SourceCreateDate"] == ""
+        assert row_dict["SourceLastModifiedDate"] == ""
 
 
 def describe_when_users_in_different_courses_are_mapped():
