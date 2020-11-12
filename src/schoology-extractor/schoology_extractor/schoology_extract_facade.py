@@ -288,4 +288,10 @@ class SchoologyExtractFacade:
         if len(replies) == 0:
             return pd.DataFrame()
 
-        return discussionRepliesMap.map_to_udm(pd.DataFrame(replies), section_id)
+        sync_replies = sync.sync_resource(
+            RESOURCE_NAMES.USER_ACTIVITIES,
+            self._db_engine,
+            replies
+            )
+
+        return discussionRepliesMap.map_to_udm(pd.DataFrame(sync_replies), section_id)

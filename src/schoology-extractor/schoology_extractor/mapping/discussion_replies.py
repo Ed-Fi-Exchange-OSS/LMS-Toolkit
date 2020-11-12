@@ -51,7 +51,9 @@ def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int) -> pd.DataF
         "status",
         "comment",
         "uid",
-        "id"
+        "id",
+        "CreateDate",
+        "LastModifiedDate"
         ]].copy()
 
     df["created"] = df["created"].apply(lambda x: datetime.fromtimestamp(int(x)).strftime("%Y-%m-%d %H:%M:%S"))
@@ -75,8 +77,5 @@ def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int) -> pd.DataF
         },
         inplace=True,
     )
-
-    df["CreateDate"] = None
-    df["LastModifiedDate"] = None
 
     return df
