@@ -17,9 +17,9 @@ class Test_mapping_schoology_users_to_udm:
     def setup_class(cls):
 
         # Arrange
-        responses_csv = '''id,uid,comment,created,parent_id,status,likes,user_like_action,links
-824849694,100032890,Mary Archer's response to ""First Algebra Discussion Topic."",1604351930,0,1,0,False,{'self': 'https://api.schoology.com/v1/sections/2942191527/discussions/3278946222/comments/824849694'}
-824853919,100032891,Kyle Hughes's reply to Mary Archer's response to ""First Algebra Discussion Topic."",1604352056,824849694,1,0,False,{'self': 'https://api.schoology.com/v1/sections/2942191527/discussions/3278946222/comments/824853919'}'''
+        responses_csv = '''id,uid,comment,created,parent_id,status,likes,user_like_action,links,CreateDate,LastModifiedDate
+824849694,100032890,Mary Archer's response to ""First Algebra Discussion Topic."",1604351930,0,1,0,False,{'self': 'https://api.schoology.com/v1/sections/2942191527/discussions/3278946222/comments/824849694'},2020-11-12 10:39:27,2020-11-12 10:39:27
+824853919,100032891,Kyle Hughes's reply to Mary Archer's response to ""First Algebra Discussion Topic."",1604352056,824849694,1,0,False,{'self': 'https://api.schoology.com/v1/sections/2942191527/discussions/3278946222/comments/824853919'},2020-11-12 10:39:27,2020-11-12 10:39:27'''
         lines = responses_csv.split("\n")
         responses_df = pd.DataFrame(
             [x.split(",") for x in lines[1:]], columns=lines[0].split(",")
