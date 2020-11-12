@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from dataclasses import dataclass
+from typing import List
 
 from configargparse import ArgParser  # type: ignore
 
@@ -39,7 +40,7 @@ class MainArguments:
     page_size: int
 
 
-def parse_main_arguments(args_in: list) -> MainArguments:
+def parse_main_arguments(args_in: List[str]) -> MainArguments:
     """
     Configures the command-line interface.
 
@@ -54,7 +55,6 @@ def parse_main_arguments(args_in: list) -> MainArguments:
         A populated `MainArguments` object.
     """
 
-    assert isinstance(args_in, list), "Argument `args_in` must be a list"
     parser = ArgParser()
     parser.add(  # type: ignore
         "-k",
@@ -172,7 +172,7 @@ class GradingPeriodsArguments:
     page_size: int
 
 
-def parse_grading_periods_arguments(args_in: list) -> GradingPeriodsArguments:
+def parse_grading_periods_arguments(args_in: List[str]) -> GradingPeriodsArguments:
     """
     Configures the command-line interface.
 
@@ -186,8 +186,6 @@ def parse_grading_periods_arguments(args_in: list) -> GradingPeriodsArguments:
     arguments  : GradingPeriodsArguments
         A populated `GradingPeriodsArguments` object.
     """
-
-    assert isinstance(args_in, list), "Argument `args_in` must be a list"
 
     parser = ArgParser()
     parser.add("-k", "--client-key", required=True, help="Schoology client key.", type=str)  # type: ignore
