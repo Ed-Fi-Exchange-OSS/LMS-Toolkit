@@ -159,9 +159,17 @@ def describe_when_getting_sections():
             sectionsMap.map_to_udm = Mock()
             sectionsMap.map_to_udm.return_value = pd.DataFrame()
 
-            sections = [{"id": 1234}]
-            get_sections_mock = request_client.get_section_by_course_ids
-            get_sections_mock.return_value = sections
+            sections = {
+                "section": [{"id": 1234}],
+                "total": 1,
+                "links": {"self": "ignore"},
+            }
+            sections_page = PaginatedResult(
+                request_client, page_size, sections, "section", "ignore me"  # type: ignore
+            )
+
+            get_sections_mock = request_client.get_section_by_course_id
+            get_sections_mock.return_value = sections_page
 
             # Arrange
             service = SchoologyExtractFacade(request_client, page_size, db_engine)
@@ -191,29 +199,28 @@ def describe_when_getting_sections():
             courses = {
                 "course": [{"id": 3333}],
                 "total": 1,
-                "links": {"self": "ignore", "next": "next"},
+                "links": {"self": "ignore"},
             }
             courses_page = PaginatedResult(
                 request_client, page_size, courses, "course", "ignore me"
             )
             request_client.get_courses.return_value = courses_page
 
-            courses_2 = {
-                "course": [{"id": 3334}],
-                "total": 1,
-                "links": {"self": "ignore"},
-            }
-            request_client.base_url = ""
-            request_client.get.return_value = courses_2
-
             # Also want to mock the UDM mapper function, since it is well-tested
             # elsewhere
             sectionsMap.map_to_udm = Mock()
             sectionsMap.map_to_udm.return_value = pd.DataFrame()
 
-            sections = [{"id": 1234}]
-            get_sections_mock = request_client.get_section_by_course_ids
-            get_sections_mock.return_value = sections
+            sections = {
+                "section": [{"id": 1234}],
+                "total": 1,
+                "links": {"self": "ignore"},
+            }
+            sections_page = PaginatedResult(
+                request_client, page_size, sections, "section", "ignore me"
+            )
+            get_sections_mock = request_client.get_section_by_course_id
+            get_sections_mock.return_value = sections_page
 
             # Arrange
             service = SchoologyExtractFacade(request_client, page_size, db_engine)
@@ -227,13 +234,8 @@ def describe_when_getting_sections():
             _, get_sections_mock = system
 
             args = get_sections_mock.call_args
-            assert 3333 in args[0][0]
-
-        def it_should_use_second_course_when_getting_sections(system):
-            _, get_sections_mock = system
-
-            args = get_sections_mock.call_args
-            assert 3334 in args[0][0]
+            print(get_sections_mock.call_args[0][0])
+            assert 3333 == args[0][0]
 
 
 def describe_when_getting_assignments():
@@ -256,10 +258,18 @@ def describe_when_getting_assignments():
                     "section_id": section_id,
                 }
             ]
+            assignments_response_mock = {
+                "assignment": assignments,
+                "total": 1,
+                "links": {"self": "ignore"},
+            }
+            assignments_page = PaginatedResult(
+                request_client, page_size, assignments_response_mock, "assignment", "ignore me"
+            )
 
             # Arrange
             get_assignments_mock = request_client.get_assignments
-            get_assignments_mock.return_value = assignments
+            get_assignments_mock.return_value = assignments_page
 
             # Mock the UDM mapper
             assignmentsMap.map_to_udm = Mock()
@@ -353,7 +363,15 @@ def describe_when_getting_section_associations():
         # Mock the API calls
         section_id = 1234
         get_sections_mock = request_client.get_enrollments
-        get_sections_mock.return_value = [{"id": 1}, {"id": 2}]
+        sections_response_mock = {
+            "sections": [{"id": 1}, {"id": 2}],
+            "total": 1,
+            "links": {"self": "ignore"},
+        }
+        sections_page = PaginatedResult(
+            request_client, page_size, sections_response_mock, "sections", "ignore me"
+        )
+        get_sections_mock.return_value = sections_page
 
         # Mock the Sync process
         sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))

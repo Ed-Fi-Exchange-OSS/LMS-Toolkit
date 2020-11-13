@@ -130,26 +130,20 @@ class TestRequestClient:
 
                 return result
 
-            def test_then_it_should_return_two_assignment(self, result, requests_mock):
-                assert len(result) == 2
+            def test_then_it_should_return_two_assignment(self, result: PaginatedResult, requests_mock):
+                assert result.get_next_page() is not None
 
-            def test_result_should_contain_first_assignment(self, result, requests_mock):
-                assert len([1 for r in result if r["id"] == "b"]) == 1
+            def test_result_should_contain_first_assignment(self, result: PaginatedResult, requests_mock):
+                assert len([r for r in result.current_page_items if r["id"] == "b"]) == 1
 
-            def test_result_should_contain_second_assignment(self, result, requests_mock):
-                assert len([1 for r in result if r["id"] == "c"]) == 1
+            def test_result_should_contain_second_assignment(self, result: PaginatedResult, requests_mock):
+                assert len([r for r in result.get_next_page().current_page_items if r["id"] == "c"]) == 1
 
-    class Test_when_get_section_by_course_ids_method_is_called:
-        def test_given_no_parameters_passed_then_throw_assert_exception(
-            self, default_request_client
+    class Test_when_get_section_by_course_id_method_is_called:
+        def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
+            self, default_request_client: RequestClient, requests_mock
         ):
-            with pytest.raises(AssertionError):
-                default_request_client.get_section_by_course_ids(None)
-
-        def test_given_a_parameter_is_passed_then_shoud_make_the_get_calls(
-            self, default_request_client, requests_mock
-        ):
-            section_ids = [1, 2]
+            course_id = 1
             expected_url_1 = "https://api.schoology.com/v1/courses/1/sections"
             expected_url_2 = "https://api.schoology.com/v1/courses/2/sections"
 
@@ -165,15 +159,13 @@ class TestRequestClient:
             requests_mock.get(expected_url_2, reason="OK", status_code=200, text=callback)
 
             # Act
-            response = default_request_client.get_section_by_course_ids(section_ids)
+            response = default_request_client.get_section_by_course_id(course_id)
 
             # Assert
-            assert len(called) == len(section_ids)
             assert expected_url_1 in called, "URL 1 not called"
-            assert expected_url_2 in called, "URL 2 not called"
 
-            assert isinstance(response, list), "expected response to be a list"
-            assert len(response) == 2, "expected three results"
+            assert isinstance(response, PaginatedResult), "expected response to be a PaginatedResult"
+            assert len(response.current_page_items) == 1, "expected one result"
 
     class Test_when_get_submissions_by_section_id_and_grade_item_id_method_is_called:
         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
@@ -335,14 +327,14 @@ def describe_when_getting_enrollments_with_two_pages():
 
         return result
 
-    def it_should_return_two_enrollments(result):
-        assert len(result) == 2
+    def it_should_return_two_pages(result: PaginatedResult):
+        assert result.get_next_page() is not None
 
-    def it_should_contain_the_first_enrollment(result):
-        assert len([1 for r in result if r["id"] == 12345]) == 1
+    def it_should_contain_the_first_enrollment(result: PaginatedResult):
+        assert len([r for r in result.current_page_items if r["id"] == 12345]) == 1
 
-    def it_should_contain_the_second_enrollment(result):
-        assert len([1 for r in result if r["id"] == 99999]) == 1
+    def it_should_contain_the_second_enrollment(result: PaginatedResult):
+        assert len([r for r in result.get_next_page().current_page_items if r["id"] == 99999]) == 1
 
 
 def describe_when_getting_attendance():
