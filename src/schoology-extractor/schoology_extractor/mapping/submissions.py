@@ -17,18 +17,19 @@ def map_to_udm(submissions_df: pd.DataFrame) -> pd.DataFrame:
 
     Parameters
     ----------
-    assignments_df: DataFrame
+    submissions_df: DataFrame
         Pandas DataFrame containing Schoology submissions for a section
 
     Returns
     -------
     DataFrame
-        A LMSUsers-formatted DataFrame
+        A Submissions-formatted DataFrame .
 
     Notes
     -----
     DataFrame columns are:
-        SourceSystemIdentifier: A unique number or alphanumeric code assigned to a submission by the source system
+        SourceSystemIdentifier: A unique number or alphanumeric code assigned to a
+            submission by the source system
         SourceSystem: The system code or name providing the user data
         SubmissionStatus: The status of the submission
         SubmissionDateTime: Datetime of the submission
