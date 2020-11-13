@@ -341,7 +341,7 @@ class RequestClient:
 
     def get_attendance(
         self, section_id: int
-    ) -> list[dict]:
+    ) -> list:
         """
         Retrieves attendance event data for a section. Note: attendance does
         not support paging.
@@ -353,7 +353,7 @@ class RequestClient:
 
         Returns
         -------
-        list[dict]
+        list
             A list of all parsed results from the server
 
         Notes
@@ -370,7 +370,7 @@ class RequestClient:
 
     def get_discussions(
         self, section_id: int
-    ) -> list[dict]:
+    ) -> list:
         """
         Retrieves discussions list for a section.
 
@@ -381,7 +381,7 @@ class RequestClient:
 
         Returns
         -------
-        list[dict]
+        list
             A list of all parsed results from the server
 
         Notes
@@ -395,7 +395,7 @@ class RequestClient:
 
     def get_discussion_replies(
         self, section_id: int, discussion_id: Union[int, str]
-    ) -> list[dict]:
+    ) -> list:
         """
         Retrieves replies list for a discussion.
 
@@ -408,7 +408,7 @@ class RequestClient:
 
         Returns
         -------
-        list[dict]
+        list
             A list of all parsed results from the server
 
         Notes
@@ -421,7 +421,7 @@ class RequestClient:
         return result["comment"]
 
 
-def get_all_pages(result: PaginatedResult) -> list[dict]:
+def get_all_pages(result: PaginatedResult) -> list:
     """
     Returns all items from a PaginatedResult within all available pages
 
@@ -432,11 +432,11 @@ def get_all_pages(result: PaginatedResult) -> list[dict]:
 
     Returns
     -------
-    list[dict]
+    list
         A list of all parsed results
     """
 
-    items = list[dict]()
+    items: list = []
     while True:
         items = items + result.current_page_items
         if result.get_next_page() is None:

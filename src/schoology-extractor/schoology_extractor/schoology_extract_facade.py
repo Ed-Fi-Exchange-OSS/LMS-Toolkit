@@ -100,7 +100,7 @@ class SchoologyExtractFacade:
             return get_all_pages(self._client.get_section_by_course_id(section_id))
 
         logger.debug("Exporting sections: get sections for active courses")
-        all_sections = list[dict]()
+        all_sections: list = []
         for course in courses_list:
             all_sections = all_sections + _get_section_for_course(course["id"])
 
