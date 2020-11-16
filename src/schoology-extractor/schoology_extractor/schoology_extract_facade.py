@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 import logging
-from typing import Any, Dict, List
+from typing import Union
 
 import pandas as pd
 import sqlalchemy
@@ -70,27 +70,13 @@ class SchoologyExtractFacade:
         """
 
         logger.debug("Exporting users: get users")
-        users_response = self._client.get_users(self._page_size)
-        users_list: List[Any] = []
-        while True:
-            users_list = users_list + users_response.current_page_items
-            if users_response.get_next_page() is None:
-                break
+        users_list = self._client.get_users(self._page_size).get_all_pages()
 
         logger.debug("Exporting users: get roles")
-        roles_list: List[Any] = []
-        roles_response = self._client.get_roles(self._page_size)
-        while True:
-            roles_list = roles_list + roles_response.current_page_items
-            if roles_response.get_next_page() is None:
-                break
+        roles_list = self._client.get_roles(self._page_size).get_all_pages()
 
         users_df = sync.sync_resource(RESOURCE_NAMES.USER, self._db_engine, users_list)
-        roles_df = sync.sync_resource(
-            RESOURCE_NAMES.ROLE,
-            self._db_engine,
-            roles_list
-        )
+        roles_df = sync.sync_resource(RESOURCE_NAMES.ROLE, self._db_engine, roles_list)
 
         return (
             usersMap.map_to_udm(users_df, roles_df)
@@ -100,7 +86,7 @@ class SchoologyExtractFacade:
 
     def get_sections(self) -> pd.DataFrame:
         """
-        Gets all Schoology users.
+        Gets all Schoology sections.
 
         Returns
         -------
@@ -108,25 +94,20 @@ class SchoologyExtractFacade:
         """
 
         logger.debug("Exporting sections: get active courses")
-        courses_response = self._client.get_courses(self._page_size)
-        courses_list: List[Any] = []
-        while True:
-            courses_list = courses_list + courses_response.current_page_items
-            if courses_response.get_next_page() is None:
-                break
+        courses_list = self._client.get_courses(self._page_size).get_all_pages()
+
+        def _get_section_for_course(section_id: Union[int, str]):
+            return self._client.get_section_by_course_id(section_id).get_all_pages()
 
         logger.debug("Exporting sections: get sections for active courses")
+        all_sections: list = []
+        for course in courses_list:
+            all_sections = all_sections + _get_section_for_course(course["id"])
 
-        # TODO: inconsistency - in this case the pagination is handled inside of
-        # the client, instead of being handled here. Arguably there should be
-        # some other thing, neither this service nor the client, that handles
-        # the paging. As BB said in a pr comment, perhaps it should be handled
-        # in a decorator. This works but we should consider refactoring to a
-        # cleaner approach.
         sections = sync.sync_resource(
             RESOURCE_NAMES.SECTION,
             self._db_engine,
-            self._client.get_section_by_course_ids([c["id"] for c in courses_list])
+            all_sections
             )
 
         return sectionsMap.map_to_udm(sections)
@@ -150,7 +131,7 @@ class SchoologyExtractFacade:
         assignments = sync.sync_resource(
             RESOURCE_NAMES.ASSIGNMENT,
             self._db_engine,
-            self._client.get_assignments(section_id, self._page_size)
+            self._client.get_assignments(section_id, self._page_size).get_all_pages()
             )
 
         return assignmentsMap.map_to_udm(assignments, section_id)
@@ -171,31 +152,24 @@ class SchoologyExtractFacade:
             List of submissions
         """
 
-        submissions: List[Dict[str, Any]] = []
-        submissions_response = (
-            self._client.get_submissions_by_section_id_and_grade_item_id(
+        all_submissions = self._client.get_submissions_by_section_id_and_grade_item_id(
                 section_id,
                 assignment_id,
                 self._page_size,
-            )
-        )
+                ).get_all_pages()
 
-        while True:
-            submissions_with_id = [
-                {
-                    **row,
-                    'id': f'{section_id}#{assignment_id}#{row["uid"]}'
-                }
-                for row in submissions_response.current_page_items
-            ]
-            submissions = submissions + submissions_with_id
-            if submissions_response.get_next_page() is None:
-                break
+        all_submissions = [
+            {
+                **row,
+                'id': f'{section_id}#{assignment_id}#{row["uid"]}'
+            }
+            for row in all_submissions
+        ]
 
         data = sync.sync_resource(
             RESOURCE_NAMES.SUBMISSION,
             self._db_engine,
-            submissions
+            all_submissions
         )
         return submissionsMap.map_to_udm(data)
 
@@ -217,7 +191,7 @@ class SchoologyExtractFacade:
         enrollments = sync.sync_resource(
             RESOURCE_NAMES.ENROLLMENT,
             self._db_engine,
-            self._client.get_enrollments(section_id)
+            self._client.get_enrollments(section_id).get_all_pages()
             )
 
         return sectionAssocMap.map_to_udm(pd.DataFrame(enrollments), section_id)

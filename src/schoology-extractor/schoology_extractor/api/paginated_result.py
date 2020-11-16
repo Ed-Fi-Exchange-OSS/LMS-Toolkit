@@ -112,3 +112,21 @@ class PaginatedResult:
             self.current_page_items = []
 
         return self
+
+    def get_all_pages(self) -> list:
+        """
+        Returns all items from the PaginatedResult object within all available pages
+
+        Returns
+        -------
+        list
+            A list of all parsed results
+        """
+
+        items: list = []
+        while True:
+            items = items + self.current_page_items
+            if self.get_next_page() is None:
+                break
+
+        return items

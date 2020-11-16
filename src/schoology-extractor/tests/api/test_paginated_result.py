@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from unittest.mock import Mock
 import pytest
 
 from schoology_extractor.api.paginated_result import PaginatedResult
@@ -138,3 +139,47 @@ class TestPaginatedResult:
 
             # Assert
             assert result is None
+
+
+def describe_when_getting_all_pages():
+    @pytest.fixture
+    def paginated_result():
+        request_client = Mock(spec=RequestClient)
+        page_size = 22
+
+        users = {
+            "user": [{"uid": 1234, "role_id": 321}],
+            "total": 1,
+            "links": {"self": "ignore"},
+        }
+        paginated_result = PaginatedResult(
+            request_client, page_size, users, "user", "ignore me"
+        )
+        paginated_result.get_next_page = Mock(return_value=None)
+
+        # act
+        paginated_result.get_all_pages()
+        return paginated_result
+
+    def it_should_call_get_next_page(paginated_result: PaginatedResult):
+        assert paginated_result.get_next_page.called
+
+    @pytest.fixture
+    def result():
+        request_client = Mock(spec=RequestClient)
+        page_size = 22
+
+        users = {
+            "user": [{"uid": 1234, "role_id": 321}],
+            "total": 1,
+            "links": {"self": "ignore"},
+        }
+        paginated_result = PaginatedResult(
+            request_client, page_size, users, "user", "ignore me"
+        )
+
+        # act
+        return paginated_result.get_all_pages()
+
+    def it_should_return_all_available_items(result: list):
+        assert len(result) == 1
