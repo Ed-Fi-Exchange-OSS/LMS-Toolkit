@@ -9,6 +9,7 @@ from typing import List, Dict, Optional, Callable, cast
 from requests import RequestException
 from opnieuw import retry
 from tail_recursive import tail_recursive
+from googleapiclient.errors import Error as GoogleApiError
 
 ResourceType = namedtuple("ValidSdkFunction", ["courses", "userUsageReport"])
 
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 @retry(
-    retry_on_exceptions=(IOError, RequestException),
+    retry_on_exceptions=(IOError, RequestException, GoogleApiError),
     max_calls_total=MAX_TOTAL_CALLS,
     retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
 )
@@ -80,7 +81,7 @@ def _call_api_recursive(
     response = _execute(resource_method(**resource_parameters))
     try:
         current_results.extend(response.get(response_property, []))
-    except (IOError, RequestException):
+    except (IOError, RequestException, GoogleApiError):
         logger.exception("Error during API call after retries.  Will try to continue.")
         return current_results
 
