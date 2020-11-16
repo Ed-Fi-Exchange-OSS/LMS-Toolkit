@@ -358,7 +358,7 @@ class RequestClient:
 
         Notes
         -----
-        The endpoind for this resource doesn't support pagination,
+        The endpoint for this resource doesn't support pagination,
         that's why it returns a list.
         """
 
@@ -386,7 +386,7 @@ class RequestClient:
 
         Notes
         -----
-        The endpoind for this resource doesn't support pagination,
+        The endpoint for this resource doesn't support pagination,
         that's why it returns a list.
         """
 
@@ -413,7 +413,7 @@ class RequestClient:
 
         Notes
         -----
-        The endpoind for this resource doesn't support pagination,
+        The endpoint for this resource doesn't support pagination,
         that's why it returns a list.
         """
 
