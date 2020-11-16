@@ -358,7 +358,7 @@ class RequestClient:
 
         Notes
         -----
-        The endpoint for this resource doesn't support pagination,
+        The endpoint for this resource doesn't support pagination.
         that's why it returns a list.
         """
 
@@ -386,7 +386,7 @@ class RequestClient:
 
         Notes
         -----
-        The endpoint for this resource doesn't support pagination,
+        The endpoint for this resource doesn't support pagination.
         that's why it returns a list.
         """
 
@@ -413,33 +413,9 @@ class RequestClient:
 
         Notes
         -----
-        The endpoint for this resource doesn't support pagination,
+        The endpoint for this resource doesn't support pagination.
         that's why it returns a list.
         """
 
         result = self.get(f"sections/{section_id}/discussions/{discussion_id}/comments")
         return result["comment"]
-
-
-def get_all_pages(result: PaginatedResult) -> list:
-    """
-    Returns all items from a PaginatedResult within all available pages
-
-    Parameters
-    ----------
-    result : PaginatedResult
-        A PaginatedResult object.
-
-    Returns
-    -------
-    list
-        A list of all parsed results
-    """
-
-    items: list = []
-    while True:
-        items = items + result.current_page_items
-        if result.get_next_page() is None:
-            break
-
-    return items

@@ -3,10 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from unittest.mock import Mock
 import pytest
 
-from schoology_extractor.api.request_client import RequestClient, get_all_pages
+from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.api.paginated_result import PaginatedResult
 
 FAKE_KEY = "TEST_KEY"
@@ -359,43 +358,3 @@ def describe_when_getting_attendance():
 
     def it_should_return_one_event(result):
         assert len(result) == 1
-
-
-def describe_when_getting_all_pages():
-    @pytest.fixture
-    def paginated_result():
-        mock_paginated_result = Mock(spec=PaginatedResult)
-        mock_paginated_result.current_page_items = []
-        mock_paginated_result.get_next_page.return_value = None
-
-        # act
-        get_all_pages(mock_paginated_result)
-        return mock_paginated_result
-
-    def it_should_call_get_next_page(paginated_result: Mock):
-        assert paginated_result.get_next_page.called
-
-    @pytest.fixture
-    def result():
-        mock_paginated_result = Mock(spec=PaginatedResult)
-        mock_paginated_result.current_page_items = [{'first_item': 123}]
-        mock_paginated_result.get_next_page.return_value = None
-
-        # act
-        return get_all_pages(mock_paginated_result)
-
-    def it_should_return_all_available_items(result: list):
-        assert len(result) == 1
-
-    @pytest.fixture
-    def result_two_pages():
-        mock_paginated_result = Mock(spec=PaginatedResult)
-        mock_paginated_result.current_page_items = [{'first_item': 123}]
-
-        mock_paginated_result.get_next_page.side_effect = [{}, None]
-
-        # act
-        return get_all_pages(mock_paginated_result)
-
-    def it_should_return_all_available_items_from_all_pages(result_two_pages: list):
-        assert len(result_two_pages) == 2

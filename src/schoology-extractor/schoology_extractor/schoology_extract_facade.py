@@ -12,7 +12,7 @@ import sqlalchemy
 
 from .helpers import sync
 from .helpers.constants import RESOURCE_NAMES
-from .api.request_client import RequestClient, get_all_pages
+from .api.request_client import RequestClient
 from .mapping import users as usersMap
 from .mapping import assignments as assignmentsMap
 from .mapping import sections as sectionsMap
@@ -70,10 +70,10 @@ class SchoologyExtractFacade:
         """
 
         logger.debug("Exporting users: get users")
-        users_list = get_all_pages(self._client.get_users(self._page_size))
+        users_list = self._client.get_users(self._page_size).get_all_pages()
 
         logger.debug("Exporting users: get roles")
-        roles_list = get_all_pages(self._client.get_roles(self._page_size))
+        roles_list = self._client.get_roles(self._page_size).get_all_pages()
 
         users_df = sync.sync_resource(RESOURCE_NAMES.USER, self._db_engine, users_list)
         roles_df = sync.sync_resource(RESOURCE_NAMES.ROLE, self._db_engine, roles_list)
@@ -94,10 +94,10 @@ class SchoologyExtractFacade:
         """
 
         logger.debug("Exporting sections: get active courses")
-        courses_list = get_all_pages(self._client.get_courses(self._page_size))
+        courses_list = self._client.get_courses(self._page_size).get_all_pages()
 
         def _get_section_for_course(section_id: Union[int, str]):
-            return get_all_pages(self._client.get_section_by_course_id(section_id))
+            return self._client.get_section_by_course_id(section_id).get_all_pages()
 
         logger.debug("Exporting sections: get sections for active courses")
         all_sections: list = []
@@ -131,7 +131,7 @@ class SchoologyExtractFacade:
         assignments = sync.sync_resource(
             RESOURCE_NAMES.ASSIGNMENT,
             self._db_engine,
-            get_all_pages(self._client.get_assignments(section_id, self._page_size))
+            self._client.get_assignments(section_id, self._page_size).get_all_pages()
             )
 
         return assignmentsMap.map_to_udm(assignments, section_id)
@@ -152,12 +152,11 @@ class SchoologyExtractFacade:
             List of submissions
         """
 
-        all_submissions = get_all_pages(
-            self._client.get_submissions_by_section_id_and_grade_item_id(
+        all_submissions = self._client.get_submissions_by_section_id_and_grade_item_id(
                 section_id,
                 assignment_id,
                 self._page_size,
-                ))
+                ).get_all_pages()
 
         all_submissions = [
             {
@@ -192,7 +191,7 @@ class SchoologyExtractFacade:
         enrollments = sync.sync_resource(
             RESOURCE_NAMES.ENROLLMENT,
             self._db_engine,
-            get_all_pages(self._client.get_enrollments(section_id))
+            self._client.get_enrollments(section_id).get_all_pages()
             )
 
         return sectionAssocMap.map_to_udm(pd.DataFrame(enrollments), section_id)
