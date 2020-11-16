@@ -18,6 +18,7 @@ You can explore the work done by navigating across the sub-folders.
 
 1. Python 3.8
 1. Poetry 1.0.10
+1. [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 1. Optional: Latest version of VS Code
 
 ### Configuring Canvas
@@ -41,6 +42,14 @@ Note that this token will provide access to data that mirrors the access of the
 user account it is connected to, so if you are not in an administrator account,
 less data will be available when you use the API using this token.
 
+Copy the `.env.example` file to a file simply named `.env` and customize:
+
+* `CANVAS_BASE_URL` is the base URL for your installation, e.g. https://your-name.instructure.com
+* `CANVAS_ACCESS_TOKEN` is the access token string that you extracted above
+* `CANVAS_ADMIN_ID` is the number representing the account to access. In the web site, click on the Admin menu button, then click on the link for your account. The number is at the end of that URL, for example `1` from `https://xyx.instructure.com/accounts/1?`.
+* `DATA_EXTRACTOR_YEAR_TO_EXTRACT` limits the export results to courses that begin or end in the designated year
+* `DATA_EXTRACTOR_CSV_OUTPUT_PATH="./data` this is the output path for the extracted files.
+
 ### Installation
 
 Follow these steps to install:
@@ -54,25 +63,8 @@ Follow these steps to install:
 
 ### PowerShell
 
-1. If using Windows Powershell, first switch to the virtual environment just
-    created:
-
-    ```powershell
-    cd src/canvas-extractor
-    .venv/scripts/activate.ps1
-    ```
-
-2. Run the script
+1. Run the script
 
     ```powershell
     poetry run python.exe ./data-extractor/main.py
     ```
-
-### Inside Visual Studio Code
-
-Type `ctrl`+`shift`+`p` and search for the command `Python: select interpreter`,
-then point it to your generated folder `src/canvas-extractor/.venv`. Run the command `poetry
-run python.exe ./data-extractor/main.py`
-
-
-
