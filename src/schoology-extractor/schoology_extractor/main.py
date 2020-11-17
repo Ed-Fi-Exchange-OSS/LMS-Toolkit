@@ -15,7 +15,7 @@ from schoology_extractor.helpers import csv_writer
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.helpers import arg_parser
 from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
-from schoology_extractor.usage_analytics_facade import UsageAnalyticsFacade
+from schoology_extractor import usage_analytics_facade
 import schoology_extractor.lms_filesystem as lms
 
 from schoology_extractor.helpers.sync import get_sync_db_engine
@@ -52,7 +52,6 @@ request_client = RequestClient(schoology_key, schoology_secret)
 db_engine = get_sync_db_engine()
 
 extractorFacade = SchoologyExtractFacade(request_client, page_size, db_engine)
-analyticsFacade = UsageAnalyticsFacade(db_engine)
 
 
 def _create_file_from_dataframe(action: Callable, file_name) -> bool:
@@ -147,14 +146,8 @@ def _get_attendance_events(section_id: int) -> Callable:
     return __get_attendance_events
 
 
-def _get_system_activities(input_directory: str) -> Callable:
-    def __get_system_activities() -> pd.DataFrame:
-        system_activities = analyticsFacade.get_system_activities(input_directory)
-        result_bucket["system_activities"] = system_activities
-        
-        return system_activities
-    
-    return __get_system_activities
+def _get_system_activities() -> pd.DataFrame:
+    return usage_analytics_facade.get_system_activities(input_directory, db_engine)
 
 
 def main():
@@ -209,10 +202,11 @@ def main():
         )
         _create_file_from_dataframe(_get_attendance_events(section_id), file_path)
 
-    if input_directory is not None:
+    need_to_process_input_files = input_directory is not None
+    if need_to_process_input_files:
         system_activities_output_dir = lms.get_system_activities_file_path(schoology_output_path)
         _create_file_from_dataframe(
-            _get_system_activities(input_directory),
+            _get_system_activities,
             system_activities_output_dir
         )
 

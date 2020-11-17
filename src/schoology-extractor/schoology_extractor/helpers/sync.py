@@ -41,17 +41,16 @@ def _get_current_date_with_format() -> str:
     return datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
 
 
-def _map_result_to_dicts_arr(result: Union[list[ResultProxy], None]):
-    mapped_arr: list[dict] = list[dict]()
+def _map_result_to_dicts_arr(result: Union[list[ResultProxy], None]) -> list[dict]:
     if result is None:
         return list()
-    for row in result:
-        db_item = dict()
-        for column, db_value in row.items():  # type: ignore
-            db_item[column] = db_value
-        mapped_arr.append(db_item)
 
-    return mapped_arr
+    return [dict(row.items()) for row in result]  # type: ignore
+
+
+def _map_single_result_to_dict(result: Union[list[ResultProxy], None]) -> dict:
+    mapped_result = _map_result_to_dicts_arr(result)
+    return mapped_result[0] if len(mapped_result) > 0 else dict()
 
 
 def _resource_has_changed(
@@ -63,8 +62,7 @@ def _resource_has_changed(
     query = f"SELECT * FROM {resource_name} where SourceId = '{resource[id_column]}' limit 1;"
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
-        mapped_result = _map_result_to_dicts_arr(result)
-        db_item = dict() if len(mapped_result) == 0 else mapped_result[0]
+        db_item = _map_single_result_to_dict(result)
 
     if "JsonResponse" not in db_item:
         # Implies this is a new record that is not yet in the database.
@@ -249,8 +247,7 @@ def usage_file_is_processed(
     query = f"SELECT * FROM {USAGE_TABLE_NAME} where FILE_NAME='{file_name}' limit 1;"
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
-        mapped_result = _map_result_to_dicts_arr(result)
-        db_item = dict() if len(mapped_result) == 0 else mapped_result[0]
+        db_item = _map_single_result_to_dict(result)
 
     return "FILE_NAME" in db_item
 

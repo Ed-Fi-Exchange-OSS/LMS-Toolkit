@@ -12,31 +12,28 @@ from unittest.mock import Mock
 
 import sqlalchemy
 
-from schoology_extractor.usage_analytics_facade import UsageAnalyticsFacade
+from schoology_extractor import usage_analytics_facade
 from schoology_extractor.mapping import usage_analytics as usageMap
 from schoology_extractor.helpers import csv_reader
 from schoology_extractor.helpers import sync
 
 
 def describe_when_getting_system_activities():
-    @pytest.fixture
-    def usage_analytics_facade_empty_result():
-        db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
-        os.scandir = Mock(return_value=[])
-        csv_reader.load_data_frame = Mock(return_value=pd.DataFrame(["one"]))
-
-        return UsageAnalyticsFacade(db_engine)
-
     def describe_given_no_usage_analytics_provided():
-        def it_should_return_empty_data_frame(usage_analytics_facade_empty_result: UsageAnalyticsFacade):
-            result = usage_analytics_facade_empty_result.get_system_activities('.')
+        def _mock_packages():
+            os.scandir = Mock(return_value=[])
+            csv_reader.load_data_frame = Mock(return_value=pd.DataFrame(["one"]))
+
+        def it_should_return_empty_data_frame():
+            _mock_packages()
+            db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
+            result = usage_analytics_facade.get_system_activities('.', db_engine)
             assert result.empty
 
     def describe_given_usage_analytics():
         @pytest.fixture
         def system() -> Tuple[pd.DataFrame, Mock]:
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
-            usage_analytics_facade = UsageAnalyticsFacade(db_engine)
 
             mock_file_one = Mock()
             mock_file_one.name = "fake_name"
@@ -57,7 +54,7 @@ def describe_when_getting_system_activities():
             sync.insert_usage_file_name = Mock()
 
             # Act
-            result = usage_analytics_facade.get_system_activities("fake_path")
+            result = usage_analytics_facade.get_system_activities("fake_path", db_engine)
 
             return result, usageMap.map_to_udm
 
