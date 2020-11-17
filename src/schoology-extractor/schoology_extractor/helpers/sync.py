@@ -16,6 +16,7 @@ SYNC_DATABASE_LOCATION_SUFFIX = "data"
 COLUMN_MAPPING = {
     'SourceId': sqlalchemy.types.String
 }
+USAGE_TABLE_NAME = 'USAGE_PROCESSED_FILES'
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,19 @@ def _get_current_date_with_format() -> str:
     return datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
 
 
+def _map_result_to_dicts_arr(result: Union[list[ResultProxy], None]):
+    mapped_arr: list[dict] = list[dict]()
+    if result is None:
+        return list()
+    for row in result:
+        db_item = dict()
+        for column, db_value in row.items():  # type: ignore
+            db_item[column] = db_value
+        mapped_arr.append(db_item)
+
+    return mapped_arr
+
+
 def _resource_has_changed(
     resource: dict,
     resource_name: str,
@@ -47,14 +61,10 @@ def _resource_has_changed(
     id_column: str = "id"
 ) -> bool:
     query = f"SELECT * FROM {resource_name} where SourceId = '{resource[id_column]}' limit 1;"
-    db_item = dict()
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
-        if result is None:
-            return True
-        for row in result:
-            for column, db_value in row.items():
-                db_item[column] = db_value
+        mapped_result = _map_result_to_dicts_arr(result)
+        db_item = dict() if len(mapped_result) == 0 else mapped_result[0]
 
     if "JsonResponse" not in db_item:
         # Implies this is a new record that is not yet in the database.
@@ -204,3 +214,63 @@ def sync_resource(
     _remove_duplicates(resource_name, db_engine)
 
     return DataFrame(data)
+
+
+def _create_usage_table_if_it_does_not_exist(
+        db_engine: sqlalchemy.engine.base.Engine
+        ):
+    if _table_exist(USAGE_TABLE_NAME, db_engine) is False:
+        db_engine.execute(f"""CREATE TABLE {USAGE_TABLE_NAME} (
+            FILE_NAME TEXT PRIMARY KEY
+        );""")
+
+
+def usage_file_is_processed(
+        file_name: str,
+        db_engine: sqlalchemy.engine.base.Engine
+        ) -> bool:
+    """
+    Verifies if the current file has been previously processed
+
+    Parameters
+    ----------
+    file_name: str
+        Name of the file
+    db_engine: sqlalchemy.engine.base.Engine
+
+    Returns
+    -------
+    bool
+        True if the file has been processed, False if it has not.
+    """
+
+    _create_usage_table_if_it_does_not_exist(db_engine)
+
+    query = f"SELECT * FROM {USAGE_TABLE_NAME} where FILE_NAME='{file_name}' limit 1;"
+    with db_engine.connect() as con:
+        result: Union[ResultProxy, None] = con.execute(query)
+        mapped_result = _map_result_to_dicts_arr(result)
+        db_item = dict() if len(mapped_result) == 0 else mapped_result[0]
+
+    return "FILE_NAME" in db_item
+
+
+def insert_usage_file_name(
+        file_name: str,
+        db_engine: sqlalchemy.engine.base.Engine) -> None:
+    """
+    Inserts the name of the file in the table for processed files
+
+    Parameters
+    ----------
+    file_name: str
+        Name of the file
+    db_engine: sqlalchemy.engine.base.Engine
+
+    Returns
+    -------
+    None
+    """
+
+    _create_usage_table_if_it_does_not_exist(db_engine)
+    db_engine.execute(f"""INSERT INTO {USAGE_TABLE_NAME} VALUES({file_name})""")

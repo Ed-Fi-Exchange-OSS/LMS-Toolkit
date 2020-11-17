@@ -15,6 +15,7 @@ from schoology_extractor.helpers import csv_writer
 from schoology_extractor.api.request_client import RequestClient
 from schoology_extractor.helpers import arg_parser
 from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
+from schoology_extractor.usage_analytics_facade import UsageAnalyticsFacade
 import schoology_extractor.lms_filesystem as lms
 
 from schoology_extractor.helpers.sync import get_sync_db_engine
@@ -31,6 +32,7 @@ schoology_output_path = arguments.output_directory
 schoology_grading_periods = arguments.grading_periods
 log_level = arguments.log_level
 page_size = arguments.page_size
+input_directory = arguments.input_directory
 
 # Configure logging
 logFormatter = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
@@ -49,7 +51,8 @@ grading_periods = schoology_grading_periods.split(",")
 request_client = RequestClient(schoology_key, schoology_secret)
 db_engine = get_sync_db_engine()
 
-service = SchoologyExtractFacade(request_client, page_size, db_engine)
+extractorFacade = SchoologyExtractFacade(request_client, page_size, db_engine)
+analyticsFacade = UsageAnalyticsFacade(db_engine)
 
 
 def _create_file_from_dataframe(action: Callable, file_name) -> bool:
@@ -79,7 +82,7 @@ def _create_file_from_list(action: Callable, file_name: str) -> bool:
 
 
 def _get_users() -> pd.DataFrame:
-    return service.get_users()
+    return extractorFacade.get_users()
 
 
 # This variable facilitates temporary storage of output results from one GET
@@ -88,7 +91,7 @@ result_bucket: Dict[str, pd.DataFrame] = {}
 
 
 def _get_sections() -> pd.DataFrame:
-    sections = service.get_sections()
+    sections = extractorFacade.get_sections()
     result_bucket["sections"] = sections
     return sections
 
@@ -96,7 +99,7 @@ def _get_sections() -> pd.DataFrame:
 def _get_assignments(section_id: int) -> Callable:
     # This nested function provides "closure" over `section_id`
     def __get_assignments() -> Optional[pd.DataFrame]:
-        assignments = service.get_assignments(section_id)
+        assignments = extractorFacade.get_assignments(section_id)
         result_bucket["assignments"] = assignments
 
         return assignments
@@ -107,7 +110,7 @@ def _get_assignments(section_id: int) -> Callable:
 def _get_user_activities(section_id: int) -> Callable:
     # This nested function provides "closure" over `section_id`
     def __get_user_activities() -> Optional[pd.DataFrame]:
-        user_activities = service.get_user_activities(section_id)
+        user_activities = extractorFacade.get_user_activities(section_id)
         result_bucket["user_activities"] = user_activities
 
         return user_activities
@@ -117,14 +120,14 @@ def _get_user_activities(section_id: int) -> Callable:
 
 def _get_submissions(assigment_id: int, section_id: int) -> Callable:
     def __get_submissions() -> Optional[pd.DataFrame]:
-        return service.get_submissions(assigment_id, section_id)
+        return extractorFacade.get_submissions(assigment_id, section_id)
 
     return __get_submissions
 
 
 def _get_section_associations(section_id: int) -> Callable:
     def __get_section_associations() -> pd.DataFrame:
-        section_associations = service.get_section_associations(section_id)
+        section_associations = extractorFacade.get_section_associations(section_id)
         result_bucket["section_associations"] = section_associations
 
         return section_associations
@@ -135,13 +138,23 @@ def _get_section_associations(section_id: int) -> Callable:
 def _get_attendance_events(section_id: int) -> Callable:
     def __get_attendance_events() -> pd.DataFrame:
         section_associations = result_bucket["section_associations"]
-        attendance_events = service.get_attendance_events(
+        attendance_events = extractorFacade.get_attendance_events(
             section_id, section_associations
         )
 
         return attendance_events
 
     return __get_attendance_events
+
+
+def _get_system_activities(input_directory: str) -> Callable:
+    def __get_system_activities() -> pd.DataFrame:
+        system_activities = analyticsFacade.get_system_activities(input_directory)
+        result_bucket["system_activities"] = system_activities
+        
+        return system_activities
+    
+    return __get_system_activities
 
 
 def main():
@@ -195,6 +208,13 @@ def main():
             schoology_output_path, section_id
         )
         _create_file_from_dataframe(_get_attendance_events(section_id), file_path)
+
+    if input_directory is not None:
+        system_activities_output_dir = lms.get_system_activities_file_path(schoology_output_path)
+        _create_file_from_dataframe(
+            _get_system_activities(input_directory),
+            system_activities_output_dir
+        )
 
 
 if __name__ == "__main__":
