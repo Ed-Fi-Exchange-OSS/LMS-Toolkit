@@ -267,3 +267,34 @@ class Test_given_sync_resource_is_called:
                 {"fake_column": 'fake_value', "id": 'fake_id'}
             ])
         assert isinstance(result, DataFrame)
+
+
+@pytest.fixture
+def db_engine_mock_returns_existing_file():
+    execute_mock = Mock()
+    execute_mock.execute.return_value = {'exists': 1}
+
+    mock_connection = Mock()
+    mock_connection.__enter__ = Mock(return_value=execute_mock)
+    mock_connection.__exit__ = Mock()
+
+    mock_db_engine = Mock()
+    mock_db_engine.connect.return_value = mock_connection
+    return mock_db_engine
+
+
+class Test_given_usage_file_is_processed_is_called:
+    def test_then_returns_boolean(self, db_engine_mock_returns_existing_file):
+        mock_sync_internal_functions(sync)
+        result = sync.usage_file_is_processed(
+            "fake_resource_name",
+            db_engine_mock_returns_existing_file)
+        assert isinstance(result, bool)
+
+    class Test_given_db_returns_false():
+        def test_then_returns_false(self, db_engine_mock_returns_existing_file):
+            mock_sync_internal_functions(sync)
+            result = sync.usage_file_is_processed(
+                "fake_resource_name",
+                db_engine_mock_returns_existing_file)
+            assert result is False

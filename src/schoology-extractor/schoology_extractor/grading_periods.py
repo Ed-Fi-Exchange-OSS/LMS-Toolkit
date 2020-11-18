@@ -7,7 +7,7 @@ import logging
 from typing import Any, List
 import sys
 
-from schoology_extractor.helpers import export_data, arg_parser
+from schoology_extractor.helpers import csv_writer, arg_parser
 from schoology_extractor.api.request_client import RequestClient
 
 # Parse arguments
@@ -44,7 +44,7 @@ try:
         )
         if grading_periods_response.get_next_page() is None:
             break
-    print(export_data.to_string(grading_periods_list))
+    print(csv_writer.to_string(grading_periods_list))
 
 except Exception as ex:
     logger.error("An exception occurred while getting the Grading Periods: %s", ex)

@@ -8,7 +8,7 @@ import os
 import pytest
 import pandas as pd
 
-from schoology_extractor.helpers.export_data import df_to_csv, to_csv, to_string
+from schoology_extractor.helpers.csv_writer import df_to_csv, to_csv, to_string
 
 
 def describe_when_exporting_data():
