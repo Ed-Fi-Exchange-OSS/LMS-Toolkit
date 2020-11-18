@@ -13,11 +13,11 @@ logger = logging.getLogger(__name__)
 def load_data_frame(file_path: str) -> pd.DataFrame:
     logger.info("Reading file `%s`", file_path)
 
-    if file_path.endswith("csv.gz"):
+    if file_path.endswith(".csv.gz"):
         with gz_open(file_path) as file:
             return pd.read_csv(file)  # type:ignore
     elif file_path.endswith(".csv"):
-        return pd.read_csv(file)  # type:ignore
+        return pd.read_csv(file_path)  # type:ignore
     elif file_path.endswith(".gitkeep"):
         return pd.DataFrame()  # type:ignore
 
