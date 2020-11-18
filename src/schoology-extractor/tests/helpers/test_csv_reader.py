@@ -47,3 +47,14 @@ def describe_when_reading_a_csv_file():
 
             # Assert
             assert_frame_equal(result, expected)
+
+    def describe_given_gitkeep_file():
+        def it_should_load_the_DataFrame():
+            # Arrange
+            file_name = os.path.join(DIR_NAME, ".gitkeep")
+
+            # Act
+            result = load_data_frame(file_name)
+
+            # Assert
+            assert result.empty
