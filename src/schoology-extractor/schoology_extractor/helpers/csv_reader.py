@@ -18,5 +18,7 @@ def load_data_frame(file_path: str) -> pd.DataFrame:
             return pd.read_csv(file)  # type:ignore
     elif file_path.endswith(".csv"):
         return pd.read_csv(file)  # type:ignore
+    elif file_path.endswith(".gitkeep"):
+        return pd.DataFrame()  # type:ignore
 
     raise RuntimeError(f"Unrecognizable file type: {file_path}")

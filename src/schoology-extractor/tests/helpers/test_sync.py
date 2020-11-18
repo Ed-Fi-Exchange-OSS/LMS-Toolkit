@@ -267,3 +267,20 @@ class Test_given_sync_resource_is_called:
                 {"fake_column": 'fake_value', "id": 'fake_id'}
             ])
         assert isinstance(result, DataFrame)
+
+
+class Test_given_usage_file_is_processed_is_called:
+    def test_then_returns_boolean(self, db_engine_mock_returns_none):
+        mock_sync_internal_functions(sync)
+        result = sync.usage_file_is_processed(
+            "fake_resource_name",
+            db_engine_mock_returns_none)
+        assert isinstance(result, bool)
+
+    class Test_given_db_returns_false():
+        def test_then_returns_false(self, db_engine_mock_returns_none):
+            mock_sync_internal_functions(sync)
+            result = sync.usage_file_is_processed(
+                "fake_resource_name",
+                db_engine_mock_returns_none)
+            assert result is False
