@@ -69,10 +69,10 @@ def _create_file_from_dataframe(action: Callable, file_name) -> bool:
 # TODO: this method should disappear when we finish converting all of the output
 # to use the official CSV formats.
 def _create_file_from_list(action: Callable, file_name: str) -> bool:
-    logger.info(f"Exporting {file_name}")
     try:
         data = action()
         if data is not None:
+            logger.info(f"Exporting {file_name}")
             csv_writer.to_csv(data, os.path.join(schoology_output_path, file_name))
         return True
     except Exception:
