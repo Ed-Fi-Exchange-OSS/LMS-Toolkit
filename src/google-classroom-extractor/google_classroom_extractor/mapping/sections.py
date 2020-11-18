@@ -35,8 +35,10 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source system
         Term: The enrollment term for the section
         Title: The section title or name
-        CreateDate: Date this record was created
-        LastModifiedDate: Date this record was last updated
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
+        CreateDate: Date this record was created in the extractor
+        LastModifiedDate: Date this record was last updated in the extractor
     """
     assert "id" in courses_df.columns
     assert "courseState" in courses_df.columns
@@ -51,6 +53,8 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
             "name",
             "creationTime",
             "updateTime",
+            "CreateDate",
+            "LastModifiedDate"
         ]
     ]
     result = result.rename(
@@ -59,8 +63,8 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
             "courseState": "LMSSectionStatus",
             "descriptionHeading": "SectionDescription",
             "name": "Title",
-            "creationTime": "CreateDate",
-            "updateTime": "LastModifiedDate",
+            "creationTime": "SourceCreateDate",
+            "updateTime": "SourceLastModifiedDate",
         }
     )
 

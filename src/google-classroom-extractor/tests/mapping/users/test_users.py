@@ -79,8 +79,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert student_row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert student_row_dict["LocalUserIdentifier"] == ""
         assert student_row_dict["SISUserIdentifier"] == ""
-        assert student_row_dict["CreateDate"] == ""
-        assert student_row_dict["LastModifiedDate"] == ""
+        assert student_row_dict["SourceCreateDate"] == ""
+        assert student_row_dict["SourceLastModifiedDate"] == ""
 
     def it_should_have_complete_teacher_mapping_as_second_row(users_df):
         teacher_row_dict = users_df.to_dict(orient="records")[1]
@@ -92,5 +92,5 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert teacher_row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert teacher_row_dict["LocalUserIdentifier"] == ""
         assert teacher_row_dict["SISUserIdentifier"] == ""
-        assert teacher_row_dict["CreateDate"] == ""
-        assert teacher_row_dict["LastModifiedDate"] == ""
+        assert teacher_row_dict["SourceCreateDate"] == ""
+        assert teacher_row_dict["SourceLastModifiedDate"] == ""

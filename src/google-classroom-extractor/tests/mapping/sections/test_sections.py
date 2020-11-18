@@ -27,6 +27,8 @@ TEACHER_GROUP_EMAIL = "13"
 COURSE_GROUP_EMAIL = "14"
 GUARDIANS_ENABLED = "15"
 CALENDAR_ID = "16"
+CREATE_DATE = "17"
+LAST_MODIFIED_DATE = "18"
 
 
 def describe_when_a_single_coursework_with_unique_fields_is_mapped():
@@ -50,6 +52,8 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
                 "courseGroupEmail": [COURSE_GROUP_EMAIL],
                 "guardiansEnabled": [GUARDIANS_ENABLED],
                 "calendarId": [CALENDAR_ID],
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
             }
         )
 
@@ -59,7 +63,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
     def it_should_have_correct_shape(sections_df):
         row_count, column_count = sections_df.shape
         assert row_count == 1
-        assert column_count == 10
+        assert column_count == 12
 
     def it_should_map_fields_correctly(sections_df):
         row_dict = sections_df.to_dict(orient="records")[0]
@@ -67,9 +71,11 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         assert row_dict["LMSSectionStatus"] == COURSE_STATE
         assert row_dict["SectionDescription"] == DESCRIPTION_HEADING
         assert row_dict["Title"] == NAME
-        assert row_dict["CreateDate"] == CREATION_TIME
-        assert row_dict["LastModifiedDate"] == UPDATE_TIME
+        assert row_dict["SourceCreateDate"] == CREATION_TIME
+        assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert row_dict["SISSectionIdentifier"] == ""
         assert row_dict["Term"] == ""
+        assert row_dict["CreateDate"] == CREATE_DATE
+        assert row_dict["LastModifiedDate"] == LAST_MODIFIED_DATE

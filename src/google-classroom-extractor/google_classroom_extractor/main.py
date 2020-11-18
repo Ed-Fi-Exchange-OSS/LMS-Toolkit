@@ -80,7 +80,7 @@ def request() -> Optional[Result]:
 
 def main():
     logger.info("Starting Ed-Fi LMS Google Classroom Extractor")
-    result_dfs: Result = request()
+    result_dfs: Optional[Result] = request()
 
     if not result_dfs:
         # Enrich this in FIZZ-150

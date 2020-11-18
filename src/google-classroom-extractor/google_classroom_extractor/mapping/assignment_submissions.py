@@ -44,8 +44,8 @@ def submissions_to_assignment_submissions_dfs(
         Status: The status of the submission in relation to the late acceptance policy
         SubmissionDateTime: The date and time of the assignment submission
         LMSUserIdentifier: A unique numeric identifier assigned to the user
-        CreateDate: Date this record was created
-        LastModifiedDate: Date this record was last updated
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
     assert "courseId" in submissions_df.columns
     assert "courseWorkId" in submissions_df.columns
@@ -93,8 +93,8 @@ def submissions_to_assignment_submissions_dfs(
             "userId": "LMSUserIdentifier",
             "courseId": "SourceSystemSectionIdentifier",
             "courseWorkType": "SubmissionType",
-            "creationTime": "CreateDate",
-            "updateTime": "LastModifiedDate",
+            "creationTime": "SourceCreateDate",
+            "updateTime": "SourceLastModifiedDate",
             "state": "Status",
         }
     )

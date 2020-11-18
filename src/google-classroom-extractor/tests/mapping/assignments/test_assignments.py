@@ -99,8 +99,8 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{ID}"
         assert row_dict["StartDateTime"] == SCHEDULED_TIME
         assert row_dict["Title"] == TITLE
-        assert row_dict["CreateDate"] == CREATION_TIME
-        assert row_dict["LastModifiedDate"] == UPDATE_TIME
+        assert row_dict["SourceCreateDate"] == CREATION_TIME
+        assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
 
 
 def describe_when_a_single_coursework_without_due_date_info_is_mapped():
@@ -154,8 +154,8 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{ID}"
         assert row_dict["StartDateTime"] == SCHEDULED_TIME
         assert row_dict["Title"] == TITLE
-        assert row_dict["CreateDate"] == CREATION_TIME
-        assert row_dict["LastModifiedDate"] == UPDATE_TIME
+        assert row_dict["SourceCreateDate"] == CREATION_TIME
+        assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
 
 
 BOILERPLATE: Dict[str, str] = {

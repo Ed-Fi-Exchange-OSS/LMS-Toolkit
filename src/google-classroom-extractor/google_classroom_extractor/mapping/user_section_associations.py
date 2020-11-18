@@ -42,8 +42,8 @@ def _students_or_teachers_to_user_section_associations_df(
             assigned to a user by the source system
         StartDate: Month, day, and year of the user's entry or assignment to the section
         LMSUserIdentifier: A unique numeric identifier assigned to the user
-        CreateDate: Date this record was created
-        LastModifiedDate: Date this record was last updated
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
     assert "userId" in students_or_teachers_df.columns
     assert "courseId" in students_or_teachers_df.columns
@@ -77,9 +77,9 @@ def _students_or_teachers_to_user_section_associations_df(
     user_section_associations_df[
         "EndDate"
     ] = ""  # No enrollment end date available from API
-    user_section_associations_df["CreateDate"] = ""  # No create date available from API
+    user_section_associations_df["SourceCreateDate"] = ""  # No create date available from API
     user_section_associations_df[
-        "LastModifiedDate"
+        "SourceLastModifiedDate"
     ] = ""  # No modified date available from API
     return user_section_associations_df
 
@@ -118,8 +118,8 @@ def students_and_teachers_to_user_section_associations_dfs(
             assigned to a user by the source system
         StartDate: Month, day, and year of the user's entry or assignment to the section
         LMSUserIdentifier: A unique numeric identifier assigned to the user
-        CreateDate: Date this record was created
-        LastModifiedDate: Date this record was last updated
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
     assert "userId" in students_df.columns
     assert "courseId" in students_df.columns

@@ -43,8 +43,8 @@ def _students_or_teachers_to_users_df(
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source system
         UserRole: The role assigned to the user
-        CreateDate: Date this record was created
-        LastModifiedDate: Date this record was last updated
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
     assert "userId" in students_or_teachers_df.columns
     assert "profile.name.fullName" in students_or_teachers_df.columns
@@ -69,8 +69,8 @@ def _students_or_teachers_to_users_df(
 
     result["LocalUserIdentifier"] = ""  # No local id available from API
     result["SISUserIdentifier"] = ""  # No SIS id available from API
-    result["CreateDate"] = ""  # No create date available from API
-    result["LastModifiedDate"] = ""  # No modified date available from API
+    result["SourceCreateDate"] = ""  # No create date available from API
+    result["SourceLastModifiedDate"] = ""  # No modified date available from API
 
     return result
 

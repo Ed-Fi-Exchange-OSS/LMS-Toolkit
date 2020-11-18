@@ -84,8 +84,8 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         assert row_dict["Status"] == STATE
         assert row_dict["SubmissionDateTime"] == ""
         assert row_dict["LMSUserIdentifier"] == USER_ID
-        assert row_dict["CreateDate"] == CREATION_TIME
-        assert row_dict["LastModifiedDate"] == UPDATE_TIME
+        assert row_dict["SourceCreateDate"] == CREATION_TIME
+        assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
 
 
 BOILERPLATE: Dict[str, str] = {
