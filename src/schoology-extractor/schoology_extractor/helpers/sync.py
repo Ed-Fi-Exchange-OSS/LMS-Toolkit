@@ -41,14 +41,14 @@ def _get_current_date_with_format() -> str:
     return datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
 
 
-def _map_result_to_dicts_arr(result: Union[list[ResultProxy], None]) -> list[dict]:
+def _map_result_to_dicts_arr(result: Union[list, None]) -> list:
     if result is None:
         return list()
 
     return [dict(row.items()) for row in result]  # type: ignore
 
 
-def _map_single_result_to_dict(result: Union[list[ResultProxy], None]) -> dict:
+def _map_single_result_to_dict(result: Union[list, None]) -> dict:
     mapped_result = _map_result_to_dicts_arr(result)
     return mapped_result[0] if len(mapped_result) > 0 else dict()
 

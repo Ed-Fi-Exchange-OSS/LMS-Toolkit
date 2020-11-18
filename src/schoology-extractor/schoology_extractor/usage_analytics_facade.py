@@ -48,7 +48,7 @@ def get_system_activities(usage_input_dir: str, db_engine: sqlalchemy.engine.bas
             output.append(mapped_row)
         else:
             output = mapped_row
-        
+
         sync.insert_usage_file_name(file.name, db_engine)
 
     # If reports have overlapping dates then we'll have duplicates
