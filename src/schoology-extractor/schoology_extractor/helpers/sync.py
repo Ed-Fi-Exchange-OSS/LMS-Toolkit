@@ -244,12 +244,13 @@ def usage_file_is_processed(
 
     _create_usage_table_if_it_does_not_exist(db_engine)
 
-    query = f"SELECT * FROM {USAGE_TABLE_NAME} where FILE_NAME='{file_name}' limit 1;"
+    query = F"select exists(select 1 from {USAGE_TABLE_NAME} where FILE_NAME='{file_name}') as 'exists'"
+
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
         db_item = _map_single_result_to_dict(result)
 
-    return "FILE_NAME" in db_item
+    return db_item['exists'] == 1
 
 
 def insert_usage_file_name(
@@ -270,4 +271,4 @@ def insert_usage_file_name(
     """
 
     _create_usage_table_if_it_does_not_exist(db_engine)
-    db_engine.execute(f"INSERT INTO {USAGE_TABLE_NAME} VALUES({file_name})")
+    db_engine.execute(f"INSERT INTO {USAGE_TABLE_NAME} VALUES('{file_name}')")

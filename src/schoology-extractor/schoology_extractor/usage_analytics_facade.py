@@ -43,13 +43,12 @@ def get_system_activities(usage_input_dir: str, db_engine: sqlalchemy.engine.bas
         if not sync.usage_file_is_processed(file.name, db_engine):
             row_data = csv_reader.load_data_frame(file.path)
             mapped_row = usageMap.map_to_udm(row_data)
+            sync.insert_usage_file_name(file.name, db_engine)
 
         if not output.empty:
             output.append(mapped_row)
         else:
             output = mapped_row
-
-        sync.insert_usage_file_name(file.name, db_engine)
 
     # If reports have overlapping dates then we'll have duplicates
     logger.debug("Processing usage_analytics files: Removing duplicated system activities from DataFrame")
