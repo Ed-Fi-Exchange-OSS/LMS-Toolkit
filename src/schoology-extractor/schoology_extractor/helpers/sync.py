@@ -246,6 +246,7 @@ def usage_file_is_processed(
 
     query = F"select exists(select 1 from {USAGE_TABLE_NAME} where FILE_NAME='{file_name}') as 'exists'"
 
+    db_item = {'exists': False}
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
         db_item = _map_single_result_to_dict(result)
