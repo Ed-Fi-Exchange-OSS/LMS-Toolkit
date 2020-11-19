@@ -244,31 +244,6 @@ class TestRequestClient:
             # Assert
             assert result == expected_result
 
-    class Test_when_get_grading_periods:
-        def test_given_wrong_type_in_params_then_thrown_assertion_error(
-            self, default_request_client
-        ):
-            with pytest.raises(AssertionError):
-                default_request_client.get_grading_periods([])
-
-        def test_given_correct_parameter_then_returns_expected_data(
-            self, default_request_client, requests_mock
-        ):
-            expected_url_1 = "https://api.schoology.com/v1/gradingperiods"
-
-            # Arrange
-            text = '{"total":1,"gradingperiods":[{"id": 100032890}]}'
-
-            requests_mock.get(expected_url_1, reason="OK", status_code=200, text=text)
-
-            # Act
-            response = default_request_client.get_grading_periods()
-
-            # Assert
-            assert isinstance(response, PaginatedResult)
-            assert len(response.current_page_items) == 1
-            assert response.current_page_items[0]["id"] == 100032890
-
     class Test_when_getting_all_courses:
         def test_given_wrong_type_in_params_then_thrown_assertion_error(
             self, default_request_client

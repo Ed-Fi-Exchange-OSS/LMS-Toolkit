@@ -29,7 +29,6 @@ arguments = arg_parser.parse_main_arguments(sys.argv[1:])
 schoology_key = arguments.client_key
 schoology_secret = arguments.client_secret
 schoology_output_path = arguments.output_directory
-schoology_grading_periods = arguments.grading_periods
 log_level = arguments.log_level
 page_size = arguments.page_size
 input_directory = arguments.input_directory
@@ -47,7 +46,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-grading_periods = schoology_grading_periods.split(",")
 request_client = RequestClient(schoology_key, schoology_secret)
 db_engine = get_sync_db_engine()
 
