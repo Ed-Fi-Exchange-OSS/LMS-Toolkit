@@ -45,13 +45,21 @@ def _students_or_teachers_to_users_df(
         UserRole: The role assigned to the user
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
+        CreateDate: Date this record was created in the extractor
+        LastModifiedDate: Date this record was last updated in the extractor
     """
     assert "userId" in students_or_teachers_df.columns
     assert "profile.name.fullName" in students_or_teachers_df.columns
     assert "profile.emailAddress" in students_or_teachers_df.columns
 
     result: DataFrame = students_or_teachers_df[
-        ["userId", "profile.name.fullName", "profile.emailAddress"]
+        [
+            "userId",
+            "profile.name.fullName",
+            "profile.emailAddress",
+            "CreateDate",
+            "LastModifiedDate",
+        ]
     ]
     result = result.rename(
         columns={
@@ -91,7 +99,7 @@ def students_and_teachers_to_users_df(
     Returns
     -------
     DataFrame
-        a LMSUsers DataFrame based on the given Teachers API DataFrame
+        a LMSUsers DataFrame based on the given Students and Teachers API DataFrames
 
     Notes
     -----
@@ -100,9 +108,14 @@ def students_and_teachers_to_users_df(
         EntityStatus: The status of the record
         LocalUserIdentifier: The user identifier assigned by a school or district
         Name: The full name of the user
-        SISUserIdentifier: The user identifier defined in the Teacher Information System (SIS)
+        SISUserIdentifier: The user identifier defined in the Student Information System (SIS)
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source system
+        UserRole: The role assigned to the user
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
+        CreateDate: Date this record was created in the extractor
+        LastModifiedDate: Date this record was last updated in the extractor
     """
     assert "userId" in students_df.columns
     assert "profile.name.fullName" in students_df.columns

@@ -7,7 +7,7 @@ from datetime import datetime
 import pytest
 import xxhash
 from pandas import read_sql_query, DataFrame
-from google_classroom_extractor.api.courses import _sync_courses_without_cleanup
+from google_classroom_extractor.api.courses import _sync_without_cleanup
 
 COLUMNS = [
     "id",
@@ -197,7 +197,7 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         )
 
         # act
-        _sync_courses_without_cleanup(courses_sync_df, test_db_fixture)
+        _sync_without_cleanup(courses_sync_df, test_db_fixture)
 
         return test_db_fixture
 

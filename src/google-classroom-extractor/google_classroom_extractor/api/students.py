@@ -8,7 +8,11 @@ from typing import List, Dict, Optional, cast
 from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
-from .api_caller import call_api, ResourceType
+from google_classroom_extractor.api.api_caller import call_api, ResourceType
+from google_classroom_extractor.api.resource_sync import (
+    cleanup_after_sync,
+    sync_to_db_without_cleanup,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -117,18 +121,42 @@ def request_all_students_as_df(
     """
 
     students_df: DataFrame = request_latest_students_as_df(resource, course_ids)
-
-    # append everything from API call
-    students_df.to_sql(
-        "Students", sync_db, if_exists="append", index=False, chunksize=500
-    )
-    # remove duplicates - leave only the most recent
-    with sync_db.connect() as con:
-        con.execute(
-            "DELETE from Students "
-            "WHERE rowid not in (select max(rowid) "
-            "FROM Students "
-            "GROUP BY courseId, userId)"
-        )
+    _sync_without_cleanup(students_df, sync_db)
+    cleanup_after_sync("Students", sync_db)
 
     return students_df
+
+
+def _sync_without_cleanup(
+    resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
+):
+    """
+    Take fetched API data and sync with database. Creates tables when necessary,
+    but ok if temporary tables are there to start. Doesn't delete temporary tables when finished.
+
+    Parameters
+    ----------
+    resource_df: DataFrame
+        a Students API DataFrame with the current fetched data which
+        will be mutated, adding Hash and CreateDate/LastModifiedDate
+    sync_db: sqlalchemy.engine.base.Engine
+        an Engine instance for creating database connections
+    """
+    sync_to_db_without_cleanup(
+        resource_df=resource_df,
+        resource_name="Students",
+        table_columns_sql="""
+            courseId TEXT,
+            userId TEXT,
+            "profile.id" TEXT,
+            "profile.name.givenName" TEXT,
+            "profile.name.familyName" TEXT,
+            "profile.name.fullName" TEXT,
+            "profile.emailAddress" TEXT,
+            "profile.permissions" TEXT,
+            "profile.photoUrl" TEXT,
+            "profile.verifiedTeacher" TEXT,
+            """,
+        primary_keys="courseId,userId",
+        sync_db=sync_db,
+    )
