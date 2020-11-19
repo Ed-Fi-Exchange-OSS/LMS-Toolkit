@@ -150,9 +150,7 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
 
         courses_initial_df = DataFrame(INITIAL_COURSE_DATA, columns=COLUMNS)
         courses_initial_df["Hash"] = courses_initial_df.apply(
-            lambda row: xxhash.xxh64_hexdigest(
-                row.to_json().encode("utf-8")
-            ),
+            lambda row: xxhash.xxh64_hexdigest(row.to_json().encode("utf-8")),
             axis=1,
         )
         dateToUse = datetime(2020, 9, 14, 12, 0, 0)
@@ -253,7 +251,7 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
                 EXPECTED_UNMATCHED_DATA_AFTER_SYNC, columns=COLUMNS
             ).astype("string")
             unmatched_from_db_df = (
-                read_sql_query("SELECT * from Unmatched", con)
+                read_sql_query("SELECT * from Unmatched_Courses", con)
                 .loc[:, "id":"calendarId"]  # original columns only
                 .astype("string")
             )
