@@ -1,7 +1,7 @@
 # Schoology Extractor
 
-This script retrieves and writes out to CSV all students, sections, assignments,
-and submissions.
+This script retrieves and writes out to CSV all students, currently-active† sections, assignments,
+and submissions († sections that are in an active grading period).
 
 ## Notes on Working With Schoology Data
 
