@@ -16,7 +16,6 @@ class RESOURCE_NAMES:
     SECTION = 'section'
     REVISION = 'revision'
     USER = 'user'
-    GRADING_PERIODS = 'gradingperiods'
     COURSE = 'course'
     ROLE = 'role'
     SUBMISSION = 'submissions'

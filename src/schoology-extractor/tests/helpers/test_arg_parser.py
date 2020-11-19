@@ -9,15 +9,8 @@ import pytest
 
 from schoology_extractor.helpers.arg_parser import (
     parse_main_arguments,
-    MainArguments,
-    parse_grading_periods_arguments,
-    GradingPeriodsArguments,
+    MainArguments
 )
-
-
-@pytest.fixture
-def required_params_for_parse_grading_periods_arguments():
-    return ["-s", "fake_secret", "-k", "fake_key"]
 
 
 def assert_error_message(capsys):
@@ -32,16 +25,13 @@ def describe_when_parsing_arguments():
         @pytest.fixture
         def result() -> MainArguments:
             # Arrange
-            parameters = ["-s", "fake_secret", "-g", "123,456", "-k", "fake_key"]
+            parameters = ["-s", "fake_secret", "-k", "fake_key"]
 
             # Act
             return parse_main_arguments(parameters)
 
         def it_should_load_the_secret(result: MainArguments):
             assert result.client_secret == "fake_secret"
-
-        def it_should_load_the_grading_periods(result: MainArguments):
-            assert result.grading_periods == "123,456"
 
         def it_should_load_the_key(result: MainArguments):
             assert result.client_key == "fake_key"
@@ -62,8 +52,6 @@ def describe_when_parsing_arguments():
             parameters = [
                 "-s",
                 "fake_secret",
-                "-g",
-                "123,456",
                 "-k",
                 "fake_key",
                 "-o",
@@ -94,22 +82,16 @@ def describe_when_parsing_arguments():
     def describe_given_parameters_are_not_valid():
         @pytest.fixture
         def default_parameters() -> List[str]:
-            return ["-s", "fake_secret", "-g", "123,456", "-k", "fake_key"]
+            return ["-s", "fake_secret", "-k", "fake_key"]
 
         def given_client_key_parameter_is_missing_then_throw_error(capsys):
-            args = ["-s", "fake_secret", "-g", "fake_grading_periods"]
+            args = ["-s", "fake_secret"]
             with pytest.raises(SystemExit):
                 parse_main_arguments(args)
                 assert_error_message(capsys)
 
         def given_client_secret_parameter_is_missing_then_throw_error(capsys):
-            args = ["-k", "fake_key", "-g", "fake_grading_periods"]
-            with pytest.raises(SystemExit):
-                parse_main_arguments(args)
-                assert_error_message(capsys)
-
-        def given_grading_periods_parameter_is_missing_then_throw_error(capsys):
-            args = ["-k", "fake_key", "-s", "fake_secret"]
+            args = ["-k", "fake_key"]
             with pytest.raises(SystemExit):
                 parse_main_arguments(args)
                 assert_error_message(capsys)
@@ -134,57 +116,4 @@ def describe_when_parsing_arguments():
             ] + default_parameters
             with pytest.raises(SystemExit):
                 parse_main_arguments(args)
-                assert_error_message(capsys)
-
-
-def describe_when_parsing_grading_periods_arguments():
-    def describe_given_parameters_are_valid():
-        def it_should_not_throw_an_exception(
-            required_params_for_parse_grading_periods_arguments,
-        ):
-            parse_grading_periods_arguments(
-                required_params_for_parse_grading_periods_arguments
-            )
-
-        def it_should_return_correct_type(
-            required_params_for_parse_grading_periods_arguments,
-        ):
-            parsed_arguments = parse_grading_periods_arguments(
-                required_params_for_parse_grading_periods_arguments
-            )
-            assert isinstance(parsed_arguments, GradingPeriodsArguments)
-
-    def describe_given_parameters_are_not_valid():
-        def given_client_key_parameter_is_missing_then_throw_error(capsys):
-            args = ["-s", "fake_secret"]
-            with pytest.raises(SystemExit):
-                parse_grading_periods_arguments(args)
-                assert_error_message(capsys)
-
-        def given_client_secret_parameter_is_missing_then_throw_error(capsys):
-            args = ["-k", "fake_key"]
-            with pytest.raises(SystemExit):
-                parse_grading_periods_arguments(args)
-                assert_error_message(capsys)
-
-        def given_not_valid_log_level_parameter_is_missing_then_throw_system_exit_error(
-            required_params_for_parse_grading_periods_arguments, capsys
-        ):
-            args = [
-                "-l",
-                "invalid_log_level",
-            ] + required_params_for_parse_grading_periods_arguments
-            with pytest.raises(SystemExit):
-                parse_grading_periods_arguments(args)
-                assert_error_message(capsys)
-
-        def given_not_valid_page_size_parameter_then_throw_system_exit_error(
-            required_params_for_parse_grading_periods_arguments, capsys
-        ):
-            args = [
-                "-p",
-                "non_numeric_value",
-            ] + required_params_for_parse_grading_periods_arguments
-            with pytest.raises(SystemExit):
-                parse_grading_periods_arguments(args)
                 assert_error_message(capsys)

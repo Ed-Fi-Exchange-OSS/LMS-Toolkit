@@ -1,7 +1,7 @@
 # Schoology Extractor
 
 This script retrieves and writes out to CSV all students, sections, assignments,
-and submissions for the desired grading period(s).
+and submissions.
 
 ## Notes on Working With Schoology Data
 
@@ -31,7 +31,6 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | ----------- | -------- | --------------------- | -------------------- |
 | Schoology API Key | yes | -k or --client-key | SCHOOLOGY_KEY |
 | Schoology API Secret | yes |  -s or --client-secret | SCHOOLOGY_SECRET |
-| List of Grading Periods | yes | -g or --grading-periods | SCHOOLOGY_GRADING_PERIODS |
 | Output Directory | no (default: working directory) | -o or --output-directory | SCHOOLOGY_OUTPUT_PATH |
 | Log level | no (default: WARNING) | -l or --log-level | SCHOOLOGY_LOG_LEVEL |
 | Page size | no (default: 20) | -p or --page-size | PAGE_SIZE |
@@ -41,18 +40,12 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 User's API key and secret are managed at
 [https://app.schoology.com/api](https://app.schoology.com/api).
 
-The grading periods list helps determine which grading periods are of interest.
-The value should be a comma-separated list of Grading Period Id values, e.g `-g
-12345,67899`. For example, an organization with multiple school years in one
-Schoology account would only want to list the grading periods for the current
-school year.
-
 ## Execution
 
 Execute the extractor with CLI args:
 
 ```bash
-poetry run python.exe schoology_extractor/main.py -k your-schoology-client-key -s your-schoology-client-secret  -g csv-of-grading-periods
+poetry run python.exe schoology_extractor/main.py -k your-schoology-client-key -s your-schoology-client-secret
 ```
 
 For detailed help, execute `poetry run python schoology_extractor/main.py -h`.
@@ -62,28 +55,9 @@ Alternately, run with environment variables or `.env` file:
 poetry run python.exe schoology_extractor/main.py
 ```
 
-### Grading Periods Helper
-
-To get a list of all available grading periods, run:
-
-```bash
-poetry run python schoology_extractor/grading_periods.py -k your-schoology-client-key -s your-schoology-client-secret
-```
-
-As with the main script, you can also use environment variables or a `.env` file in place of the `-k` and `-s` arguments. For detailed help, run:
-
-```bash
-poetry run python schoology_extractor/grading_periods.py -h
-```
-
 ## Output
 
-Four files in the project(or the specified output) directory:
-
-* `users.csv`
-* `sections.csv`
-* `assignments.csv`
-* `submissions.csv`
+CSV files in the data(or the specified output) directory with the LMS UDM format.
 
 ## Developer Utilities
 

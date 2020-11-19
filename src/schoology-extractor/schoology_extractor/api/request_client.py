@@ -238,27 +238,6 @@ class RequestClient:
 
         return PaginatedResult(self, page_size, self.get(url), "user", self.base_url + url)
 
-    def get_grading_periods(
-        self, page_size: int = DEFAULT_PAGE_SIZE
-    ) -> PaginatedResult:
-        """
-        Gets all the grading periods from the Schoology API
-
-        Parameters
-        ----------
-        page_size : int
-            Number of items per page.
-
-        Returns
-        -------
-        PaginatedResult
-            A parsed response from the server
-        """
-
-        url = f"gradingperiods?{self._build_query_params_for_first_page(page_size)}"
-
-        return PaginatedResult(self, page_size, self.get(url), "gradingperiods", self.base_url + url)
-
     def get_courses(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
         """
         Gets all the courses from the Schoology API
