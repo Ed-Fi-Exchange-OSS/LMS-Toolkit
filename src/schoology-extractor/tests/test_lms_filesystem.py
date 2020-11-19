@@ -14,7 +14,8 @@ from schoology_extractor.lms_filesystem import (
     get_user_file_path,
     get_section_file_path,
     get_section_association_file_path,
-    get_attendance_events_file_path
+    get_attendance_events_file_path,
+    get_system_activities_file_path
 )
 
 
@@ -130,3 +131,23 @@ def describe_when_getting_the_attendance_events_file_name():
 
     def it_should_create_the_section_directory(result, fs):
         assert os.path.exists("./output/section=123/attendance")
+
+
+def describe_when_getting_system_activities_file_path():
+    @pytest.fixture
+    @freeze_time(DATE_TIME_INPUT_STRING)
+    def result(fs):
+        _setup_filesystem(fs)
+
+        return get_system_activities_file_path(OUTPUT_DIRECTORY)
+
+    def it_should_use_the_current_date_in_the_directory_path(result, fs):
+        assert (
+            re.match(r"./output/system-activities/date=2020-10-16/[^/]+\.csv", result) is not None
+        ), f"actual: {result}"
+
+    def it_should_use_timestamp_for_file_name(result):
+        assert result.endswith(FILE_NAME)
+
+    def it_should_create_the_date_directory(result, fs):
+        assert os.path.exists("./output/system-activities/date=2020-10-16")

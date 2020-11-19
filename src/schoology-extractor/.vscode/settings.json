@@ -11,7 +11,6 @@
     "python.formatting.provider": "black",
     "python.testing.pytestEnabled": true,
     "python.venvPath": ".venv/Scripts/python",
-    "python.dataScience.jupyterServerURI": "local",
     "files.associations": {
         "*.metaed": "csharp"
     },
@@ -95,5 +94,6 @@
         "SPDX",
         "dbname",
         "pytest"
-    ]
+    ],
+    "jupyter.jupyterServerType": "local"
 }
