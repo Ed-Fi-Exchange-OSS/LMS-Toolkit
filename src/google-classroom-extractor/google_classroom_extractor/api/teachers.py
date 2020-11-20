@@ -14,6 +14,9 @@ from google_classroom_extractor.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 
+
+TEACHERS_RESOURCE_NAME = "Teachers"
+
 logger = logging.getLogger(__name__)
 
 
@@ -122,7 +125,7 @@ def request_all_teachers_as_df(
 
     teachers_df: DataFrame = request_latest_teachers_as_df(resource, course_ids)
     _sync_without_cleanup(teachers_df, sync_db)
-    cleanup_after_sync("Teachers", sync_db)
+    cleanup_after_sync(TEACHERS_RESOURCE_NAME, sync_db)
 
     return teachers_df
 
@@ -144,7 +147,7 @@ def _sync_without_cleanup(
     """
     sync_to_db_without_cleanup(
         resource_df=resource_df,
-        resource_name="Teachers",
+        resource_name=TEACHERS_RESOURCE_NAME,
         table_columns_sql="""
             courseId TEXT,
             userId TEXT,
