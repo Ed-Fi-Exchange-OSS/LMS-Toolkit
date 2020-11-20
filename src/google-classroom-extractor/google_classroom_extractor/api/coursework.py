@@ -9,6 +9,10 @@ from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
+from google_classroom_extractor.api.resource_sync import (
+    cleanup_after_sync,
+    sync_to_db_without_cleanup,
+)
 
 REQUIRED_COLUMNS = [
     "courseId",
@@ -32,6 +36,8 @@ REQUIRED_COLUMNS = [
     "scheduledTime",
     "topicId",
 ]
+
+ASSIGNMENTS_RESOURCE_NAME = "Assignmments"
 
 logger = logging.getLogger(__name__)
 
@@ -170,18 +176,56 @@ def request_all_coursework_as_df(
     """
 
     coursework_df: DataFrame = request_latest_coursework_as_df(resource, course_ids)
-
-    # append everything from API call
-    coursework_df.to_sql(
-        "Coursework", sync_db, if_exists="append", index=False, chunksize=500
-    )
-    # remove duplicates - leave only the most recent
-    with sync_db.connect() as con:
-        con.execute(
-            "DELETE from Coursework "
-            "WHERE rowid not in (select max(rowid) "
-            "FROM Coursework "
-            "GROUP BY id)"
-        )
+    _sync_without_cleanup(coursework_df, sync_db)
+    cleanup_after_sync(ASSIGNMENTS_RESOURCE_NAME, sync_db)
 
     return coursework_df
+
+
+def _sync_without_cleanup(
+    resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
+):
+    """
+    Take fetched API data and sync with database. Creates tables when necessary,
+    but ok if temporary tables are there to start. Doesn't delete temporary tables when finished.
+
+    Parameters
+    ----------
+    resource_df: DataFrame
+        a courseworks API DataFrame with the current fetched data which
+        will be mutated, adding Hash and CreateDate/LastModifiedDate
+    sync_db: sqlalchemy.engine.base.Engine
+        an Engine instance for creating database connections
+    """
+    sync_to_db_without_cleanup(
+        resource_df=resource_df,
+        resource_name=ASSIGNMENTS_RESOURCE_NAME,
+        table_columns_sql="""
+            courseId TEXT,
+            id TEXT,
+            title TEXT,
+            description TEXT,
+            materials TEXT,
+            state TEXT,
+            alternateLink TEXT,
+            creationTime TEXT,
+            updateTime TEXT,
+            maxPoints TEXT,
+            workType TEXT,
+            submissionModificationMode TEXT,
+            assigneeMode TEXT,
+            creatorUserId TEXT,
+            "dueDate.year" TEXT,
+            "dueDate.month" TEXT,
+            "dueDate.day" TEXT,
+            "dueTime.hours" TEXT,
+            "dueTime.minutes" TEXT,
+            "assignment.studentWorkFolder.id" TEXT,
+            "assignment.studentWorkFolder.title" TEXT,
+            "assignment.studentWorkFolder.alternateLink" TEXT,
+            topicId TEXT,
+            scheduledTime TEXT,
+            """,
+        primary_keys="id",
+        sync_db=sync_db,
+    )
