@@ -44,6 +44,8 @@ def _students_or_teachers_to_user_section_associations_df(
         LMSUserIdentifier: A unique numeric identifier assigned to the user
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
+        CreateDate: Date this record was created in the extractor
+        LastModifiedDate: Date this record was last updated in the extractor
     """
     assert "userId" in students_or_teachers_df.columns
     assert "courseId" in students_or_teachers_df.columns
@@ -52,6 +54,8 @@ def _students_or_teachers_to_user_section_associations_df(
         [
             "userId",
             "courseId",
+            "CreateDate",
+            "LastModifiedDate",
         ]
     ]
 
@@ -120,6 +124,8 @@ def students_and_teachers_to_user_section_associations_dfs(
         LMSUserIdentifier: A unique numeric identifier assigned to the user
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
+        CreateDate: Date this record was created in the extractor
+        LastModifiedDate: Date this record was last updated in the extractor
     """
     assert "userId" in students_df.columns
     assert "courseId" in students_df.columns

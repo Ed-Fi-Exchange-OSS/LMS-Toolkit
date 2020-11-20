@@ -15,10 +15,15 @@ from google_classroom_extractor.mapping.constants import (
     ENTITY_STATUS_ACTIVE,
 )
 
+
 # unique value for each column in fixture
 COURSE_ID = "1"
 STUDENT_USER_ID = "2"
-TEACHER_USER_ID = "3"
+STUDENT_CREATE_DATE = "3"
+STUDENT_LAST_MODIFIED_DATE = "4"
+TEACHER_USER_ID = "5"
+TEACHER_CREATE_DATE = "6"
+TEACHER_LAST_MODIFIED_DATE = "7"
 
 
 def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapped():
@@ -29,6 +34,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
             {
                 "courseId": [COURSE_ID],
                 "userId": [STUDENT_USER_ID],
+                "CreateDate": [STUDENT_CREATE_DATE],
+                "LastModifiedDate": [STUDENT_LAST_MODIFIED_DATE],
             }
         )
 
@@ -36,6 +43,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
             {
                 "courseId": [COURSE_ID],
                 "userId": [TEACHER_USER_ID],
+                "CreateDate": [TEACHER_CREATE_DATE],
+                "LastModifiedDate": [TEACHER_LAST_MODIFIED_DATE],
             }
         )
 
@@ -51,7 +60,7 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         row_count, column_count = association_df.shape
 
         assert row_count == 2
-        assert column_count == 10
+        assert column_count == 12
 
     def it_should_map_student_fields_correctly(associations_dicts):
         association_df: DataFrame = associations_dicts[COURSE_ID]
@@ -67,6 +76,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert row_dict["EndDate"] == ""
         assert row_dict["SourceCreateDate"] == ""
         assert row_dict["SourceLastModifiedDate"] == ""
+        assert row_dict["CreateDate"] == STUDENT_CREATE_DATE
+        assert row_dict["LastModifiedDate"] == STUDENT_LAST_MODIFIED_DATE
 
     def it_should_map_teacher_fields_correctly(associations_dicts):
         association_df: DataFrame = associations_dicts[COURSE_ID]
@@ -82,6 +93,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert row_dict["EndDate"] == ""
         assert row_dict["SourceCreateDate"] == ""
         assert row_dict["SourceLastModifiedDate"] == ""
+        assert row_dict["CreateDate"] == TEACHER_CREATE_DATE
+        assert row_dict["LastModifiedDate"] == TEACHER_LAST_MODIFIED_DATE
 
 
 def describe_when_users_in_different_courses_are_mapped():
@@ -94,6 +107,8 @@ def describe_when_users_in_different_courses_are_mapped():
             {
                 "courseId": [COURSE_ID],
                 "userId": [STUDENT_USER_ID],
+                "CreateDate": [STUDENT_CREATE_DATE],
+                "LastModifiedDate": [STUDENT_LAST_MODIFIED_DATE],
             }
         )
 
@@ -101,6 +116,8 @@ def describe_when_users_in_different_courses_are_mapped():
             {
                 "courseId": [course2_id],
                 "userId": [TEACHER_USER_ID],
+                "CreateDate": [TEACHER_CREATE_DATE],
+                "LastModifiedDate": [TEACHER_LAST_MODIFIED_DATE],
             }
         )
 
