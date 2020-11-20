@@ -7,21 +7,12 @@ from typing import Callable
 
 import pandas as pd
 
-
-from .file_repository import (
-    get_users_file,
-    get_sections_file,
-    get_section_associations_file,
-    get_user_activities_file,
-    get_assignments_file,
-    get_grades_file,
-    get_attendance_events_file,
-    get_submissions_file
-)
+import lms_file_utils.file_repository as fr
 
 
 def _default() -> pd.DataFrame:
     return pd.DataFrame()
+
 
 def _read_csv(file: str) -> pd.DataFrame:
     if file:
@@ -33,7 +24,16 @@ def _read_csv(file: str) -> pd.DataFrame:
 
 
 def get_all_users(base_directory: str) -> pd.DataFrame:
-    file = get_users_file(base_directory)
+    file = fr.get_users_file(base_directory)
+
+    if file is not None:
+        return _read_csv(file)
+
+    return _default()
+
+
+def get_all_system_activities(base_directory: str) -> pd.DataFrame:
+    file = fr.get_system_activities_file(base_directory)
 
     if file is not None:
         return _read_csv(file)
@@ -42,7 +42,7 @@ def get_all_users(base_directory: str) -> pd.DataFrame:
 
 
 def get_all_sections(base_directory: str) -> pd.DataFrame:
-    file = get_sections_file(base_directory)
+    file = fr.get_sections_file(base_directory)
 
     if file is not None:
         return _read_csv(file)
@@ -51,7 +51,7 @@ def get_all_sections(base_directory: str) -> pd.DataFrame:
 
 
 def get_section_associations(base_directory: str, section_id: int) -> pd.DataFrame:
-    file = get_section_associations_file(base_directory, section_id)
+    file = fr.get_section_associations_file(base_directory, section_id)
 
     if file is not None:
         return _read_csv(file)
@@ -85,8 +85,8 @@ def get_all_section_associations(
     return _get_data_for_section(base_directory, sections, get_section_associations)
 
 
-def get_user_activities(base_directory: str, section_id: int) -> pd.DataFrame:
-    file = get_user_activities_file(base_directory, section_id)
+def get_section_activities(base_directory: str, section_id: int) -> pd.DataFrame:
+    file = fr.get_section_activities_file(base_directory, section_id)
 
     if file is not None:
         return _read_csv(file)
@@ -94,14 +94,14 @@ def get_user_activities(base_directory: str, section_id: int) -> pd.DataFrame:
     return _default()
 
 
-def get_all_user_activities(
+def get_all_section_activities(
     base_directory: str, sections: pd.DataFrame
 ) -> pd.DataFrame:
-    return _get_data_for_section(base_directory, sections, get_user_activities)
+    return _get_data_for_section(base_directory, sections, get_section_activities)
 
 
 def get_assignments(base_directory: str, section_id: int) -> pd.DataFrame:
-    file = get_assignments_file(base_directory, section_id)
+    file = fr.get_assignments_file(base_directory, section_id)
 
     if file is not None:
         return _read_csv(file)
@@ -116,7 +116,7 @@ def get_all_assignments(base_directory: str, sections: pd.DataFrame) -> pd.DataF
 def get_submissions(
     base_directory: str, section_id: int, assignment_id: int
 ) -> pd.DataFrame:
-    file = get_submissions_file(base_directory, section_id, assignment_id)
+    file = fr.get_submissions_file(base_directory, section_id, assignment_id)
 
     if file is not None:
         return _read_csv(file)
@@ -137,7 +137,7 @@ def get_all_submissions(base_directory: str, assignments: pd.DataFrame) -> pd.Da
 
 
 def get_grades(base_directory: str, section_id: int) -> pd.DataFrame:
-    file = get_grades_file(base_directory, section_id)
+    file = fr.get_grades_file(base_directory, section_id)
 
     if file is not None:
         return _read_csv(file)
@@ -150,7 +150,7 @@ def get_all_grades(base_directory: str, sections: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_attendance_events(base_directory: str, section_id: int) -> pd.DataFrame:
-    file = get_attendance_events_file(base_directory, section_id)
+    file = fr.get_attendance_events_file(base_directory, section_id)
 
     if file is not None:
         return _read_csv(file)

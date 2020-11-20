@@ -45,14 +45,14 @@ SUBMISSIONS_FILE_NEW = (
 )
 ATTENDANCE_FILE_OLD = "base_dir/section=1/attendance-events/2020-11-18-04-05-06.csv"
 ATTENDANCE_FILE_NEW = "base_dir/section=1/attendance-events/2020-11-19-04-05-06.csv"
-SECTION_ACTIVIITES_FILE_OLD = (
+SECTION_ACTIVITIES_FILE_OLD = (
     "base_dir/section=1/section-activities/2020-11-18-04-05-06.csv"
 )
-SECTION_ACTIVIITES_FILE_NEW = (
+SECTION_ACTIVITIES_FILE_NEW = (
     "base_dir/section=1/section-activities/2020-11-19-04-05-06.csv"
 )
-SYSTEM_ACTIVIITES_FILE_OLD = "base_dir/system-activities/2020-11-18-04-05-06.csv"
-SYSTEM_ACTIVIITES_FILE_NEW = "base_dir/system-activities/2020-11-19-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_OLD = "base_dir/system-activities/2020-11-18-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_NEW = "base_dir/system-activities/2020-11-19-04-05-06.csv"
 
 files = [
     SECTION_FILE_OLD,
@@ -69,10 +69,10 @@ files = [
     SUBMISSIONS_FILE_NEW,
     ATTENDANCE_FILE_OLD,
     ATTENDANCE_FILE_NEW,
-    SECTION_ACTIVIITES_FILE_OLD,
-    SECTION_ACTIVIITES_FILE_NEW,
-    SYSTEM_ACTIVIITES_FILE_OLD,
-    SYSTEM_ACTIVIITES_FILE_NEW,
+    SECTION_ACTIVITIES_FILE_OLD,
+    SECTION_ACTIVITIES_FILE_NEW,
+    SYSTEM_ACTIVITIES_FILE_OLD,
+    SYSTEM_ACTIVITIES_FILE_NEW,
 ]
 
 
@@ -243,9 +243,9 @@ def describe_given_files_exist():
     def describe_when_getting_section_activities_file():
         def it_should_return_newest_file(fs, init_fs):
             file = get_section_activities_file(BASE_DIRECTORY, SECTION_ID)
-            assert file == SECTION_ACTIVIITES_FILE_NEW
+            assert file == SECTION_ACTIVITIES_FILE_NEW
 
     def describe_when_getting_system_activities_file():
         def it_should_return_newest_file(fs, init_fs):
             file = get_system_activities_file(BASE_DIRECTORY)
-            assert file == SYSTEM_ACTIVIITES_FILE_NEW
+            assert file == SYSTEM_ACTIVITIES_FILE_NEW
