@@ -14,6 +14,9 @@ from google_classroom_extractor.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 
+
+COURSES_RESOURCE_NAME = "Courses"
+
 logger = logging.getLogger(__name__)
 
 
@@ -118,6 +121,9 @@ def request_all_courses_as_df(
         alternateLink: Absolute link to this course in the Classroom web UI
         teacherGroupEmail: The email address of a Google group containing all teachers of the course
         courseGroupEmail: The email address of a Google group containing all members of the course
+        teacherFolder.id: The identifier of the teacher folder
+        teacherFolder.title: The identifier of the teacher folder,
+        teacherFolder.alternateLink: Absolute link to the teacher folder in the Classroom web UI
         guardiansEnabled: Whether or not guardian notifications are enabled for this course
         calendarId: The Calendar ID for a calendar that all course members can see
         CreateDate: Date this record was created by the extractor
@@ -125,14 +131,14 @@ def request_all_courses_as_df(
     """
 
     courses_df = request_latest_courses_as_df(resource)
-    _sync_courses_without_cleanup(courses_df, sync_db)
-    cleanup_after_sync("Courses", sync_db)
+    _sync_without_cleanup(courses_df, sync_db)
+    cleanup_after_sync(COURSES_RESOURCE_NAME, sync_db)
 
     return courses_df
 
 
-def _sync_courses_without_cleanup(
-    courses_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
+def _sync_without_cleanup(
+    resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
 ):
     """
     Take fetched API data and sync with database. Creates tables when necessary,
@@ -140,15 +146,15 @@ def _sync_courses_without_cleanup(
 
     Parameters
     ----------
-    courses_df: DataFrame
+    resource_df: DataFrame
         a Courses API DataFrame with the current fetched data which
         will be mutated, adding Hash and CreateDate/LastModifiedDate
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
     """
     sync_to_db_without_cleanup(
-        resource_df=courses_df,
-        resource_name="Courses",
+        resource_df=resource_df,
+        resource_name=COURSES_RESOURCE_NAME,
         table_columns_sql="""
             id BIGINT,
             name TEXT,
