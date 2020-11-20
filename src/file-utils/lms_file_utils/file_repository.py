@@ -4,7 +4,7 @@ from typing import Optional
 
 def _get_newest_file(directory: str) -> Optional[str]:
     if not os.path.exists(directory):
-        return ""
+        return None
 
     files = [(f.path, f.name) for f in os.scandir(directory) if f.name.endswith(".csv")]
     files = sorted(files, key=lambda x: x[1], reverse=True)
@@ -31,14 +31,18 @@ def get_sections_file(base_directory: str) -> Optional[str]:
     return _get_newest_file(os.path.join(base_directory, "sections"))
 
 
+def get_system_activities_file(base_directory: str) -> Optional[str]:
+    return _get_newest_file(os.path.join(base_directory, "system-activities"))
+
+
 def get_section_associations_file(
     base_directory: str, section_id: int
 ) -> Optional[str]:
     return _get_file_for_section(base_directory, section_id, "section-associations")
 
 
-def get_user_activities_file(base_directory: str, section_id: int) -> Optional[str]:
-    return _get_file_for_section(base_directory, section_id, "user-activities")
+def get_section_activities_file(base_directory: str, section_id: int) -> Optional[str]:
+    return _get_file_for_section(base_directory, section_id, "section-activities")
 
 
 def get_assignments_file(base_directory: str, section_id: int) -> Optional[str]:
