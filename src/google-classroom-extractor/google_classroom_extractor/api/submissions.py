@@ -9,6 +9,10 @@ from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
+from google_classroom_extractor.api.resource_sync import (
+    cleanup_after_sync,
+    sync_to_db_without_cleanup,
+)
 
 REQUIRED_COLUMNS = [
     "courseId",
@@ -26,6 +30,8 @@ REQUIRED_COLUMNS = [
     "associatedWithDeveloper",
     "submissionHistory",
 ]
+
+SUBMISSIONS_RESOURCE_NAME = "StudentSubmissions"
 
 logger = logging.getLogger(__name__)
 
@@ -156,23 +162,55 @@ def request_all_submissions_as_df(
         associatedWithDeveloper: Whether this student submission is associated with the
             Developer Console project making the request
         submissionHistory: The history of the submission as JSON
+        CreateDate: Date this record was created by the extractor
+        LastModifiedDate: Date this record was last updated by the extractor
     """
 
     submissions_df: DataFrame = request_latest_submissions_as_df(
         resource, course_ids
     )
 
-    # append everything from API call
-    submissions_df.to_sql(
-        "StudentSubmissions", sync_db, if_exists="append", index=False, chunksize=500
-    )
-    # remove duplicates - leave only the most recent
-    with sync_db.connect() as con:
-        con.execute(
-            "DELETE from StudentSubmissions "
-            "WHERE rowid not in (select max(rowid) "
-            "FROM StudentSubmissions "
-            "GROUP BY id)"
-        )
+    _sync_without_cleanup(submissions_df, sync_db)
+    cleanup_after_sync(SUBMISSIONS_RESOURCE_NAME, sync_db)
 
     return submissions_df
+
+
+def _sync_without_cleanup(
+    resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
+):
+    """
+    Take fetched API data and sync with database. Creates tables when necessary,
+    but ok if temporary tables are there to start. Doesn't delete temporary tables when finished.
+
+    Parameters
+    ----------
+    resource_df: DataFrame
+        a courseworks API DataFrame with the current fetched data which
+        will be mutated, adding Hash and CreateDate/LastModifiedDate
+    sync_db: sqlalchemy.engine.base.Engine
+        an Engine instance for creating database connections
+    """
+    sync_to_db_without_cleanup(
+        resource_df=resource_df,
+        resource_name=SUBMISSIONS_RESOURCE_NAME,
+        table_columns_sql="""
+            courseId TEXT,
+            courseWorkId TEXT,
+            id TEXT,
+            userId TEXT,
+            creationTime TEXT,
+            updateTime TEXT,
+            state TEXT,
+            alternateLink TEXT,
+            courseWorkType TEXT,
+            submissionHistory TEXT,
+            late TEXT,
+            draftGrade TEXT,
+            assignedGrade TEXT,
+            "assignmentSubmission.attachments" TEXT,
+            associatedWithDeveloper TEXT,
+            """,
+        primary_keys="courseId,id,courseWorkId,userId",
+        sync_db=sync_db,
+    )
