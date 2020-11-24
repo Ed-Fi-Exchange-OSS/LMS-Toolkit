@@ -226,6 +226,6 @@ def _sync_without_cleanup(
             topicId TEXT,
             scheduledTime TEXT,
             """,
-        primary_keys="id",
+        primary_keys="id,courseId",
         sync_db=sync_db,
     )
