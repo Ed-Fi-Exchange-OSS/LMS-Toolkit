@@ -100,6 +100,8 @@ def coursework_to_assignments_dfs(
             "updateTime",
             "DueDateTime",
             "SourceSystemIdentifier",
+            "CreateDate",
+            "LastModifiedDate"
         ]
     ]
 

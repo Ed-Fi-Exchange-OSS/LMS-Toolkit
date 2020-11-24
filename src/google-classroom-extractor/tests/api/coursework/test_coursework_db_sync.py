@@ -3,127 +3,225 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Dict
-from unittest.mock import patch
-from pandas import DataFrame, read_csv
-from google_classroom_extractor.api.coursework import request_all_coursework_as_df
-from tests.helper import merged_dict
+from datetime import datetime
+import pytest
+import xxhash
+from pandas import read_sql_query, DataFrame
+from google_classroom_extractor.api.coursework import _sync_without_cleanup
+
+COLUMNS = [
+    "courseId",
+    "id",
+    "title",
+    "description",
+    "state",
+    "alternateLink",
+    "creationTime",
+    "updateTime",
+    "maxPoints",
+    "workType",
+    "submissionModificationMode",
+    "assigneeMode",
+    "creatorUserId",
+    "dueDate.year",
+    "dueDate.month",
+    "dueDate.day",
+    "dueTime.hours",
+    "dueTime.minutes",
+    "topicId",
+    "scheduledTime",
+]
+
+CHANGED_COURSEWORK_BEFORE = [
+    "1",
+    "11",
+    "title",
+    "description",
+    "state",
+    "link",
+    "2020-08-19T21:02:46.877Z",
+    "2020-08-19T21:02:46.877Z",
+    "100",
+    "ASSIGNMENT",
+    "2",
+    "1",
+    "111",
+    "2020",
+    "02",
+    "01",
+    "05",
+    "25",
+    "1111",
+    "25",
+]
+
+CHANGED_COURSEWORK_AFTER = [
+    "1",
+    "11",
+    "title",
+    "CHANGED*",
+    "state",
+    "link",
+    "2020-08-19T21:02:46.877Z",
+    "2020-08-19T21:02:46.877Z",
+    "100",
+    "ASSIGNMENT",
+    "2",
+    "1",
+    "111",
+    "2020",
+    "02",
+    "01",
+    "05",
+    "25",
+    "1111",
+    "25",
+]
+
+UNCHANGED_COURSEWORK = [
+    "2",
+    "21",
+    "title",
+    "description*",
+    "state",
+    "link",
+    "2020-08-19T21:02:46.877Z",
+    "2020-08-19T21:02:46.877Z",
+    "100",
+    "ASSIGNMENT",
+    "2",
+    "1",
+    "211",
+    "2020",
+    "02",
+    "01",
+    "05",
+    "25",
+    "2111",
+    "25",
+]
+
+NEW_COURSEWORK = [
+    "3",
+    "31",
+    "title",
+    "description*",
+    "state",
+    "link",
+    "2020-08-19T21:02:46.877Z",
+    "2020-08-19T21:02:46.877Z",
+    "100",
+    "ASSIGNMENT",
+    "3",
+    "3",
+    "311",
+    "2020",
+    "02",
+    "01",
+    "05",
+    "25",
+    "3111",
+    "25",
+]
+
+SYNC_DATA = [CHANGED_COURSEWORK_AFTER, UNCHANGED_COURSEWORK, NEW_COURSEWORK]
 
 
-def dataframe_row_count(dataframe) -> int:
-    return dataframe.shape[0]
+def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
+    @pytest.fixture
+    def test_db_after_sync(test_db_fixture):
+        # arrange
+        INITIAL_DATA = [
+            CHANGED_COURSEWORK_BEFORE,
+            UNCHANGED_COURSEWORK
+        ]
 
+        courseworks_initial_df = DataFrame(INITIAL_DATA, columns=COLUMNS)
+        courseworks_initial_df["Hash"] = courseworks_initial_df.apply(
+            lambda row: xxhash.xxh64_hexdigest(row.to_json().encode("utf-8")),
+            axis=1,
+        )
+        dateToUse = datetime(2020, 9, 14, 12, 0, 0)
+        courseworks_initial_df["SyncNeeded"] = 0
+        courseworks_initial_df["CreateDate"] = dateToUse
+        courseworks_initial_df["LastModifiedDate"] = dateToUse
 
-def db_row_count(test_db) -> int:
-    return test_db.engine.execute("SELECT COUNT(rowid) from Coursework").scalar()
+        courseworks_sync_df = DataFrame(SYNC_DATA, columns=COLUMNS)
 
+        with test_db_fixture.connect() as con:
+            con.execute("DROP TABLE IF EXISTS Assignmments")
+            con.execute(
+                """
+                CREATE TABLE IF NOT EXISTS Assignmments (
+                    courseId TEXT,
+                    id TEXT,
+                    title TEXT,
+                    description TEXT,
+                    materials TEXT,
+                    state TEXT,
+                    alternateLink TEXT,
+                    creationTime TEXT,
+                    updateTime TEXT,
+                    maxPoints TEXT,
+                    workType TEXT,
+                    submissionModificationMode TEXT,
+                    assigneeMode TEXT,
+                    creatorUserId TEXT,
+                    "dueDate.year" TEXT,
+                    "dueDate.month" TEXT,
+                    "dueDate.day" TEXT,
+                    "dueTime.hours" TEXT,
+                    "dueTime.minutes" TEXT,
+                    "assignment.studentWorkFolder.id" TEXT,
+                    "assignment.studentWorkFolder.title" TEXT,
+                    "assignment.studentWorkFolder.alternateLink" TEXT,
+                    topicId TEXT,
+                    scheduledTime TEXT,
+                    Hash TEXT,
+                    CreateDate DATETIME,
+                    LastModifiedDate DATETIME,
+                    SyncNeeded BIGINT,
+                    PRIMARY KEY (id,courseId)
+                )
+                """
+            )
 
-def db_ending_id(test_db) -> int:
-    return test_db.engine.execute(
-        "SELECT id from Coursework WHERE rowid = (SELECT MAX(rowid) from Coursework)"
-    ).scalar()
+        courseworks_initial_df.to_sql(
+            "Assignmments", test_db_fixture, if_exists="append", index=False, chunksize=1000
+        )
 
+        # act
+        _sync_without_cleanup(courseworks_sync_df, test_db_fixture)
 
-def db_state_by_coursework_id(test_db, coursework_id) -> int:
-    return test_db.engine.execute(
-        f"SELECT state from Coursework WHERE id = '{coursework_id}'"
-    ).scalar()
+        return test_db_fixture
 
-
-DUMMY_COURSE_IDS = ["1", "2"]
-
-
-def describe_when_overlap_removal_is_needed():
-    @patch("google_classroom_extractor.api.coursework.request_latest_coursework_as_df")
-    def it_should_load_three_pulls_in_a_row_with_overlap_correctly(
-        mock_latest_coursework_df, test_db_fixture
+    def it_should_have_courseworks_table_with_updated_row_and_added_new_row(
+        test_db_after_sync,
     ):
-        # 1st pull: 17 rows, last row id is 87699559
-        mock_latest_coursework_df.return_value = read_csv(
-            "tests/api/coursework/coursework-1st.csv"
-        )
-        first_coursework_df = request_all_coursework_as_df(
-            None, DUMMY_COURSE_IDS, test_db_fixture
-        )
-        assert dataframe_row_count(first_coursework_df) == 17
-        assert db_row_count(test_db_fixture) == 17
-        assert db_ending_id(test_db_fixture) == 87699559
+        EXPECTED_COURSEWORKS_DATA_AFTER_SYNC = [
+            UNCHANGED_COURSEWORK,
+            CHANGED_COURSEWORK_AFTER,
+            NEW_COURSEWORK,
+        ]
+        with test_db_after_sync.connect() as con:
+            expected_courseworks_df = (
+                DataFrame(EXPECTED_COURSEWORKS_DATA_AFTER_SYNC, columns=COLUMNS)
+                .set_index(["id", "courseId"]).astype("string")  # ignore generated dataframe index
+            )
+            courseworks_from_db_df = (
+                read_sql_query("SELECT * from Assignmments", con)
+                .set_index(["id", "courseId"]).astype("string")  # ignore generated dataframe index
+            )
+            print(courseworks_from_db_df.columns.values)
 
-        # 2nd pull: 39 rows, overlaps 7, last row id is 87025291
-        mock_latest_coursework_df.return_value = read_csv(
-            "tests/api/coursework/coursework-2nd-overlaps-1st.csv"
-        )
-        second_coursework_df = request_all_coursework_as_df(
-            None, DUMMY_COURSE_IDS, test_db_fixture
-        )
-        assert dataframe_row_count(second_coursework_df) == 39
-        assert (
-            db_row_count(test_db_fixture) == 44
-        )  # 39 new + 12 existing - 7 overlapping
-        assert db_ending_id(test_db_fixture) == 87025291
+            courseworks_from_db_df.drop(labels=[
+                'materials',
+                'assignment.studentWorkFolder.id',
+                'assignment.studentWorkFolder.title',
+                'assignment.studentWorkFolder.alternateLink',
+                'Hash',
+                'CreateDate',
+                'LastModifiedDate',
+                'SyncNeeded'], axis=1, inplace=True)  # deleting null columns not provided for the test
 
-        # 3rd pull: 98 rows, overlaps 43, last row id is 15461200
-        mock_latest_coursework_df.return_value = read_csv(
-            "tests/api/coursework/coursework-3rd-overlaps-1st-and-2nd.csv"
-        )
-        third_coursework_df = request_all_coursework_as_df(
-            None, DUMMY_COURSE_IDS, test_db_fixture
-        )
-        assert dataframe_row_count(third_coursework_df) == 98
-        assert (
-            db_row_count(test_db_fixture) == 99
-        )  # 98 new + 44 existing - 43 overlapping
-        assert db_ending_id(test_db_fixture) == 15461200
-
-
-def describe_when_two_pulls_of_same_coursework_data_differ_in_state():
-    coursework_id = "123456"
-    consistent_rows: Dict[str, str] = {
-        "courseId": "1234",
-        "id": coursework_id,
-        "title": "Customer-focused eco-centric standardization",
-        "description": "Herself PM out far really beautiful.",
-        "creationTime": "2020-01-12 03:52:52",
-        "updateTime": "2020-09-20 12:37:54",
-        "dueDate": "2020-09-11",
-        "dueTime": "22:47:58",
-        "scheduledTime": "23:23:01",
-        "maxPoints": "75",
-        "workType": "ASSIGNMENT",
-        "creatorUserId": "49165122",
-        "topicId": "81859357",
-    }
-    initial_state = "CREATED"
-    update_state = "PUBLISHED"
-
-    @patch("google_classroom_extractor.api.coursework.request_latest_coursework_as_df")
-    def it_should_replace_old_state_with_new(
-        mock_latest_coursework_df, test_db_fixture
-    ):
-        # original coursework
-        mock_latest_coursework_df.return_value = DataFrame.from_dict(
-            [merged_dict(consistent_rows, {"state": initial_state})]
-        )
-
-        # initial pull
-        first_coursework_df = request_all_coursework_as_df(
-            None, DUMMY_COURSE_IDS, test_db_fixture
-        )
-        assert dataframe_row_count(first_coursework_df) == 1
-        assert db_row_count(test_db_fixture) == 1
-        assert (
-            db_state_by_coursework_id(test_db_fixture, coursework_id) == initial_state
-        )
-
-        # same coursework, with state updated
-        mock_latest_coursework_df.return_value = DataFrame.from_dict(
-            [merged_dict(consistent_rows, {"state": update_state})]
-        )
-
-        # overwrite pull
-        overwrite_coursework_df = request_all_coursework_as_df(
-            None, DUMMY_COURSE_IDS, test_db_fixture
-        )
-        assert dataframe_row_count(overwrite_coursework_df) == 1
-        assert db_row_count(test_db_fixture) == 1
-        assert db_state_by_coursework_id(test_db_fixture, coursework_id) == update_state
+            assert expected_courseworks_df.to_csv() == courseworks_from_db_df.to_csv()

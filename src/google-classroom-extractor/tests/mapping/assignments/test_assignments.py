@@ -35,6 +35,8 @@ ASSIGNEE_MODE = "16"
 CREATOR_USER_ID = "17"
 SCHEDULED_TIME = "18"
 TOPIC_ID = "19"
+CREATE_DATE = "a"
+LAST_MODIFIED_DATE = "b"
 
 
 def describe_when_a_single_coursework_with_unique_fields_is_mapped():
@@ -63,6 +65,8 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
                 "dueTime.minutes": [DUETIME_MINUTES],
                 "scheduledTime": [SCHEDULED_TIME],
                 "topicId": [TOPIC_ID],
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
             }
         )
 
@@ -76,7 +80,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
-        assert column_count == 13
+        assert column_count == 15
 
     def it_should_map_fields_correctly(assignments_dicts):
         assignments_df: DataFrame = assignments_dicts[COURSE_ID]
@@ -124,6 +128,8 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
                 "creatorUserId": [CREATOR_USER_ID],
                 "scheduledTime": [SCHEDULED_TIME],
                 "topicId": [TOPIC_ID],
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
             }
         )
 
@@ -137,7 +143,7 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
-        assert column_count == 13
+        assert column_count == 15
 
     def it_should_map_fields_correctly_with_empty_duedate(assignments_dicts):
         assignments_df: DataFrame = assignments_dicts[COURSE_ID]
@@ -176,6 +182,8 @@ BOILERPLATE: Dict[str, str] = {
     "dueTime.minutes": DUETIME_MINUTES,
     "scheduledTime": SCHEDULED_TIME,
     "topicId": TOPIC_ID,
+    "CreateDate": [CREATE_DATE],
+    "LastModifiedDate": [LAST_MODIFIED_DATE],
 }
 
 
