@@ -84,6 +84,8 @@ def submissions_to_assignment_submissions_dfs(
             "creationTime",
             "updateTime",
             "state",
+            "CreateDate",
+            "LastModifiedDate"
         ]
     ]
 

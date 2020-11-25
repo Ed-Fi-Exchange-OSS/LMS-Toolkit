@@ -30,6 +30,8 @@ ALTERNATE_LINK = "11"
 COURSEWORK_TYPE = "12"
 ASSOCIATED_WITH_DEVELOPER = "13"
 SUBMISSION_HISTORY = "14"
+CREATE_DATE = "14"
+LAST_MODIFIED_DATE = "14"
 
 
 def describe_when_a_single_submission_with_unique_fields_is_mapped():
@@ -52,6 +54,8 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
                 "courseWorkType": [COURSEWORK_TYPE],
                 "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
                 "submissionHistory": [SUBMISSION_HISTORY],
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE]
             }
         )
 
@@ -67,7 +71,7 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 1
-        assert column_count == 12
+        assert column_count == 14
 
     def it_should_map_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[
@@ -86,6 +90,8 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         assert row_dict["LMSUserIdentifier"] == USER_ID
         assert row_dict["SourceCreateDate"] == CREATION_TIME
         assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
+        assert row_dict["CreateDate"] == CREATE_DATE
+        assert row_dict["LastModifiedDate"] == LAST_MODIFIED_DATE
 
 
 BOILERPLATE: Dict[str, str] = {
@@ -100,6 +106,8 @@ BOILERPLATE: Dict[str, str] = {
     "courseWorkType": COURSEWORK_TYPE,
     "associatedWithDeveloper": ASSOCIATED_WITH_DEVELOPER,
     "submissionHistory": SUBMISSION_HISTORY,
+    "CreateDate": CREATE_DATE,
+    "LastModifiedDate": LAST_MODIFIED_DATE
 }
 
 
