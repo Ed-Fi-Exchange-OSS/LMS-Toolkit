@@ -173,6 +173,8 @@ def request_all_coursework_as_df(
         dueTime.minutes: Optional minute, in UTC, that submissions are due
         scheduledTime: Optional timestamp when this course work is scheduled to be published
         topicId: Identifier for the topic that this coursework is associated with
+        CreateDate: Date this record was created by the extractor
+        LastModifiedDate: Date this record was last updated by the extractor
     """
 
     coursework_df: DataFrame = request_latest_coursework_as_df(resource, course_ids)

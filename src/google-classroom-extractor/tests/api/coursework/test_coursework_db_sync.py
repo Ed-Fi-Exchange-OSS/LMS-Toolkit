@@ -212,7 +212,6 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
                 read_sql_query("SELECT * from Assignmments", con)
                 .set_index(["id", "courseId"]).astype("string")  # ignore generated dataframe index
             )
-            print(courseworks_from_db_df.columns.values)
 
             courseworks_from_db_df.drop(labels=[
                 'materials',
