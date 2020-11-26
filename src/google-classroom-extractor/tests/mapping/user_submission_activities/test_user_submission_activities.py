@@ -35,6 +35,8 @@ STATE_TIMESTAMP = "15"
 GRADE_CHANGE_TYPE = "16"
 GRADE_TIMESTAMP = "17"
 ACTOR_USER_ID = "18"
+LAST_MODIFIED_DATE = "01-01-2020"
+CREATE_DATE = "01-01-2020"
 STATE_SUBMISSION_HISTORY = f"{{'stateHistory': {{'state': '{STATE}', 'stateTimestamp': '{STATE_TIMESTAMP}', 'actorUserId': '{ACTOR_USER_ID}'}}}}"
 GRADE_SUBMISSION_HISTORY = f"{{'gradeHistory': {{'pointsEarned': 0, 'maxPoints': 1, 'gradeTimestamp': '{GRADE_TIMESTAMP}', 'actorUserId': '{ACTOR_USER_ID}', 'gradeChangeType': '{GRADE_CHANGE_TYPE}'}}}}"
 
@@ -59,6 +61,8 @@ def describe_when_a_single_state_submission_with_unique_fields_is_mapped():
                 "courseWorkType": [COURSEWORK_TYPE],
                 "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
                 "submissionHistory": [f"[{STATE_SUBMISSION_HISTORY}]"],
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
             }
         )
 
@@ -72,7 +76,7 @@ def describe_when_a_single_state_submission_with_unique_fields_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 1
-        assert column_count == 11
+        assert column_count == 13
 
     def it_should_map_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]
@@ -116,6 +120,8 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
                 "submissionHistory": [
                     f"[{STATE_SUBMISSION_HISTORY},{GRADE_SUBMISSION_HISTORY}]"
                 ],
+                "CreateDate": CREATE_DATE,
+                "LastModifiedDate": LAST_MODIFIED_DATE,
             }
         )
 
@@ -129,7 +135,7 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 2
-        assert column_count == 11
+        assert column_count == 13
 
     def it_should_map_state_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]

@@ -59,7 +59,7 @@ def submissions_to_user_submission_activities_dfs(
         ["courseId", "courseWorkId"]
     ].agg("-".join, axis=1)
 
-    submissions_df = submissions_df[["id", "courseId", "courseWorkId", "submissionHistory", "AssignmentIdentifier"]]
+    submissions_df = submissions_df[["id", "courseId", "courseWorkId", "submissionHistory", "AssignmentIdentifier", "CreateDate", "LastModifiedDate"]]
 
     # explode submissionHistory lists into rows with other columns duplicated
     history_df = submissions_df.explode(column="submissionHistory")
@@ -85,6 +85,8 @@ def submissions_to_user_submission_activities_dfs(
             "state",
             "courseId",
             "actorUserId",
+            "CreateDate",
+            "LastModifiedDate"
         ]
     ]
 
@@ -117,6 +119,8 @@ def submissions_to_user_submission_activities_dfs(
                 "gradeChangeType",
                 "courseId",
                 "actorUserId",
+                "CreateDate",
+                "LastModifiedDate"
             ]
         ]
 
