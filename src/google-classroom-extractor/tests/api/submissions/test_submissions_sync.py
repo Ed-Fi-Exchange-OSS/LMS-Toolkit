@@ -167,11 +167,11 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         with test_db_after_sync.connect() as con:
             expected_submissions_df = (
                 DataFrame(EXPECTED_SUBMISSIONS_DATA_AFTER_SYNC, columns=COLUMNS)
-                .set_index(["id", "courseId", "courseWorkId", "userId"]).astype("string")  # ignore generated dataframe index
+                .set_index(["id", "courseId", "courseWorkId"]).astype("string")  # ignore generated dataframe index
             )
             submissions_from_db_df = (
                 read_sql_query("SELECT * from StudentSubmissions", con)
-                .set_index(["id", "courseId", "courseWorkId", "userId"]).astype("string")  # ignore generated dataframe index
+                .set_index(["id", "courseId", "courseWorkId"]).astype("string")  # ignore generated dataframe index
             )
 
             submissions_from_db_df.drop(labels=[

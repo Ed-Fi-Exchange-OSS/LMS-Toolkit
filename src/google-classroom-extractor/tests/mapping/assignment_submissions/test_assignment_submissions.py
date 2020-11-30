@@ -30,8 +30,8 @@ ALTERNATE_LINK = "11"
 COURSEWORK_TYPE = "12"
 ASSOCIATED_WITH_DEVELOPER = "13"
 SUBMISSION_HISTORY = "14"
-CREATE_DATE = "14"
-LAST_MODIFIED_DATE = "14"
+CREATE_DATE = "2020-01-01"
+LAST_MODIFIED_DATE = "2020-01-02"
 
 
 def describe_when_a_single_submission_with_unique_fields_is_mapped():
