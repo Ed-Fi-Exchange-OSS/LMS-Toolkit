@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import List, Optional
 
 
 def _get_newest_file(directory: str) -> Optional[str]:
@@ -31,8 +31,19 @@ def get_sections_file(base_directory: str) -> Optional[str]:
     return _get_newest_file(os.path.join(base_directory, "sections"))
 
 
-def get_system_activities_file(base_directory: str) -> Optional[str]:
-    return _get_newest_file(os.path.join(base_directory, "system-activities"))
+def get_system_activities_files(base_directory: str) -> List[str]:
+    files = list()
+
+    sys_activities = os.path.join(base_directory, "system-activities")
+
+    if os.path.exists(sys_activities):
+        for f in os.scandir(sys_activities):
+            file = _get_newest_file(f.path)
+
+            if file is not None:
+                files.append(file)
+
+    return files
 
 
 def get_section_associations_file(

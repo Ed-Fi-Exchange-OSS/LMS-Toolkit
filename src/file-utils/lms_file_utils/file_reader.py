@@ -3,11 +3,15 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+import logging
 from typing import Callable
 
 import pandas as pd
 
 import lms_file_utils.file_repository as fr
+
+
+logger = logging.getLogger(__name__)
 
 
 def _default() -> pd.DataFrame:
@@ -33,12 +37,16 @@ def get_all_users(base_directory: str) -> pd.DataFrame:
 
 
 def get_all_system_activities(base_directory: str) -> pd.DataFrame:
-    file = fr.get_system_activities_file(base_directory)
+    files = fr.get_system_activities_files(base_directory)
 
-    if file is not None:
-        return _read_csv(file)
+    if files is None:
+        return _default()
 
-    return _default()
+    df_list = list()
+    for f in files:
+        df_list.append(_read_csv(f))
+
+    return pd.concat(df_list)
 
 
 def get_all_sections(base_directory: str) -> pd.DataFrame:
@@ -65,7 +73,7 @@ def _get_data_for_section(
     df = pd.DataFrame()
 
     if sections.empty:
-        print(
+        logger.info(
             "No sections have been loaded, therefore no section sub-files can be read."
         )
         return _default()
@@ -125,6 +133,13 @@ def get_submissions(
 
 
 def get_all_submissions(base_directory: str, assignments: pd.DataFrame) -> pd.DataFrame:
+
+    if assignments.empty:
+        logger.info(
+            "No assignments have been loaded, therefore no submission files can be read."
+        )
+        return _default()
+
     df = pd.DataFrame()
     columns = ["SourceSystemIdentifier", "LMSSectionSourceSystemIdentifier"]
     for _, assignment_id, section_id in assignments[columns].itertuples():

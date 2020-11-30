@@ -15,7 +15,7 @@ from lms_file_utils.file_repository import (
     get_grades_file,
     get_attendance_events_file,
     get_submissions_file,
-    get_system_activities_file,
+    get_system_activities_files,
 )
 
 
@@ -51,8 +51,9 @@ SECTION_ACTIVITIES_FILE_OLD = (
 SECTION_ACTIVITIES_FILE_NEW = (
     "base_dir/section=1/section-activities/2020-11-19-04-05-06.csv"
 )
-SYSTEM_ACTIVITIES_FILE_OLD = "base_dir/system-activities/2020-11-18-04-05-06.csv"
-SYSTEM_ACTIVITIES_FILE_NEW = "base_dir/system-activities/2020-11-19-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_OLD = "base_dir/system-activities/date=2020-11-17/2020-11-18-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_NEW_1 = "base_dir/system-activities/date=2020-11-17/2020-11-19-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_NEW_2 = "base_dir/system-activities/date=2020-11-18/2020-11-19-04-05-06.csv"
 
 files = [
     SECTION_FILE_OLD,
@@ -72,7 +73,8 @@ files = [
     SECTION_ACTIVITIES_FILE_OLD,
     SECTION_ACTIVITIES_FILE_NEW,
     SYSTEM_ACTIVITIES_FILE_OLD,
-    SYSTEM_ACTIVITIES_FILE_NEW,
+    SYSTEM_ACTIVITIES_FILE_NEW_1,
+    SYSTEM_ACTIVITIES_FILE_NEW_2,
 ]
 
 
@@ -124,10 +126,10 @@ def describe_given_filesystem_does_not_exist():
             file = get_section_activities_file(BASE_DIRECTORY, SECTION_ID)
             assert file is None
 
-    def describe_when_getting_system_activities_file():
-        def it_should_return_None(fs, init_fs):
-            file = get_system_activities_file(BASE_DIRECTORY)
-            assert file is None
+    def describe_when_getting_system_activities_files():
+        def it_should_return_an_empty_list(fs, init_fs):
+            files = get_system_activities_files(BASE_DIRECTORY)
+            assert len(files) == 0
 
 
 def describe_given_filesystem_exists_with_no_files():
@@ -145,7 +147,8 @@ def describe_given_filesystem_exists_with_no_files():
         fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/grades")
         fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/section-associations")
         fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/section-activities")
-        fs.create_dir(f"{BASE_DIRECTORY}/system-activities")
+        fs.create_dir(f"{BASE_DIRECTORY}/system-activities/date=2020-11-17")
+        fs.create_dir(f"{BASE_DIRECTORY}/system-activities/date=2020-11-18")
         fs.create_dir(f"{BASE_DIRECTORY}/users")
 
     def describe_when_getting_sections_file_file():
@@ -189,9 +192,9 @@ def describe_given_filesystem_exists_with_no_files():
             assert file is None
 
     def describe_when_getting_system_activities_file():
-        def it_should_return_None(fs, init_fs):
-            file = get_system_activities_file(BASE_DIRECTORY)
-            assert file is None
+        def it_should_return_an_empty_list(fs, init_fs):
+            file = get_system_activities_files(BASE_DIRECTORY)
+            assert len(file) == 0
 
 
 def describe_given_files_exist():
@@ -245,7 +248,11 @@ def describe_given_files_exist():
             file = get_section_activities_file(BASE_DIRECTORY, SECTION_ID)
             assert file == SECTION_ACTIVITIES_FILE_NEW
 
-    def describe_when_getting_system_activities_file():
-        def it_should_return_newest_file(fs, init_fs):
-            file = get_system_activities_file(BASE_DIRECTORY)
-            assert file == SYSTEM_ACTIVITIES_FILE_NEW
+    def describe_when_getting_system_activities_files():
+        def it_return_newest_file_from_day_one(fs, init_fs):
+            files = get_system_activities_files(BASE_DIRECTORY)
+            assert SYSTEM_ACTIVITIES_FILE_NEW_1 in files
+
+        def it_return_newest_file_from_day_two(fs, init_fs):
+            files = get_system_activities_files(BASE_DIRECTORY)
+            assert SYSTEM_ACTIVITIES_FILE_NEW_2 in files

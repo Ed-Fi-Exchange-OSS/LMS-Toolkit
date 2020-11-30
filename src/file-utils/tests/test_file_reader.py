@@ -13,15 +13,12 @@ from lms_file_utils.file_reader import (
     get_all_section_associations,
     get_all_section_activities,
     get_all_system_activities,
-    get_assignments,
     get_all_assignments,
     get_all_submissions,
-    get_grades,
     get_all_grades,
-    get_attendance_events,
     get_all_attendance_events
 )
-from test_file_repository import BASE_DIRECTORY, SECTION_FILE_NEW
+from test_file_repository import BASE_DIRECTORY
 
 SECTIONS = "sections"
 USERS = "users"
@@ -49,7 +46,7 @@ ATTENDANCE_FILE = "base_dir/section=1/attendance-events/2020-11-19-04-05-06.csv"
 SECTION_ACTIVITIES_FILE = (
     "base_dir/section=1/section-activities/2020-11-19-04-05-06.csv"
 )
-SYSTEM_ACTIVITIES_FILE = "base_dir/system-activities/2020-11-19-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE = "base_dir/system-activities/2020-11-19/2020-11-19-04-05-06.csv"
 
 INPUT_DF = pd.DataFrame(
     [{"SourceSystemIdentifier": 1, "LMSSectionSourceSystemIdentifier": 2}]
@@ -66,7 +63,7 @@ def describe_given_files_exist():
 
         mocker.patch("lms_file_utils.file_repository.get_users_file", lambda _: USERS_FILE)
         mocker.patch("lms_file_utils.file_repository.get_sections_file", lambda _: SECTIONS_FILE)
-        mocker.patch("lms_file_utils.file_repository.get_system_activities_file", lambda _: SYSTEM_ACTIVITIES_FILE)
+        mocker.patch("lms_file_utils.file_repository.get_system_activities_files", lambda _: [SYSTEM_ACTIVITIES_FILE])
         mocker.patch("lms_file_utils.file_repository.get_section_associations_file", lambda _a, _b: ASSOCIATIONS_FILE)
         mocker.patch("lms_file_utils.file_repository.get_section_activities_file", lambda _a, _b: SECTION_ACTIVITIES_FILE)
         mocker.patch("lms_file_utils.file_repository.get_assignments_file", lambda _a, _b: ASSIGNMENTS_FILE)
@@ -115,12 +112,24 @@ def describe_given_files_exist():
 
             assert df.iloc[0][SECTION_ASSOCIATIONS] == 1
 
+        def given_empty_section_list_it_should_return_empty_data_frame(mocker, system):
+
+            df = get_all_section_associations(BASE_DIRECTORY, pd.DataFrame())
+
+            assert df.empty
+
     def describe_when_getting_section_activities():
         def it_should_read_file_into_DataFrame(mocker, system):
 
             df = get_all_section_activities(BASE_DIRECTORY, INPUT_DF)
 
             assert df.iloc[0][SECTION_ACTIVITIES] == 1
+
+        def given_empty_section_list_it_should_return_empty_data_frame(mocker, system):
+
+            df = get_all_section_activities(BASE_DIRECTORY, pd.DataFrame())
+
+            assert df.empty
 
     def describe_when_getting_assignments():
         def it_should_read_file_into_DataFrame(mocker, system):
@@ -129,12 +138,24 @@ def describe_given_files_exist():
 
             assert df.iloc[0][ASSIGNMENTS] == 1
 
+        def given_empty_section_list_it_should_return_empty_data_frame(mocker, system):
+
+            df = get_all_assignments(BASE_DIRECTORY, pd.DataFrame())
+
+            assert df.empty
+
     def describe_when_getting_submissions():
         def it_should_read_file_into_DataFrame(mocker, system):
 
             df = get_all_submissions(BASE_DIRECTORY, INPUT_DF)
 
             assert df.iloc[0][SUBMISSIONS] == 1
+
+        def given_empty_assignments_list_it_should_return_empty_data_frame(mocker, system):
+
+            df = get_all_submissions(BASE_DIRECTORY, pd.DataFrame())
+
+            assert df.empty
 
     def describe_when_getting_grades():
         def it_should_read_file_into_DataFrame(mocker, system):
@@ -143,12 +164,24 @@ def describe_given_files_exist():
 
             assert df.iloc[0][GRADES] == 1
 
+        def given_empty_section_list_it_should_return_empty_data_frame(mocker, system):
+
+            df = get_all_grades(BASE_DIRECTORY, pd.DataFrame())
+
+            assert df.empty
+
     def describe_when_getting_attendance_events():
         def it_should_read_file_into_DataFrame(mocker, system):
 
             df = get_all_attendance_events(BASE_DIRECTORY, INPUT_DF)
 
             assert df.iloc[0][ATTENDANCE_EVENTS] == 1
+
+        def given_empty_section_list_it_should_return_empty_data_frame(mocker, system):
+
+            df = get_all_attendance_events(BASE_DIRECTORY, pd.DataFrame())
+
+            assert df.empty
 
 
 def describe_given_there_are_no_files_to_read():
@@ -157,7 +190,7 @@ def describe_given_there_are_no_files_to_read():
 
         mocker.patch("lms_file_utils.file_repository.get_users_file", lambda _: None)
         mocker.patch("lms_file_utils.file_repository.get_sections_file", lambda _: None)
-        mocker.patch("lms_file_utils.file_repository.get_system_activities_file", lambda _: None)
+        mocker.patch("lms_file_utils.file_repository.get_system_activities_files", lambda _: None)
         mocker.patch("lms_file_utils.file_repository.get_section_associations_file", lambda _a, _b: None)
         mocker.patch("lms_file_utils.file_repository.get_section_activities_file", lambda _a, _b: None)
         mocker.patch("lms_file_utils.file_repository.get_assignments_file", lambda _a, _b: None)
@@ -169,58 +202,58 @@ def describe_given_there_are_no_files_to_read():
         def it_should_return_an_empty_DataFrame(mocker, system):
             df = get_all_users(BASE_DIRECTORY)
 
-            assert df.iloc[0][USERS] == 1
+            assert df.empty
 
     def describe_when_getting_section():
         def it_should_return_an_empty_DataFrame(mocker, system):
             df = get_all_sections(BASE_DIRECTORY)
 
-            assert df.iloc[0][SECTIONS] == 1
+            assert df.empty
 
     def describe_when_getting_system_activities():
         def it_should_return_an_empty_DataFrame(mocker, system):
             df = get_all_system_activities(BASE_DIRECTORY)
 
-            assert df.iloc[0][SYSTEM_ACTIVITIES] == 1
+            assert df.empty
 
     def describe_when_getting_section_associations():
         def it_should_return_an_empty_DataFrame(mocker, system):
 
             df = get_all_section_associations(BASE_DIRECTORY, INPUT_DF)
 
-            assert df.iloc[0][SECTION_ASSOCIATIONS] == 1
+            assert df.empty
 
     def describe_when_getting_section_activities():
         def it_should_return_an_empty_DataFrame(mocker, system):
 
             df = get_all_section_activities(BASE_DIRECTORY, INPUT_DF)
 
-            assert df.iloc[0][SECTION_ACTIVITIES] == 1
+            assert df.empty
 
     def describe_when_getting_assignments():
         def it_should_return_an_empty_DataFrame(mocker, system):
 
             df = get_all_assignments(BASE_DIRECTORY, INPUT_DF)
 
-            assert df.iloc[0][ASSIGNMENTS] == 1
+            assert df.empty
 
     def describe_when_getting_submissions():
         def it_should_return_an_empty_DataFrame(mocker, system):
 
             df = get_all_submissions(BASE_DIRECTORY, INPUT_DF)
 
-            assert df.iloc[0][SUBMISSIONS] == 1
+            assert df.empty
 
     def describe_when_getting_grades():
         def it_should_return_an_empty_DataFrame(mocker, system):
 
             df = get_all_grades(BASE_DIRECTORY, INPUT_DF)
 
-            assert df.iloc[0][GRADES] == 1
+            assert df.empty
 
     def describe_when_getting_attendance_events():
         def it_should_return_an_empty_DataFrame(mocker, system):
 
             df = get_all_attendance_events(BASE_DIRECTORY, INPUT_DF)
 
-            assert df.iloc[0][ATTENDANCE_EVENTS] == 1
+            assert df.empty
