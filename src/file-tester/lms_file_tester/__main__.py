@@ -8,6 +8,12 @@ import os
 import sys
 from typing import List, Union
 
+# This next line *should* have
+# `lms_file_tester.validators.directory_validation`, but the script does not run
+# from the command line if you have `lms_file_tester` there - you get a module
+# not found error. This does not make sense, and in fact mypy complains about
+# it. But pylance does not. Headscratcher. Have tried renaming file to `main.py`
+# and that did not solve it.
 from validators.directory_validation import (
     validate_assignment_directory_structure,
     validate_base_directory_structure,
