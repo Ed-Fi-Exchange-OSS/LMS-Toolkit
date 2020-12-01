@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import Callable
+from typing import Callable, Union
 
 import pandas as pd
 
@@ -18,25 +18,27 @@ def _default() -> pd.DataFrame:
     return pd.DataFrame()
 
 
-def _read_csv(file: str) -> pd.DataFrame:
+def _read_csv(file: str, nrows: Union[int, None] = None) -> pd.DataFrame:
     if file:
         return pd.read_csv(
-            file, engine="c", parse_dates=True, infer_datetime_format=True
+            file, engine="c", parse_dates=True, infer_datetime_format=True, nrows=nrows
         )
 
     return _default()
 
 
-def get_all_users(base_directory: str) -> pd.DataFrame:
+def get_all_users(base_directory: str, nrows: Union[int, None] = None) -> pd.DataFrame:
     file = fr.get_users_file(base_directory)
 
     if file is not None:
-        return _read_csv(file)
+        return _read_csv(file, nrows)
 
     return _default()
 
 
-def get_all_system_activities(base_directory: str) -> pd.DataFrame:
+def get_all_system_activities(
+    base_directory: str, nrows: Union[int, None] = None
+) -> pd.DataFrame:
     files = fr.get_system_activities_files(base_directory)
 
     if files is None:
@@ -44,31 +46,38 @@ def get_all_system_activities(base_directory: str) -> pd.DataFrame:
 
     df_list = list()
     for f in files:
-        df_list.append(_read_csv(f))
+        df_list.append(_read_csv(f, nrows))
 
     return pd.concat(df_list)
 
 
-def get_all_sections(base_directory: str) -> pd.DataFrame:
+def get_all_sections(
+    base_directory: str, nrows: Union[int, None] = None
+) -> pd.DataFrame:
     file = fr.get_sections_file(base_directory)
 
     if file is not None:
-        return _read_csv(file)
+        return _read_csv(file, nrows)
 
     return _default()
 
 
-def get_section_associations(base_directory: str, section_id: int) -> pd.DataFrame:
+def get_section_associations(
+    base_directory: str, section_id: int, nrows: Union[int, None] = None
+) -> pd.DataFrame:
     file = fr.get_section_associations_file(base_directory, section_id)
 
     if file is not None:
-        return _read_csv(file)
+        return _read_csv(file, nrows)
 
     return _default()
 
 
 def _get_data_for_section(
-    base_directory: str, sections: pd.DataFrame, callback: Callable
+    base_directory: str,
+    sections: pd.DataFrame,
+    callback: Callable,
+    nrows: Union[int, None] = None,
 ) -> pd.DataFrame:
     df = pd.DataFrame()
 
@@ -79,7 +88,7 @@ def _get_data_for_section(
         return _default()
 
     for _, section_id in sections[["SourceSystemIdentifier"]].itertuples():
-        sa = callback(base_directory, section_id)
+        sa = callback(base_directory, section_id, nrows)
 
         if not sa.empty:
             df = df.append(sa)
@@ -88,51 +97,66 @@ def _get_data_for_section(
 
 
 def get_all_section_associations(
-    base_directory: str, sections: pd.DataFrame
+    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
-    return _get_data_for_section(base_directory, sections, get_section_associations)
+    return _get_data_for_section(
+        base_directory, sections, get_section_associations, nrows
+    )
 
 
-def get_section_activities(base_directory: str, section_id: int) -> pd.DataFrame:
+def get_section_activities(
+    base_directory: str, section_id: int, nrows: Union[int, None] = None
+) -> pd.DataFrame:
     file = fr.get_section_activities_file(base_directory, section_id)
 
     if file is not None:
-        return _read_csv(file)
+        return _read_csv(file, nrows)
 
     return _default()
 
 
 def get_all_section_activities(
-    base_directory: str, sections: pd.DataFrame
+    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
-    return _get_data_for_section(base_directory, sections, get_section_activities)
+    return _get_data_for_section(
+        base_directory, sections, get_section_activities, nrows
+    )
 
 
-def get_assignments(base_directory: str, section_id: int) -> pd.DataFrame:
+def get_assignments(
+    base_directory: str, section_id: int, nrows: Union[int, None] = None
+) -> pd.DataFrame:
     file = fr.get_assignments_file(base_directory, section_id)
 
     if file is not None:
-        return _read_csv(file)
+        return _read_csv(file, nrows)
 
     return _default()
 
 
-def get_all_assignments(base_directory: str, sections: pd.DataFrame) -> pd.DataFrame:
-    return _get_data_for_section(base_directory, sections, get_assignments)
+def get_all_assignments(
+    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
+) -> pd.DataFrame:
+    return _get_data_for_section(base_directory, sections, get_assignments, nrows)
 
 
 def get_submissions(
-    base_directory: str, section_id: int, assignment_id: int
+    base_directory: str,
+    section_id: int,
+    assignment_id: int,
+    nrows: Union[int, None] = None,
 ) -> pd.DataFrame:
     file = fr.get_submissions_file(base_directory, section_id, assignment_id)
 
     if file is not None:
-        return _read_csv(file)
+        return _read_csv(file, nrows)
 
     return _default()
 
 
-def get_all_submissions(base_directory: str, assignments: pd.DataFrame) -> pd.DataFrame:
+def get_all_submissions(
+    base_directory: str, assignments: pd.DataFrame, nrows: Union[int, None] = None
+) -> pd.DataFrame:
 
     if assignments.empty:
         logger.info(
@@ -143,7 +167,7 @@ def get_all_submissions(base_directory: str, assignments: pd.DataFrame) -> pd.Da
     df = pd.DataFrame()
     columns = ["SourceSystemIdentifier", "LMSSectionSourceSystemIdentifier"]
     for _, assignment_id, section_id in assignments[columns].itertuples():
-        s = get_submissions(base_directory, section_id, assignment_id)
+        s = get_submissions(base_directory, section_id, assignment_id, nrows)
 
         if not s.empty:
             df = df.append(s)
@@ -151,29 +175,35 @@ def get_all_submissions(base_directory: str, assignments: pd.DataFrame) -> pd.Da
     return df
 
 
-def get_grades(base_directory: str, section_id: int) -> pd.DataFrame:
+def get_grades(
+    base_directory: str, section_id: int, nrows: Union[int, None] = None
+) -> pd.DataFrame:
     file = fr.get_grades_file(base_directory, section_id)
 
     if file is not None:
-        return _read_csv(file)
+        return _read_csv(file, nrows)
 
     return _default()
 
 
-def get_all_grades(base_directory: str, sections: pd.DataFrame) -> pd.DataFrame:
-    return _get_data_for_section(base_directory, sections, get_grades)
+def get_all_grades(
+    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
+) -> pd.DataFrame:
+    return _get_data_for_section(base_directory, sections, get_grades, nrows)
 
 
-def get_attendance_events(base_directory: str, section_id: int) -> pd.DataFrame:
+def get_attendance_events(
+    base_directory: str, section_id: int, nrows: Union[int, None] = None
+) -> pd.DataFrame:
     file = fr.get_attendance_events_file(base_directory, section_id)
 
     if file is not None:
-        return _read_csv(file)
+        return _read_csv(file, nrows)
 
     return _default()
 
 
 def get_all_attendance_events(
-    base_directory: str, sections: pd.DataFrame
+    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
-    return _get_data_for_section(base_directory, sections, get_attendance_events)
+    return _get_data_for_section(base_directory, sections, get_attendance_events, nrows)
