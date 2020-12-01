@@ -6,7 +6,7 @@
 import pytest
 
 
-from lms_file_tester import directory_validation as dr
+from lms_file_tester.validators import directory_validation as drval
 
 
 INPUT_DIR = "input_dir"
@@ -25,7 +25,7 @@ def fixture(fs):
 def describe_when_validating_basic_directories():
     def describe_given_input_directory_does_not_exist():
         def it_should_report_an_error():
-            result = dr.validate_base_directory_structure(INPUT_DIR)
+            result = drval.validate_base_directory_structure(INPUT_DIR)
 
             assert result[0] == f"Missing directory: {INPUT_DIR}"
 
@@ -41,7 +41,7 @@ def describe_when_validating_basic_directories():
 
         def describe_given_all_directories_exist():
             def it_should_not_return_any_errors(fs, fixture, inner_fixture):
-                result = dr.validate_base_directory_structure(INPUT_DIR)
+                result = drval.validate_base_directory_structure(INPUT_DIR)
 
                 assert len(result) == 0
 
@@ -49,7 +49,7 @@ def describe_when_validating_basic_directories():
             def it_should_report_one_error(fs, fixture, inner_fixture):
                 fs.remove_object(f"{INPUT_DIR}/users")
 
-                result = dr.validate_base_directory_structure(INPUT_DIR)
+                result = drval.validate_base_directory_structure(INPUT_DIR)
 
                 assert result[0] == f"Missing directory: {INPUT_DIR}/users"
 
@@ -57,7 +57,7 @@ def describe_when_validating_basic_directories():
             def it_should_report_one_error(fs, fixture, inner_fixture):
                 fs.remove_object(f"{INPUT_DIR}/sections")
 
-                result = dr.validate_base_directory_structure(INPUT_DIR)
+                result = drval.validate_base_directory_structure(INPUT_DIR)
 
                 assert result[0] == f"Missing directory: {INPUT_DIR}/sections"
 
@@ -65,7 +65,7 @@ def describe_when_validating_basic_directories():
             def it_should_report_one_error(fs, fixture, inner_fixture):
                 fs.remove_object(f"{INPUT_DIR}/system-activities")
 
-                result = dr.validate_base_directory_structure(INPUT_DIR)
+                result = drval.validate_base_directory_structure(INPUT_DIR)
 
                 assert result[0] == f"Missing directory: {INPUT_DIR}/system-activities"
 
@@ -73,7 +73,7 @@ def describe_when_validating_basic_directories():
 def describe_when_validating_section_directories():
     def describe_given_input_directory_does_not_exist():
         def it_should_report_an_error():
-            result = dr.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
+            result = drval.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
 
             assert result[0] == f"Missing directory: {INPUT_DIR}"
 
@@ -93,7 +93,7 @@ def describe_when_validating_section_directories():
 
         def describe_given_all_directories_exist():
             def it_should_not_return_any_errors(fs, fixture, inner_fixture):
-                result = dr.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
+                result = drval.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
 
                 assert len(result) == 0
 
@@ -102,7 +102,7 @@ def describe_when_validating_section_directories():
                 dir = f"{INPUT_DIR}/section={SECTION_ID}/assignments"
                 fs.remove_object(dir)
 
-                result = dr.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
+                result = drval.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
 
                 assert result[0] == f"Missing directory: {dir}"
 
@@ -111,7 +111,7 @@ def describe_when_validating_section_directories():
                 dir = f"{INPUT_DIR}/section={SECTION_ID}/attendance-events"
                 fs.remove_object(dir)
 
-                result = dr.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
+                result = drval.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
 
                 assert result[0] == f"Missing directory: {dir}"
 
@@ -120,7 +120,7 @@ def describe_when_validating_section_directories():
                 dir = f"{INPUT_DIR}/section={SECTION_ID}/section-activities"
                 fs.remove_object(dir)
 
-                result = dr.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
+                result = drval.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
 
                 assert result[0] == f"Missing directory: {dir}"
 
@@ -129,7 +129,7 @@ def describe_when_validating_section_directories():
                 dir = f"{INPUT_DIR}/section={SECTION_ID}/grades"
                 fs.remove_object(dir)
 
-                result = dr.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
+                result = drval.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
 
                 assert result[0] == f"Missing directory: {dir}"
 
@@ -138,7 +138,7 @@ def describe_when_validating_section_directories():
                 dir = f"{INPUT_DIR}/section={SECTION_ID}/section-associations"
                 fs.remove_object(dir)
 
-                result = dr.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
+                result = drval.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
 
                 assert result[0] == f"Missing directory: {dir}"
 
@@ -146,7 +146,7 @@ def describe_when_validating_section_directories():
 def describe_when_validating_assignment_directories():
     def describe_given_assignment_directory_does_not_exist():
         def it_should_report_an_error(fs, fixture):
-            result = dr.validate_assignment_directory_structure(INPUT_DIR, SECTION_ID, ASSIGNMENT_ID)
+            result = drval.validate_assignment_directory_structure(INPUT_DIR, SECTION_ID, ASSIGNMENT_ID)
 
             exp = f"Missing directory: {INPUT_DIR}/section={SECTION_ID}"
             assert result[0] == exp
@@ -159,7 +159,7 @@ def describe_when_validating_assignment_directories():
                 fs.create_dir(exp)
 
                 # Act
-                result = dr.validate_assignment_directory_structure(INPUT_DIR, SECTION_ID, ASSIGNMENT_ID)
+                result = drval.validate_assignment_directory_structure(INPUT_DIR, SECTION_ID, ASSIGNMENT_ID)
 
                 # Assert
                 exp = f"Missing directory: {exp}/submissions"
@@ -171,7 +171,7 @@ def describe_when_validating_assignment_directories():
                 fs.create_dir(f"{INPUT_DIR}/section={SECTION_ID}/assignment={ASSIGNMENT_ID}/submissions")
 
                 # Act
-                result = dr.validate_assignment_directory_structure(INPUT_DIR, SECTION_ID, ASSIGNMENT_ID)
+                result = drval.validate_assignment_directory_structure(INPUT_DIR, SECTION_ID, ASSIGNMENT_ID)
 
                 # Assert
                 assert len(result) == 0
