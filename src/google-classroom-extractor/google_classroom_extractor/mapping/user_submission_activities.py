@@ -148,6 +148,8 @@ def submissions_to_user_submission_activities_dfs(
     user_submission_df["Content"] = ""
     user_submission_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
     user_submission_df["SourceSystem"] = SOURCE_SYSTEM
+    user_submission_df["SourceCreateDate"] = ""  # No create date available from API
+    user_submission_df["SourceLastModifiedDate"] = ""  # No modified date available from API
 
     # group by section id as a Dict of DataFrames
     result: Dict[str, DataFrame] = dict(
