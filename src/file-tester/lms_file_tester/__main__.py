@@ -8,7 +8,12 @@ import os
 import sys
 from typing import List, Union
 
-from validators.directory_validation import validate_assignment_directory_structure, validate_base_directory_structure, validate_section_directory_structure
+from validators.directory_validation import (
+    validate_assignment_directory_structure,
+    validate_base_directory_structure,
+    validate_section_directory_structure,
+    validate_system_activities_directory_structure,
+)
 
 # The following is a hack to load a local package above this package's base
 # directory, so that this test utility does not need to rely on downloading a
@@ -52,33 +57,40 @@ def _validate_assignment_directories(input_directory: str, section_id: Union[int
         return
 
     for _, assignment_id in assignments["SourceSystemIdentifier"].iteritems():
-        errors = validate_assignment_directory_structure(input_directory, section_id, assignment_id)
-        _report(errors, "Assignment directory structure is valid.")
+        errors = validate_assignment_directory_structure(
+            input_directory, section_id, assignment_id
+        )
+        _report(errors, f"Assignment directory structure is valid for section {section_id}, assignment {assignment_id}")
 
 
 def _validate_section_directories(input_directory: str):
     sections = fread.get_all_sections(input_directory)
 
-    # then test all of those sections
     for _, section_id in sections["SourceSystemIdentifier"].iteritems():
         errors = validate_section_directory_structure(input_directory, section_id)
-        _report(errors, "Section directory structure is valid.")
+        _report(errors, f"Section directory structure is valid for section {section_id}")
 
         _validate_assignment_directories(input_directory, section_id)
+
+
+def _validate_system_activities_directories(input_directory: str):
+    errors = validate_system_activities_directory_structure(input_directory)
+    _report(errors, "System Activities directory structure is valid.")
 
 
 def _main():
     logger.info("Starting LMS File Tester")
 
-    if (len(sys.argv) != 2):
-        logger.critical("Must pass an input directory as the only argument to the script.")
+    if len(sys.argv) != 2:
+        logger.critical(
+            "Must pass an input directory as the only argument to the script."
+        )
 
     input_directory = sys.argv[1]
 
     _validate_top_directories(input_directory)
     _validate_section_directories(input_directory)
-
-    # Also need to do some more testing on system activities
+    _validate_system_activities_directories(input_directory)
 
 
 if __name__ == "__main__":

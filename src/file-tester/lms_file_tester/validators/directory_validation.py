@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import os
+import re
 import sys
 from typing import List, Optional, Union
 
@@ -31,8 +32,7 @@ def validate_base_directory_structure(input_directory: str) -> List[str]:
 
     for d in [
         dr.get_users_directory(input_directory),
-        dr.get_sections_directory(input_directory),
-        dr.get_system_activities_directory(input_directory),
+        dr.get_sections_directory(input_directory)
     ]:
         is_missing = _check_for_directory(d)
         if is_missing:
@@ -80,5 +80,26 @@ def validate_assignment_directory_structure(
     )
     if is_missing:
         return [is_missing]
+
+    return list()
+
+
+def validate_system_activities_directory_structure(input_directory: str) -> List[str]:
+
+    # Goal is to ensure that any sub-directories are named appropriately,
+    # with format like `date=2020-12-01`.
+
+    dir = dr.get_system_activities_directory(input_directory)
+    is_missing = _check_for_directory(dir)
+    if is_missing:
+        return [is_missing]
+
+    # Get all directories. Ignore random directories, but ensure that there is
+    # at least one proper directory with the expected naming convention.
+    sub_directories = os.listdir(dir)
+
+    pattern = re.compile(r"^date=\d\d\d\d-\d\d-\d\d$")
+    if not any(d for d in sub_directories if pattern.match(d) is not None):
+        return ["System activities directory does not contain any date-based sub-directories"]
 
     return list()

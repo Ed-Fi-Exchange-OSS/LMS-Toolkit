@@ -37,7 +37,6 @@ def describe_when_validating_basic_directories():
             fs.create_dir(INPUT_DIR)
             fs.create_dir(f"{INPUT_DIR}/users")
             fs.create_dir(f"{INPUT_DIR}/sections")
-            fs.create_dir(f"{INPUT_DIR}/system-activities")
 
         def describe_given_all_directories_exist():
             def it_should_not_return_any_errors(fs, fixture, inner_fixture):
@@ -60,14 +59,6 @@ def describe_when_validating_basic_directories():
                 result = drval.validate_base_directory_structure(INPUT_DIR)
 
                 assert result[0] == f"Missing directory: {INPUT_DIR}/sections"
-
-        def describe_given_systems_activities_is_missing():
-            def it_should_report_one_error(fs, fixture, inner_fixture):
-                fs.remove_object(f"{INPUT_DIR}/system-activities")
-
-                result = drval.validate_base_directory_structure(INPUT_DIR)
-
-                assert result[0] == f"Missing directory: {INPUT_DIR}/system-activities"
 
 
 def describe_when_validating_section_directories():
@@ -175,3 +166,41 @@ def describe_when_validating_assignment_directories():
 
                 # Assert
                 assert len(result) == 0
+
+
+def describe_when_validating_system_activities():
+    def describe_given_system_activities_directory_does_not_exist():
+        def it_should_report_an_error(fs, fixture):
+            result = drval.validate_system_activities_directory_structure(INPUT_DIR)
+
+            assert result[0] == f"Missing directory: {INPUT_DIR}/system-activities"
+
+    def describe_given_contains_valid_sub_directory():
+        def it_should_not_report_any_errors(fs, fixture):
+            fs.create_dir(f"{INPUT_DIR}/system-activities")
+            fs.create_dir(f"{INPUT_DIR}/system-activities/date=2020-12-01")
+
+            result = drval.validate_system_activities_directory_structure(INPUT_DIR)
+
+            assert len(result) == 0
+
+    def describe_given_contains_no_sub_directories():
+        def it_should_report_an_error(fs, fixture):
+            fs.create_dir(f"{INPUT_DIR}/system-activities")
+
+            result = drval.validate_system_activities_directory_structure(INPUT_DIR)
+
+            assert len(result) == 1
+            assert result[0] == "System activities directory does not contain any date-based sub-directories"
+
+    def describe_given_contains_only_invalid_sub_directories():
+        def it_should_report_an_error(fs, fixture):
+            fs.create_dir(f"{INPUT_DIR}/system-activities")
+            fs.create_dir(f"{INPUT_DIR}/system-activities/something")
+            fs.create_dir(f"{INPUT_DIR}/system-activities/date=")
+            fs.create_dir(f"{INPUT_DIR}/system-activities/ate=2020-12-01")
+
+            result = drval.validate_system_activities_directory_structure(INPUT_DIR)
+
+            assert len(result) == 1
+            assert result[0] == "System activities directory does not contain any date-based sub-directories"
