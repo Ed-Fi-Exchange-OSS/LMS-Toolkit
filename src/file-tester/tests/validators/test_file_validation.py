@@ -1446,6 +1446,74 @@ def describe_when_validating_assignments_file():
                 == f"Assignments file has an invalid timestamp format for {bad_column}"
             )
 
+    def describe_given_missing_optional_date():
+        @pytest.mark.parametrize(
+            "missing_column",
+            [
+                "EndDateTime",
+                "StartDateTime",
+            ],
+        )
+        def it_does_not_return_an_error(mocker, missing_column):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "Title",
+                "AssignmentCategory",
+                "AssignmentDescription",
+                "StartDateTime",
+                "EndDateTime",
+                "DueDateTime",
+                "SubmissionType",
+                "MaxPoints",
+                "LMSSectionSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "Title",
+                    "AssignmentCategory",
+                    "AssignmentDescription",
+                    "9876-12-16 15:16:17",
+                    "9876-12-16 15:16:17",
+                    "9876-12-16 15:16:17",
+                    "SubmissionType",
+                    "MaxPoints",
+                    "LMSSectionSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            df.iloc[0][missing_column] = None
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_assignments",
+                lambda dir, sections, nrows: df,
+            )
+
+            # Act
+            result = fileval.validate_assignments_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert len(result) == 0
+
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
             # Arrange
