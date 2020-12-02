@@ -139,8 +139,8 @@ def main():
     logger.info("Finishing Ed-Fi LMS Google Classroom Extractor")
 
     if error_tracker.fired:
-        print("fatal error", file=sys.stderr)
-        sys.exit(-1)
+        print("A fatal error occurred, please review the log output for more information.", file=sys.stderr)
+        sys.exit(1)
     sys.exit(0)
 
 
