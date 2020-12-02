@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
 import sqlalchemy
+from errorhandler import ErrorHandler
 
 from google_classroom_extractor.result import Result
 from google_classroom_extractor.config import get_credentials, get_sync_db_engine
@@ -43,10 +44,12 @@ from google_classroom_extractor.csv_generation.write import (
 )
 
 logger: logging.Logger
+error_tracker: ErrorHandler
 
 
 def configure_logging():
     global logger
+    global error_tracker
 
     logger = logging.getLogger(__name__)
 
@@ -58,6 +61,7 @@ def configure_logging():
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         level=level,
     )
+    error_tracker = ErrorHandler()
 
 
 def request() -> Optional[Result]:
@@ -133,6 +137,9 @@ def main():
     )
 
     logger.info("Finishing Ed-Fi LMS Google Classroom Extractor")
+
+    if error_tracker.fired:
+        logger.info("An error has ocurred during the execution of the extractor. Check the logs to find more detail about it.")
 
 
 if __name__ == "__main__":
