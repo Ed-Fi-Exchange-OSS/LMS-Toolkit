@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import os
+import re
 import sys
 from typing import List
 
@@ -14,6 +15,9 @@ import pandas as pd
 # published version of the LMS file utils.
 sys.path.append(os.path.join("..", "file-utils"))
 from lms_file_utils import file_reader as fread  # type: ignore # noqa: E402
+
+
+date_pattern = re.compile(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$")
 
 
 def _validate_columns(expected: set, df: pd.DataFrame, file_type: str) -> List[str]:
@@ -34,13 +38,32 @@ def _validate_columns(expected: set, df: pd.DataFrame, file_type: str) -> List[s
 
 
 def _file_is_empty(file_type: str) -> List[str]:
-    return [
-        f"{file_type} file could not be read or the file does not exist."
-    ]
+    return [f"{file_type} file could not be read or the file does not exist."]
+
+
+def _validate_create_and_last_modified_date_formats(
+    df: pd.DataFrame, file_type: str
+) -> List[str]:
+    errors: List[str] = list()
+
+    cols = list(df.columns)
+
+    if "CreateDate" in cols and date_pattern.match(df.iloc[0]["CreateDate"]) is None:
+        errors.append(f"{file_type} file has an invalid timestamp format for CreateDate")
+
+    if (
+        "LastModifiedDate" in cols
+        and date_pattern.match(df.iloc[0]["LastModifiedDate"]) is None
+    ):
+        errors.append(
+            f"{file_type} file has an invalid timestamp format for LastModifiedDate"
+        )
+
+    return errors
 
 
 def validate_users_file(input_directory: str) -> List[str]:
-    df = fread.get_all_users(input_directory, nrows=1)
+    df = fread.get_all_users(input_directory, nrows=2)
 
     if df.empty:
         return _file_is_empty("Users")
@@ -62,11 +85,13 @@ def validate_users_file(input_directory: str) -> List[str]:
         ]
     )
 
-    return _validate_columns(expected, df, "Users")
+    return _validate_columns(
+        expected, df, "Users"
+    ) + _validate_create_and_last_modified_date_formats(df, "Users")
 
 
 def validate_sections_file(input_directory: str) -> List[str]:
-    df = fread.get_all_sections(input_directory, nrows=1)
+    df = fread.get_all_sections(input_directory, nrows=2)
 
     if df.empty:
         return _file_is_empty("Sections")
@@ -88,11 +113,13 @@ def validate_sections_file(input_directory: str) -> List[str]:
         ]
     )
 
-    return _validate_columns(expected, df, "Sections")
+    return _validate_columns(
+        expected, df, "Sections"
+    ) + _validate_create_and_last_modified_date_formats(df, "Sections")
 
 
 def validate_system_activities_file(input_directory: str) -> List[str]:
-    df = fread.get_all_system_activities(input_directory, nrows=1)
+    df = fread.get_all_system_activities(input_directory, nrows=2)
 
     if df.empty:
         return _file_is_empty("System Activities")
@@ -115,13 +142,15 @@ def validate_system_activities_file(input_directory: str) -> List[str]:
         ]
     )
 
-    return _validate_columns(expected, df, "System Activities")
+    return _validate_columns(
+        expected, df, "System Activities"
+    ) + _validate_create_and_last_modified_date_formats(df, "System Activities")
 
 
 def validate_section_associations_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
-    df = fread.get_all_section_associations(input_directory, sections, nrows=1)
+    df = fread.get_all_section_associations(input_directory, sections, nrows=2)
 
     if df.empty:
         return _file_is_empty("Section Associations")
@@ -143,13 +172,15 @@ def validate_section_associations_file(
         ]
     )
 
-    return _validate_columns(expected, df, "Section Associations")
+    return _validate_columns(
+        expected, df, "Section Associations"
+    ) + _validate_create_and_last_modified_date_formats(df, "Section Associations")
 
 
 def validate_section_activities_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
-    df = fread.get_all_section_activities(input_directory, sections, nrows=1)
+    df = fread.get_all_section_activities(input_directory, sections, nrows=2)
 
     if df.empty:
         return _file_is_empty("Section Activities")
@@ -173,13 +204,15 @@ def validate_section_activities_file(
         ]
     )
 
-    return _validate_columns(expected, df, "Section Activities")
+    return _validate_columns(
+        expected, df, "Section Activities"
+    ) + _validate_create_and_last_modified_date_formats(df, "Section Activities")
 
 
 def validate_assignments_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
-    df = fread.get_all_assignments(input_directory, sections, nrows=1)
+    df = fread.get_all_assignments(input_directory, sections, nrows=2)
 
     if df.empty:
         return _file_is_empty("Assignments")
@@ -205,13 +238,15 @@ def validate_assignments_file(
         ]
     )
 
-    return _validate_columns(expected, df, "Assignments")
+    return _validate_columns(
+        expected, df, "Assignments"
+    ) + _validate_create_and_last_modified_date_formats(df, "Assignments")
 
 
 def validate_submissions_file(
     input_directory: str, assignments: pd.DataFrame
 ) -> List[str]:
-    df = fread.get_all_submissions(input_directory, assignments, nrows=1)
+    df = fread.get_all_submissions(input_directory, assignments, nrows=2)
 
     if df.empty:
         return _file_is_empty("Submissions")
@@ -234,11 +269,13 @@ def validate_submissions_file(
         ]
     )
 
-    return _validate_columns(expected, df, "Submissions")
+    return _validate_columns(
+        expected, df, "Submissions"
+    ) + _validate_create_and_last_modified_date_formats(df, "Submissions")
 
 
 def validate_grades_file(input_directory: str, sections: pd.DataFrame) -> List[str]:
-    df = fread.get_all_grades(input_directory, sections, nrows=1)
+    df = fread.get_all_grades(input_directory, sections, nrows=2)
 
     if df.empty:
         return _file_is_empty("Grades")
@@ -258,13 +295,15 @@ def validate_grades_file(input_directory: str, sections: pd.DataFrame) -> List[s
         ]
     )
 
-    return _validate_columns(expected, df, "Grades")
+    return _validate_columns(
+        expected, df, "Grades"
+    ) + _validate_create_and_last_modified_date_formats(df, "Grades")
 
 
 def validate_attendance_events_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
-    df = fread.get_all_attendance_events(input_directory, sections, nrows=1)
+    df = fread.get_all_attendance_events(input_directory, sections, nrows=2)
 
     if df.empty:
         return _file_is_empty("Attendance Events")
@@ -286,4 +325,6 @@ def validate_attendance_events_file(
         ]
     )
 
-    return _validate_columns(expected, df, "Attendance Events")
+    return _validate_columns(
+        expected, df, "Attendance Events"
+    ) + _validate_create_and_last_modified_date_formats(df, "Attendance Events")

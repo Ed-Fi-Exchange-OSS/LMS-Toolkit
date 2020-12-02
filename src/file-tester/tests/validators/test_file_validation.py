@@ -37,20 +37,20 @@ def describe_when_validating_users_file():
                     "Name",
                     "EmailAddress",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_users",
-                lambda dir, nrows: df if nrows == 1 else None,
+                lambda dir, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -58,6 +58,103 @@ def describe_when_validating_users_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "UserRole",
+                "LocalUserIdentifier",
+                "SISUserIdentifier",
+                "Name",
+                "EmailAddress",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "UserRole",
+                    "LocalUserIdentifier",
+                    "SISUserIdentifier",
+                    "Name",
+                    "EmailAddress",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_users",
+                lambda dir, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_users_file("random_dir")
+
+            # Arrange
+            assert result[0] == "Users file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "UserRole",
+                "LocalUserIdentifier",
+                "SISUserIdentifier",
+                "Name",
+                "EmailAddress",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "UserRole",
+                    "LocalUserIdentifier",
+                    "SISUserIdentifier",
+                    "Name",
+                    "EmailAddress",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_users",
+                lambda dir, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_users_file("random_dir")
+
+            # Arrange
+            assert result[0] == "Users file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -87,9 +184,9 @@ def describe_when_validating_users_file():
                     "Name",
                     "EmailAddress",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "does not belong here",
                 ]
@@ -226,20 +323,20 @@ def describe_when_validating_sections_file():
                     "Term",
                     "LMSSectionStatus",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_sections",
-                lambda dir, nrows: df if nrows == 1 else None,
+                lambda dir, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -247,6 +344,103 @@ def describe_when_validating_sections_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "SISSectionIdentifier",
+                "Title",
+                "SectionDescription",
+                "Term",
+                "LMSSectionStatus",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "SISSectionIdentifier",
+                    "Title",
+                    "SectionDescription",
+                    "Term",
+                    "LMSSectionStatus",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_sections",
+                lambda dir, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_sections_file("random_dir")
+
+            # Arrange
+            assert result[0] == "Sections file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "SISSectionIdentifier",
+                "Title",
+                "SectionDescription",
+                "Term",
+                "LMSSectionStatus",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "SISSectionIdentifier",
+                    "Title",
+                    "SectionDescription",
+                    "Term",
+                    "LMSSectionStatus",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_sections",
+                lambda dir, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_sections_file("random_dir")
+
+            # Arrange
+            assert result[0] == "Sections file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -276,9 +470,9 @@ def describe_when_validating_sections_file():
                     "Term",
                     "LMSSectionStatus",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "Does not belong here",
                 ]
@@ -414,20 +608,20 @@ def describe_when_validating_system_activities_file():
                     "ParentSourceSystemIdentifier",
                     "ActivityTimeInMinutes",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_system_activities",
-                lambda dir, nrows: df if nrows == 1 else None,
+                lambda dir, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -435,6 +629,107 @@ def describe_when_validating_system_activities_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "LMSUserSourceSystemIdentifier",
+                "ActivityDateTime",
+                "ActivityType",
+                "ActivityStatus",
+                "ParentSourceSystemIdentifier",
+                "ActivityTimeInMinutes",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "LMSUserSourceSystemIdentifier",
+                    "ActivityDateTime",
+                    "ActivityType",
+                    "ActivityStatus",
+                    "ParentSourceSystemIdentifier",
+                    "ActivityTimeInMinutes",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_system_activities",
+                lambda dir, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_system_activities_file("random_dir")
+
+            # Arrange
+            assert result[0] == "System Activities file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "LMSUserSourceSystemIdentifier",
+                "ActivityDateTime",
+                "ActivityType",
+                "ActivityStatus",
+                "ParentSourceSystemIdentifier",
+                "ActivityTimeInMinutes",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "LMSUserSourceSystemIdentifier",
+                    "ActivityDateTime",
+                    "ActivityType",
+                    "ActivityStatus",
+                    "ParentSourceSystemIdentifier",
+                    "ActivityTimeInMinutes",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_system_activities",
+                lambda dir, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_system_activities_file("random_dir")
+
+            # Arrange
+            assert result[0] == "System Activities file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -466,9 +761,9 @@ def describe_when_validating_system_activities_file():
                     "ParentSourceSystemIdentifier",
                     "ActivityTimeInMinutes",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "Does not belong here",
                 ]
@@ -609,20 +904,20 @@ def describe_when_validating_section_associations_file():
                     "LMSUserSourceSystemIdentifier",
                     "LMSSectionSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_section_associations",
-                lambda dir, sections, nrows: df if nrows == 1 else None,
+                lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -632,6 +927,107 @@ def describe_when_validating_section_associations_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "EnrollmentStatus",
+                "StartDate",
+                "EndDate",
+                "LMSUserSourceSystemIdentifier",
+                "LMSSectionSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "EnrollmentStatus",
+                    "StartDate",
+                    "EndDate",
+                    "LMSUserSourceSystemIdentifier",
+                    "LMSSectionSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_section_associations",
+                lambda dir, sections, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_section_associations_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Section Associations file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "EnrollmentStatus",
+                "StartDate",
+                "EndDate",
+                "LMSUserSourceSystemIdentifier",
+                "LMSSectionSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "EnrollmentStatus",
+                    "StartDate",
+                    "EndDate",
+                    "LMSUserSourceSystemIdentifier",
+                    "LMSSectionSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_section_associations",
+                lambda dir, sections, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_section_associations_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Section Associations file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -661,9 +1057,9 @@ def describe_when_validating_section_associations_file():
                     "LMSUserSourceSystemIdentifier",
                     "LMSSectionSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "Does not belong here",
                 ]
@@ -809,20 +1205,20 @@ def describe_when_validating_section_activities_file():
                     "LMSSectionSourceSystemIdentifier",
                     "UserSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_section_activities",
-                lambda dir, sections, nrows: df if nrows == 1 else None,
+                lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -832,6 +1228,115 @@ def describe_when_validating_section_activities_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "ActivityType",
+                "ActivityDateTime",
+                "ActivityStatus",
+                "MessagePost",
+                "TotalActivityTimeInMinutes",
+                "LMSSectionSourceSystemIdentifier",
+                "UserSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "ActivityType",
+                    "ActivityDateTime",
+                    "ActivityStatus",
+                    "MessagePost",
+                    "TotalActivityTimeInMinutes",
+                    "LMSSectionSourceSystemIdentifier",
+                    "UserSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_section_activities",
+                lambda dir, sections, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_section_activities_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Section Activities file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "ActivityType",
+                "ActivityDateTime",
+                "ActivityStatus",
+                "MessagePost",
+                "TotalActivityTimeInMinutes",
+                "LMSSectionSourceSystemIdentifier",
+                "UserSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "ActivityType",
+                    "ActivityDateTime",
+                    "ActivityStatus",
+                    "MessagePost",
+                    "TotalActivityTimeInMinutes",
+                    "LMSSectionSourceSystemIdentifier",
+                    "UserSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_section_activities",
+                lambda dir, sections, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_section_activities_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Section Activities file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -865,9 +1370,9 @@ def describe_when_validating_section_activities_file():
                     "LMSSectionSourceSystemIdentifier",
                     "UserSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "Does not belong here",
                 ]
@@ -1025,20 +1530,20 @@ def describe_when_validating_assignments_file():
                     "MaxPoints",
                     "LMSSectionSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_assignments",
-                lambda dir, sections, nrows: df if nrows == 1 else None,
+                lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -1048,6 +1553,123 @@ def describe_when_validating_assignments_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "Title",
+                "AssignmentCategory",
+                "AssignmentDescription",
+                "StartDateTime",
+                "EndDateTime",
+                "DueDateTime",
+                "SubmissionType",
+                "MaxPoints",
+                "LMSSectionSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "Title",
+                    "AssignmentCategory",
+                    "AssignmentDescription",
+                    "StartDateTime",
+                    "EndDateTime",
+                    "DueDateTime",
+                    "SubmissionType",
+                    "MaxPoints",
+                    "LMSSectionSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_assignments",
+                lambda dir, sections, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_assignments_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Assignments file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "Title",
+                "AssignmentCategory",
+                "AssignmentDescription",
+                "StartDateTime",
+                "EndDateTime",
+                "DueDateTime",
+                "SubmissionType",
+                "MaxPoints",
+                "LMSSectionSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "Title",
+                    "AssignmentCategory",
+                    "AssignmentDescription",
+                    "StartDateTime",
+                    "EndDateTime",
+                    "DueDateTime",
+                    "SubmissionType",
+                    "MaxPoints",
+                    "LMSSectionSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_assignments",
+                lambda dir, sections, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_assignments_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Assignments file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -1085,9 +1707,9 @@ def describe_when_validating_assignments_file():
                     "MaxPoints",
                     "LMSSectionSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "Does not belong here",
                 ]
@@ -1247,20 +1869,20 @@ def describe_when_validating_submissions_file():
                     "AssignmentSourceSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_submissions",
-                lambda dir, assignments, nrows: df if nrows == 1 else None,
+                lambda dir, assignments, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -1270,6 +1892,111 @@ def describe_when_validating_submissions_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "SubmissionStatus",
+                "SubmissionDateTime",
+                "EarnedPoints",
+                "Grade",
+                "AssignmentSourceSystemIdentifier",
+                "LMSUserSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "SubmissionStatus",
+                    "SubmissionDateTime",
+                    "EarnedPoints",
+                    "Grade",
+                    "AssignmentSourceSystemIdentifier",
+                    "LMSUserSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_submissions",
+                lambda dir, assignments, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_submissions_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Submissions file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "SubmissionStatus",
+                "SubmissionDateTime",
+                "EarnedPoints",
+                "Grade",
+                "AssignmentSourceSystemIdentifier",
+                "LMSUserSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "SubmissionStatus",
+                    "SubmissionDateTime",
+                    "EarnedPoints",
+                    "Grade",
+                    "AssignmentSourceSystemIdentifier",
+                    "LMSUserSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_submissions",
+                lambda dir, assignments, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_submissions_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Submissions file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -1301,9 +2028,9 @@ def describe_when_validating_submissions_file():
                     "AssignmentSourceSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "Does not belong here",
                 ]
@@ -1445,20 +2172,20 @@ def describe_when_validating_grades_file():
                     "GradeType",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_grades",
-                lambda dir, sections, nrows: df if nrows == 1 else None,
+                lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -1468,6 +2195,99 @@ def describe_when_validating_grades_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "Grade",
+                "GradeType",
+                "LMSUserLMSSectionAssociationSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "Grade",
+                    "GradeType",
+                    "LMSUserLMSSectionAssociationSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_grades",
+                lambda dir, sections, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_grades_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Grades file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "Grade",
+                "GradeType",
+                "LMSUserLMSSectionAssociationSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "Grade",
+                    "GradeType",
+                    "LMSUserLMSSectionAssociationSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                # This has an implicit assertion built in (if nrows == 2).
+                # There is a better way to do this, just not remembering it at
+                # the moment...
+                "lms_file_utils.file_reader.get_all_grades",
+                lambda dir, sections, nrows: df if nrows == 2 else None,
+            )
+
+            # Act
+            result = fileval.validate_grades_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Grades file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -1493,9 +2313,9 @@ def describe_when_validating_grades_file():
                     "GradeType",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "Does not belong here",
                 ]
@@ -1628,20 +2448,20 @@ def describe_when_validating_attendance_events_file():
                     "LMSUserSourceSystemIdentifier",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                 ]
             ]
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                # This has an implicit assertion built in (if nrows == 1).
+                # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
                 "lms_file_utils.file_reader.get_all_attendance_events",
-                lambda dir, sections, nrows: df if nrows == 1 else None,
+                lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
             # Act
@@ -1651,6 +2471,101 @@ def describe_when_validating_attendance_events_file():
 
             # Arrange
             assert len(result) == 0
+
+    def describe_given_invalid_date_format():
+        def it_returns_an_error_for_CreateDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "EventDate",
+                "AttendanceStatus",
+                "LMSSectionAssociationSystemIdentifier",
+                "LMSUserSourceSystemIdentifier",
+                "LMSUserLMSSectionAssociationSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "EventDate",
+                    "AttendanceStatus",
+                    "LMSSectionAssociationSystemIdentifier",
+                    "LMSUserSourceSystemIdentifier",
+                    "LMSUserLMSSectionAssociationSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16T15:16:17",  # This has the error
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                "lms_file_utils.file_reader.get_all_attendance_events",
+                lambda dir, sections, nrows: df,
+            )
+
+            # Act
+            result = fileval.validate_attendance_events_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Attendance Events file has an invalid timestamp format for CreateDate"
+
+        def it_returns_an_error_for_LastModifiedDate(mocker):
+            # Arrange
+            columns = [
+                "SourceSystemIdentifier",
+                "SourceSystem",
+                "EventDate",
+                "AttendanceStatus",
+                "LMSSectionAssociationSystemIdentifier",
+                "LMSUserSourceSystemIdentifier",
+                "LMSUserLMSSectionAssociationSourceSystemIdentifier",
+                "EntityStatus",
+                "CreateDate",
+                "LastModifiedDate",
+                "SourceCreateDate",
+                "SourceLastModifiedDate",
+            ]
+            data = [
+                [
+                    "SourceSystemIdentifier",
+                    "SourceSystem",
+                    "EventDate",
+                    "AttendanceStatus",
+                    "LMSSectionAssociationSystemIdentifier",
+                    "LMSUserSourceSystemIdentifier",
+                    "LMSUserLMSSectionAssociationSourceSystemIdentifier",
+                    "EntityStatus",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17T14:15:16",  # This has the error
+                    "9876-12-18 13:14:15",
+                    "9876-12-19 10:11:12",
+                ]
+            ]
+            df = pd.DataFrame(columns=columns, data=data)
+
+            mocker.patch(
+                "lms_file_utils.file_reader.get_all_attendance_events",
+                lambda dir, sections, nrows: df,
+            )
+
+            # Act
+            result = fileval.validate_attendance_events_file(
+                "random_dir", pd.DataFrame([{"a": 1}])
+            )
+
+            # Arrange
+            assert result[0] == "Attendance Events file has an invalid timestamp format for LastModifiedDate"
 
     def describe_given_an_extra_column():
         def it_reports_an_error(mocker):
@@ -1680,9 +2595,9 @@ def describe_when_validating_attendance_events_file():
                     "LMSUserSourceSystemIdentifier",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
                     "EntityStatus",
-                    "9876-12-16",
-                    "9876-12-17",
-                    "9876-12-18",
+                    "9876-12-16 15:16:17",
+                    "9876-12-17 14:15:16",
+                    "9876-12-18 13:14:15",
                     "9876-12-19 10:11:12",
                     "Does not belong here",
                 ]
