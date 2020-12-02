@@ -45,6 +45,8 @@ def validate_users_file(input_directory: str) -> List[str]:
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
@@ -66,6 +68,8 @@ def validate_sections_file(input_directory: str) -> List[str]:
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
@@ -88,13 +92,17 @@ def validate_system_activities_file(input_directory: str) -> List[str]:
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
     return _validate_columns(expected, df, "System Activities")
 
 
-def validate_section_associations_file(input_directory: str, sections: pd.DataFrame) -> List[str]:
+def validate_section_associations_file(
+    input_directory: str, sections: pd.DataFrame
+) -> List[str]:
     df = fread.get_all_section_associations(input_directory, sections, nrows=1)
 
     expected = set(
@@ -109,13 +117,17 @@ def validate_section_associations_file(input_directory: str, sections: pd.DataFr
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
     return _validate_columns(expected, df, "Section Associations")
 
 
-def validate_section_activities_file(input_directory: str, sections: pd.DataFrame) -> List[str]:
+def validate_section_activities_file(
+    input_directory: str, sections: pd.DataFrame
+) -> List[str]:
     df = fread.get_all_section_activities(input_directory, sections, nrows=1)
 
     expected = set(
@@ -132,13 +144,17 @@ def validate_section_activities_file(input_directory: str, sections: pd.DataFram
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
     return _validate_columns(expected, df, "Section Activities")
 
 
-def validate_assignments_file(input_directory: str, sections: pd.DataFrame) -> List[str]:
+def validate_assignments_file(
+    input_directory: str, sections: pd.DataFrame
+) -> List[str]:
     df = fread.get_all_assignments(input_directory, sections, nrows=1)
 
     expected = set(
@@ -157,13 +173,17 @@ def validate_assignments_file(input_directory: str, sections: pd.DataFrame) -> L
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
     return _validate_columns(expected, df, "Assignments")
 
 
-def validate_submissions_file(input_directory: str, assignments: pd.DataFrame) -> List[str]:
+def validate_submissions_file(
+    input_directory: str, assignments: pd.DataFrame
+) -> List[str]:
     df = fread.get_all_submissions(input_directory, assignments, nrows=1)
 
     expected = set(
@@ -182,6 +202,8 @@ def validate_submissions_file(input_directory: str, assignments: pd.DataFrame) -
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
@@ -201,13 +223,17 @@ def validate_grades_file(input_directory: str, sections: pd.DataFrame) -> List[s
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
     return _validate_columns(expected, df, "Grades")
 
 
-def validate_attendance_events_file(input_directory: str, sections: pd.DataFrame) -> List[str]:
+def validate_attendance_events_file(
+    input_directory: str, sections: pd.DataFrame
+) -> List[str]:
     df = fread.get_all_attendance_events(input_directory, sections, nrows=1)
 
     expected = set(
@@ -222,8 +248,9 @@ def validate_attendance_events_file(input_directory: str, sections: pd.DataFrame
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
         ]
     )
 
     return _validate_columns(expected, df, "Grades")
-
