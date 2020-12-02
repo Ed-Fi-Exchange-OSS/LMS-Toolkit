@@ -92,7 +92,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         help="The log level for the tool.",
         choices=constants.LOG_LEVELS,
         type=str,
-        default="WARNING",
+        default="INFO",
         env_var="SCHOOLOGY_LOG_LEVEL",
     )
 
