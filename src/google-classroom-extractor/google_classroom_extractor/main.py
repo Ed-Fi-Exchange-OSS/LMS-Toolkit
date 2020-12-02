@@ -139,7 +139,9 @@ def main():
     logger.info("Finishing Ed-Fi LMS Google Classroom Extractor")
 
     if error_tracker.fired:
-        logger.warning("An error has ocurred during the execution of the extractor. Check the logs to find more detail about it.")
+        print("fatal error", file=sys.stderr)
+        sys.exit(-1)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
