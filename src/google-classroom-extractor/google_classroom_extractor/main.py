@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
 import sqlalchemy
-from errorhandler import ErrorHandler
+from errorhandler import ErrorHandler  # type: ignore
 
 from google_classroom_extractor.result import Result
 from google_classroom_extractor.config import get_credentials, get_sync_db_engine
