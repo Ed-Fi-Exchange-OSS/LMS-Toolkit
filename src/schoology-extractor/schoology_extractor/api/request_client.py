@@ -8,6 +8,7 @@ import os
 import time
 import random
 from typing import Union
+from http import HTTPStatus
 
 from opnieuw import retry
 from requests.exceptions import ConnectionError, HTTPError, Timeout
@@ -115,6 +116,11 @@ class RequestClient:
         -------
         dict
             A parsed response from the server
+
+        Raises
+        -------
+        RuntimeError
+            If the GET operation is unsuccessful
         """
 
         assert isinstance(resource, str), "Argument `resource` should be of type `str`."
@@ -128,7 +134,91 @@ class RequestClient:
             auth=self.oauth.auth,
         )
 
-        if response.status_code != 200:
+        if response.status_code != HTTPStatus.OK:
+            raise RuntimeError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
+
+        return response.json()
+
+    @retry(
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        max_calls_total=REQUEST_RETRY_COUNT,
+        retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
+    )
+    def bulk_post(self, resource: str, json: dict) -> dict:
+        """
+        Send a bulk HTTP POST request.
+
+        Parameters
+        ----------
+        resource : str
+            The resource endpoint that you want to POST to.
+        json : str
+            The body of the POST as a JSON-like dict.  This must be in the
+            bulk form specified by the API. Note that 50 is the maximum
+            number permitted by the API for a bulk operation.
+
+        Returns
+        -------
+        dict
+            A parsed response from the server
+
+        Raises
+        -------
+        RuntimeError
+            If the bulk POST operation as a whole is unsuccessful. Does not
+            attempt to check status codes for each individual operation.
+        """
+        response = self.oauth.post(
+            url=f"{self.base_url}{resource}",
+            headers=self._request_header,
+            auth=self.oauth.auth,
+            json=json,
+        )
+
+        if response.status_code != HTTPStatus.MULTI_STATUS:
+            raise RuntimeError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
+
+        return response.json()
+
+    @retry(
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        max_calls_total=REQUEST_RETRY_COUNT,
+        retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
+    )
+    def bulk_delete(self, resource: str, ids: str) -> dict:
+        """
+        Send a bulk HTTP DELETE request.
+
+        Parameters
+        ----------
+        resource : str
+            The resource endpoint that you want to DELETE to.
+        ids : str
+            A comma-separated list of Schoology generated ids of the specific resources to delete.
+            Note that 50 is the maximum number of ids permitted by the API for a bulk operation.
+
+        Returns
+        -------
+        dict
+            A parsed response from the server
+
+        Raises
+        -------
+        RuntimeError
+            If the bulk DELETE operation as a whole is unsuccessful.  Does not
+            attempt to check status codes for each individual operation.
+        """
+        response = self.oauth.delete(
+            url=f"{self.base_url}{resource}?uids={ids}&email_notification=0",
+            headers=self._request_header,
+            auth=self.oauth.auth,
+        )
+
+        if response.status_code != HTTPStatus.MULTI_STATUS:
             raise RuntimeError(
                 f"{response.reason} ({response.status_code}): {response.text}"
             )
