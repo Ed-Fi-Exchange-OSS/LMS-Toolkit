@@ -41,7 +41,7 @@ def get_all_system_activities(
 ) -> pd.DataFrame:
     files = fr.get_system_activities_files(base_directory)
 
-    if files is None:
+    if files is None or len(files) == 0:
         return _default()
 
     df_list = list()

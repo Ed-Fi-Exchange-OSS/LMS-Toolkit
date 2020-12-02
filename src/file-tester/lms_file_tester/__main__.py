@@ -20,6 +20,17 @@ from validators.directory_validation import (
     validate_section_directory_structure,
     validate_system_activities_directory_structure,
 )
+from validators.file_validation import (
+    validate_users_file,
+    validate_sections_file,
+    validate_system_activities_file,
+    validate_section_associations_file,
+    validate_section_activities_file,
+    validate_assignments_file,
+    validate_submissions_file,
+    validate_grades_file,
+    validate_attendance_events_file,
+)
 
 # The following is a hack to load a local package above this package's base
 # directory, so that this test utility does not need to rely on downloading a
@@ -30,7 +41,7 @@ from lms_file_utils import file_reader as fread  # type: ignore # noqa: E402
 logger = logging.getLogger(__name__)
 
 
-def _configure_logging():
+def _configure_logging(level="INFO"):
     logFormatter = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
 
     logging.basicConfig(
@@ -38,7 +49,7 @@ def _configure_logging():
             logging.StreamHandler(sys.stdout),
         ],
         format=logFormatter,
-        level="INFO",
+        level=level,
     )
 
 
@@ -50,9 +61,15 @@ def _report(errors: List[str], happy: str):
             logger.warning(e)
 
 
-def _validate_top_directories(input_directory: str):
+def _validate_users_and_sections(input_directory: str):
     errors = validate_base_directory_structure(input_directory)
     _report(errors, "Basic directory structure is valid.")
+
+    errors = validate_users_file(input_directory)
+    _report(errors, "Users file is valid.")
+
+    errors = validate_sections_file(input_directory)
+    _report(errors, "Sections file is valid.")
 
 
 def _validate_assignment_directories(input_directory: str, section_id: Union[int, str]):
@@ -66,7 +83,13 @@ def _validate_assignment_directories(input_directory: str, section_id: Union[int
         errors = validate_assignment_directory_structure(
             input_directory, section_id, assignment_id
         )
-        _report(errors, f"Assignment directory structure is valid for section {section_id}, assignment {assignment_id}")
+        _report(
+            errors,
+            f"Assignment directory structure is valid for section {section_id}, assignment {assignment_id}.",
+        )
+
+    errors = validate_submissions_file(input_directory, assignments)
+    _report(errors, "Submissions file is valid.")
 
 
 def _validate_section_directories(input_directory: str):
@@ -74,18 +97,37 @@ def _validate_section_directories(input_directory: str):
 
     for _, section_id in sections["SourceSystemIdentifier"].iteritems():
         errors = validate_section_directory_structure(input_directory, section_id)
-        _report(errors, f"Section directory structure is valid for section {section_id}")
+        _report(
+            errors, f"Section directory structure is valid for section {section_id}"
+        )
 
         _validate_assignment_directories(input_directory, section_id)
+
+    errors = validate_attendance_events_file(input_directory, sections)
+    _report(errors, "Attendance Events file is valid.")
+
+    errors = validate_grades_file(input_directory, sections)
+    _report(errors, "Grades file is valid.")
+
+    errors = validate_assignments_file(input_directory, sections)
+    _report(errors, "Assignments file is valid.")
+
+    errors = validate_section_associations_file(input_directory, sections)
+    _report(errors, "Section Associations Events file is valid.")
+
+    errors = validate_section_activities_file(input_directory, sections)
+    _report(errors, "Section Activities Events file is valid.")
 
 
 def _validate_system_activities_directories(input_directory: str):
     errors = validate_system_activities_directory_structure(input_directory)
     _report(errors, "System Activities directory structure is valid.")
 
+    errors = validate_system_activities_file(input_directory)
+    _report(errors, "System Activities file is valid.")
+
 
 def _main():
-    logger.info("Starting LMS File Tester")
 
     if len(sys.argv) != 2:
         logger.critical(
@@ -94,11 +136,17 @@ def _main():
 
     input_directory = sys.argv[1]
 
-    _validate_top_directories(input_directory)
+    if len(sys.argv) == 3:
+        _configure_logging(sys.argv[2])
+    else:
+        _configure_logging()
+
+    logger.info("Starting LMS File Tester")
+
+    _validate_users_and_sections(input_directory)
     _validate_section_directories(input_directory)
     _validate_system_activities_directories(input_directory)
 
 
 if __name__ == "__main__":
-    _configure_logging()
     _main()

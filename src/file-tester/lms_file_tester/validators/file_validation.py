@@ -23,15 +23,27 @@ def _validate_columns(expected: set, df: pd.DataFrame, file_type: str) -> List[s
         return list()
 
     extra = actual.difference(expected)
-    missing = expected.difference(extra)
+    missing = expected.difference(actual)
+
+    extra = str(extra) if len(extra) > 0 else "{none}"
+    missing = str(missing) if len(missing) > 0 else "{none}"
 
     return [
         f"{file_type} file contains extra columns {extra} and is missing columns {missing}"
     ]
 
 
+def _file_is_empty(file_type: str) -> List[str]:
+    return [
+        f"{file_type} file could not be read or the file does not exist."
+    ]
+
+
 def validate_users_file(input_directory: str) -> List[str]:
     df = fread.get_all_users(input_directory, nrows=1)
+
+    if df.empty:
+        return _file_is_empty("Users")
 
     expected = set(
         [
@@ -56,6 +68,9 @@ def validate_users_file(input_directory: str) -> List[str]:
 def validate_sections_file(input_directory: str) -> List[str]:
     df = fread.get_all_sections(input_directory, nrows=1)
 
+    if df.empty:
+        return _file_is_empty("Sections")
+
     expected = set(
         [
             "SourceSystemIdentifier",
@@ -78,6 +93,9 @@ def validate_sections_file(input_directory: str) -> List[str]:
 
 def validate_system_activities_file(input_directory: str) -> List[str]:
     df = fread.get_all_system_activities(input_directory, nrows=1)
+
+    if df.empty:
+        return _file_is_empty("System Activities")
 
     expected = set(
         [
@@ -105,6 +123,9 @@ def validate_section_associations_file(
 ) -> List[str]:
     df = fread.get_all_section_associations(input_directory, sections, nrows=1)
 
+    if df.empty:
+        return _file_is_empty("Section Associations")
+
     expected = set(
         [
             "SourceSystemIdentifier",
@@ -129,6 +150,9 @@ def validate_section_activities_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
     df = fread.get_all_section_activities(input_directory, sections, nrows=1)
+
+    if df.empty:
+        return _file_is_empty("Section Activities")
 
     expected = set(
         [
@@ -156,6 +180,9 @@ def validate_assignments_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
     df = fread.get_all_assignments(input_directory, sections, nrows=1)
+
+    if df.empty:
+        return _file_is_empty("Assignments")
 
     expected = set(
         [
@@ -186,19 +213,19 @@ def validate_submissions_file(
 ) -> List[str]:
     df = fread.get_all_submissions(input_directory, assignments, nrows=1)
 
+    if df.empty:
+        return _file_is_empty("Submissions")
+
     expected = set(
         [
             "SourceSystemIdentifier",
             "SourceSystem",
-            "Title",
-            "AssignmentCategory",
-            "AssignmentDescription",
-            "StartDateTime",
-            "EndDateTime",
-            "DueDateTime",
-            "SubmissionType",
-            "MaxPoints",
-            "LMSSectionSourceSystemIdentifier",
+            "SubmissionStatus",
+            "SubmissionDateTime",
+            "EarnedPoints",
+            "Grade",
+            "AssignmentSourceSystemIdentifier",
+            "LMSUserSourceSystemIdentifier",
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
@@ -212,6 +239,9 @@ def validate_submissions_file(
 
 def validate_grades_file(input_directory: str, sections: pd.DataFrame) -> List[str]:
     df = fread.get_all_grades(input_directory, sections, nrows=1)
+
+    if df.empty:
+        return _file_is_empty("Grades")
 
     expected = set(
         [
@@ -236,15 +266,18 @@ def validate_attendance_events_file(
 ) -> List[str]:
     df = fread.get_all_attendance_events(input_directory, sections, nrows=1)
 
+    if df.empty:
+        return _file_is_empty("Attendance Events")
+
     expected = set(
         [
             "SourceSystemIdentifier",
             "SourceSystem",
-            "Date",
+            "EventDate",
             "AttendanceStatus",
-            "SectionAssociationSystemIdentifier",
-            "UserSourceSystemIdentifier",
-            "UserLMSSectionAssociationSourceSystemIdentifier",
+            "LMSSectionAssociationSystemIdentifier",
+            "LMSUserSourceSystemIdentifier",
+            "LMSUserLMSSectionAssociationSourceSystemIdentifier",
             "EntityStatus",
             "CreateDate",
             "LastModifiedDate",
@@ -253,4 +286,4 @@ def validate_attendance_events_file(
         ]
     )
 
-    return _validate_columns(expected, df, "Grades")
+    return _validate_columns(expected, df, "Attendance Events")
