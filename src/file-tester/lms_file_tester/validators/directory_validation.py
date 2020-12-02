@@ -56,7 +56,7 @@ def validate_section_directory_structure(
         dr.get_section_activities_directory(input_directory, section_id),
         dr.get_assignments_directory(input_directory, section_id),
         dr.get_grades_directory(input_directory, section_id),
-        dr.get_attendance_events_directory(input_directory, section_id),
+        # Ignoring attendance events, since only the Schoology extractor exports this
     ]:
         is_missing = _check_for_directory(d)
         if is_missing:

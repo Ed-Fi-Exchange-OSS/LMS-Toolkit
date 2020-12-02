@@ -98,13 +98,14 @@ def describe_when_validating_section_directories():
                 assert result[0] == f"Missing directory: {dir}"
 
         def describe_given_attendance_is_missing():
-            def it_should_report_one_error(fs, fixture, inner_fixture):
+            # This one is non-standard because only Schoology writes out an attendance record
+            def it_should_not_report_an_error(fs, fixture, inner_fixture):
                 dir = f"{INPUT_DIR}/section={SECTION_ID}/attendance-events"
                 fs.remove_object(dir)
 
                 result = drval.validate_section_directory_structure(INPUT_DIR, SECTION_ID)
 
-                assert result[0] == f"Missing directory: {dir}"
+                assert len(result) == 0
 
         def describe_given_section_activities_is_missing():
             def it_should_report_one_error(fs, fixture, inner_fixture):
