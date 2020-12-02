@@ -211,6 +211,6 @@ def _sync_without_cleanup(
             "assignmentSubmission.attachments" TEXT,
             associatedWithDeveloper TEXT,
             """,
-        primary_keys="courseId,id,courseWorkId,userId",
+        primary_keys="courseId,id,courseWorkId",
         sync_db=sync_db,
     )
