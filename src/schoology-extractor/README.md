@@ -40,7 +40,12 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 User's API key and secret are managed at
 [https://app.schoology.com/api](https://app.schoology.com/api).
 
-For more information about log levels [click here](https://techdocs.ed-fi.org/display/EDFIODS/Fizz+-+Exception+Handling+and+Logging)
+Valid log levels:
+* DEBUG
+* INFO
+* WARNING(default)
+* ERROR
+* CRITICAL
 
 ## Execution
 
