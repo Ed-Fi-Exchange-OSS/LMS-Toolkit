@@ -29,11 +29,11 @@ def _validate_columns(expected: set, df: pd.DataFrame, file_type: str) -> List[s
     extra = actual.difference(expected)
     missing = expected.difference(actual)
 
-    extra = str(extra) if len(extra) > 0 else "{none}"
-    missing = str(missing) if len(missing) > 0 else "{none}"
+    extra_msg = str(extra) if len(extra) > 0 else "{none}"
+    missing_msg = str(missing) if len(missing) > 0 else "{none}"
 
     return [
-        f"{file_type} file contains extra columns {extra} and is missing columns {missing}"
+        f"{file_type} file contains extra columns {extra_msg} and is missing columns {missing_msg}"
     ]
 
 

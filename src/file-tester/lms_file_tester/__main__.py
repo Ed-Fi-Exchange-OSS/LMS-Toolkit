@@ -14,13 +14,13 @@ from typing import List, Union
 # not found error. This does not make sense, and in fact mypy complains about
 # it. But pylance does not. Headscratcher. Have tried renaming file to `main.py`
 # and that did not solve it.
-from validators.directory_validation import (
+from validators.directory_validation import (  # type: ignore
     validate_assignment_directory_structure,
     validate_base_directory_structure,
     validate_section_directory_structure,
     validate_system_activities_directory_structure,
 )
-from validators.file_validation import (
+from validators.file_validation import (  # type: ignore
     validate_users_file,
     validate_sections_file,
     validate_system_activities_file,
