@@ -41,23 +41,16 @@ def _file_is_empty(file_type: str) -> List[str]:
     return [f"{file_type} file could not be read or the file does not exist."]
 
 
-def _validate_create_and_last_modified_date_formats(
+def _validate_date_formats(
     df: pd.DataFrame, file_type: str
 ) -> List[str]:
     errors: List[str] = list()
 
     cols = list(df.columns)
 
-    if "CreateDate" in cols and date_pattern.match(df.iloc[0]["CreateDate"]) is None:
-        errors.append(f"{file_type} file has an invalid timestamp format for CreateDate")
-
-    if (
-        "LastModifiedDate" in cols
-        and date_pattern.match(df.iloc[0]["LastModifiedDate"]) is None
-    ):
-        errors.append(
-            f"{file_type} file has an invalid timestamp format for LastModifiedDate"
-        )
+    for column in [c for c in cols if (c.endswith("Date") or c.endswith("DateTime"))]:
+        if date_pattern.match(str(df.iloc[0][column])) is None:
+            errors.append(f"{file_type} file has an invalid timestamp format for {column}")
 
     return errors
 
@@ -87,7 +80,7 @@ def validate_users_file(input_directory: str) -> List[str]:
 
     return _validate_columns(
         expected, df, "Users"
-    ) + _validate_create_and_last_modified_date_formats(df, "Users")
+    ) + _validate_date_formats(df, "Users")
 
 
 def validate_sections_file(input_directory: str) -> List[str]:
@@ -115,7 +108,7 @@ def validate_sections_file(input_directory: str) -> List[str]:
 
     return _validate_columns(
         expected, df, "Sections"
-    ) + _validate_create_and_last_modified_date_formats(df, "Sections")
+    ) + _validate_date_formats(df, "Sections")
 
 
 def validate_system_activities_file(input_directory: str) -> List[str]:
@@ -144,7 +137,7 @@ def validate_system_activities_file(input_directory: str) -> List[str]:
 
     return _validate_columns(
         expected, df, "System Activities"
-    ) + _validate_create_and_last_modified_date_formats(df, "System Activities")
+    ) + _validate_date_formats(df, "System Activities")
 
 
 def validate_section_associations_file(
@@ -174,7 +167,7 @@ def validate_section_associations_file(
 
     return _validate_columns(
         expected, df, "Section Associations"
-    ) + _validate_create_and_last_modified_date_formats(df, "Section Associations")
+    ) + _validate_date_formats(df, "Section Associations")
 
 
 def validate_section_activities_file(
@@ -206,7 +199,7 @@ def validate_section_activities_file(
 
     return _validate_columns(
         expected, df, "Section Activities"
-    ) + _validate_create_and_last_modified_date_formats(df, "Section Activities")
+    ) + _validate_date_formats(df, "Section Activities")
 
 
 def validate_assignments_file(
@@ -240,7 +233,7 @@ def validate_assignments_file(
 
     return _validate_columns(
         expected, df, "Assignments"
-    ) + _validate_create_and_last_modified_date_formats(df, "Assignments")
+    ) + _validate_date_formats(df, "Assignments")
 
 
 def validate_submissions_file(
@@ -271,7 +264,7 @@ def validate_submissions_file(
 
     return _validate_columns(
         expected, df, "Submissions"
-    ) + _validate_create_and_last_modified_date_formats(df, "Submissions")
+    ) + _validate_date_formats(df, "Submissions")
 
 
 def validate_grades_file(input_directory: str, sections: pd.DataFrame) -> List[str]:
@@ -297,7 +290,7 @@ def validate_grades_file(input_directory: str, sections: pd.DataFrame) -> List[s
 
     return _validate_columns(
         expected, df, "Grades"
-    ) + _validate_create_and_last_modified_date_formats(df, "Grades")
+    ) + _validate_date_formats(df, "Grades")
 
 
 def validate_attendance_events_file(
@@ -327,4 +320,4 @@ def validate_attendance_events_file(
 
     return _validate_columns(
         expected, df, "Attendance Events"
-    ) + _validate_create_and_last_modified_date_formats(df, "Attendance Events")
+    ) + _validate_date_formats(df, "Attendance Events")
