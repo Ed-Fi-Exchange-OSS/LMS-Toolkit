@@ -21,6 +21,7 @@ teamcity-messages = "^1.28"
 pytest = "^6.0"
 xxhash = "^2.0.0"
 numpy = "1.19.3"
+errorhandler = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"
