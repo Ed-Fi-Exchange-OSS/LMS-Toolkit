@@ -5,11 +5,21 @@
 
 import pytest
 
+INPUT_DIRECTORY = './input'
+
+
+def _setup_empty_filesystem(fs):
+    fs.path_separator = "/"
+    fs.is_windows_fs = False
+    fs.is_macos = False
+    fs.create_dir(INPUT_DIRECTORY)
+
 
 def describe_will_this_fail():
-    @pytest.fixture
-    def fixture(fs):
-        fs.os = "linux"
+    def describe_one_more_level_nesting():
+        @pytest.fixture
+        def fixture(fs):
+            _setup_empty_filesystem(fs)
 
-    def it_should_not_fail(fs, fixture):
-        assert 1 == 1
+        def it_should_not_fail(fs, fixture):
+            assert 1 == 1
