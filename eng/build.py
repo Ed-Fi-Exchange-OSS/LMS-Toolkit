@@ -44,7 +44,15 @@ def _run_command(command: List[str], exit_immediately: bool = True):
         command = ["cmd", "/c", *command]
 
     script_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
-    package_dir = os.path.join(script_dir, "..", "src", sys.argv[2])
+
+    package_name = sys.argv[2]
+
+    package_dir = os.path.join(script_dir, "..", "src", package_name)
+    if not os.path.exists(package_dir):
+        package_dir = os.path.join(script_dir, "..", "utils", package_name)
+
+        if not os.path.exists(package_dir):
+            raise RuntimeError(f"Cannot find package {package_name}")
 
     result = subprocess.run(command, cwd=package_dir)
 
