@@ -19,41 +19,41 @@ from lms_file_utils.file_repository import (
 )
 
 
-BASE_DIRECTORY = "base_dir"
+BASE_DIRECTORY = "./base_dir"
 SECTION_ID = 1
 ASSIGNMENT_ID = 2
 
-SECTION_FILE_OLD = "base_dir/sections/2020-11-18-04-05-06.csv"
-SECTION_FILE_NEW = "base_dir/sections/2020-11-19-04-05-06.csv"
-USERS_FILE_OLD = "base_dir/users/2020-11-18-04-05-06.csv"
-USERS_FILE_NEW = "base_dir/users/2020-11-19-04-05-06.csv"
-ASSIGNMENTS_FILE_OLD = "base_dir/section=1/assignments/2020-11-18-04-05-06.csv"
-ASSIGNMENTS_FILE_NEW = "base_dir/section=1/assignments/2020-11-19-04-05-06.csv"
+SECTION_FILE_OLD = f"{BASE_DIRECTORY}/sections/2020-11-18-04-05-06.csv"
+SECTION_FILE_NEW = f"{BASE_DIRECTORY}/sections/2020-11-19-04-05-06.csv"
+USERS_FILE_OLD = f"{BASE_DIRECTORY}/users/2020-11-18-04-05-06.csv"
+USERS_FILE_NEW = f"{BASE_DIRECTORY}/users/2020-11-19-04-05-06.csv"
+ASSIGNMENTS_FILE_OLD = f"{BASE_DIRECTORY}/section=1/assignments/2020-11-18-04-05-06.csv"
+ASSIGNMENTS_FILE_NEW = f"{BASE_DIRECTORY}/section=1/assignments/2020-11-19-04-05-06.csv"
 ASSOCIATIONS_FILE_OLD = (
-    "base_dir/section=1/section-associations/2020-11-18-04-05-06.csv"
+    f"{BASE_DIRECTORY}/section=1/section-associations/2020-11-18-04-05-06.csv"
 )
 ASSOCIATIONS_FILE_NEW = (
-    "base_dir/section=1/section-associations/2020-11-19-04-05-06.csv"
+    f"{BASE_DIRECTORY}/section=1/section-associations/2020-11-19-04-05-06.csv"
 )
-GRADES_FILE_OLD = "base_dir/section=1/grades/2020-11-18-04-05-06.csv"
-GRADES_FILE_NEW = "base_dir/section=1/grades/2020-11-19-04-05-06.csv"
+GRADES_FILE_OLD = f"{BASE_DIRECTORY}/section=1/grades/2020-11-18-04-05-06.csv"
+GRADES_FILE_NEW = f"{BASE_DIRECTORY}/section=1/grades/2020-11-19-04-05-06.csv"
 SUBMISSIONS_FILE_OLD = (
-    "base_dir/section=1/assignment=2/submissions/2020-11-18-04-05-06.csv"
+    f"{BASE_DIRECTORY}/section=1/assignment=2/submissions/2020-11-18-04-05-06.csv"
 )
 SUBMISSIONS_FILE_NEW = (
-    "base_dir/section=1/assignment=2/submissions/2020-11-19-04-05-06.csv"
+    f"{BASE_DIRECTORY}/section=1/assignment=2/submissions/2020-11-19-04-05-06.csv"
 )
-ATTENDANCE_FILE_OLD = "base_dir/section=1/attendance-events/2020-11-18-04-05-06.csv"
-ATTENDANCE_FILE_NEW = "base_dir/section=1/attendance-events/2020-11-19-04-05-06.csv"
+ATTENDANCE_FILE_OLD = f"{BASE_DIRECTORY}/section=1/attendance-events/2020-11-18-04-05-06.csv"
+ATTENDANCE_FILE_NEW = f"{BASE_DIRECTORY}/section=1/attendance-events/2020-11-19-04-05-06.csv"
 SECTION_ACTIVITIES_FILE_OLD = (
-    "base_dir/section=1/section-activities/2020-11-18-04-05-06.csv"
+    f"{BASE_DIRECTORY}/section=1/section-activities/2020-11-18-04-05-06.csv"
 )
 SECTION_ACTIVITIES_FILE_NEW = (
-    "base_dir/section=1/section-activities/2020-11-19-04-05-06.csv"
+    f"{BASE_DIRECTORY}/section=1/section-activities/2020-11-19-04-05-06.csv"
 )
-SYSTEM_ACTIVITIES_FILE_OLD = "base_dir/system-activities/date=2020-11-17/2020-11-18-04-05-06.csv"
-SYSTEM_ACTIVITIES_FILE_NEW_1 = "base_dir/system-activities/date=2020-11-17/2020-11-19-04-05-06.csv"
-SYSTEM_ACTIVITIES_FILE_NEW_2 = "base_dir/system-activities/date=2020-11-18/2020-11-19-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_OLD = f"{BASE_DIRECTORY}/system-activities/date=2020-11-17/2020-11-18-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_NEW_1 = f"{BASE_DIRECTORY}/system-activities/date=2020-11-17/2020-11-19-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_NEW_2 = f"{BASE_DIRECTORY}/system-activities/date=2020-11-18/2020-11-19-04-05-06.csv"
 
 files = [
     SECTION_FILE_OLD,
@@ -85,6 +85,7 @@ def describe_given_filesystem_does_not_exist():
         # fs.path_separator = "/"
         # fs.is_windows_fs = False
         # fs.is_macos = False
+        raise RuntimeError("try to fail here")
         fs.os = "linux"
 
     def describe_when_getting_sections_file_file():
