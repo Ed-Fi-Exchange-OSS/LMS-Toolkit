@@ -33,7 +33,7 @@ def get_sections_file(base_directory: str) -> Optional[str]:
 
 
 def get_system_activities_files(base_directory: str) -> List[str]:
-    files = list()
+    files: List[str] = list()
 
     sys_activities = dr.get_system_activities_directory(base_directory)
 
