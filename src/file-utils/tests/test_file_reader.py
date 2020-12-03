@@ -16,7 +16,7 @@ from lms_file_utils.file_reader import (
     get_all_assignments,
     get_all_submissions,
     get_all_grades,
-    get_all_attendance_events
+    get_all_attendance_events,
 )
 from test_file_repository import BASE_DIRECTORY
 
@@ -35,13 +35,9 @@ ATTENDANCE_EVENTS = "attendance-events"
 SECTIONS_FILE = "base_dir/sections/2020-11-19-04-05-06.csv"
 USERS_FILE = "base_dir/users/2020-11-19-04-05-06.csv"
 ASSIGNMENTS_FILE = "base_dir/section=1/assignments/2020-11-19-04-05-06.csv"
-ASSOCIATIONS_FILE = (
-    "base_dir/section=1/section-associations/2020-11-19-04-05-06.csv"
-)
+ASSOCIATIONS_FILE = "base_dir/section=1/section-associations/2020-11-19-04-05-06.csv"
 GRADES_FILE = "base_dir/section=1/grades/2020-11-19-04-05-06.csv"
-SUBMISSIONS_FILE = (
-    "base_dir/section=1/assignment=2/submissions/2020-11-19-04-05-06.csv"
-)
+SUBMISSIONS_FILE = "base_dir/section=1/assignment=2/submissions/2020-11-19-04-05-06.csv"
 ATTENDANCE_FILE = "base_dir/section=1/attendance-events/2020-11-19-04-05-06.csv"
 SECTION_ACTIVITIES_FILE = (
     "base_dir/section=1/section-activities/2020-11-19-04-05-06.csv"
@@ -59,17 +55,41 @@ def generate_data_frame(resource: str) -> pd.DataFrame:
 
 def describe_given_files_exist():
     @pytest.fixture
-    def system(mocker):
+    def fixture(mocker):
 
-        mocker.patch("lms_file_utils.file_repository.get_users_file", lambda _: USERS_FILE)
-        mocker.patch("lms_file_utils.file_repository.get_sections_file", lambda _: SECTIONS_FILE)
-        mocker.patch("lms_file_utils.file_repository.get_system_activities_files", lambda _: [SYSTEM_ACTIVITIES_FILE])
-        mocker.patch("lms_file_utils.file_repository.get_section_associations_file", lambda _a, _b: ASSOCIATIONS_FILE)
-        mocker.patch("lms_file_utils.file_repository.get_section_activities_file", lambda _a, _b: SECTION_ACTIVITIES_FILE)
-        mocker.patch("lms_file_utils.file_repository.get_assignments_file", lambda _a, _b: ASSIGNMENTS_FILE)
-        mocker.patch("lms_file_utils.file_repository.get_grades_file", lambda _a, _b: GRADES_FILE)
-        mocker.patch("lms_file_utils.file_repository.get_submissions_file", lambda _a, _b, _c: SUBMISSIONS_FILE)
-        mocker.patch("lms_file_utils.file_repository.get_attendance_events_file", lambda _a, _b: ATTENDANCE_FILE)
+        mocker.patch(
+            "lms_file_utils.file_repository.get_users_file", lambda _: USERS_FILE
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_sections_file", lambda _: SECTIONS_FILE
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_system_activities_files",
+            lambda _: [SYSTEM_ACTIVITIES_FILE],
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_section_associations_file",
+            lambda _a, _b: ASSOCIATIONS_FILE,
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_section_activities_file",
+            lambda _a, _b: SECTION_ACTIVITIES_FILE,
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_assignments_file",
+            lambda _a, _b: ASSIGNMENTS_FILE,
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_grades_file", lambda _a, _b: GRADES_FILE
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_submissions_file",
+            lambda _a, _b, _c: SUBMISSIONS_FILE,
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_attendance_events_file",
+            lambda _a, _b: ATTENDANCE_FILE,
+        )
 
         def _fake_reader(file: str, **kwargs) -> pd.DataFrame:
             switcher = {
@@ -81,7 +101,7 @@ def describe_given_files_exist():
                 ASSIGNMENTS_FILE: generate_data_frame(ASSIGNMENTS),
                 GRADES_FILE: generate_data_frame(GRADES),
                 SUBMISSIONS_FILE: generate_data_frame(SUBMISSIONS),
-                ATTENDANCE_FILE: generate_data_frame(ATTENDANCE_EVENTS)
+                ATTENDANCE_FILE: generate_data_frame(ATTENDANCE_EVENTS),
             }
             return switcher.get(file, pd.DataFrame())
 
@@ -151,7 +171,9 @@ def describe_given_files_exist():
 
             assert df.iloc[0][SUBMISSIONS] == 1
 
-        def given_empty_assignments_list_it_should_return_empty_data_frame(mocker, fixture):
+        def given_empty_assignments_list_it_should_return_empty_data_frame(
+            mocker, fixture
+        ):
 
             df = get_all_submissions(BASE_DIRECTORY, pd.DataFrame())
 
@@ -190,13 +212,31 @@ def describe_given_there_are_no_files_to_read():
 
         mocker.patch("lms_file_utils.file_repository.get_users_file", lambda _: None)
         mocker.patch("lms_file_utils.file_repository.get_sections_file", lambda _: None)
-        mocker.patch("lms_file_utils.file_repository.get_system_activities_files", lambda _: None)
-        mocker.patch("lms_file_utils.file_repository.get_section_associations_file", lambda _a, _b: None)
-        mocker.patch("lms_file_utils.file_repository.get_section_activities_file", lambda _a, _b: None)
-        mocker.patch("lms_file_utils.file_repository.get_assignments_file", lambda _a, _b: None)
-        mocker.patch("lms_file_utils.file_repository.get_grades_file", lambda _a, _b: None)
-        mocker.patch("lms_file_utils.file_repository.get_submissions_file", lambda _a, _b, _c: None)
-        mocker.patch("lms_file_utils.file_repository.get_attendance_events_file", lambda _a, _b: None)
+        mocker.patch(
+            "lms_file_utils.file_repository.get_system_activities_files", lambda _: None
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_section_associations_file",
+            lambda _a, _b: None,
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_section_activities_file",
+            lambda _a, _b: None,
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_assignments_file", lambda _a, _b: None
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_grades_file", lambda _a, _b: None
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_submissions_file",
+            lambda _a, _b, _c: None,
+        )
+        mocker.patch(
+            "lms_file_utils.file_repository.get_attendance_events_file",
+            lambda _a, _b: None,
+        )
 
     def describe_when_getting_users():
         def it_should_return_an_empty_DataFrame(mocker, fixture):
