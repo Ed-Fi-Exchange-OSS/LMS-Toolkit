@@ -243,7 +243,7 @@ description = "pyfakefs implements a fake file system that mocks the Python file
 name = "pyfakefs"
 optional = false
 python-versions = ">=3.5"
-version = "4.3.0"
+version = "4.1.0"
 
 [[package]]
 category = "dev"
@@ -399,7 +399,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "07987ecfa719080ce7cbbf651ff69eeab2355d72cfa4f2e20f54841339ba1a68"
+content-hash = "1b609ee37338505f81232ffce2cb0318faa9d35c332d5a050ce6cae9dce1a76e"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -609,8 +609,8 @@ pycodestyle = [
     {file = "pycodestyle-2.6.0.tar.gz", hash = "sha256:c58a7d2815e0e8d7972bf1803331fb0152f867bd89adf8a01dfd55085434192e"},
 ]
 pyfakefs = [
-    {file = "pyfakefs-4.3.0-py3-none-any.whl", hash = "sha256:dee4fc0ee691b865077f18a6d11f8fb68002bd8c346b73df259c76774c6604e1"},
-    {file = "pyfakefs-4.3.0.tar.gz", hash = "sha256:4623770fb9994887e883d4193cc6a3746014b4287f94a73e0de04a0aa3c8a56a"},
+    {file = "pyfakefs-4.1.0-py3-none-any.whl", hash = "sha256:1eae36f920e54a7f9f50789f21ab77ceb481ef697bec66de6495ecdf5db44f0f"},
+    {file = "pyfakefs-4.1.0.tar.gz", hash = "sha256:bbbaa8b622fa50751a5839350fff3c1f8b1bbd364cd40fd0c7442e18fe5edc8e"},
 ]
 pyflakes = [
     {file = "pyflakes-2.2.0-py2.py3-none-any.whl", hash = "sha256:0d94e0e05a19e57a99444b6ddcf9a6eb2e5c68d3ca1e98e90707af8152c90a92"},
