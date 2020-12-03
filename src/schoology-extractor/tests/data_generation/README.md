@@ -16,27 +16,29 @@ generator only uses a subset of the extractor configuration values.
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
 
-
 ## Additional Configuration
 
-The number of entities to generate are currently hardcoded in the main.py file, requiring an edit to change.
-For each type of entity, certain values (e.g. valid email domains) may be hardcoded at the top of file where
-data generation takes place (e.g. users.py for Users).
+The number of entities to generate are currently hardcoded in the `__main__`.py
+file, requiring an edit to change. For each type of entity, certain values (e.g.
+valid email domains) may be hardcoded at the top of file where data generation
+takes place (e.g. `users.py` for Users).
 
-When possible, API loaders for each type of entity will have code to roll back entity creation. This can
-be enabled/disabled by commenting out the usage of _rollback* functions.
+When possible, API loaders for each type of entity will have code to roll back
+entity creation. This can be enabled/disabled by commenting out the usage of
+_rollback* functions.
 
 ## Execution
 
 Execute the extractor with CLI args:
 
 ```bash
-poetry run python.exe tests/data_generation/main.py -k your-schoology-client-key -s your-schoology-client-secret
+poetry run python.exe tests/data_generation -k your-schoology-client-key -s your-schoology-client-secret
 ```
 
 Alternately, run with environment variables or `.env` file:
+
 ```bash
-poetry run python.exe tests/data_generation/main.py
+poetry run python.exe tests/data_generation
 ```
 
 ## Output
