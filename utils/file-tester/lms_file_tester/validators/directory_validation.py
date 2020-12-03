@@ -23,7 +23,19 @@ def _check_for_directory(input_directory: str) -> Optional[str]:
 
 
 def validate_base_directory_structure(input_directory: str) -> List[str]:
+    """
+    Validates that a base directory contains the Users and Sections directories.
 
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     is_missing = _check_for_directory(input_directory)
     if is_missing:
         return [is_missing]
@@ -44,7 +56,23 @@ def validate_base_directory_structure(input_directory: str) -> List[str]:
 def validate_section_directory_structure(
     input_directory: str, section_id: Union[str, int]
 ) -> List[str]:
+    """
+    Validates that a Section directory contains the section associations,
+    section activities, assignments, and grades directories. Ignores
+    attendance events, which are only for Schoology.
 
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+    section_id: int
+        Section identifier.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     is_missing = _check_for_directory(input_directory)
     if is_missing:
         return [is_missing]
@@ -68,6 +96,21 @@ def validate_section_directory_structure(
 def validate_assignment_directory_structure(
     input_directory: str, section_id: Union[str, int], assignment_id: Union[str, int]
 ) -> List[str]:
+    """
+    Validates that an Assignments directory contains the submissions directory.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+    section_id: int
+        Section identifier.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
 
     base_dir = os.path.split(dr.get_assignments_directory(input_directory, section_id))[0]
 
@@ -85,10 +128,20 @@ def validate_assignment_directory_structure(
 
 
 def validate_system_activities_directory_structure(input_directory: str) -> List[str]:
+    """
+    Validates that a System Activities directory exists and contains at least
+    one sub-directory with a properly-formated name.
 
-    # Goal is to ensure that any sub-directories are named appropriately,
-    # with format like `date=2020-12-01`.
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
 
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     dir = dr.get_system_activities_directory(input_directory)
     is_missing = _check_for_directory(dir)
     if is_missing:

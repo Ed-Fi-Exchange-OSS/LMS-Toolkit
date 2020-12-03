@@ -28,6 +28,21 @@ def _read_csv(file: str, nrows: Union[int, None] = None) -> pd.DataFrame:
 
 
 def get_all_users(base_directory: str, nrows: Union[int, None] = None) -> pd.DataFrame:
+    """
+    Reads the most recent users file into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     file = fr.get_users_file(base_directory)
 
     if file is not None:
@@ -39,6 +54,23 @@ def get_all_users(base_directory: str, nrows: Union[int, None] = None) -> pd.Dat
 def get_all_system_activities(
     base_directory: str, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent system activities files into a Pandas DataFrame.
+    Combines data from the latest file in all existing directories and
+    removes duplicates.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     files = fr.get_system_activities_files(base_directory)
 
     if files is None or len(files) == 0:
@@ -48,12 +80,30 @@ def get_all_system_activities(
     for f in files:
         df_list.append(_read_csv(f, nrows))
 
-    return pd.concat(df_list)
+    df = pd.concat(df_list)
+    df.drop_duplicates(inplace=True)
+
+    return df
 
 
 def get_all_sections(
     base_directory: str, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent sections file into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     file = fr.get_sections_file(base_directory)
 
     if file is not None:
@@ -65,6 +115,24 @@ def get_all_sections(
 def get_section_associations(
     base_directory: str, section_id: int, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent section associations file for the given section into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    section_id: int
+        Section identifier.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     file = fr.get_section_associations_file(base_directory, section_id)
 
     if file is not None:
@@ -99,6 +167,24 @@ def _get_data_for_section(
 def get_all_section_associations(
     base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent section associations files for all given sections into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    sections: pd.DataFrame
+        DataFrame containing sections read from a sections file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     return _get_data_for_section(
         base_directory, sections, get_section_associations, nrows
     )
@@ -107,6 +193,24 @@ def get_all_section_associations(
 def get_section_activities(
     base_directory: str, section_id: int, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent section activities file for the given section into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    section_id: int
+        Section identifier.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     file = fr.get_section_activities_file(base_directory, section_id)
 
     if file is not None:
@@ -118,6 +222,24 @@ def get_section_activities(
 def get_all_section_activities(
     base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent section activities files for all given sections into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    sections: pd.DataFrame
+        DataFrame containing sections read from a sections file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     return _get_data_for_section(
         base_directory, sections, get_section_activities, nrows
     )
@@ -126,6 +248,24 @@ def get_all_section_activities(
 def get_assignments(
     base_directory: str, section_id: int, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent assignments file for the given section into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    section_id: int
+        Section identifier.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     file = fr.get_assignments_file(base_directory, section_id)
 
     if file is not None:
@@ -137,6 +277,24 @@ def get_assignments(
 def get_all_assignments(
     base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent assignments files for all given sections into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    sections: pd.DataFrame
+        DataFrame containing sections read from a sections file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     return _get_data_for_section(base_directory, sections, get_assignments, nrows)
 
 
@@ -146,6 +304,26 @@ def get_submissions(
     assignment_id: int,
     nrows: Union[int, None] = None,
 ) -> pd.DataFrame:
+    """
+    Reads the most recent submissions file for the given section into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    section_id: int
+        Section identifier.
+    assignment_id: int
+        Assignment identifier.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     file = fr.get_submissions_file(base_directory, section_id, assignment_id)
 
     if file is not None:
@@ -157,6 +335,24 @@ def get_submissions(
 def get_all_submissions(
     base_directory: str, assignments: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent section associations files for all given sections into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    assignments: pd.DataFrame
+        DataFrame containing assignments read from an assignments file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
 
     if assignments.empty:
         logger.info(
@@ -178,6 +374,24 @@ def get_all_submissions(
 def get_grades(
     base_directory: str, section_id: int, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent grades file for the given section into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    section_id: int
+        Section identifier.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     file = fr.get_grades_file(base_directory, section_id)
 
     if file is not None:
@@ -189,12 +403,48 @@ def get_grades(
 def get_all_grades(
     base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent grades files for all given sections into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    sections: pd.DataFrame
+        DataFrame containing sections read from a sections file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     return _get_data_for_section(base_directory, sections, get_grades, nrows)
 
 
 def get_attendance_events(
     base_directory: str, section_id: int, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent attendance events file for the given section into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    section_id: int
+        Section identifier.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     file = fr.get_attendance_events_file(base_directory, section_id)
 
     if file is not None:
@@ -206,4 +456,22 @@ def get_attendance_events(
 def get_all_attendance_events(
     base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
 ) -> pd.DataFrame:
+    """
+    Reads the most recent attendance events files for all given sections into
+    a Pandas DataFrame.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+    sections: pd.DataFrame
+        DataFrame containing sections read from a sections file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
     return _get_data_for_section(base_directory, sections, get_attendance_events, nrows)

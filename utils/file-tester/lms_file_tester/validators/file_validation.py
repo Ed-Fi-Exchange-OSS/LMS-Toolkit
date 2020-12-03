@@ -56,6 +56,20 @@ def _validate_date_formats(
 
 
 def validate_users_file(input_directory: str) -> List[str]:
+    """
+    Validates that the latest users file has the expected columns and all
+    columns whose names end with `Date` or `DateTime` have the proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_users(input_directory, nrows=2)
 
     if df.empty:
@@ -84,6 +98,20 @@ def validate_users_file(input_directory: str) -> List[str]:
 
 
 def validate_sections_file(input_directory: str) -> List[str]:
+    """
+    Validates that the latest sections file has the expected columns and all
+    columns whose names end with `Date` or `DateTime` have the proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_sections(input_directory, nrows=2)
 
     if df.empty:
@@ -112,6 +140,20 @@ def validate_sections_file(input_directory: str) -> List[str]:
 
 
 def validate_system_activities_file(input_directory: str) -> List[str]:
+    """
+    Validates that the latest system activities file has the expected columns and all
+    columns whose names end with `Date` or `DateTime` have the proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_system_activities(input_directory, nrows=2)
 
     if df.empty:
@@ -143,6 +185,23 @@ def validate_system_activities_file(input_directory: str) -> List[str]:
 def validate_section_associations_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
+    """
+    Validates that the latest section associations file has the expected
+    columns and all columns whose names end with `Date` or `DateTime` have the
+    proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+    sections: pd.DataFrame
+        DataFrame containing section information read from a Sections file.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_section_associations(input_directory, sections, nrows=2)
 
     if df.empty:
@@ -173,6 +232,23 @@ def validate_section_associations_file(
 def validate_section_activities_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
+    """
+    Validates that the latest section activities file has the expected
+    columns and all columns whose names end with `Date` or `DateTime` have the
+    proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+    sections: pd.DataFrame
+        DataFrame containing section information read from a Sections file.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_section_activities(input_directory, sections, nrows=2)
 
     if df.empty:
@@ -205,6 +281,23 @@ def validate_section_activities_file(
 def validate_assignments_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
+    """
+    Validates that the latest assignments file has the expected
+    columns and all columns whose names end with `Date` or `DateTime` have the
+    proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+    sections: pd.DataFrame
+        DataFrame containing section information read from a Sections file.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_assignments(input_directory, sections, nrows=2)
 
     if df.empty:
@@ -239,6 +332,23 @@ def validate_assignments_file(
 def validate_submissions_file(
     input_directory: str, assignments: pd.DataFrame
 ) -> List[str]:
+    """
+    Validates that the latest submissions file has the expected
+    columns and all columns whose names end with `Date` or `DateTime` have the
+    proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+    assignments: pd.DataFrame
+        DataFrame containing assignments information read from a Assignments file.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_submissions(input_directory, assignments, nrows=2)
 
     if df.empty:
@@ -268,6 +378,23 @@ def validate_submissions_file(
 
 
 def validate_grades_file(input_directory: str, sections: pd.DataFrame) -> List[str]:
+    """
+    Validates that the latest grades file has the expected
+    columns and all columns whose names end with `Date` or `DateTime` have the
+    proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+    sections: pd.DataFrame
+        DataFrame containing section information read from a Sections file.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_grades(input_directory, sections, nrows=2)
 
     if df.empty:
@@ -296,6 +423,23 @@ def validate_grades_file(input_directory: str, sections: pd.DataFrame) -> List[s
 def validate_attendance_events_file(
     input_directory: str, sections: pd.DataFrame
 ) -> List[str]:
+    """
+    Validates that the latest attendance events file has the expected
+    columns and all columns whose names end with `Date` or `DateTime` have the
+    proper format.
+
+    Parameters
+    ----------
+    input_directory: str
+        Base / parent directory containing files created by an LMS extractor.
+    sections: pd.DataFrame
+        DataFrame containing section information read from a Sections file.
+
+    Returns
+    -------
+    List[str]
+        List containing detailed error messages, if any.
+    """
     df = fread.get_all_attendance_events(input_directory, sections, nrows=2)
 
     if df.empty:
