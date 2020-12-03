@@ -24,15 +24,6 @@ def _get_newest_file(directory: Optional[str]) -> Optional[str]:
     return None
 
 
-# def _get_file_for_section(
-#     base_directory: str, section_id: int, file_type: str
-# ) -> Optional[str]:
-#     return _get_newest_file(
-
-#         os.path.join(base_directory, f"section={section_id}", file_type)
-#     )
-
-
 def get_users_file(base_directory: str) -> Optional[str]:
     return _get_newest_file(dr.get_users_directory(base_directory))
 
