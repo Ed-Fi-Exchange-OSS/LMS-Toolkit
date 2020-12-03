@@ -21,6 +21,7 @@ object FileTesterProject : Project({
             +:.teamcity => .teamcity
             +:%project.directory% => %project.directory%
             +:eng => eng
+            +:src/file-utils => src/file-utils
         """.trimIndent())
     }
 })
