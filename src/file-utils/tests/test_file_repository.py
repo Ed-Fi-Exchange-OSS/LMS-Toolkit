@@ -82,9 +82,10 @@ def describe_given_filesystem_does_not_exist():
     @pytest.fixture
     def init_fs(fs):
         # Fake as Linux so that all slashes in these test are forward
-        fs.path_separator = "/"
-        fs.is_windows_fs = False
-        fs.is_macos = False
+        # fs.path_separator = "/"
+        # fs.is_windows_fs = False
+        # fs.is_macos = False
+        fs.os = "linux"
 
     def describe_when_getting_sections_file_file():
         def it_should_return_None(fs, init_fs):
