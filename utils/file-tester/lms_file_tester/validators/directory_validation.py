@@ -11,7 +11,7 @@ from typing import List, Optional, Union
 # The following is a hack to load a local package above this package's base
 # directory, so that this test utility does not need to rely on downloading a
 # published version of the LMS file utils.
-sys.path.append(os.path.join("..", "file-utils"))
+sys.path.append(os.path.join("..", "..", "src", "file-utils"))
 from lms_file_utils import directory_repository as dr  # type: ignore # noqa: E402
 
 
