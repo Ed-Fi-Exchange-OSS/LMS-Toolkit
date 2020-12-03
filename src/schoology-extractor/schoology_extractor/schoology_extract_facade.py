@@ -239,9 +239,9 @@ class SchoologyExtractFacade:
 
         return events_df
 
-    def get_user_activities(self, section_id: int) -> pd.DataFrame:
+    def get_section_activities(self, section_id: int) -> pd.DataFrame:
         """
-        Gets all Schoology user-activities for a section, in the Ed-Fi UDM format.
+        Gets all Schoology section-activities for a section, in the Ed-Fi UDM format.
 
         Parameters
         ----------
@@ -250,7 +250,7 @@ class SchoologyExtractFacade:
 
         Returns
         -------
-        DataFrame containing the user activities
+        DataFrame containing the section activities
         """
 
         discussions = self._client.get_discussions(section_id)
