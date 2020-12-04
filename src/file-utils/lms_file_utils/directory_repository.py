@@ -6,11 +6,13 @@
 import os
 from typing import Optional, Union
 
+import lms_file_utils.constants as c
+
 
 def _get_directory_for_section(
     base_directory: str, section_id: Union[str, int], file_type: str
 ) -> Optional[str]:
-    return os.path.join(base_directory, f"section={section_id}", file_type)
+    return os.path.join(base_directory, f"{c.SECTION}={section_id}", file_type)
 
 
 def get_users_directory(base_directory: str) -> Optional[str]:
@@ -27,7 +29,7 @@ def get_users_directory(base_directory: str) -> Optional[str]:
     str or None
         Directory as string or None if the users directory does not exist.
     """
-    return os.path.join(base_directory, "users")
+    return os.path.join(base_directory, c.USERS)
 
 
 def get_sections_directory(base_directory: str) -> Optional[str]:
@@ -44,7 +46,7 @@ def get_sections_directory(base_directory: str) -> Optional[str]:
     str or None
         Directory as string or None if the sections directory does not exist.
     """
-    return os.path.join(base_directory, "sections")
+    return os.path.join(base_directory, c.SECTIONS)
 
 
 def get_system_activities_directory(base_directory: str) -> Optional[str]:
@@ -61,7 +63,7 @@ def get_system_activities_directory(base_directory: str) -> Optional[str]:
     str or None
         Directory as string or None if the system activities directory does not exist.
     """
-    return os.path.join(base_directory, "system-activities")
+    return os.path.join(base_directory, c.SYSTEM_ACTIVITIES)
 
 
 def get_section_associations_directory(
@@ -83,7 +85,7 @@ def get_section_associations_directory(
         Directory as string or None if the section associations directory does not exist.
     """
     return _get_directory_for_section(
-        base_directory, section_id, "section-associations"
+        base_directory, section_id, c.SECTION_ASSOCIATIONS
     )
 
 
@@ -105,7 +107,7 @@ def get_section_activities_directory(
     str or None
         Directory as string or None if the section activities directory does not exist.
     """
-    return _get_directory_for_section(base_directory, section_id, "section-activities")
+    return _get_directory_for_section(base_directory, section_id, c.SECTION_ACTIVITIES)
 
 
 def get_assignments_directory(base_directory: str, section_id: int) -> Optional[str]:
@@ -124,7 +126,7 @@ def get_assignments_directory(base_directory: str, section_id: int) -> Optional[
     str or None
         Directory as string or None if the assignments directory does not exist.
     """
-    return _get_directory_for_section(base_directory, section_id, "assignments")
+    return _get_directory_for_section(base_directory, section_id, c.ASSIGNMENTS)
 
 
 def get_grades_directory(base_directory: str, section_id: int) -> Optional[str]:
@@ -143,7 +145,7 @@ def get_grades_directory(base_directory: str, section_id: int) -> Optional[str]:
     str or None
         Directory as string or None if the grades directory does not exist.
     """
-    return _get_directory_for_section(base_directory, section_id, "grades")
+    return _get_directory_for_section(base_directory, section_id, c.GRADES)
 
 
 def get_submissions_directory(
@@ -167,13 +169,13 @@ def get_submissions_directory(
         Directory as string or None if the submissions directory does not exist.
     """
     assignments = _get_directory_for_section(
-        base_directory, section_id, f"assignment={assignment_id}"
+        base_directory, section_id, f"{c.ASSIGNMENT}={assignment_id}"
     )
 
     if assignments is None:
         return None
 
-    return os.path.join(assignments, "submissions")
+    return os.path.join(assignments, c.SUBMISSIONS)
 
 
 def get_attendance_events_directory(
@@ -194,4 +196,4 @@ def get_attendance_events_directory(
     str or None
         Directory as string or None if the attendance events directory does not exist.
     """
-    return _get_directory_for_section(base_directory, section_id, "attendance-events")
+    return _get_directory_for_section(base_directory, section_id, c.ATTENDANCE_EVENTS)

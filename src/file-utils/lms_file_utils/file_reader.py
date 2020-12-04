@@ -9,7 +9,7 @@ from typing import Callable, Union
 import pandas as pd
 
 import lms_file_utils.file_repository as fr
-
+import lms_file_utils.constants as c
 
 logger = logging.getLogger(__name__)
 
@@ -155,7 +155,7 @@ def _get_data_for_section(
         )
         return _default()
 
-    for _, section_id in sections[["SourceSystemIdentifier"]].itertuples():
+    for _, section_id in sections[[c.SOURCE_SYSTEM_IDENTIFIER]].itertuples():
         sa = callback(base_directory, section_id, nrows)
 
         if not sa.empty:
@@ -361,7 +361,7 @@ def get_all_submissions(
         return _default()
 
     df = pd.DataFrame()
-    columns = ["SourceSystemIdentifier", "LMSSectionSourceSystemIdentifier"]
+    columns = [c.SOURCE_SYSTEM_IDENTIFIER, c.LMS_SECTION_SOURCE_SYSTEM_IDENTIFIER]
     for _, assignment_id, section_id in assignments[columns].itertuples():
         s = get_submissions(base_directory, section_id, assignment_id, nrows)
 
