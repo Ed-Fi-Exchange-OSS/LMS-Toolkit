@@ -1,0 +1,8 @@
+[MESSAGES CONTROL]
+disable =
+    C0330,
+    C0326,
+    fixme,
+
+[format]
+max-line-length = 110
