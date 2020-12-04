@@ -49,7 +49,8 @@ def _validate_date_formats(
     cols = list(df.columns)
 
     for column in [c for c in cols if (c.endswith("Date") or c.endswith("DateTime"))]:
-        if df.iloc[0][column] is not None and date_pattern.match(str(df.iloc[0][column])) is None:
+        test_value = df.iloc[0][column]
+        if pd.notna(test_value) and date_pattern.match(str(test_value)) is None:
             errors.append(f"{file_type} file has an invalid timestamp format for {column}")
 
     return errors
