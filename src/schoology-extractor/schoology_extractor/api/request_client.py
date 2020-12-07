@@ -189,7 +189,7 @@ class RequestClient:
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
-    def bulk_delete(self, resource: str, ids: str) -> dict:
+    def bulk_delete(self, resource: str, parameters: str) -> dict:
         """
         Send a bulk HTTP DELETE request.
 
@@ -197,9 +197,9 @@ class RequestClient:
         ----------
         resource : str
             The resource endpoint that you want to DELETE to.
-        ids : str
-            A comma-separated list of Schoology generated ids of the specific resources to delete.
-            Note that 50 is the maximum number of ids permitted by the API for a bulk operation.
+        parameters : str
+            A URL parameter string required for the bulk delete operation,
+            typically a list of ids of the resources to delete
 
         Returns
         -------
@@ -213,7 +213,7 @@ class RequestClient:
             attempt to check status codes for each individual operation.
         """
         response = self.oauth.delete(
-            url=f"{self.base_url}{resource}?uids={ids}&email_notification=0",
+            url=f"{self.base_url}{resource}?{parameters}",
             headers=self._request_header,
             auth=self.oauth.auth,
         )
@@ -224,6 +224,44 @@ class RequestClient:
             )
 
         return response.json()
+
+    @retry(
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        max_calls_total=REQUEST_RETRY_COUNT,
+        retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
+    )
+    def delete(self, resource: str, id: str):
+        """
+        Send a HTTP DELETE request.
+
+        Parameters
+        ----------
+        resource : str
+            The resource endpoint that you want to DELETE to.
+        id : str
+            A Schoology generated id of the specific resource to delete.
+
+        Returns
+        -------
+        dict
+            A parsed response from the server
+
+        Raises
+        -------
+        RuntimeError
+            If the bulk DELETE operation as a whole is unsuccessful.  Does not
+            attempt to check status codes for each individual operation.
+        """
+        response = self.oauth.delete(
+            url=f"{self.base_url}{resource}/{id}",
+            headers=self._request_header,
+            auth=self.oauth.auth,
+        )
+
+        if response.status_code != HTTPStatus.NO_CONTENT:
+            raise RuntimeError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
 
     def get_assignments(
         self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
