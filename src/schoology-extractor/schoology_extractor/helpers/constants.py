@@ -21,4 +21,4 @@ class RESOURCE_NAMES:
     SUBMISSION = 'submissions'
     ENROLLMENT = "enrollment"
     ATTENDANCE_EVENTS = 'attendance_events'
-    USER_ACTIVITIES = 'user_activities'
+    SECTION_ACTIVITIES = 'section_activities'

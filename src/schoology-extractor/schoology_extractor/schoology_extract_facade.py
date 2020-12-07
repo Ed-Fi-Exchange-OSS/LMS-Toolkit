@@ -263,7 +263,7 @@ class SchoologyExtractFacade:
             return pd.DataFrame()
 
         sync_replies = sync.sync_resource(
-            RESOURCE_NAMES.USER_ACTIVITIES,
+            RESOURCE_NAMES.SECTION_ACTIVITIES,
             self._db_engine,
             replies
             )

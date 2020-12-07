@@ -58,7 +58,7 @@ def get_assignment_file_path(output_directory: str, section_id: int) -> str:
     return os.path.join(base_dir, _get_file_name())
 
 
-def get_user_activities_file_path(output_directory: str, section_id: int) -> str:
+def get_section_activities_file_path(output_directory: str, section_id: int) -> str:
     """
     Builds the expected filesystem path (directory + file name) for a new
     user activity file.
