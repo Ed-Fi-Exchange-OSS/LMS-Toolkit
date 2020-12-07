@@ -20,6 +20,5 @@ def validate_multi_status(multi_response: List[Dict]):
     RuntimeError
         If any individual operation had a non-OK response code.
     """
-    for response in multi_response:
-        if response["response_code"] != HTTPStatus.OK:
-            raise RuntimeError(str(multi_response))
+    if any(response["response_code"] != HTTPStatus.OK for response in multi_response):
+        raise RuntimeError(str(multi_response))

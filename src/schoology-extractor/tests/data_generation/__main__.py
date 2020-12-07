@@ -4,7 +4,6 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-import traceback
 from sys import stdout, argv
 
 from dotenv import load_dotenv
@@ -46,7 +45,7 @@ grading_periods = []
 try:
     grading_periods = get_gradingperiods(request_client)
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
 
 
 NUMBER_OF_USERS = 5
@@ -54,7 +53,7 @@ users = []
 try:
     users = generate_and_load_users(request_client, NUMBER_OF_USERS)
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
 
 
 NUMBER_OF_COURSES = 5
@@ -62,7 +61,7 @@ courses = []
 try:
     courses = generate_and_load_courses(request_client, NUMBER_OF_COURSES)
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
 
 
 NUMBER_OF_SECTIONS_PER_COURSE = 3
@@ -75,7 +74,7 @@ try:
         grading_periods=grading_periods,
     )
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
 
 
 NUMBER_OF_USERS_PER_SECTION = 3
@@ -88,28 +87,28 @@ try:
         users=users,
     )
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
 
 
 try:
     rollback_loaded_enrollments(request_client, enrollments)
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
 
 
 try:
     rollback_loaded_sections(request_client, sections)
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
 
 
 try:
     rollback_loaded_courses(request_client, courses)
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
 
 
 try:
     rollback_loaded_users(request_client, users)
 except Exception as ex:
-    traceback.print_exception(type(ex), ex, ex.__traceback__)
+    logger.exception(ex)
