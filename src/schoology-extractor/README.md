@@ -52,14 +52,14 @@ Valid log levels:
 Execute the extractor with CLI args:
 
 ```bash
-poetry run python.exe schoology_extractor/main.py -k your-schoology-client-key -s your-schoology-client-secret
+poetry run python.exe schoology_extractor -k your-schoology-client-key -s your-schoology-client-secret
 ```
 
 For detailed help, execute `poetry run python schoology_extractor/main.py -h`.
 Alternately, run with environment variables or `.env` file:
 
 ```bash
-poetry run python.exe schoology_extractor/main.py
+poetry run python.exe schoology_extractor
 ```
 
 ## Output
