@@ -21,6 +21,7 @@ from schoology_extractor.mapping import assignments as assignmentsMap
 from schoology_extractor.mapping import submissions as submissionsMap
 from schoology_extractor.mapping import attendance as attendanceMap
 from schoology_extractor.mapping import discussion_replies as discussionRepliesMap
+from schoology_extractor.mapping import discussions as discussionsMap
 from schoology_extractor.helpers import sync
 
 
@@ -467,12 +468,14 @@ def describe_when_getting_attendance_events():
 
 def describe_when_getting_user_activities():
     @pytest.fixture
-    def system() -> Tuple[pd.DataFrame, Mock]:
+    def system() -> dict:
         request_client = Mock(spec=RequestClient)
         page_size = 1
 
         discussionRepliesMap.map_to_udm = Mock()
         discussionRepliesMap.map_to_udm.return_value = pd.DataFrame()
+        discussionsMap.map_to_udm = Mock()
+        discussionsMap.map_to_udm.return_value = pd.DataFrame()
 
         section_id = 1234
         get_discussions_mock = request_client.get_discussions
@@ -487,16 +490,20 @@ def describe_when_getting_user_activities():
         service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
         # Act
-        result = service.get_user_activities(section_id)
+        result = service.get_section_activities(section_id)
 
-        return result, discussionRepliesMap.map_to_udm
+        return {
+            'result': result,
+            'replies_mock': discussionRepliesMap.map_to_udm,
+            'discussions_mock': discussionsMap.map_to_udm
+        }
 
     def it_should_return_a_data_frame(system):
-        result, _ = system
 
-        assert isinstance(result, pd.DataFrame)
+        assert isinstance(system['result'], pd.DataFrame)
 
-    def it_should_map_to_the_udm(system):
-        _, mapper = system
+    def it_should_map_replies_to_the_udm(system):
+        assert system['replies_mock'].called
 
-        mapper.assert_called_once()
+    def it_should_map_discussions_to_the_udm(system):
+        assert system['discussions_mock'].called
