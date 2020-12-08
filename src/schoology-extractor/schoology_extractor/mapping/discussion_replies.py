@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from datetime import datetime
 import pandas as pd
 
 from . import constants
@@ -55,7 +56,7 @@ def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int, discussion_
         "parent_id"
         ]].copy()
 
-    df["created"] = None
+    df["created"] = df["created"].apply(lambda x: datetime.fromtimestamp(int(x)).strftime("%Y-%m-%d %H:%M:%S"))
     df["status"] = df["status"].apply(lambda x: 'active' if int(x) == 1 else 'deleted')
     df["id"] = df["id"].apply(lambda x: f'sdr#{x}')
     df["ActivityType"] = DISCUSSION_REPLIES_TYPE

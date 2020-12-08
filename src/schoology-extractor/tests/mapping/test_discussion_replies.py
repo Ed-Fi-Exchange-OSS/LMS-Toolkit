@@ -10,6 +10,7 @@ import pytest
 from schoology_extractor.mapping.discussion_replies import map_to_udm
 
 FAKE_SECTION_ID = 1
+FAKE_DISCUSSION_ID = 12
 
 
 class Test_mapping_schoology_users_to_udm:
@@ -26,7 +27,7 @@ class Test_mapping_schoology_users_to_udm:
         )
 
         # Act
-        cls.result = map_to_udm(responses_df, FAKE_SECTION_ID)
+        cls.result = map_to_udm(responses_df, FAKE_SECTION_ID, FAKE_DISCUSSION_ID)
 
     # Each assertion is a separate method
     def test_then_output_has_two_rows(self):
@@ -37,24 +38,21 @@ class Test_mapping_schoology_users_to_udm:
         [
             "SourceSystemIdentifier",
             "SourceSystem",
-            "LMSUserIdentifier",
-            "LMSSectionIdentifier",
-            "EntityStatus",
+            "ActivityType",
             "ActivityDateTime",
             "ActivityStatus",
-            "ActivityType",
-            "Content",
-            "AssignmentIdentifier",
+            "ParentSourceSystemIdentifier",
             "ActivityTimeInMinutes",
-            "CreateDate",
-            "LastModifiedDate",
+            "EntityStatus",
+            "LMSUserIdentifier",
+            "LMSSectionIdentifier"
         ],
     )
     def test_then_output_has_column(self, input):
         assert input in self.result.columns
 
     def test_then_source_system_identifier_is_mapped(self):
-        assert self.result.at[0, "SourceSystemIdentifier"] == "824849694"
+        assert self.result.at[0, "SourceSystemIdentifier"] == "sdr#824849694"
 
     def test_then_source_system_is_mapped(self):
         assert self.result.at[0, "SourceSystem"] == "Schoology"
@@ -75,7 +73,4 @@ class Test_mapping_schoology_users_to_udm:
         assert self.result.at[0, "ActivityStatus"] == "active"
 
     def test_then_activity_type_is_mapped(self):
-        assert self.result.at[0, "ActivityType"] == "Discussion Reply"
-
-    def test_then_content_is_mapped(self):
-        assert self.result.at[0, "Content"] == '''Mary Archer's response to ""First Algebra Discussion Topic.""'''
+        assert self.result.at[0, "ActivityType"] == "discussion-reply"
