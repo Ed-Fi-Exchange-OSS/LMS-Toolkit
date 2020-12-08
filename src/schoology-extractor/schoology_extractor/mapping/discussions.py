@@ -3,7 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from datetime import datetime
 import pandas as pd
 
 from . import constants
@@ -13,13 +12,13 @@ DISCUSSION_TYPE = "Discussion"
 
 def map_to_udm(discussions_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     """
-    Maps a DataFrame containing Schoology section associations (enrollments)
+    Maps a DataFrame containing Schoology Discussion threads
     into the Ed-Fi LMS Unified Data Model (UDM) format.
 
     Parameters
     ----------
-    discussion_replies_df: DataFrame
-        Pandas DataFrame containing Schoology assignments for a section
+    discussions_df: DataFrame
+        Pandas DataFrame containing Schoology discussions
 
     Returns
     -------
@@ -47,31 +46,41 @@ def map_to_udm(discussions_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         LastModifieDate: Date/time when the record was modified, or when first retrieved
     """
     df = discussions_df[[
-        "created",
-        "status",
+        "completed",
+        "graded",
+        "available",
+        "published",
         "uid",
         "id",
         "CreateDate",
         "LastModifiedDate"
         ]].copy()
 
-    df["created"] = df["created"].apply(lambda x: datetime.fromtimestamp(int(x)).strftime("%Y-%m-%d %H:%M:%S"))
-    df["status"] = df["status"].apply(lambda x: 'active' if int(x) == 1 else 'deleted')
+    df["created"] = df["CreateDate"]
+    df["status"] = None
+    df["status"] = df["published"].apply(lambda x: 'published' if x == 1 else df["status"])
+    df["status"] = df["available"].apply(lambda x: 'available' if x == 1 else df["status"])
+    df["status"] = df["graded"].apply(lambda x: 'graded' if x == 1 else df["status"])
+    df["status"] = df["completed"].apply(lambda x: 'completed' if x == 1 else df["status"])
+
+    df["id"] = df["id"].apply(lambda x: f'sd#{x}')
     df["ActivityType"] = DISCUSSION_TYPE
     df["LMSSectionIdentifier"] = section_id
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
 
-    df["AssignmentIdentifier"] = None
     df["ActivityTimeInMinutes"] = None
+    df["ParentSourceSystemIdentifier"] = None
     df["EntityStatus"] = constants.ACTIVE
+
+    df.drop(['completed', 'graded', 'available', 'published'], axis=1, inplace=True)
 
     df.rename(
         columns={
             "created": "ActivityDateTime",
-            "status": "ActivityStatus",
             "id": "SourceSystemIdentifier",
-            "uid": "LMSUserIdentifier"
+            "uid": "LMSUserIdentifier",
+            "status": "ActivityStatus",
         },
         inplace=True,
     )

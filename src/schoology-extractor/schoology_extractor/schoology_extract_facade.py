@@ -19,6 +19,7 @@ from .mapping import sections as sectionsMap
 from .mapping import section_associations as sectionAssocMap
 from .mapping import attendance as attendanceMap
 from .mapping import discussion_replies as discussionRepliesMap
+from .mapping import discussions as discussionsMap
 from .mapping import submissions as submissionsMap
 
 
@@ -255,17 +256,29 @@ class SchoologyExtractFacade:
 
         discussions = self._client.get_discussions(section_id)
         replies: list = []
+        mapped_replies = pd.DataFrame()
         for discussion in discussions:
             discussion_id = discussion["id"]
             replies = replies + self._client.get_discussion_replies(section_id, discussion_id)
+            sync_replies = sync.sync_resource(
+                RESOURCE_NAMES.DISCUSSION_REPLIES,
+                self._db_engine,
+                replies
+            )
+            current_replies = discussionRepliesMap.map_to_udm(pd.DataFrame(sync_replies), section_id, discussion_id)
+            if mapped_replies.empty:
+                mapped_replies = current_replies
+            else:
+                mapped_replies.append(current_replies)
 
         if len(replies) == 0:
             return pd.DataFrame()
 
-        sync_replies = sync.sync_resource(
-            RESOURCE_NAMES.SECTION_ACTIVITIES,
+        sync_discussions = sync.sync_resource(
+            RESOURCE_NAMES.DISCUSSIONS,
             self._db_engine,
-            replies
+            discussions
             )
 
-        return discussionRepliesMap.map_to_udm(pd.DataFrame(sync_replies), section_id)
+        mapped_discussions = discussionsMap.map_to_udm(pd.DataFrame(sync_discussions), section_id)
+        return mapped_discussions.append(mapped_replies)
