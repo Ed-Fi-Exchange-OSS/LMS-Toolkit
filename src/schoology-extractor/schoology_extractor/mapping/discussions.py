@@ -46,6 +46,10 @@ def map_to_udm(discussions_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         CreateDate: Date/time at which the record was first retrieved
         LastModifieDate: Date/time when the record was modified, or when first retrieved
     """
+
+    if discussions_df.empty:
+        return discussions_df
+
     df = discussions_df[
         [
             "completed",
