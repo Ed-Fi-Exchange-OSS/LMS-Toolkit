@@ -18,7 +18,7 @@ IS_ACTIVE = "1"
 
 
 def rollback_loaded_enrollments(
-    request_client: RequestClient, creation_response: List[Dict]
+    request_client: RequestClient, response_dict: Dict[str, List[Dict]]
 ):
     """
     Delete already loaded enrollments via the Schoology API.
@@ -28,24 +28,23 @@ def rollback_loaded_enrollments(
     ----------
     request_client : RequestClient
         A RequestClient initialized for access to the Schoology API
-    creation_response: List[Dict]
-        A list of JSON-like response objects from a successful enrollment load operation
+    response_dict: Dict[str, List[Dict]]
+        A Dict of mappings from Schoology section id to a list of JSON-like response objects
+        from a successful enrollment load operation
     """
-    logger.info(
-        "**** Rolling back %s enrollments via Schoology API - for testing purposes",
-        len(creation_response),
-    )
+    logger.info("**** Rolling back enrollments via Schoology API - for testing purposes")
+    for section_id, creation_response in response_dict.items():
+        logger.info("**** Deleting %s enrollments for section %s", len(creation_response), section_id)
+        ids: str = ",".join(
+            map(lambda enrollment: str(enrollment["id"]), creation_response)
+        )
 
-    ids: str = ",".join(
-        map(lambda enrollment: str(enrollment["id"]), creation_response)
-    )
+        delete_response = request_client.bulk_delete(
+            "enrollments", f"enrollment_ids={ids}"
+        )["enrollments"]["enrollment"]
 
-    delete_response = request_client.bulk_delete(
-        "enrollments", f"enrollment_ids={ids}"
-    )["enrollments"]["enrollment"]
-
-    validate_multi_status(delete_response)
-    logger.info("**** Successfully deleted %s enrollments", len(delete_response))
+        validate_multi_status(delete_response)
+        logger.info("**** Successfully deleted %s enrollments", len(delete_response))
 
 
 def load_enrollments(
@@ -98,7 +97,7 @@ def generate_and_load_enrollments(
     users_per_section_count: int,
     sections: List[Dict],
     users: List[Dict],
-) -> List[Dict]:
+) -> Dict[str, List[Dict]]:
     """
     Generate and load a number of enrollments into the Schoology API.
 
@@ -106,21 +105,21 @@ def generate_and_load_enrollments(
     ----------
     request_client : RequestClient
         A RequestClient initialized for access to the Schoology API
-    section_per_course_count : int
-        The number of sections generated per course
+    users_per_section_count : int
+        The number of users to be in each section
     sections: List[Dict]
         A list of JSON-like section objects from a bulk create response
     users: List[Dict]
-        A list of JSON-like course objects from a bulk create response
-
+        A list of JSON-like user objects from a bulk create response
 
     Returns
     -------
-    List[Dict]
-        A list of JSON-like enrollment objects incorporating the response values from the
-        Schoology API, e.g. resource ids and status from individual POSTing
+    Dict[str, List[Dict]]
+        A Dict of mappings from Schoology section id to a list of JSON-like enrollment
+        objects incorporating the response values from the Schoology API,
+        e.g. resource ids and status from individual POSTing
     """
-    result: List[Dict] = []
+    result: Dict[str, List[Dict]] = {}
 
     for section in sections:
         users_in_section = fake.random_sample(
@@ -138,6 +137,6 @@ def generate_and_load_enrollments(
         )
 
         enrollment_result = load_enrollments(request_client, section["id"], enrollments)
-        result.extend(enrollment_result)
+        result[section["id"]] = enrollment_result
 
     return result

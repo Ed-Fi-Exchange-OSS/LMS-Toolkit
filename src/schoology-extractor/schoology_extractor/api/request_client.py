@@ -146,6 +146,46 @@ class RequestClient:
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
+    def post(self, resource: str, json: dict) -> dict:
+        """
+        Send a HTTP POST request.
+
+        Parameters
+        ----------
+        resource : str
+            The resource endpoint that you want to POST to.
+        json : str
+            The body of the POST as a JSON-like dict.
+
+        Returns
+        -------
+        dict
+            A parsed response from the server
+
+        Raises
+        -------
+        RuntimeError
+            If the POST operation is unsuccessful.
+        """
+        response = self.oauth.post(
+            url=f"{self.base_url}{resource}",
+            headers=self._request_header,
+            auth=self.oauth.auth,
+            json=json,
+        )
+
+        if response.status_code != HTTPStatus.CREATED:
+            raise RuntimeError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
+
+        return response.json()
+
+    @retry(
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        max_calls_total=REQUEST_RETRY_COUNT,
+        retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
+    )
     def bulk_post(self, resource: str, json: dict) -> dict:
         """
         Send a bulk HTTP POST request.

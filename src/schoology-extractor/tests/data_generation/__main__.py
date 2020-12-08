@@ -7,6 +7,18 @@ import logging
 from sys import stdout, argv
 
 from dotenv import load_dotenv
+from tests.data_generation.discussion_comments import (
+    generate_and_load_discussion_comments,
+    rollback_loaded_discussion_comments,
+)
+from tests.data_generation.discussions import (
+    generate_and_load_discussions,
+    rollback_loaded_discussions,
+)
+from tests.data_generation.assignments import (
+    generate_and_load_assignments,
+    rollback_loaded_assignments,
+)
 from tests.data_generation.enrollments import (
     generate_and_load_enrollments,
     rollback_loaded_enrollments,
@@ -78,7 +90,7 @@ except Exception as ex:
 
 
 NUMBER_OF_USERS_PER_SECTION = 3
-enrollments = []
+enrollments = {}
 try:
     enrollments = generate_and_load_enrollments(
         request_client=request_client,
@@ -86,6 +98,61 @@ try:
         sections=sections,
         users=users,
     )
+except Exception as ex:
+    logger.exception(ex)
+
+
+NUMBER_OF_ASSIGNMENTS_PER_SECTION = 2
+assignments = {}
+try:
+    assignments = generate_and_load_assignments(
+        request_client=request_client,
+        assignment_per_section_count=NUMBER_OF_ASSIGNMENTS_PER_SECTION,
+        enrollments=enrollments,
+    )
+except Exception as ex:
+    logger.exception(ex)
+
+
+NUMBER_OF_DISCUSSIONS_PER_ASSIGNMENT = 2
+discussions = {}
+try:
+    discussions = generate_and_load_discussions(
+        request_client=request_client,
+        discussions_per_assignment_count=NUMBER_OF_DISCUSSIONS_PER_ASSIGNMENT,
+        assignments=assignments,
+    )
+except Exception as ex:
+    logger.exception(ex)
+
+
+NUMBER_OF_DISCUSSION_COMMENTS_PER_DISCUSSION = 3
+discussion_comments = {}
+try:
+    discussion_comments = generate_and_load_discussion_comments(
+        request_client=request_client,
+        discussion_comments_per_discussion_count=NUMBER_OF_DISCUSSION_COMMENTS_PER_DISCUSSION,
+        discussions=discussions,
+        enrollments=enrollments,
+    )
+except Exception as ex:
+    logger.exception(ex)
+
+
+try:
+    rollback_loaded_discussion_comments(request_client, discussion_comments)
+except Exception as ex:
+    logger.exception(ex)
+
+
+try:
+    rollback_loaded_discussions(request_client, discussions)
+except Exception as ex:
+    logger.exception(ex)
+
+
+try:
+    rollback_loaded_assignments(request_client, assignments)
 except Exception as ex:
     logger.exception(ex)
 
