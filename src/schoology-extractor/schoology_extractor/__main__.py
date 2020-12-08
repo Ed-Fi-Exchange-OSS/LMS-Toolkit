@@ -9,6 +9,7 @@ import sys
 from typing import Callable, Dict, Optional
 
 from dotenv import load_dotenv
+from errorhandler import ErrorHandler  # type: ignore
 import pandas as pd
 
 from schoology_extractor.helpers import csv_writer
@@ -33,23 +34,30 @@ log_level = arguments.log_level
 page_size = arguments.page_size
 input_directory = arguments.input_directory
 
-# Configure logging
-logFormatter = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
-
-logging.basicConfig(
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-    ],
-    format=logFormatter,
-    level=log_level,
-)
-
-logger = logging.getLogger(__name__)
-
 request_client = RequestClient(schoology_key, schoology_secret)
 db_engine = get_sync_db_engine()
 
 extractorFacade = SchoologyExtractFacade(request_client, page_size, db_engine)
+
+logger: logging.Logger
+error_tracker: ErrorHandler
+
+
+def configure_logging():
+    global logger
+    global error_tracker
+
+    logger = logging.getLogger(__name__)
+
+    level = os.environ.get("LOGLEVEL", "INFO")
+    logging.basicConfig(
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+        ],
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        level=level,
+    )
+    error_tracker = ErrorHandler()
 
 
 def _create_file_from_dataframe(action: Callable, file_name) -> bool:
@@ -149,6 +157,8 @@ def _get_system_activities() -> pd.DataFrame:
 
 
 def main():
+    logger.info("Starting Ed-Fi LMS Schoology Extractor")
+
     _create_file_from_dataframe(
         _get_users, lms.get_user_file_path(schoology_output_path)
     )
@@ -213,7 +223,15 @@ def main():
             _get_system_activities, system_activities_output_dir
         )
 
+    logger.info("Finishing Ed-Fi LMS Schoology Extractor")
+
+    if error_tracker.fired:
+        print("A fatal error occurred, please review the log output for more information.", file=sys.stderr)
+        sys.exit(1)
+
+    sys.exit(0)
+
 
 if __name__ == "__main__":
-    logger.info("Starting Ed-Fi LMS Schoology Extractor")
+    configure_logging()
     main()
