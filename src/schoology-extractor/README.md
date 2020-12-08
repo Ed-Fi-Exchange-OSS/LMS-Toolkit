@@ -62,9 +62,26 @@ Alternately, run with environment variables or `.env` file:
 poetry run python.exe schoology_extractor
 ```
 
-## Output
+### Output
 
 CSV files in the data(or the specified output) directory with the LMS UDM format.
+
+### Logging and Exit Codes
+
+Log statements are written to the standard output. If you wish to capture log
+details, then be sure to redirect the output to a file. For example:
+
+```bash
+poetry run python.exe schoology_extractor > 2020-12-07-15-43.log
+```
+
+If any errors occurred during the script run, then there will be a final print
+message to the standard error handler as an additional mechanism for calling
+attention to the error: `"A fatal error occurred, please review the log output
+for more information."`
+
+The application will exit with status code `1` if there were any log messages at
+the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 
 ## Developer Utilities
 
