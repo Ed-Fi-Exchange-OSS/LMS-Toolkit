@@ -56,7 +56,9 @@ def describe_when_getting_users():
             usersMap.map_to_udm.return_value = pd.DataFrame()
 
             # This method will be tested in a different test
-            sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
+            sync.sync_resource = Mock(
+                side_effect=lambda v, w, x, y="", z="": DataFrame(x)
+            )
 
             service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
@@ -265,7 +267,11 @@ def describe_when_getting_assignments():
                 "links": {"self": "ignore"},
             }
             assignments_page = PaginatedResult(
-                request_client, page_size, assignments_response_mock, "assignment", "ignore me"
+                request_client,
+                page_size,
+                assignments_response_mock,
+                "assignment",
+                "ignore me",
             )
 
             # Arrange
@@ -312,7 +318,9 @@ def describe_when_getting_submissions():
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             # This method will be tested in a different test
-            sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
+            sync.sync_resource = Mock(
+                side_effect=lambda v, w, x, y="", z="": DataFrame(x)
+            )
             # Mock the UDM mapper
             submissionsMap.map_to_udm = Mock()
             submissionsMap.map_to_udm.side_effect = lambda x: x
@@ -375,7 +383,7 @@ def describe_when_getting_section_associations():
         get_sections_mock.return_value = sections_page
 
         # Mock the Sync process
-        sync.sync_resource = Mock(side_effect=lambda v, w, x, y='', z='': DataFrame(x))
+        sync.sync_resource = Mock(side_effect=lambda v, w, x, y="", z="": DataFrame(x))
 
         db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
 
@@ -482,7 +490,10 @@ def describe_when_getting_user_activities():
         get_discussions_mock.return_value = [{"id": 1}, {"id": 2}]
 
         get_discussion_replies_mock = request_client.get_discussion_replies
-        get_discussion_replies_mock.return_value = [{"fake_dict_attrib": 1}, {"fake_dict_attrib": 2}]
+        get_discussion_replies_mock.return_value = [
+            {"fake_dict_attrib": 1},
+            {"fake_dict_attrib": 2},
+        ]
 
         db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
 
@@ -493,17 +504,17 @@ def describe_when_getting_user_activities():
         result = service.get_section_activities(section_id)
 
         return {
-            'result': result,
-            'replies_mock': discussionRepliesMap.map_to_udm,
-            'discussions_mock': discussionsMap.map_to_udm
+            "result": result,
+            "replies_mock": discussionRepliesMap.map_to_udm,
+            "discussions_mock": discussionsMap.map_to_udm,
         }
 
     def it_should_return_a_data_frame(system):
 
-        assert isinstance(system['result'], pd.DataFrame)
+        assert isinstance(system["result"], pd.DataFrame)
 
     def it_should_map_replies_to_the_udm(system):
-        assert system['replies_mock'].called
+        assert system["replies_mock"].called
 
     def it_should_map_discussions_to_the_udm(system):
-        assert system['discussions_mock'].called
+        assert system["discussions_mock"].called

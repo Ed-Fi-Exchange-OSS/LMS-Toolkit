@@ -11,7 +11,9 @@ from . import constants
 DISCUSSION_REPLIES_TYPE = "discussion-reply"
 
 
-def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int, discussion_id: int) -> pd.DataFrame:
+def map_to_udm(
+    discussion_replies_df: pd.DataFrame, section_id: int, discussion_id: int
+) -> pd.DataFrame:
     """
     Maps a DataFrame containing Schoology section associations (enrollments)
     into the Ed-Fi LMS Unified Data Model (UDM) format.
@@ -46,24 +48,30 @@ def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int, discussion_
         CreateDate: Date/time at which the record was first retrieved
         LastModifieDate: Date/time when the record was modified, or when first retrieved
     """
-    df = discussion_replies_df[[
-        "created",
-        "status",
-        "uid",
-        "id",
-        "CreateDate",
-        "LastModifiedDate",
-        "parent_id"
-        ]].copy()
+    df = discussion_replies_df[
+        [
+            "created",
+            "status",
+            "uid",
+            "id",
+            "CreateDate",
+            "LastModifiedDate",
+            "parent_id",
+        ]
+    ].copy()
 
-    df["created"] = df["created"].apply(lambda x: datetime.fromtimestamp(int(x)).strftime("%Y-%m-%d %H:%M:%S"))
-    df["status"] = df["status"].apply(lambda x: 'active' if int(x) == 1 else 'deleted')
-    df["id"] = df["id"].apply(lambda x: f'sdr#{x}')
+    df["created"] = df["created"].apply(
+        lambda x: datetime.fromtimestamp(int(x)).strftime("%Y-%m-%d %H:%M:%S")
+    )
+    df["status"] = df["status"].apply(lambda x: "active" if int(x) == 1 else "deleted")
+    df["id"] = df["id"].apply(lambda x: f"sdr#{x}")
     df["ActivityType"] = DISCUSSION_REPLIES_TYPE
     df["LMSSectionIdentifier"] = section_id
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
-    df["parent_id"] = df["parent_id"].apply(lambda x: f'sdr{x}' if (x != 0) else f'sd{discussion_id}')
+    df["parent_id"] = df["parent_id"].apply(
+        lambda x: f"sdr{x}" if (x != 0) else f"sd{discussion_id}"
+    )
 
     df["ActivityTimeInMinutes"] = None
     df["EntityStatus"] = constants.ACTIVE
@@ -75,7 +83,7 @@ def map_to_udm(discussion_replies_df: pd.DataFrame, section_id: int, discussion_
             "status": "ActivityStatus",
             "id": "SourceSystemIdentifier",
             "uid": "LMSUserIdentifier",
-            "parent_id": "ParentSourceSystemIdentifier"
+            "parent_id": "ParentSourceSystemIdentifier",
         },
         inplace=True,
     )

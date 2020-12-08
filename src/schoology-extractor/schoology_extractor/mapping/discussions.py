@@ -45,25 +45,33 @@ def map_to_udm(discussions_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         CreateDate: Date/time at which the record was first retrieved
         LastModifieDate: Date/time when the record was modified, or when first retrieved
     """
-    df = discussions_df[[
-        "completed",
-        "graded",
-        "available",
-        "published",
-        "uid",
-        "id",
-        "CreateDate",
-        "LastModifiedDate"
-        ]].copy()
+    df = discussions_df[
+        [
+            "completed",
+            "graded",
+            "available",
+            "published",
+            "uid",
+            "id",
+            "CreateDate",
+            "LastModifiedDate",
+        ]
+    ].copy()
 
     df["created"] = df["CreateDate"]
     df["status"] = None
-    df["status"] = df["published"].apply(lambda x: 'published' if x == 1 else df["status"])
-    df["status"] = df["available"].apply(lambda x: 'available' if x == 1 else df["status"])
-    df["status"] = df["graded"].apply(lambda x: 'graded' if x == 1 else df["status"])
-    df["status"] = df["completed"].apply(lambda x: 'completed' if x == 1 else df["status"])
+    df["status"] = df["published"].apply(
+        lambda x: "published" if x == 1 else df["status"]
+    )
+    df["status"] = df["available"].apply(
+        lambda x: "available" if x == 1 else df["status"]
+    )
+    df["status"] = df["graded"].apply(lambda x: "graded" if x == 1 else df["status"])
+    df["status"] = df["completed"].apply(
+        lambda x: "completed" if x == 1 else df["status"]
+    )
 
-    df["id"] = df["id"].apply(lambda x: f'sd#{x}')
+    df["id"] = df["id"].apply(lambda x: f"sd#{x}")
     df["ActivityType"] = DISCUSSION_TYPE
     df["LMSSectionIdentifier"] = section_id
     df["SourceSystem"] = constants.SOURCE_SYSTEM
@@ -73,7 +81,7 @@ def map_to_udm(discussions_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     df["ParentSourceSystemIdentifier"] = None
     df["EntityStatus"] = constants.ACTIVE
 
-    df.drop(['completed', 'graded', 'available', 'published'], axis=1, inplace=True)
+    df.drop(["completed", "graded", "available", "published"], axis=1, inplace=True)
 
     df.rename(
         columns={

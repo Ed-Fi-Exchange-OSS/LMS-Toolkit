@@ -166,7 +166,9 @@ def get_attendance_events_file_path(output_directory: str, section_id: int) -> s
     return os.path.join(base_dir, _get_file_name())
 
 
-def get_submissions_file_path(output_directory: str, section_id: int, assignment_id : int) -> str:
+def get_submissions_file_path(
+    output_directory: str, section_id: int, assignment_id: int
+) -> str:
     """
     Builds the expected filesystem path (directory + file name) for a new
     Submissions file.

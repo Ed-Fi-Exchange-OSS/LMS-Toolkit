@@ -106,10 +106,8 @@ class SchoologyExtractFacade:
             all_sections = all_sections + _get_section_for_course(course["id"])
 
         sections = sync.sync_resource(
-            RESOURCE_NAMES.SECTION,
-            self._db_engine,
-            all_sections
-            )
+            RESOURCE_NAMES.SECTION, self._db_engine, all_sections
+        )
 
         return sectionsMap.map_to_udm(sections)
 
@@ -132,8 +130,8 @@ class SchoologyExtractFacade:
         assignments = sync.sync_resource(
             RESOURCE_NAMES.ASSIGNMENT,
             self._db_engine,
-            self._client.get_assignments(section_id, self._page_size).get_all_pages()
-            )
+            self._client.get_assignments(section_id, self._page_size).get_all_pages(),
+        )
 
         return assignmentsMap.map_to_udm(assignments, section_id)
 
@@ -154,23 +152,18 @@ class SchoologyExtractFacade:
         """
 
         all_submissions = self._client.get_submissions_by_section_id_and_grade_item_id(
-                section_id,
-                assignment_id,
-                self._page_size,
-                ).get_all_pages()
+            section_id,
+            assignment_id,
+            self._page_size,
+        ).get_all_pages()
 
         all_submissions = [
-            {
-                **row,
-                'id': f'{section_id}#{assignment_id}#{row["uid"]}'
-            }
+            {**row, "id": f'{section_id}#{assignment_id}#{row["uid"]}'}
             for row in all_submissions
         ]
 
         data = sync.sync_resource(
-            RESOURCE_NAMES.SUBMISSION,
-            self._db_engine,
-            all_submissions
+            RESOURCE_NAMES.SUBMISSION, self._db_engine, all_submissions
         )
         return submissionsMap.map_to_udm(data)
 
@@ -192,8 +185,8 @@ class SchoologyExtractFacade:
         enrollments = sync.sync_resource(
             RESOURCE_NAMES.ENROLLMENT,
             self._db_engine,
-            self._client.get_enrollments(section_id).get_all_pages()
-            )
+            self._client.get_enrollments(section_id).get_all_pages(),
+        )
 
         return sectionAssocMap.map_to_udm(pd.DataFrame(enrollments), section_id)
 
@@ -220,7 +213,7 @@ class SchoologyExtractFacade:
         events = self._client.get_attendance(section_id)
 
         def _sync_wrapper(data: pd.DataFrame):
-            """ Attendance_events entity has a more complex mapping. For most
+            """Attendance_events entity has a more complex mapping. For most
             entities, sync process running before mapping is fine, but considering
             the process involved for this entity, the mapper for attendance events
             will accept an additional callable for sync process that will run when
@@ -229,14 +222,13 @@ class SchoologyExtractFacade:
             return sync.sync_resource(
                 RESOURCE_NAMES.ATTENDANCE_EVENTS,
                 self._db_engine,
-                data.to_dict('records'),
-                "SourceSystemIdentifier"
-                )
+                data.to_dict("records"),
+                "SourceSystemIdentifier",
+            )
 
         events_df = attendanceMap.map_to_udm(
-            events,
-            section_associations,
-            sync_callback=_sync_wrapper)
+            events, section_associations, sync_callback=_sync_wrapper
+        )
 
         return events_df
 
@@ -259,13 +251,15 @@ class SchoologyExtractFacade:
         mapped_replies = pd.DataFrame()
         for discussion in discussions:
             discussion_id = discussion["id"]
-            replies = replies + self._client.get_discussion_replies(section_id, discussion_id)
-            sync_replies = sync.sync_resource(
-                RESOURCE_NAMES.DISCUSSION_REPLIES,
-                self._db_engine,
-                replies
+            replies = replies + self._client.get_discussion_replies(
+                section_id, discussion_id
             )
-            current_replies = discussionRepliesMap.map_to_udm(pd.DataFrame(sync_replies), section_id, discussion_id)
+            sync_replies = sync.sync_resource(
+                RESOURCE_NAMES.DISCUSSION_REPLIES, self._db_engine, replies
+            )
+            current_replies = discussionRepliesMap.map_to_udm(
+                pd.DataFrame(sync_replies), section_id, discussion_id
+            )
             if mapped_replies.empty:
                 mapped_replies = current_replies
             else:
@@ -275,10 +269,10 @@ class SchoologyExtractFacade:
             return pd.DataFrame()
 
         sync_discussions = sync.sync_resource(
-            RESOURCE_NAMES.DISCUSSIONS,
-            self._db_engine,
-            discussions
-            )
+            RESOURCE_NAMES.DISCUSSIONS, self._db_engine, discussions
+        )
 
-        mapped_discussions = discussionsMap.map_to_udm(pd.DataFrame(sync_discussions), section_id)
+        mapped_discussions = discussionsMap.map_to_udm(
+            pd.DataFrame(sync_discussions), section_id
+        )
         return mapped_discussions.append(mapped_replies)

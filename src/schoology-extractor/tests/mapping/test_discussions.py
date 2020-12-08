@@ -17,8 +17,8 @@ class Test_mapping_schoology_discussions_to_udm:
     def setup_class(cls):
 
         # Arrange
-        responses_csv = '''id,uid,title,body,weight,graded,require_initial_post,published,available,completed,display_weight,folder_id,due,comments_closed,completion_status,links/self,CreateDate,LastModifiedDate
-3277613289,99785803,Test discussion,,10,0,,1,1,0,2,0,2021-01-26 23:59:00,0,,https://api.schoology.com/v1/sections/2941242697/discussions/3277613289,12/8/2020 7:58,12/8/2020 7:58'''
+        responses_csv = """id,uid,title,body,weight,graded,require_initial_post,published,available,completed,display_weight,folder_id,due,comments_closed,completion_status,links/self,CreateDate,LastModifiedDate
+3277613289,99785803,Test discussion,,10,0,,1,1,0,2,0,2021-01-26 23:59:00,0,,https://api.schoology.com/v1/sections/2941242697/discussions/3277613289,12/8/2020 7:58,12/8/2020 7:58"""
         lines = responses_csv.split("\n")
         responses_df = pd.DataFrame(
             [x.split(",") for x in lines[1:]], columns=lines[0].split(",")
@@ -43,7 +43,7 @@ class Test_mapping_schoology_discussions_to_udm:
             "ActivityTimeInMinutes",
             "EntityStatus",
             "LMSUserIdentifier",
-            "LMSSectionIdentifier"
+            "LMSSectionIdentifier",
         ],
     )
     def test_then_output_has_column(self, input):
