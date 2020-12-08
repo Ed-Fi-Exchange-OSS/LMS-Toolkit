@@ -68,6 +68,18 @@ def get_all_sections(base_directory: str) -> pd.DataFrame:
 
     return pd.DataFrame()
 
+def get_all_system_activities(base_directory: str) -> pd.DataFrame:
+    sa = pd.DataFrame()
+    file_path = ""
+    
+    for r, d, f in os.walk(os.path.join(base_directory, "system-activities")):
+        for file in f:
+            if file.endswith(".csv"):
+                file_path = os.path.join(r,file)   
+                sa = sa.append(_read_csv(file_path))
+    
+    return sa
+
 def get_section_associations(base_directory: str, section_id: int) -> pd.DataFrame:
     file = get_section_associations_file(base_directory, section_id)
 
