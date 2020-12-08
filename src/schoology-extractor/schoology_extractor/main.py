@@ -104,15 +104,15 @@ def _get_assignments(section_id: int) -> Callable:
     return __get_assignments
 
 
-def _get_user_activities(section_id: int) -> Callable:
+def _get_section_activities(section_id: int) -> Callable:
     # This nested function provides "closure" over `section_id`
-    def __get_user_activities() -> Optional[pd.DataFrame]:
-        user_activities = extractorFacade.get_user_activities(section_id)
-        result_bucket["user_activities"] = user_activities
+    def __get_section_activities() -> Optional[pd.DataFrame]:
+        section_activities = extractorFacade.get_section_activities(section_id)
+        result_bucket["section_activities"] = section_activities
 
-        return user_activities
+        return section_activities
 
-    return __get_user_activities
+    return __get_section_activities
 
 
 def _get_submissions(assigment_id: int, section_id: int) -> Callable:
@@ -171,18 +171,22 @@ def main():
         )
 
         if succeeded:
-            assignments : pd.DataFrame = result_bucket["assignments"]
+            assignments: pd.DataFrame = result_bucket["assignments"]
 
             for assignment in assignments["SourceSystemIdentifier"].tolist():
                 assignment_id = int(assignment)
-                submission_file_name = lms.get_submissions_file_path(schoology_output_path, section_id, assignment_id)
-                _create_file_from_dataframe(_get_submissions(assignment_id, section_id), submission_file_name)
+                submission_file_name = lms.get_submissions_file_path(
+                    schoology_output_path, section_id, assignment_id
+                )
+                _create_file_from_dataframe(
+                    _get_submissions(assignment_id, section_id), submission_file_name
+                )
 
-        user_activities_file_path = lms.get_user_activities_file_path(
+        section_activities_file_path = lms.get_section_activities_file_path(
             schoology_output_path, section_id
         )
         _create_file_from_dataframe(
-            _get_user_activities(section_id), user_activities_file_path
+            _get_section_activities(section_id), section_activities_file_path
         )
 
         file_path = lms.get_section_association_file_path(
@@ -202,10 +206,11 @@ def main():
 
     need_to_process_input_files = input_directory is not None
     if need_to_process_input_files:
-        system_activities_output_dir = lms.get_system_activities_file_path(schoology_output_path)
+        system_activities_output_dir = lms.get_system_activities_file_path(
+            schoology_output_path
+        )
         _create_file_from_dataframe(
-            _get_system_activities,
-            system_activities_output_dir
+            _get_system_activities, system_activities_output_dir
         )
 
 

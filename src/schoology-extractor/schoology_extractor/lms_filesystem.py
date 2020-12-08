@@ -10,7 +10,7 @@ USERS = "users"
 SECTION = "section"
 ASSIGNMENT = "assignment"
 ASSIGNMENTS = "assignments"
-USER_ACTIVITY = "user-activities"
+SECTION_ACTIVITY = "section-activities"
 SECTIONS = "sections"
 SECTION_ASSOCIATIONS = "section-associations"
 ATTENDANCE = "attendance"
@@ -57,10 +57,10 @@ def get_assignment_file_path(output_directory: str, section_id: int) -> str:
     return os.path.join(base_dir, _get_file_name())
 
 
-def get_user_activities_file_path(output_directory: str, section_id: int) -> str:
+def get_section_activities_file_path(output_directory: str, section_id: int) -> str:
     """
     Builds the expected filesystem path (directory + file name) for a new
-    Discussions file.
+    section activity file.
 
     Parameters
     ----------
@@ -74,7 +74,7 @@ def get_user_activities_file_path(output_directory: str, section_id: int) -> str
     full path with file name
     """
     base_dir = _get_section_directory(output_directory, section_id)
-    base_dir = os.path.join(base_dir, USER_ACTIVITY)
+    base_dir = os.path.join(base_dir, SECTION_ACTIVITY)
     _create_directory_if_it_does_not_exist(base_dir)
 
     return os.path.join(base_dir, _get_file_name())
@@ -166,7 +166,9 @@ def get_attendance_events_file_path(output_directory: str, section_id: int) -> s
     return os.path.join(base_dir, _get_file_name())
 
 
-def get_submissions_file_path(output_directory: str, section_id: int, assignment_id : int) -> str:
+def get_submissions_file_path(
+    output_directory: str, section_id: int, assignment_id: int
+) -> str:
     """
     Builds the expected filesystem path (directory + file name) for a new
     Submissions file.
