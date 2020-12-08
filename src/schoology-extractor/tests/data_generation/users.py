@@ -4,9 +4,10 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
+from pandas import DataFrame, json_normalize, merge
 from typing import Dict, List
-from http import HTTPStatus
 from faker import Faker
+from tests.data_generation.generation_helper import validate_multi_status
 from schoology_extractor.api.request_client import RequestClient
 
 fake = Faker("en_US")
@@ -53,26 +54,9 @@ def generate_users(record_count: int) -> List[Dict]:
     return users
 
 
-def _validate_multi_status(multi_response: List[Dict]):
-    """
-    Confirm response codes for all elements of a bulk response.
-
-    Parameters
-    ----------
-    multi_response : List[Dict]
-        A list of JSON-like responses to each individual request.
-
-    Raises
-    -------
-    RuntimeError
-        If any individual operation had a non-OK response code.
-    """
-    for response in multi_response:
-        if response["response_code"] != HTTPStatus.OK:
-            raise RuntimeError(str(multi_response))
-
-
-def _rollback_loaded_users(request_client: RequestClient, creation_response: List[Dict]):
+def rollback_loaded_users(
+    request_client: RequestClient, creation_response: List[Dict]
+):
     """
     Delete already loaded users via the Schoology API.
     **** Used during testing of the load functionality ****
@@ -84,17 +68,20 @@ def _rollback_loaded_users(request_client: RequestClient, creation_response: Lis
     creation_response: List[Dict]
         A list of JSON-like response objects from a successful user load operation
     """
-    logger.info("**** Rolling back %s users via Schoology API - for testing purposes", len(creation_response))
+    logger.info(
+        "**** Rolling back %s users via Schoology API - for testing purposes",
+        len(creation_response),
+    )
 
     ids: str = ",".join(map(lambda user: str(user["id"]), creation_response))
 
-    delete_response = request_client.bulk_delete("users", ids)["user"]
+    delete_response = request_client.bulk_delete("users", f"uids={ids}&email_notification=0")["user"]
 
-    _validate_multi_status(delete_response)
+    validate_multi_status(delete_response)
     logger.info("**** Successfully deleted %s users", len(delete_response))
 
 
-def load_users(request_client: RequestClient, users: List[Dict]):
+def load_users(request_client: RequestClient, users: List[Dict]) -> List[Dict]:
     """
     Load a list of users via the Schoology API.
 
@@ -105,25 +92,37 @@ def load_users(request_client: RequestClient, users: List[Dict]):
     users: List[Dict]
         A list of JSON-like user objects in a form suitable for submission to the
         Schoology user creation endpoint.
+
+    Returns
+    -------
+    List[Dict]
+        A list of JSON-like user objects incorporating the response values from the
+        Schoology API, e.g. resource ids and status from individual POSTing
     """
-    assert len(users) > 0 and len(users) < 51, "Number of users must be between 1 and 50"
+    assert (
+        len(users) > 0 and len(users) < 51
+    ), "Number of users must be between 1 and 50"
 
     logger.info("Creating %s users via Schoology API", len(users))
 
-    users_json = {
-        "users": {
-            "user": users
-        }
-    }
+    users_json = {"users": {"user": users}}
     post_response: List[Dict] = request_client.bulk_post("users", users_json)["user"]
-    _validate_multi_status(post_response)
+    validate_multi_status(post_response)
     logger.info("Successfully created %s users", len(post_response))
 
-    # **** Used during testing of the load functionality ****
-    _rollback_loaded_users(request_client, post_response)
+    with_schoology_response_df: DataFrame = merge(
+        json_normalize(users),
+        json_normalize(post_response).drop("school_uid", axis=1),
+        left_index=True,
+        right_index=True,
+    )
+
+    return with_schoology_response_df.to_dict("records")
 
 
-def generate_and_load_users(request_client: RequestClient, record_count: int):
+def generate_and_load_users(
+    request_client: RequestClient, record_count: int
+) -> List[Dict]:
     """
     Generate and load a number of users into the Schoology API.
 
@@ -133,13 +132,25 @@ def generate_and_load_users(request_client: RequestClient, record_count: int):
         A RequestClient initialized for access to the Schoology API
     record_count : int
         The number of users to generate.
+
+    Returns
+    -------
+    List[Dict]
+        A list of JSON-like user objects incorporating the response values from the
+        Schoology API, e.g. resource ids and status from individual POSTing
     """
     assert record_count > 0, "Number of users to generate must be greater than zero"
 
     total_users: List[Dict] = generate_users(record_count)
 
     MAX_CHUNK_SIZE = 50
-    chunked_users: List[List[Dict]] = [total_users[x:x+MAX_CHUNK_SIZE] for x in range(0, len(total_users), MAX_CHUNK_SIZE)]
+    chunked_users: List[List[Dict]] = [
+        total_users[x : x + MAX_CHUNK_SIZE]
+        for x in range(0, len(total_users), MAX_CHUNK_SIZE)
+    ]
 
+    result: List[Dict] = []
     for user_chunk in chunked_users:
-        load_users(request_client, user_chunk)
+        chunked_result = load_users(request_client, user_chunk)
+        result.extend(chunked_result)
+    return result

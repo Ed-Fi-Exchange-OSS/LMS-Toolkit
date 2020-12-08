@@ -14,6 +14,13 @@
     "files.associations": {
         "*.metaed": "csharp"
     },
+    "files.exclude": {
+        ".mypy_cache": true,
+        ".pytest_cache": true,
+        "**/__pycache__": true,
+        "**/*.egg-info": true,
+        "**/.coverage": true
+    },
     "psi-header.config": {
         "forceToTop": true,
         "blankLinesAfter": 1,
