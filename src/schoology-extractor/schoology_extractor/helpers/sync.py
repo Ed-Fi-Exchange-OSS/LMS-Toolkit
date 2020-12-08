@@ -74,16 +74,18 @@ def _resource_has_changed(
     for key in db_parsed_item:
         ignore_key = key == "CreateDate" or key == "LastModifiedDate"
 
-        if not ignore_key:
-            api_value = resource[key]
-            db_value = db_parsed_item[key]
+        if ignore_key:
+            continue
 
-            if isinstance(api_value, dict) or isinstance(api_value, list):
-                api_value = str(api_value).replace("'", '"')
-                db_value = str(db_value).replace("'", '"')
+        api_value = resource[key]
+        db_value = db_parsed_item[key]
 
-            if str(db_value) != str(api_value):
-                return True
+        if isinstance(api_value, dict) or isinstance(api_value, list):
+            api_value = str(api_value).replace("'", '"')
+            db_value = str(db_value).replace("'", '"')
+
+        if str(db_value) != str(api_value):
+            return True
 
     return False
 

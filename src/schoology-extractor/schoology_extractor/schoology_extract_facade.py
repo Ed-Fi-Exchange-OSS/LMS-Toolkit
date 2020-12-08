@@ -260,13 +260,7 @@ class SchoologyExtractFacade:
             current_replies = discussionRepliesMap.map_to_udm(
                 pd.DataFrame(sync_replies), section_id, discussion_id
             )
-            if mapped_replies.empty:
-                mapped_replies = current_replies
-            else:
-                mapped_replies.append(current_replies)
-
-        if len(replies) == 0:
-            return pd.DataFrame()
+            mapped_replies = pd.concat([mapped_replies, current_replies])
 
         sync_discussions = sync.sync_resource(
             RESOURCE_NAMES.DISCUSSIONS, self._db_engine, discussions

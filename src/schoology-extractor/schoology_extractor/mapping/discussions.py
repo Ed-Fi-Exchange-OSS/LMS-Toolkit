@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from typing import Union
 import pandas as pd
 
 from . import constants
@@ -59,17 +60,23 @@ def map_to_udm(discussions_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     ].copy()
 
     df["created"] = df["CreateDate"]
-    df["status"] = None
-    df["status"] = df["published"].apply(
-        lambda x: "published" if x == 1 else df["status"]
-    )
-    df["status"] = df["available"].apply(
-        lambda x: "available" if x == 1 else df["status"]
-    )
-    df["status"] = df["graded"].apply(lambda x: "graded" if x == 1 else df["status"])
-    df["status"] = df["completed"].apply(
-        lambda x: "completed" if x == 1 else df["status"]
-    )
+
+    def _get_status(row: pd.Series) -> Union[str, None]:
+        completed = row["completed"]
+        if completed == 1:
+            return "completed"
+        graded = row["graded"]
+        if graded == 1:
+            return "graded"
+        available = row["available"]
+        if available == 1:
+            return "available"
+        published = row["published"]
+        if published == 1:
+            return "published"
+        return None
+
+    df["status"] = df.apply(_get_status, axis=1)
 
     df["id"] = df["id"].apply(lambda x: f"sd#{x}")
     df["ActivityType"] = DISCUSSION_TYPE
