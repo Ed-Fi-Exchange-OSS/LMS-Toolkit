@@ -35,8 +35,8 @@ ASSIGNEE_MODE = "16"
 CREATOR_USER_ID = "17"
 SCHEDULED_TIME = "18"
 TOPIC_ID = "19"
-CREATE_DATE = "a"
-LAST_MODIFIED_DATE = "b"
+CREATE_DATE = "2020-01-01"
+LAST_MODIFIED_DATE = "2020-01-02"
 
 
 def describe_when_a_single_coursework_with_unique_fields_is_mapped():
@@ -105,6 +105,8 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         assert row_dict["Title"] == TITLE
         assert row_dict["SourceCreateDate"] == CREATION_TIME
         assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
+        assert row_dict["CreateDate"] == CREATE_DATE
+        assert row_dict["LastModifiedDate"] == LAST_MODIFIED_DATE
 
 
 def describe_when_a_single_coursework_without_due_date_info_is_mapped():
@@ -182,8 +184,8 @@ BOILERPLATE: Dict[str, str] = {
     "dueTime.minutes": DUETIME_MINUTES,
     "scheduledTime": SCHEDULED_TIME,
     "topicId": TOPIC_ID,
-    "CreateDate": [CREATE_DATE],
-    "LastModifiedDate": [LAST_MODIFIED_DATE],
+    "CreateDate": CREATE_DATE,
+    "LastModifiedDate": LAST_MODIFIED_DATE,
 }
 
 

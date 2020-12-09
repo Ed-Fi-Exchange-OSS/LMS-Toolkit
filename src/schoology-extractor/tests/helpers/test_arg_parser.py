@@ -37,7 +37,7 @@ def describe_when_parsing_arguments():
             assert result.client_key == "fake_key"
 
         def it_should_default_to_warn_level(result: MainArguments):
-            assert result.log_level == "WARNING"
+            assert result.log_level == "INFO"
 
         def it_should_default_to_page_size_20(result: MainArguments):
             assert result.page_size == 20

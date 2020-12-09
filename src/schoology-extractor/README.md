@@ -31,8 +31,8 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | ----------- | -------- | --------------------- | -------------------- |
 | Schoology API Key | yes | -k or --client-key | SCHOOLOGY_KEY |
 | Schoology API Secret | yes |  -s or --client-secret | SCHOOLOGY_SECRET |
-| Output Directory | no (default: working directory) | -o or --output-directory | SCHOOLOGY_OUTPUT_PATH |
-| Log level | no (default: WARNING) | -l or --log-level | SCHOOLOGY_LOG_LEVEL |
+| Output Directory | no (default: [working directory]/data) | -o or --output-directory | SCHOOLOGY_OUTPUT_PATH |
+| Log level | no (default: INFO) | -l or --log-level | SCHOOLOGY_LOG_LEVEL |
 | Page size | no (default: 20) | -p or --page-size | PAGE_SIZE |
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
@@ -40,24 +40,48 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 User's API key and secret are managed at
 [https://app.schoology.com/api](https://app.schoology.com/api).
 
+Valid log levels:
+* DEBUG
+* INFO(default)
+* WARNING
+* ERROR
+* CRITICAL
+
 ## Execution
 
 Execute the extractor with CLI args:
 
 ```bash
-poetry run python.exe schoology_extractor/main.py -k your-schoology-client-key -s your-schoology-client-secret
+poetry run python.exe schoology_extractor -k your-schoology-client-key -s your-schoology-client-secret
 ```
 
 For detailed help, execute `poetry run python schoology_extractor/main.py -h`.
 Alternately, run with environment variables or `.env` file:
 
 ```bash
-poetry run python.exe schoology_extractor/main.py
+poetry run python.exe schoology_extractor
 ```
 
-## Output
+### Output
 
 CSV files in the data(or the specified output) directory with the LMS UDM format.
+
+### Logging and Exit Codes
+
+Log statements are written to the standard output. If you wish to capture log
+details, then be sure to redirect the output to a file. For example:
+
+```bash
+poetry run python.exe schoology_extractor > 2020-12-07-15-43.log
+```
+
+If any errors occurred during the script run, then there will be a final print
+message to the standard error handler as an additional mechanism for calling
+attention to the error: `"A fatal error occurred, please review the log output
+for more information."`
+
+The application will exit with status code `1` if there were any log messages at
+the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 
 ## Developer Utilities
 

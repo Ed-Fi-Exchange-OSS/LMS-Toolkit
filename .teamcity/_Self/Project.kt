@@ -23,6 +23,8 @@ object FizzProject : Project({
 
     subProject(schoology.SchoologyProject)
     subProject(googleClassroom.GoogleClassroomProject)
+    subProject(fileTester.FileTesterProject)
+    subProject(fileUtils.FileUtilsProject)
 
     template(_self.templates.TestTemplateBranch)
     template(_self.templates.TestTemplatePullRequest)

@@ -13,10 +13,8 @@ import sqlalchemy
 from sqlalchemy.engine import ResultProxy
 
 SYNC_DATABASE_LOCATION_SUFFIX = "data"
-COLUMN_MAPPING = {
-    'SourceId': sqlalchemy.types.String
-}
-USAGE_TABLE_NAME = 'USAGE_PROCESSED_FILES'
+COLUMN_MAPPING = {"SourceId": sqlalchemy.types.String}
+USAGE_TABLE_NAME = "USAGE_PROCESSED_FILES"
 
 logger = logging.getLogger(__name__)
 
@@ -30,8 +28,10 @@ def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
     sqlalchemy.engine.base.Engine
         a SQL Alchemy Engine
     """
-    sync_database_directory = (os.path.join(SYNC_DATABASE_LOCATION_SUFFIX))
-    logger.debug("Ensuring database directory at %s", os.path.abspath(sync_database_directory))
+    sync_database_directory = os.path.join(SYNC_DATABASE_LOCATION_SUFFIX)
+    logger.debug(
+        "Ensuring database directory at %s", os.path.abspath(sync_database_directory)
+    )
     os.makedirs(sync_database_directory, exist_ok=True)
 
     return sqlalchemy.create_engine(f"sqlite:///{sync_database_directory}/sync.sqlite")
@@ -56,8 +56,8 @@ def _map_single_result_to_dict(result: Union[list, None]) -> dict:
 def _resource_has_changed(
     resource: dict,
     resource_name: str,
-    db_engine:  sqlalchemy.engine.base.Engine,
-    id_column: str = "id"
+    db_engine: sqlalchemy.engine.base.Engine,
+    id_column: str = "id",
 ) -> bool:
     query = f"SELECT * FROM {resource_name} where SourceId = '{resource[id_column]}' limit 1;"
     with db_engine.connect() as con:
@@ -72,6 +72,11 @@ def _resource_has_changed(
     db_parsed_item = json.loads(json_response)
 
     for key in db_parsed_item:
+        ignore_key = key == "CreateDate" or key == "LastModifiedDate"
+
+        if ignore_key:
+            continue
+
         api_value = resource[key]
         db_value = db_parsed_item[key]
 
@@ -86,11 +91,16 @@ def _resource_has_changed(
 
 
 def _write_resource_to_db(
-    resource_name: str,
-    db_engine: sqlalchemy.engine.base.Engine,
-    data: DataFrame
+    resource_name: str, db_engine: sqlalchemy.engine.base.Engine, data: DataFrame
 ):
-    data.to_sql(resource_name, db_engine, if_exists="append", index=False, chunksize=500, dtype=COLUMN_MAPPING)
+    data.to_sql(
+        resource_name,
+        db_engine,
+        if_exists="append",
+        index=False,
+        chunksize=500,
+        dtype=COLUMN_MAPPING,
+    )
 
 
 def _table_exist(
@@ -98,11 +108,14 @@ def _table_exist(
     db_engine: sqlalchemy.engine.base.Engine,
 ) -> bool:
     with db_engine.connect() as con:
-        result: Union[ResultProxy, None] = con.execute("""
+        result: Union[ResultProxy, None] = con.execute(
+            """
             SELECT name
             FROM sqlite_master
             WHERE type='table' AND name=?;
-        """, (table_name, ))
+        """,
+            (table_name,),
+        )
 
         if result is None:
             return False
@@ -111,10 +124,7 @@ def _table_exist(
         return True
 
 
-def _remove_duplicates(
-    resource_name: str,
-    db_engine: sqlalchemy.engine.base.Engine
-):
+def _remove_duplicates(resource_name: str, db_engine: sqlalchemy.engine.base.Engine):
     with db_engine.connect() as con:
         con.execute(
             f"DELETE from {resource_name} "
@@ -125,35 +135,37 @@ def _remove_duplicates(
 
 
 def _get_created_date(
-    resource_name: str,
-    db_engine: sqlalchemy.engine.base.Engine,
-    id: Union[str, int]
+    resource_name: str, db_engine: sqlalchemy.engine.base.Engine, id: Union[str, int]
 ):
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(
-            f"SELECT CreateDate from {resource_name} "
-            f"WHERE SourceId == '{id}'"
+            f"SELECT CreateDate from {resource_name} " f"WHERE SourceId == '{id}'"
         )
         if result is not None:
             create_date = result.first()
-            return create_date[0] if create_date is not None else _get_current_date_with_format()
+            return (
+                create_date[0]
+                if create_date is not None
+                else _get_current_date_with_format()
+            )
 
         return _get_current_date_with_format()
 
 
 def _get_last_modified_date(
-    resource_name: str,
-    db_engine: sqlalchemy.engine.base.Engine,
-    id: Union[str, int]
+    resource_name: str, db_engine: sqlalchemy.engine.base.Engine, id: Union[str, int]
 ) -> str:
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(
-            f"SELECT LastModifiedDate from {resource_name} "
-            f"WHERE SourceId == '{id}'"
+            f"SELECT LastModifiedDate from {resource_name} " f"WHERE SourceId == '{id}'"
         )
         if result is not None:
             modified_date = result.first()
-            return modified_date[0] if modified_date is not None else _get_current_date_with_format()
+            return (
+                modified_date[0]
+                if modified_date is not None
+                else _get_current_date_with_format()
+            )
 
     return _get_current_date_with_format()
 
@@ -162,7 +174,7 @@ def sync_resource(
     resource_name: str,
     db_engine: sqlalchemy.engine.base.Engine,
     data: list,
-    id_column: str = "id"
+    id_column: str = "id",
 ) -> DataFrame:
     """
     Writes data to the local db and sets both CreateDate and LastModifiedDate.
@@ -194,14 +206,26 @@ def sync_resource(
         return DataFrame()
 
     for row in data:
-        hasChanged = _resource_has_changed(row, resource_name, db_engine, id_column) if table_exist else True
-        create_date = _get_created_date(resource_name, db_engine, row[id_column]) if table_exist else current_date_with_format
-        last_modified_date = current_date_with_format if hasChanged else _get_last_modified_date(resource_name, db_engine, row[id_column])
+        hasChanged = (
+            _resource_has_changed(row, resource_name, db_engine, id_column)
+            if table_exist
+            else True
+        )
+        create_date = (
+            _get_created_date(resource_name, db_engine, row[id_column])
+            if table_exist
+            else current_date_with_format
+        )
+        last_modified_date = (
+            current_date_with_format
+            if hasChanged
+            else _get_last_modified_date(resource_name, db_engine, row[id_column])
+        )
         record = dict(
             CreateDate=create_date,
             LastModifiedDate=last_modified_date,
             SourceId=row[id_column],
-            JsonResponse=json.dumps(row)
+            JsonResponse=json.dumps(row),
         )
         data_to_write.append(record)
         row["CreateDate"] = create_date
@@ -214,19 +238,18 @@ def sync_resource(
     return DataFrame(data)
 
 
-def _create_usage_table_if_it_does_not_exist(
-        db_engine: sqlalchemy.engine.base.Engine
-        ):
+def _create_usage_table_if_it_does_not_exist(db_engine: sqlalchemy.engine.base.Engine):
     if _table_exist(USAGE_TABLE_NAME, db_engine) is False:
-        db_engine.execute(f"""CREATE TABLE {USAGE_TABLE_NAME} (
+        db_engine.execute(
+            f"""CREATE TABLE {USAGE_TABLE_NAME} (
             FILE_NAME TEXT PRIMARY KEY
-        );""")
+        );"""
+        )
 
 
 def usage_file_is_processed(
-        file_name: str,
-        db_engine: sqlalchemy.engine.base.Engine
-        ) -> bool:
+    file_name: str, db_engine: sqlalchemy.engine.base.Engine
+) -> bool:
     """
     Verifies if the current file has been previously processed
 
@@ -244,19 +267,19 @@ def usage_file_is_processed(
 
     _create_usage_table_if_it_does_not_exist(db_engine)
 
-    query = F"select exists(select 1 from {USAGE_TABLE_NAME} where FILE_NAME='{file_name}') as 'exists'"
+    query = f"select exists(select 1 from {USAGE_TABLE_NAME} where FILE_NAME='{file_name}') as 'exists'"
 
-    db_item = {'exists': False}
+    db_item = {"exists": False}
     with db_engine.connect() as con:
         result: Union[ResultProxy, None] = con.execute(query)
         db_item = _map_single_result_to_dict(result)
 
-    return db_item['exists'] == 1
+    return db_item["exists"] == 1
 
 
 def insert_usage_file_name(
-        file_name: str,
-        db_engine: sqlalchemy.engine.base.Engine) -> None:
+    file_name: str, db_engine: sqlalchemy.engine.base.Engine
+) -> None:
     """
     Inserts the name of the file in the table for processed files
 

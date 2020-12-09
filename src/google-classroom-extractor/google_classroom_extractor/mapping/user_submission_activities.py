@@ -47,6 +47,8 @@ def submissions_to_user_submission_activities_dfs(
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a
             user activity by the source system
         LMSUserIdentifier: A unique numeric identifier assigned to the user
+        CreateDate: Date this record was created in the extractor
+        LastModifiedDate: Date this record was last updated in the extractor
     """
     assert "submissionHistory" in submissions_df.columns
     assert "id" in submissions_df.columns
@@ -59,7 +61,7 @@ def submissions_to_user_submission_activities_dfs(
         ["courseId", "courseWorkId"]
     ].agg("-".join, axis=1)
 
-    submissions_df = submissions_df[["id", "courseId", "courseWorkId", "submissionHistory", "AssignmentIdentifier"]]
+    submissions_df = submissions_df[["id", "courseId", "courseWorkId", "submissionHistory", "AssignmentIdentifier", "CreateDate", "LastModifiedDate"]]
 
     # explode submissionHistory lists into rows with other columns duplicated
     history_df = submissions_df.explode(column="submissionHistory")
@@ -85,6 +87,8 @@ def submissions_to_user_submission_activities_dfs(
             "state",
             "courseId",
             "actorUserId",
+            "CreateDate",
+            "LastModifiedDate"
         ]
     ]
 
@@ -117,6 +121,8 @@ def submissions_to_user_submission_activities_dfs(
                 "gradeChangeType",
                 "courseId",
                 "actorUserId",
+                "CreateDate",
+                "LastModifiedDate"
             ]
         ]
 
@@ -142,6 +148,8 @@ def submissions_to_user_submission_activities_dfs(
     user_submission_df["Content"] = ""
     user_submission_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
     user_submission_df["SourceSystem"] = SOURCE_SYSTEM
+    user_submission_df["SourceCreateDate"] = ""  # No create date available from API
+    user_submission_df["SourceLastModifiedDate"] = ""  # No modified date available from API
 
     # group by section id as a Dict of DataFrames
     result: Dict[str, DataFrame] = dict(

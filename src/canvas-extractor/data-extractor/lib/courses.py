@@ -30,7 +30,7 @@ def filterCoursesByYear(course):
     course_end_year = False
     course_start_year = False
     if (course["end_at"]):
-        course_end_year = datetime.strptime(course["end_at"], "%Y-%m-%d%H:%M:%SZ").year
+        course_end_year = datetime.strptime(course["end_at"], "%Y-%m-%dT%H:%M:%SZ").year
 
     if (course["start_at"]):
         course_start_year = datetime.strptime(course["start_at"], "%Y-%m-%dT%H:%M:%SZ").year

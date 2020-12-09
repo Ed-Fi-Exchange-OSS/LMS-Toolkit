@@ -87,13 +87,11 @@ To pull data from Google Classroom and generate csv files, run
 directory of this project. CSV files are output into the
 `data/ed-fi-udm-lms` directory.
 
-
 ### Visual Studio Code (Optional)
 
 To work in Visual Studio Code install the Python Extension.
 Then type `Ctrl-Shift-P`, then choose `Python:Select Interpreter`,
 then choose the environment that includes `.venv` in the name.
-
 
 ### TLS/SSL proxying
 
@@ -102,6 +100,22 @@ to have a copy of the corporate root certificate on file, and then add
 an environment variable pointing to this file:
 `HTTPLIB2_CA_CERTS=<absolute path to certificate>`
 
+### Logging and Exit Codes
+
+Log statements are written to the standard output. If you wish to capture log
+details, then be sure to redirect the output to a file. For example:
+
+```bash
+poetry run python.exe google_classroom_extractor/main.py > 2020-12-07-15-43.log
+```
+
+If any errors occurred during the script run, then there will be a final print
+message to the standard error handler as an additional mechanism for calling
+attention to the error: `"A fatal error occurred, please review the log output
+for more information."`
+
+The application will exit with status code `1` if there were any log messages at
+the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 
 ## Dev Operations
 

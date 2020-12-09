@@ -1,6 +1,6 @@
 [run]
 branch = True
 source = schoology_extractor
-omit = schoology_extractor/main.py,schoology_extractor/grading_periods.py
+omit = schoology_extractor/main.py
 
 [report]
