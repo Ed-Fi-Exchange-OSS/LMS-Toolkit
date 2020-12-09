@@ -48,6 +48,10 @@ def map_to_udm(
         CreateDate: Date/time at which the record was first retrieved
         LastModifieDate: Date/time when the record was modified, or when first retrieved
     """
+
+    if discussion_replies_df.empty:
+        return discussion_replies_df
+
     df = discussion_replies_df[
         [
             "created",
