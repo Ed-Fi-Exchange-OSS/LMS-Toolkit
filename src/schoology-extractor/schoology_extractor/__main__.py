@@ -9,7 +9,9 @@ import sys
 from typing import Callable, Dict, Optional
 
 from dotenv import load_dotenv
+from errorhandler import ErrorHandler  # type: ignore
 import pandas as pd
+import sqlalchemy
 
 from schoology_extractor.helpers import csv_writer
 from schoology_extractor.api.request_client import RequestClient
@@ -33,23 +35,44 @@ log_level = arguments.log_level
 page_size = arguments.page_size
 input_directory = arguments.input_directory
 
-# Configure logging
-logFormatter = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+db_engine: sqlalchemy.engine.base.Engine
+extractorFacade: SchoologyExtractFacade
 
-logging.basicConfig(
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-    ],
-    format=logFormatter,
-    level=log_level,
-)
+logger: logging.Logger
+error_tracker: ErrorHandler
 
-logger = logging.getLogger(__name__)
 
-request_client = RequestClient(schoology_key, schoology_secret)
-db_engine = get_sync_db_engine()
+def _configure_logging():
+    global logger
+    global error_tracker
 
-extractorFacade = SchoologyExtractFacade(request_client, page_size, db_engine)
+    logger = logging.getLogger(__name__)
+
+    level = os.environ.get("LOGLEVEL", "INFO")
+    logging.basicConfig(
+        handlers=[
+            logging.StreamHandler(sys.stdout),
+        ],
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        level=level,
+    )
+    error_tracker = ErrorHandler()
+
+
+def _initialize():
+    global extractorFacade, db_engine
+
+    try:
+        request_client = RequestClient(schoology_key, schoology_secret)
+        db_engine = get_sync_db_engine()
+        extractorFacade = SchoologyExtractFacade(request_client, page_size, db_engine)
+    except BaseException as e:
+        logger.critical(e)
+        print(
+            "A fatal error occurred, please review the log output for more information.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
 
 def _create_file_from_dataframe(action: Callable, file_name) -> bool:
@@ -59,21 +82,7 @@ def _create_file_from_dataframe(action: Callable, file_name) -> bool:
         if data is not None:
             csv_writer.df_to_csv(data, file_name)
         return True
-    except Exception:
-        logger.exception("An exception occurred while generating %s", file_name)
-        return False
-
-
-# TODO: this method should disappear when we finish converting all of the output
-# to use the official CSV formats.
-def _create_file_from_list(action: Callable, file_name: str) -> bool:
-    try:
-        data = action()
-        if data is not None:
-            logger.info(f"Exporting {file_name}")
-            csv_writer.to_csv(data, os.path.join(schoology_output_path, file_name))
-        return True
-    except Exception:
+    except BaseException:
         logger.exception("An exception occurred while generating %s", file_name)
         return False
 
@@ -115,9 +124,9 @@ def _get_section_activities(section_id: int) -> Callable:
     return __get_section_activities
 
 
-def _get_submissions(assigment_id: int, section_id: int) -> Callable:
+def _get_submissions(assignment_id: int, section_id: int) -> Callable:
     def __get_submissions() -> Optional[pd.DataFrame]:
-        return extractorFacade.get_submissions(assigment_id, section_id)
+        return extractorFacade.get_submissions(assignment_id, section_id)
 
     return __get_submissions
 
@@ -149,6 +158,11 @@ def _get_system_activities() -> pd.DataFrame:
 
 
 def main():
+    _configure_logging()
+
+    logger.info("Starting Ed-Fi LMS Schoology Extractor")
+    _initialize()
+
     _create_file_from_dataframe(
         _get_users, lms.get_user_file_path(schoology_output_path)
     )
@@ -159,7 +173,10 @@ def main():
     # Cannot proceed with section-related files if the sections extract did not
     # succeed.
     if not succeeded:
-        sys.exit(-1)
+        logger.critical(
+            "Unable to continue file generation because the load of Sections failed. Please review the log for more information."
+        )
+        sys.exit(1)
 
     for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
 
@@ -213,7 +230,17 @@ def main():
             _get_system_activities, system_activities_output_dir
         )
 
+    logger.info("Finishing Ed-Fi LMS Schoology Extractor")
+
+    if error_tracker.fired:
+        print(
+            "A fatal error occurred, please review the log output for more information.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    sys.exit(0)
+
 
 if __name__ == "__main__":
-    logger.info("Starting Ed-Fi LMS Schoology Extractor")
     main()
