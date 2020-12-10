@@ -220,9 +220,6 @@ def main():
             _get_section_associations(section_id), file_path
         )
 
-        # TODO: When merging with the work to create attendance events, should skip the attendance
-        # if section associations failed.
-
         file_path = lms.get_attendance_events_file_path(
             schoology_output_path, section_id
         )
