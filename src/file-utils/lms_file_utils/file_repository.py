@@ -16,15 +16,15 @@ def _get_newest_file(directory: Optional[str]) -> Optional[str]:
         return None
 
     files = [{"path": f.path, "name": f.name, "size": f.stat().st_size} for f in os.scandir(directory) if f.name.endswith(".csv")]
-    files = sorted(files, key=lambda x: x["name"], reverse=False)
+    files = sorted(files, key=lambda x: str(x["name"]), reverse=False)
 
     while files:
         f = files.pop()
 
         # Why 4? Because pandas.DataFrame.to_csv writes a file with two line
         # breaks "\n\n" when the DataFrame is empty. Want to ignore those files.
-        if f["size"] > 4:
-            return f["path"]
+        if int(str(f["size"])) > 4:
+            return str(f["path"])
 
     return None
 
