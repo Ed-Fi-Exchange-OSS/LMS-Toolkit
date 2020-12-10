@@ -79,8 +79,12 @@ def _create_file_from_dataframe(action: Callable, file_name) -> bool:
     logger.info(f"Exporting {file_name}")
     try:
         data: pd.DataFrame = action()
+
         if data is not None:
             csv_writer.df_to_csv(data, file_name)
+        else:
+            csv_writer.df_to_csv(pd.DataFrame(), file_name)
+
         return True
     except BaseException:
         logger.exception("An exception occurred while generating %s", file_name)
@@ -189,6 +193,9 @@ def main():
 
         if succeeded:
             assignments: pd.DataFrame = result_bucket["assignments"]
+
+            if assignments.empty:
+                continue
 
             for assignment in assignments["SourceSystemIdentifier"].tolist():
                 assignment_id = int(assignment)
