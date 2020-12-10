@@ -43,7 +43,9 @@ def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         LMSSectionSourceSystemIdentifier: Section identifier as recorded in the LMS
         EntityStatus: The status of the record
         CreateDate: datetime at which the record was first retrieved
-        LastModifieDate: datetime when the record was modified, or when first retrieved
+        LastModifiedDate: datetime when the record was modified, or when first retrieved
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
 
     if assignments_df.empty:
@@ -81,5 +83,7 @@ def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     df["LMSSectionSourceSystemIdentifier"] = section_id
 
     df["SubmissionType"] = None
+    df["SourceCreateDate"] = ""
+    df["SourceLastModifiedDate"] = ""
 
     return df

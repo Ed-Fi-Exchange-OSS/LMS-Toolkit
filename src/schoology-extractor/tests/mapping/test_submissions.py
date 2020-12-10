@@ -37,6 +37,9 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         # Act
         return map_to_udm(schoology_df)
 
+    def it_should_have_correct_number_of_columns(result):
+        assert result.shape[1] == 13
+
     def it_should_have_schoology_as_SourceSystem(result):
         assert result["SourceSystem"].iloc[0] == "Schoology"
 
@@ -48,3 +51,9 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
 
     def it_should_map_created_to_SubmissionDateTime(result):
         assert result["SubmissionDateTime"].iloc[0] == "2020-11-04 11:29:44"
+
+    def it_should_have_empty_SourceCreateDate(result):
+        assert result["SourceCreateDate"].iloc[0] == ""
+
+    def it_should_have_empty_SourceLastModifiedDate(result):
+        assert result["SourceLastModifiedDate"].iloc[0] == ""

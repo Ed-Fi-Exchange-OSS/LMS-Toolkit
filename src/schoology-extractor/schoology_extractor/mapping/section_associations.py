@@ -49,7 +49,9 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
             source system
         EntityStatus: The status of the record
         CreateDate: Date/time at which the record was first retrieved
-        LastModifieDate: Date/time when the record was modified, or when first retrieved
+        LastModifiedDate: Date/time when the record was modified, or when first retrieved
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
 
     if enrollments_df.empty:
@@ -62,6 +64,8 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
     df["LMSSectionSourceSystemIdentifier"] = section_id
+    df["SourceCreateDate"] = ""
+    df["SourceLastModifiedDate"] = ""
 
     df.rename(
         columns={

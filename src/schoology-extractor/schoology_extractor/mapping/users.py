@@ -34,7 +34,9 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source system
         CreateDate: datetime at which the record was first retrieved
-        LastModifieDate: datetime when the record was modified, or when first retrieved
+        LastModifiedDate: datetime when the record was modified, or when first retrieved
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
 
     if users_df.empty:
@@ -77,6 +79,9 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
     # in the API request results, thus everyone available at this point is an
     # active user.
     df["EntityStatus"] = constants.ACTIVE
+
+    df["SourceCreateDate"] = ""
+    df["SourceLastModifiedDate"] = ""
 
     df.drop(
         columns=["name_first", "name_middle", "name_last", "role_id", "id"],

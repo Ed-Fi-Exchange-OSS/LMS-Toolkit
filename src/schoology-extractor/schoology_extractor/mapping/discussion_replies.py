@@ -46,7 +46,9 @@ def map_to_udm(
         AssignmentIdentifier: A unique numeric identifier assigned to the assignment.
         ActivityTimeInMinutes: The total activity time in minutes.
         CreateDate: Date/time at which the record was first retrieved
-        LastModifieDate: Date/time when the record was modified, or when first retrieved
+        LastModifiedDate: Date/time when the record was modified, or when first retrieved
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
 
     if discussion_replies_df.empty:
@@ -79,7 +81,8 @@ def map_to_udm(
 
     df["ActivityTimeInMinutes"] = None
     df["EntityStatus"] = constants.ACTIVE
-    df["SourceCreatedDate"] = df["CreateDate"]
+    df["SourceCreateDate"] = ""
+    df["SourceLastModifiedDate"] = ""
 
     df.rename(
         columns={
