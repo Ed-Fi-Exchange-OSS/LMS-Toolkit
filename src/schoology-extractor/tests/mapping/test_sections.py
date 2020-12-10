@@ -38,7 +38,7 @@ def describe_when_mapping_schoology_sections_to_udm():
             assert result.shape[0] == 2
 
         def then_it_should_have_correct_number_of_columns(result):
-            assert result.shape[1] == 11
+            assert result.shape[1] == 12
 
         @pytest.mark.parametrize(
             "input",
@@ -70,6 +70,9 @@ def describe_when_mapping_schoology_sections_to_udm():
             assert (
                 result.at[0, "SectionDescription"] == "This is the section description"
             )
+
+        def then_section_school_code_is_mapped(result):
+            assert result.at[0, "SISSectionIdentifier"] == "123456"
 
         def then_term_is_mapped(result):
             # Schoology doesn't have a concept that we can translate into a term

@@ -43,7 +43,7 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
     if sections_df.empty:
         return sections_df
 
-    df = sections_df[["id", "section_title", "description", "active", "CreateDate", "LastModifiedDate"]].copy()
+    df = sections_df[["id", "section_title", "description", "section_school_code", "active", "CreateDate", "LastModifiedDate"]].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
@@ -55,6 +55,7 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
             "id": "SourceSystemIdentifier",
             "section_title": "Title",
             "description": "SectionDescription",
+            "section_school_code": "SISSectionIdentifier",
         },
         inplace=True,
     )
