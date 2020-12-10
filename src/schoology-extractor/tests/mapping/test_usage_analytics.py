@@ -88,8 +88,8 @@ def describe_when_converting_usage_analytics_to_udm():
                 # Act
                 return map_to_udm(df)
 
-            def it_should_have_eleven_columns(result):
-                assert result.shape[1] == 11
+            def it_should_have_correct_number_of_columns(result):
+                assert result.shape[1] == 13
 
             def it_should_have_one_row(result):
                 assert result.shape[0] == 1
@@ -106,7 +106,9 @@ def describe_when_converting_usage_analytics_to_udm():
                     ("ActivityTimeInMinutes", None),
                     ("EntityStatus", "active"),
                     ("CreateDate", EXPECTED_DATE_TIME),
-                    ("LastModifiedDate", EXPECTED_DATE_TIME)
+                    ("LastModifiedDate", EXPECTED_DATE_TIME),
+                    ("SourceCreateDate", ""),
+                    ("SourceLastModifiedDate", ""),
                 ]
             )
             def it_should_map_fields(result, field, expected):
@@ -130,8 +132,8 @@ def describe_when_converting_usage_analytics_to_udm():
                 # Act
                 return map_to_udm(df)
 
-            def it_should_have_eleven_columns(result):
-                assert result.shape[1] == 11
+            def it_should_have_correct_number_of_columns(result):
+                assert result.shape[1] == 13
 
             def it_should_have_one_row(result):
                 assert result.shape[0] == 1
@@ -148,7 +150,9 @@ def describe_when_converting_usage_analytics_to_udm():
                     ("ActivityTimeInMinutes", None),
                     ("EntityStatus", "active"),
                     ("CreateDate", EXPECTED_DATE_TIME),
-                    ("LastModifiedDate", EXPECTED_DATE_TIME)
+                    ("LastModifiedDate", EXPECTED_DATE_TIME),
+                    ("SourceCreateDate", ""),
+                    ("SourceLastModifiedDate", ""),
                 ]
             )
             def it_should_map_fields(result, field, expected):

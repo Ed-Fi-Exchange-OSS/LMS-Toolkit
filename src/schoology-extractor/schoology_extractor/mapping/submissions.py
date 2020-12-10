@@ -40,6 +40,8 @@ def map_to_udm(submissions_df: pd.DataFrame) -> pd.DataFrame:
         EntityStatus: Status of the entity
         CreateDate: Created date
         LastModifiedDate: Last modified date
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
 
     if submissions_df.empty:
@@ -75,6 +77,8 @@ def map_to_udm(submissions_df: pd.DataFrame) -> pd.DataFrame:
     df["AssignmentSourceSystemIdentifier"] = df["id"].apply(lambda x: x.split('#')[1])
     df["EarnedPoints"] = None
     df["Grade"] = None
+    df["SourceCreateDate"] = ""
+    df["SourceLastModifiedDate"] = ""
 
     df.rename(
         columns={

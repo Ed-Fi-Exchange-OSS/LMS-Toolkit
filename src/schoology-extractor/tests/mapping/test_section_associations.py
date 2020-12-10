@@ -49,6 +49,9 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             # Act
             return map_to_udm(schoology_df, 234234)
 
+        def it_should_have_correct_number_of_columns(result):
+            assert result.shape[1] == 12
+
         def it_should_ignore_admin_users(result):
             assert result.shape[0] == 1
 
@@ -78,6 +81,12 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
 
         def it_should_have_empty_end_date(result):
             assert result["EndDate"].iloc[0] is None
+
+        def it_should_have_empty_SourceCreateDate(result):
+            assert result["SourceCreateDate"].iloc[0] == ""
+
+        def it_should_have_empty_SourceLastModifiedDate(result):
+            assert result["SourceLastModifiedDate"].iloc[0] == ""
 
 
 def describe_when_mapping_Schoology_enrollment_status_to_string_value():

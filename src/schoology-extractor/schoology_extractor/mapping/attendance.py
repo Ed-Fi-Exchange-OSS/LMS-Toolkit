@@ -83,8 +83,10 @@ def map_to_udm(
             identifier for the section association
         EntityStatus: The status of the record
         CreateDate: datetime at which the record was first retrieved
-        LastModifieDate: datetime when the record was modified, or when first
+        LastModifiedDate: datetime when the record was modified, or when first
             retrieved
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
     if len(attendance) == 0:
         return pd.DataFrame()
@@ -130,6 +132,9 @@ def map_to_udm(
             "LMSSectionSourceSystemIdentifier",
         ]
     ]
+
+    df["SourceCreateDate"] = ""
+    df["SourceLastModifiedDate"] = ""
 
     if sync_callback is not None:
         df = sync_callback(df)

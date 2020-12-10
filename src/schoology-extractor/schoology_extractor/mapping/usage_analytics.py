@@ -37,6 +37,8 @@ def map_to_udm(usage: pd.DataFrame) -> pd.DataFrame:
         EntityStatus: will always be "active"
         CreateDate: Created date
         LastModifiedDate: Last modified date (will always be the same as the CreateDate)
+        SourceCreateDate: Date this record was created in the LMS
+        SourceLastModifiedDate: Date this record was last updated in the LMS
     """
 
     if usage.empty:
@@ -79,6 +81,8 @@ def map_to_udm(usage: pd.DataFrame) -> pd.DataFrame:
     df["CreateDate"] = df["LastModifiedDate"] = datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S"
     )
+    df["SourceCreateDate"] = ""
+    df["SourceLastModifiedDate"] = ""
 
     df.drop(columns=["action_type"], inplace=True)
 

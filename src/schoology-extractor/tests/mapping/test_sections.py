@@ -37,8 +37,8 @@ def describe_when_mapping_schoology_sections_to_udm():
         def then_output_has_two_rows(result):
             assert result.shape[0] == 2
 
-        def then_output_has_ten_columns(result):
-            assert result.shape[1] == 9
+        def then_it_should_have_correct_number_of_columns(result):
+            assert result.shape[1] == 11
 
         @pytest.mark.parametrize(
             "input",
@@ -90,3 +90,9 @@ def describe_when_mapping_schoology_sections_to_udm():
 
         def then_last_modified_date_is_mapped(result):
             assert result.at[0, "LastModifiedDate"] == "2020-10-30 11:40:50"
+
+        def then_it_should_have_empty_SourceCreateDate(result):
+            assert result.at[0, "SourceCreateDate"] == ""
+
+        def then_it_should_have_empty_SourceLastModifiedDate(result):
+            assert result.at[0, "SourceLastModifiedDate"] == ""

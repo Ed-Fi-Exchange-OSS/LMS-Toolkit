@@ -42,6 +42,9 @@ def describe_mapping_schoology_users_to_udm():
         def test_then_output_has_two_rows(result):
             assert result.shape[0] == 2
 
+        def test_then_it_should_have_correct_number_of_columns(result):
+            assert result.shape[1] == 14
+
         @pytest.mark.parametrize(
             "input",
             [
@@ -83,3 +86,9 @@ def describe_mapping_schoology_users_to_udm():
 
         def test_then_activity_type_is_mapped(result):
             assert result.at[0, "ActivityType"] == "discussion-reply"
+
+        def test_then_it_should_have_empty_SourceCreateDate(result):
+            assert result.at[0, "SourceCreateDate"] == ""
+
+        def test_then_it_should_have_empty_SourceLastModifiedDate(result):
+            assert result.at[0, "SourceLastModifiedDate"] == ""

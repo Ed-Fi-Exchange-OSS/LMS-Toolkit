@@ -47,8 +47,8 @@ def describe_when_mapping_schoology_users_to_udm():
         def test_then_output_has_two_rows(result):
             assert result.shape[0] == 2
 
-        def test_then_output_has_ten_columns(result):
-            assert result.shape[1] == 10
+        def test_then_it_should_have_correct_number_of_columns(result):
+            assert result.shape[1] == 12
 
         @pytest.mark.parametrize(
             "input",
@@ -94,3 +94,9 @@ def describe_when_mapping_schoology_users_to_udm():
 
         def test_then_entity_status_is_mapped_inactive(result):
             assert result.at[0, "EntityStatus"] == "active"
+
+        def test_then_it_should_have_empty_SourceCreateDate(result):
+            assert result.at[0, "SourceCreateDate"] == ""
+
+        def test_then_it_should_have_empty_SourceLastModifiedDate(result):
+            assert result.at[0, "SourceLastModifiedDate"] == ""

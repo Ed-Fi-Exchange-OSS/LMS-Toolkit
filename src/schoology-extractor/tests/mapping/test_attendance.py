@@ -112,8 +112,8 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
         # Act
         return map_to_udm(attendance_events, section_associations)
 
-    def it_should_have_seven_columns(result):
-        assert result.shape[1] == 7
+    def it_should_have_correct_number_of_columns(result):
+        assert result.shape[1] == 9
 
     def it_should_have_schoology_as_source_system(result):
         assert result["SourceSystem"].iloc[0] == "Schoology"
@@ -126,6 +126,12 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
 
     def it_should_have_active_as_EntityStatus(result):
         assert result["EntityStatus"].iloc[0] == "active"
+
+    def it_should_have_empty_SourceCreateDate(result):
+        assert result["SourceCreateDate"].iloc[0] == ""
+
+    def it_should_have_empty_SourceLastModifiedDate(result):
+        assert result["SourceLastModifiedDate"].iloc[0] == ""
 
     @pytest.mark.parametrize(
         "index,expected", [(0, "present"), (1, "absent"), (2, "late"), (3, "excused")]
