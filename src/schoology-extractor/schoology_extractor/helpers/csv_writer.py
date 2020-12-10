@@ -21,52 +21,6 @@ def df_to_csv(df: pd.DataFrame, output_path: str):
         The path and name where you want your csv to be generated.
 
     """
-    assert isinstance(df, pd.DataFrame), "Argument `df` should be a DataFrame"
-    assert isinstance(output_path, str), "Argument `output_path` should be a string"
-    assert len(output_path.strip()) > 0, "Argument `output_path` should not be whitespaces"
-
-    if df.empty:
-        return
 
     df.to_csv(output_path, index=False)
     logger.info("The file has been generated => %s" % output_path)
-
-
-def to_csv(data: list, output_path: str):
-    """
-        Exports the data to csv
-
-        Parameters
-        ----------
-        data : list
-            The data that will be exported to csv.
-        output_path : str
-            The path and name where you want your csv to be generated.
-
-    """
-    assert isinstance(data, list)
-    assert isinstance(output_path, str)
-
-    df = pd.DataFrame(data)
-    df_to_csv(df, output_path)
-
-
-def to_string(data: list) -> str:
-    """
-    Exports the data to string format
-
-    Parameters
-    ----------
-    data : list
-        The data that will be expoted to string.
-
-    Returns
-    -------
-    str
-        The information converted to string
-
-    """
-    assert isinstance(data, list)
-
-    df = pd.DataFrame(data)
-    return df.to_string()

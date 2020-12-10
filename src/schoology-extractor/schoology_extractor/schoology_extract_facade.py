@@ -188,7 +188,7 @@ class SchoologyExtractFacade:
             self._client.get_enrollments(section_id).get_all_pages(),
         )
 
-        return sectionAssocMap.map_to_udm(pd.DataFrame(enrollments), section_id)
+        return sectionAssocMap.map_to_udm(enrollments, section_id)
 
     def get_attendance_events(
         self, section_id: int, section_associations: pd.DataFrame
@@ -212,7 +212,7 @@ class SchoologyExtractFacade:
 
         events = self._client.get_attendance(section_id)
 
-        def _sync_wrapper(data: pd.DataFrame):
+        def _sync_wrapper(data: pd.DataFrame) -> pd.DataFrame:
             """Attendance_events entity has a more complex mapping. For most
             entities, sync process running before mapping is fine, but considering
             the process involved for this entity, the mapper for attendance events
@@ -249,6 +249,7 @@ class SchoologyExtractFacade:
         discussions = self._client.get_discussions(section_id)
         replies: list = []
         mapped_replies = pd.DataFrame()
+
         for discussion in discussions:
             discussion_id = discussion["id"]
             replies = replies + self._client.get_discussion_replies(
@@ -258,7 +259,7 @@ class SchoologyExtractFacade:
                 RESOURCE_NAMES.DISCUSSION_REPLIES, self._db_engine, replies
             )
             current_replies = discussionRepliesMap.map_to_udm(
-                pd.DataFrame(sync_replies), section_id, discussion_id
+                sync_replies, section_id, discussion_id
             )
             mapped_replies = pd.concat([mapped_replies, current_replies])
 
@@ -267,6 +268,6 @@ class SchoologyExtractFacade:
         )
 
         mapped_discussions = discussionsMap.map_to_udm(
-            pd.DataFrame(sync_discussions), section_id
+            sync_discussions, section_id
         )
         return mapped_discussions.append(mapped_replies)

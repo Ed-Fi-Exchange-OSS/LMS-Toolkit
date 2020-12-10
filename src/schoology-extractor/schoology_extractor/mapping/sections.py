@@ -38,6 +38,9 @@ def map_to_udm(sections_df: pd.DataFrame) -> pd.DataFrame:
         LastModifieDate: datetime when the record was modified, or when first retrieved
     """
 
+    if sections_df.empty:
+        return sections_df
+
     df = sections_df[["id", "section_title", "description", "active", "CreateDate", "LastModifiedDate"]].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
