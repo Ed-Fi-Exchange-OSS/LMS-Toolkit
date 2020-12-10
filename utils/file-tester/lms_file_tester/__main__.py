@@ -129,9 +129,9 @@ def _validate_system_activities_directories(input_directory: str):
 
 def _main():
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         logger.critical(
-            "Must pass an input directory as the only argument to the script."
+            "Must pass an input directory as an argument to the script. Optional log level as second argument."
         )
 
     input_directory = sys.argv[1]
