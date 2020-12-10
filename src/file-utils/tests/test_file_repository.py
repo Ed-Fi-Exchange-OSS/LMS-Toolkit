@@ -16,6 +16,7 @@ from lms_file_utils.file_repository import (
     get_attendance_events_file,
     get_submissions_file,
     get_system_activities_files,
+    _get_newest_file,
 )
 
 
@@ -78,14 +79,16 @@ files = [
 ]
 
 
+@pytest.fixture
+def init_fs(fs):
+    # Fake as Linux so that all slashes in these test are forward
+    fs.os = "linux"
+    fs.path_separator = "/"
+    fs.is_windows_fs = False
+    fs.is_macos = False
+
+
 def describe_given_filesystem_does_not_exist():
-    @pytest.fixture
-    def init_fs(fs):
-        # Fake as Linux so that all slashes in these test are forward
-        # fs.path_separator = "/"
-        # fs.is_windows_fs = False
-        # fs.is_macos = False
-        fs.os = "linux"
 
     def describe_when_getting_sections_file_file():
         def it_should_return_None(fs, init_fs):
@@ -135,11 +138,11 @@ def describe_given_filesystem_does_not_exist():
 
 def describe_given_filesystem_exists_with_no_files():
     @pytest.fixture
-    def init_fs(fs):
+    def init_fs(init_fs, fs):
         # Fake as Linux so that all slashes in these test are forward
-        fs.path_separator = "/"
-        fs.is_windows_fs = False
-        fs.is_macos = False
+        # fs.path_separator = "/"
+        # fs.is_windows_fs = False
+        # fs.is_macos = False
 
         fs.create_dir(f"{BASE_DIRECTORY}/sections")
         fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/assignments")
@@ -200,14 +203,14 @@ def describe_given_filesystem_exists_with_no_files():
 
 def describe_given_files_exist():
     @pytest.fixture
-    def init_fs(fs):
+    def init_fs(init_fs, fs):
         # Fake as Linux so that all slashes in these test are forward
-        fs.path_separator = "/"
-        fs.is_windows_fs = False
-        fs.is_macos = False
+        # fs.path_separator = "/"
+        # fs.is_windows_fs = False
+        # fs.is_macos = False
 
         for f in files:
-            fs.create_file(f)
+            fs.create_file(f, contents="content")
 
     def describe_when_getting_sections_file_file():
         def it_should_return_newest_file(fs, init_fs):
@@ -257,3 +260,120 @@ def describe_given_files_exist():
         def it_return_newest_file_from_day_two(fs, init_fs):
             files = get_system_activities_files(BASE_DIRECTORY)
             assert SYSTEM_ACTIVITIES_FILE_NEW_2 in files
+
+
+def describe_when_getting_newest_file_by_name():
+    def describe_given_there_are_no_files():
+        def it_returns_None(fs, init_fs):
+            directory = "./a"
+            fs.create_dir(directory)
+
+            result = _get_newest_file(directory)
+
+            assert result is None
+
+    def describe_given_the_directory_does_not_exist():
+        def it_returns_None(fs, init_fs):
+            directory = "./a"
+
+            result = _get_newest_file(directory)
+
+            assert result is None
+
+    def describe_given_three_files():
+        def describe_given_all_have_contents():
+            def it_returns_first_sorted_ascending(fs, init_fs):
+                # Arrange
+                directory = "./a"
+                oldest = "./a/1234-56-78-90-12-34.csv"
+                middle = "./a/1234-56-78-90-12-35.csv"
+                newest = "./a/1234-56-78-90-13-34.csv"
+
+                fs.create_dir(directory)
+                fs.create_file(oldest, contents="content")
+                fs.create_file(middle, contents="content")
+                fs.create_file(newest, contents="content")
+
+                # Act
+                result = _get_newest_file(directory)
+
+                # Assert
+                assert result == newest
+
+        def describe_given_only_oldest_has_content():
+            def it_returns_oldest_sorted_ascending(fs, init_fs):
+                # Arrange
+                directory = "./a"
+                oldest = "./a/1234-56-78-90-12-34.csv"
+                middle = "./a/1234-56-78-90-12-35.csv"
+                newest = "./a/1234-56-78-90-13-34.csv"
+
+                fs.create_dir(directory)
+                fs.create_file(oldest, contents="content")
+                fs.create_file(middle, contents="")
+                fs.create_file(newest, contents="")
+
+                # Act
+                result = _get_newest_file(directory)
+
+                # Assert
+                assert oldest == result
+
+        def describe_given_none_have_content():
+            def it_returns_None(fs, init_fs):
+                # Arrange
+                directory = "./a"
+                oldest = "./a/1234-56-78-90-12-34.csv"
+                middle = "./a/1234-56-78-90-12-35.csv"
+                newest = "./a/1234-56-78-90-13-34.csv"
+
+                fs.create_dir(directory)
+                fs.create_file(oldest, contents="")
+                fs.create_file(middle, contents="")
+                fs.create_file(newest, contents="")
+
+                # Act
+                result = _get_newest_file(directory)
+
+                # Assert
+                assert result is None
+
+        def describe_given_all_have_only_a_line_break():
+            def it_returns_None(fs, init_fs):
+                # Arrange
+                directory = "./a"
+                oldest = "./a/1234-56-78-90-12-34.csv"
+                middle = "./a/1234-56-78-90-12-35.csv"
+                newest = "./a/1234-56-78-90-13-34.csv"
+
+                fs.create_dir(directory)
+                fs.create_file(oldest, contents="\n")
+                fs.create_file(middle, contents="\n")
+                fs.create_file(newest, contents="\n")
+
+                # Act
+                result = _get_newest_file(directory)
+
+                # Assert
+                assert result is None
+
+        # Not coding or testing beyond this, because this example represents how
+        # Schoology (via pandas write to CSV) is outputting "empty" files.
+        def describe_given_all_have_only_two_line_breaks():
+            def it_returns_None(fs, init_fs):
+                # Arrange
+                directory = "./a"
+                oldest = "./a/1234-56-78-90-12-34.csv"
+                middle = "./a/1234-56-78-90-12-35.csv"
+                newest = "./a/1234-56-78-90-13-34.csv"
+
+                fs.create_dir(directory)
+                fs.create_file(oldest, contents="\n\n")
+                fs.create_file(middle, contents="\n\n")
+                fs.create_file(newest, contents="\n\n")
+
+                # Act
+                result = _get_newest_file(directory)
+
+                # Assert
+                assert result is None
