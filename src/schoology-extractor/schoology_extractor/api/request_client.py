@@ -12,6 +12,7 @@ from typing import Union
 from http import HTTPStatus
 
 from opnieuw import retry
+from requests import Response
 from requests.exceptions import ConnectionError, HTTPError, Timeout
 from requests.packages.urllib3.exceptions import ProtocolError  # type: ignore
 from requests_oauthlib import OAuth1Session  # type: ignore
@@ -104,6 +105,84 @@ class RequestClient:
         ), "Argument `page_size` should be of type `int`."
         return f"start=0&limit={page_size}"
 
+    def _check_for_rate_limiting(self, response: Response, http_method: str, url: str):
+        """
+        Check for a rate limit response. If it has occured, log and
+        raise an exception to be caught to trigger a retry.
+
+        Parameters
+        ----------
+        response: Response
+            The HTTP response to check
+        http_method: str
+            A human-readable string describing the http method, used for logging
+        url: str
+            The url of the request, used for logging
+
+        Raises
+        -------
+        HTTPError
+            If the response indicates a rate limit
+        """
+        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
+            logger.warn(
+                "Hit API rate limiting on %s to %s, will retry with backoff",
+                http_method,
+                url,
+            )
+            raise HTTPError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
+
+    def _check_for_success(self, response: Response, success_status: HTTPStatus):
+        """
+        Check a response for success. If unsuccessful, log and
+        raise an exception.
+
+        Parameters
+        ----------
+        response: Response
+            The HTTP response to check
+        success_status: HTTPStatus
+            The HTTP status that indicates success
+
+        Raises
+        -------
+        RuntimeError
+            If the response indicates failure
+        """
+        if response.status_code != success_status:
+            raise RuntimeError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
+
+    def _check_response(
+        self, response: Response, success_status: HTTPStatus, http_method: str, url: str
+    ):
+        """
+        Check a response for rate limiting and success
+
+        Parameters
+        ----------
+        response: Response
+            The HTTP response to check
+        success_status: HTTPStatus
+            The HTTP status that indicates success
+        http_method: str
+            A human-readable string describing the http method, used for logging
+        url: str
+            The url of the request, used for logging
+
+        Raises
+        -------
+        HTTPError
+            If the response indicates a rate limit, to trigger a retry
+        RuntimeError
+            If the response indicates failure
+        """
+        self._check_for_rate_limiting(response, http_method, url)
+        self._check_for_success(response, success_status)
+
     @retry(
         retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
         max_calls_total=REQUEST_RETRY_COUNT,
@@ -141,19 +220,9 @@ class RequestClient:
             auth=self.oauth.auth,
         )
 
-        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-            logger.warn(
-                "Hit API rate limiting on GET to %s, will retry with backoff", url
-            )
-            raise HTTPError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
-
-        if response.status_code != HTTPStatus.OK:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
-
+        self._check_response(
+            response=response, success_status=HTTPStatus.OK, http_method="GET", url=url
+        )
         return response.json()
 
     @retry(
@@ -190,18 +259,12 @@ class RequestClient:
             json=json,
         )
 
-        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-            logger.warn(
-                "Hit API rate limiting on POST to %s, will retry with backoff", url
-            )
-            raise HTTPError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
-
-        if response.status_code != HTTPStatus.CREATED:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
+        self._check_response(
+            response=response,
+            success_status=HTTPStatus.CREATED,
+            http_method="POST",
+            url=url,
+        )
 
         return response.json()
 
@@ -242,18 +305,12 @@ class RequestClient:
             json=json,
         )
 
-        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-            logger.warn(
-                "Hit API rate limiting on bulk POST to %s, will retry with backoff", url
-            )
-            raise HTTPError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
-
-        if response.status_code != HTTPStatus.MULTI_STATUS:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
+        self._check_response(
+            response=response,
+            success_status=HTTPStatus.MULTI_STATUS,
+            http_method="bulk POST",
+            url=url,
+        )
 
         return response.json()
 
@@ -292,19 +349,12 @@ class RequestClient:
             auth=self.oauth.auth,
         )
 
-        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-            logger.warn(
-                "Hit API rate limiting on bulk DELETE to %s, will retry with backoff",
-                url,
-            )
-            raise HTTPError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
-
-        if response.status_code != HTTPStatus.MULTI_STATUS:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
+        self._check_response(
+            response=response,
+            success_status=HTTPStatus.MULTI_STATUS,
+            http_method="bulk DELETE",
+            url=url,
+        )
 
         return response.json()
 
@@ -342,18 +392,12 @@ class RequestClient:
             auth=self.oauth.auth,
         )
 
-        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
-            logger.warn(
-                "Hit API rate limiting on DELETE to %s, will retry with backoff", url
-            )
-            raise HTTPError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
-
-        if response.status_code != HTTPStatus.NO_CONTENT:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
+        self._check_response(
+            response=response,
+            success_status=HTTPStatus.NO_CONTENT,
+            http_method="DELETE",
+            url=url,
+        )
 
     def get_assignments(
         self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
