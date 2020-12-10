@@ -194,17 +194,16 @@ def main():
         if succeeded:
             assignments: pd.DataFrame = result_bucket["assignments"]
 
-            if assignments.empty:
-                continue
+            if not assignments.empty:
+                for assignment in assignments["SourceSystemIdentifier"].tolist():
 
-            for assignment in assignments["SourceSystemIdentifier"].tolist():
-                assignment_id = int(assignment)
-                submission_file_name = lms.get_submissions_file_path(
-                    schoology_output_path, section_id, assignment_id
-                )
-                _create_file_from_dataframe(
-                    _get_submissions(assignment_id, section_id), submission_file_name
-                )
+                    assignment_id = int(assignment)
+                    submission_file_name = lms.get_submissions_file_path(
+                        schoology_output_path, section_id, assignment_id
+                    )
+                    _create_file_from_dataframe(
+                        _get_submissions(assignment_id, section_id), submission_file_name
+                    )
 
         section_activities_file_path = lms.get_section_activities_file_path(
             schoology_output_path, section_id
