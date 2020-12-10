@@ -5,7 +5,6 @@
 
 import os
 
-import pytest
 import pandas as pd
 
 from schoology_extractor.helpers.csv_writer import df_to_csv
