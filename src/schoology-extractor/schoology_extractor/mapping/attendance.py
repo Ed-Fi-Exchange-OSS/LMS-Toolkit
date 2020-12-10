@@ -68,16 +68,23 @@ def map_to_udm(
 
     Notes
     -----
+    Most mappers accept a DataFrame as input - but attendance conversion to
+        DataFrame is complex, therefore it is handled directly in this
+        function instead of upstream.
+
     DataFrame columns are:
-        SourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source system
+        SourceSystemIdentifier: A unique number or alphanumeric code
+            assigned to a user by the source system
         SourceSystem: The system code or name providing the user data
         Date: Attendance date, formatted as YYYY-mm-dd
         AttendanceStatus: one of (present, absent, late, excused)
         LMSUserSourceSystemIdentifier: source system identifier for the user
-        LMSUserLMSSectionAssociationSourceSystemIdentifier: source system identifier for the section association
+        LMSUserLMSSectionAssociationSourceSystemIdentifier: source system
+            identifier for the section association
         EntityStatus: The status of the record
         CreateDate: datetime at which the record was first retrieved
-        LastModifieDate: datetime when the record was modified, or when first retrieved
+        LastModifieDate: datetime when the record was modified, or when first
+            retrieved
     """
     if len(attendance) == 0:
         return pd.DataFrame()
