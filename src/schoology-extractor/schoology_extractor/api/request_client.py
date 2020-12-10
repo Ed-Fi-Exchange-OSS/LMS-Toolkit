@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from dataclasses import dataclass
+import logging
 import os
 import time
 import random
@@ -11,6 +12,7 @@ from typing import Union
 from http import HTTPStatus
 
 from opnieuw import retry
+from requests import Response
 from requests.exceptions import ConnectionError, HTTPError, Timeout
 from requests.packages.urllib3.exceptions import ProtocolError  # type: ignore
 from requests_oauthlib import OAuth1Session  # type: ignore
@@ -25,6 +27,8 @@ REQUEST_RETRY_COUNT = int(os.environ.get("REQUEST_RETRY_COUNT") or 4)
 REQUEST_RETRY_TIMEOUT_SECONDS = int(
     os.environ.get("REQUEST_RETRY_TIMEOUT_SECONDS") or 60
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -47,6 +51,7 @@ class RequestClient:
     oauth : OAuth1Session
         The two-legged authenticated OAuth1 session.
     """
+
     schoology_key: str
     schoology_secret: str
     base_url: str = DEFAULT_URL
@@ -95,8 +100,88 @@ class RequestClient:
         }
 
     def _build_query_params_for_first_page(self, page_size: int):
-        assert isinstance(page_size, int), "Argument `page_size` should be of type `int`."
+        assert isinstance(
+            page_size, int
+        ), "Argument `page_size` should be of type `int`."
         return f"start=0&limit={page_size}"
+
+    def _check_for_rate_limiting(self, response: Response, http_method: str, url: str):
+        """
+        Check for a rate limit response. If it has occured, log and
+        raise an exception to be caught to trigger a retry.
+
+        Parameters
+        ----------
+        response: Response
+            The HTTP response to check
+        http_method: str
+            A human-readable string describing the http method, used for logging
+        url: str
+            The url of the request, used for logging
+
+        Raises
+        -------
+        HTTPError
+            If the response indicates a rate limit
+        """
+        if response.status_code == HTTPStatus.TOO_MANY_REQUESTS:
+            logger.warn(
+                "Hit API rate limiting on %s to %s, will retry with backoff",
+                http_method,
+                url,
+            )
+            raise HTTPError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
+
+    def _check_for_success(self, response: Response, success_status: HTTPStatus):
+        """
+        Check a response for success. If unsuccessful, log and
+        raise an exception.
+
+        Parameters
+        ----------
+        response: Response
+            The HTTP response to check
+        success_status: HTTPStatus
+            The HTTP status that indicates success
+
+        Raises
+        -------
+        RuntimeError
+            If the response indicates failure
+        """
+        if response.status_code != success_status:
+            raise RuntimeError(
+                f"{response.reason} ({response.status_code}): {response.text}"
+            )
+
+    def _check_response(
+        self, response: Response, success_status: HTTPStatus, http_method: str, url: str
+    ):
+        """
+        Check a response for rate limiting and success
+
+        Parameters
+        ----------
+        response: Response
+            The HTTP response to check
+        success_status: HTTPStatus
+            The HTTP status that indicates success
+        http_method: str
+            A human-readable string describing the http method, used for logging
+        url: str
+            The url of the request, used for logging
+
+        Raises
+        -------
+        HTTPError
+            If the response indicates a rate limit, to trigger a retry
+        RuntimeError
+            If the response indicates failure
+        """
+        self._check_for_rate_limiting(response, http_method, url)
+        self._check_for_success(response, success_status)
 
     @retry(
         retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
@@ -128,16 +213,58 @@ class RequestClient:
             self.base_url, str
         ), "Property `base_url` should be of type `str`."
 
+        url = self.base_url + resource
         response = self.oauth.get(
-            url=self.base_url + resource,
+            url=url,
             headers=self._request_header,
             auth=self.oauth.auth,
         )
 
-        if response.status_code != HTTPStatus.OK:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
+        self._check_response(
+            response=response, success_status=HTTPStatus.OK, http_method="GET", url=url
+        )
+        return response.json()
+
+    @retry(
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        max_calls_total=REQUEST_RETRY_COUNT,
+        retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
+    )
+    def post(self, resource: str, json: dict) -> dict:
+        """
+        Send a HTTP POST request.
+
+        Parameters
+        ----------
+        resource : str
+            The resource endpoint that you want to POST to.
+        json : str
+            The body of the POST as a JSON-like dict.
+
+        Returns
+        -------
+        dict
+            A parsed response from the server
+
+        Raises
+        -------
+        RuntimeError
+            If the POST operation is unsuccessful.
+        """
+        url = f"{self.base_url}{resource}"
+        response = self.oauth.post(
+            url=url,
+            headers=self._request_header,
+            auth=self.oauth.auth,
+            json=json,
+        )
+
+        self._check_response(
+            response=response,
+            success_status=HTTPStatus.CREATED,
+            http_method="POST",
+            url=url,
+        )
 
         return response.json()
 
@@ -170,17 +297,20 @@ class RequestClient:
             If the bulk POST operation as a whole is unsuccessful. Does not
             attempt to check status codes for each individual operation.
         """
+        url = f"{self.base_url}{resource}"
         response = self.oauth.post(
-            url=f"{self.base_url}{resource}",
+            url=url,
             headers=self._request_header,
             auth=self.oauth.auth,
             json=json,
         )
 
-        if response.status_code != HTTPStatus.MULTI_STATUS:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
+        self._check_response(
+            response=response,
+            success_status=HTTPStatus.MULTI_STATUS,
+            http_method="bulk POST",
+            url=url,
+        )
 
         return response.json()
 
@@ -212,16 +342,19 @@ class RequestClient:
             If the bulk DELETE operation as a whole is unsuccessful.  Does not
             attempt to check status codes for each individual operation.
         """
+        url = f"{self.base_url}{resource}?{parameters}"
         response = self.oauth.delete(
-            url=f"{self.base_url}{resource}?{parameters}",
+            url=url,
             headers=self._request_header,
             auth=self.oauth.auth,
         )
 
-        if response.status_code != HTTPStatus.MULTI_STATUS:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
+        self._check_response(
+            response=response,
+            success_status=HTTPStatus.MULTI_STATUS,
+            http_method="bulk DELETE",
+            url=url,
+        )
 
         return response.json()
 
@@ -252,16 +385,19 @@ class RequestClient:
             If the bulk DELETE operation as a whole is unsuccessful.  Does not
             attempt to check status codes for each individual operation.
         """
+        url = f"{self.base_url}{resource}/{id}"
         response = self.oauth.delete(
-            url=f"{self.base_url}{resource}/{id}",
+            url=url,
             headers=self._request_header,
             auth=self.oauth.auth,
         )
 
-        if response.status_code != HTTPStatus.NO_CONTENT:
-            raise RuntimeError(
-                f"{response.reason} ({response.status_code}): {response.text}"
-            )
+        self._check_response(
+            response=response,
+            success_status=HTTPStatus.NO_CONTENT,
+            http_method="DELETE",
+            url=url,
+        )
 
     def get_assignments(
         self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
@@ -309,10 +445,7 @@ class RequestClient:
 
         url = f"courses/{course_id}/sections"
         return PaginatedResult(
-            self, page_size,
-            self.get(url),
-            RESOURCE_NAMES.SECTION,
-            self.base_url + url
+            self, page_size, self.get(url), RESOURCE_NAMES.SECTION, self.base_url + url
         )
 
     def get_submissions_by_section_id_and_grade_item_id(
@@ -340,11 +473,7 @@ class RequestClient:
         url = f"sections/{section_id}/submissions/{grade_item_id}?{query_params}"
 
         return PaginatedResult(
-            self,
-            page_size,
-            self.get(url),
-            RESOURCE_NAMES.REVISION,
-            self.base_url + url
+            self, page_size, self.get(url), RESOURCE_NAMES.REVISION, self.base_url + url
         )
 
     def get_users(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
@@ -364,7 +493,9 @@ class RequestClient:
 
         url = f"users?{self._build_query_params_for_first_page(page_size)}"
 
-        return PaginatedResult(self, page_size, self.get(url), "user", self.base_url + url)
+        return PaginatedResult(
+            self, page_size, self.get(url), "user", self.base_url + url
+        )
 
     def get_courses(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
         """
@@ -385,11 +516,8 @@ class RequestClient:
         url = f"courses?{self._build_query_params_for_first_page(page_size)}"
 
         return PaginatedResult(
-            self,
-            page_size,
-            self.get(url),
-            RESOURCE_NAMES.COURSE,
-            self.base_url + url)
+            self, page_size, self.get(url), RESOURCE_NAMES.COURSE, self.base_url + url
+        )
 
     def get_roles(self, page_size: int = DEFAULT_PAGE_SIZE) -> PaginatedResult:
         """
@@ -410,11 +538,8 @@ class RequestClient:
         url = f"roles?{self._build_query_params_for_first_page(page_size)}"
 
         return PaginatedResult(
-            self,
-            page_size,
-            self.get(url),
-            RESOURCE_NAMES.ROLE,
-            self.base_url + url)
+            self, page_size, self.get(url), RESOURCE_NAMES.ROLE, self.base_url + url
+        )
 
     def get_enrollments(
         self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
@@ -446,9 +571,7 @@ class RequestClient:
             self.base_url + url,
         )
 
-    def get_attendance(
-        self, section_id: int
-    ) -> list:
+    def get_attendance(self, section_id: int) -> list:
         """
         Retrieves attendance event data for a section. Note: attendance does
         not support paging.
@@ -475,9 +598,7 @@ class RequestClient:
 
         return result["date"]
 
-    def get_discussions(
-        self, section_id: int
-    ) -> list:
+    def get_discussions(self, section_id: int) -> list:
         """
         Retrieves discussions list for a section.
 

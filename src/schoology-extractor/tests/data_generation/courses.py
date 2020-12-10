@@ -38,10 +38,10 @@ def generate_courses(record_count: int) -> List[Dict]:
             logging.info(f"{i} courses...")
         courses.append(
             {
-                "title": "English Writing",
+                "title": fake.catch_phrase(),
+                "description": fake.sentence(),
                 "course_code": fake.bothify("?###"),
                 "department": " ".join(fake.words(2)),
-                "description": fake.catch_phrase(),
             }
         )
     return courses
