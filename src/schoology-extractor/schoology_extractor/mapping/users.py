@@ -36,37 +36,9 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
         CreateDate: datetime at which the record was first retrieved
         LastModifieDate: datetime when the record was modified, or when first retrieved
     """
-    assert isinstance(users_df, pd.DataFrame), "Expected input to be a DataFrame"
 
-    assert (
-        "primary_email" in users_df.columns
-    ), "Expected the users DataFrame to have column `primary_email`"
-    assert (
-        "uid" in users_df.columns
-    ), "Expected the users DataFrame to have column `uid`"
-    assert (
-        "role_id" in users_df.columns
-    ), "Expected the users DataFrame to have column `role_title`"
-    assert (
-        "school_uid" in users_df.columns
-    ), "Expected the users DataFrame to have column `school_uid`"
-    assert (
-        "name_first" in users_df.columns
-    ), "Expected the users DataFrame to have column `name_first`"
-    assert (
-        "name_middle" in users_df.columns
-    ), "Expected the users DataFrame to have column `name_middle`"
-    assert (
-        "name_last" in users_df.columns
-    ), "Expected the users DataFrame to have column `name_last`"
-    assert (
-        "username" in users_df.columns
-    ), "Expected the users DataFrame to have column `username`"
-
-    assert "id" in roles_df.columns, "Expected roles DataFrame to have column `id`"
-    assert (
-        "title" in roles_df.columns
-    ), "Expected roles DataFrame to have column `title`"
+    if users_df.empty:
+        return users_df
 
     df = users_df[
         [
