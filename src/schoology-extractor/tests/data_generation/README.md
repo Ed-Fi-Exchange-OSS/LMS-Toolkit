@@ -16,16 +16,15 @@ generator only uses a subset of the extractor configuration values.
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
 
-## Additional Configuration
+## Configuration Requiring Code Changes
 
-The number of entities to generate are currently hardcoded in the `__main__`.py
-file, requiring an edit to change. For each type of entity, certain values (e.g.
-valid email domains) may be hardcoded at the top of file where data generation
-takes place (e.g. `users.py` for Users).
+The `__main__.py` contains constants controlling the number of entities
+to be generated and loaded for each entity type. These should be edited
+directly in the file to tune the generator.
 
-When possible, API loaders for each type of entity will have code to roll back
-entity creation. This can be enabled/disabled by commenting out the usage of
-_rollback* functions.
+Additionally, at the end of `__main__.py` rollbacks are performed on all loaded data,
+removing that just-created data from Schoology. Comment out the rollback section
+to preserve the data in Schoology.
 
 ## Execution
 

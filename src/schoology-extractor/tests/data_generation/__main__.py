@@ -139,6 +139,8 @@ except Exception as ex:
     logger.exception(ex)
 
 
+# **** Rollback section from here to end of file. Comment out to prevent rollbacks.
+
 try:
     rollback_loaded_discussion_comments(request_client, discussion_comments)
 except Exception as ex:
