@@ -5,9 +5,17 @@
 
 from datetime import datetime
 import pytest
-import xxhash
 from pandas import read_sql_query, DataFrame
 from google_classroom_extractor.api.coursework import _sync_without_cleanup
+from google_classroom_extractor.api.resource_sync import (
+    SYNC_COLUMNS_SQL,
+    SYNC_COLUMNS,
+    add_hash_and_json_to,
+    add_sourceid_to,
+)
+from tests.api.api_helper import prep_expected_sync_df, prep_from_sync_db_df
+
+IDENTITY_COLUMNS = ["courseId", "id"]
 
 COLUMNS = [
     "courseId",
@@ -137,51 +145,23 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         ]
 
         courseworks_initial_df = DataFrame(INITIAL_DATA, columns=COLUMNS)
-        courseworks_initial_df["Hash"] = courseworks_initial_df.apply(
-            lambda row: xxhash.xxh64_hexdigest(row.to_json().encode("utf-8")),
-            axis=1,
-        )
+        courseworks_initial_df = add_hash_and_json_to(courseworks_initial_df)
+        add_sourceid_to(courseworks_initial_df, IDENTITY_COLUMNS)
+
         dateToUse = datetime(2020, 9, 14, 12, 0, 0)
         courseworks_initial_df["SyncNeeded"] = 0
         courseworks_initial_df["CreateDate"] = dateToUse
         courseworks_initial_df["LastModifiedDate"] = dateToUse
+        courseworks_initial_df = courseworks_initial_df[SYNC_COLUMNS]
 
         courseworks_sync_df = DataFrame(SYNC_DATA, columns=COLUMNS)
 
         with test_db_fixture.connect() as con:
             con.execute("DROP TABLE IF EXISTS Assignmments")
             con.execute(
-                """
+                f"""
                 CREATE TABLE IF NOT EXISTS Assignmments (
-                    courseId TEXT,
-                    id TEXT,
-                    title TEXT,
-                    description TEXT,
-                    materials TEXT,
-                    state TEXT,
-                    alternateLink TEXT,
-                    creationTime TEXT,
-                    updateTime TEXT,
-                    maxPoints TEXT,
-                    workType TEXT,
-                    submissionModificationMode TEXT,
-                    assigneeMode TEXT,
-                    creatorUserId TEXT,
-                    "dueDate.year" TEXT,
-                    "dueDate.month" TEXT,
-                    "dueDate.day" TEXT,
-                    "dueTime.hours" TEXT,
-                    "dueTime.minutes" TEXT,
-                    "assignment.studentWorkFolder.id" TEXT,
-                    "assignment.studentWorkFolder.title" TEXT,
-                    "assignment.studentWorkFolder.alternateLink" TEXT,
-                    topicId TEXT,
-                    scheduledTime TEXT,
-                    Hash TEXT,
-                    CreateDate DATETIME,
-                    LastModifiedDate DATETIME,
-                    SyncNeeded BIGINT,
-                    PRIMARY KEY (id,courseId)
+                    {SYNC_COLUMNS_SQL}
                 )
                 """
             )
@@ -204,23 +184,16 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
             NEW_COURSEWORK,
         ]
         with test_db_after_sync.connect() as con:
-            expected_courseworks_df = (
-                DataFrame(EXPECTED_COURSEWORKS_DATA_AFTER_SYNC, columns=COLUMNS)
-                .set_index(["id", "courseId"]).astype("string")  # ignore generated dataframe index
-            )
-            courseworks_from_db_df = (
-                read_sql_query("SELECT * from Assignmments", con)
-                .set_index(["id", "courseId"]).astype("string")  # ignore generated dataframe index
+            expected_courseworks_df = prep_expected_sync_df(
+                DataFrame(EXPECTED_COURSEWORKS_DATA_AFTER_SYNC, columns=COLUMNS).astype(
+                    "string"
+                ),
+                IDENTITY_COLUMNS,
             )
 
-            courseworks_from_db_df.drop(labels=[
-                'materials',
-                'assignment.studentWorkFolder.id',
-                'assignment.studentWorkFolder.title',
-                'assignment.studentWorkFolder.alternateLink',
-                'Hash',
-                'CreateDate',
-                'LastModifiedDate',
-                'SyncNeeded'], axis=1, inplace=True)  # deleting null columns not provided for the test
+            courseworks_from_db_df = prep_from_sync_db_df(
+                read_sql_query("SELECT * from Assignmments", con).astype("string"),
+                IDENTITY_COLUMNS,
+            )
 
             assert expected_courseworks_df.to_csv() == courseworks_from_db_df.to_csv()

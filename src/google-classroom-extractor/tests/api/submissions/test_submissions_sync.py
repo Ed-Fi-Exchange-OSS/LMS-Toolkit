@@ -5,9 +5,17 @@
 
 from datetime import datetime
 import pytest
-import xxhash
 from pandas import read_sql_query, DataFrame
 from google_classroom_extractor.api.submissions import _sync_without_cleanup
+from google_classroom_extractor.api.resource_sync import (
+    SYNC_COLUMNS_SQL,
+    SYNC_COLUMNS,
+    add_hash_and_json_to,
+    add_sourceid_to,
+)
+from tests.api.api_helper import prep_expected_sync_df, prep_from_sync_db_df
+
+IDENTITY_COLUMNS = ["id", "courseId", "courseWorkId"]
 
 COLUMNS = [
     "courseId",
@@ -107,47 +115,28 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         ]
 
         submissions_initial_df = DataFrame(INITIAL_DATA, columns=COLUMNS)
-        submissions_initial_df["Hash"] = submissions_initial_df.apply(
-            lambda row: xxhash.xxh64_hexdigest(row.to_json().encode("utf-8")),
-            axis=1,
-        )
+        submissions_initial_df = add_hash_and_json_to(submissions_initial_df)
+        add_sourceid_to(submissions_initial_df, IDENTITY_COLUMNS)
+
         dateToUse = datetime(2020, 9, 14, 12, 0, 0)
         submissions_initial_df["SyncNeeded"] = 0
         submissions_initial_df["CreateDate"] = dateToUse
         submissions_initial_df["LastModifiedDate"] = dateToUse
+        submissions_initial_df = submissions_initial_df[SYNC_COLUMNS]
 
         submissions_sync_df = DataFrame(SYNC_DATA, columns=COLUMNS)
 
         with test_db_fixture.connect() as con:
             con.execute("DROP TABLE IF EXISTS StudentSubmissions")
             con.execute(
-                """
+                f"""
                 CREATE TABLE IF NOT EXISTS StudentSubmissions (
-                    courseId TEXT,
-                    courseWorkId TEXT,
-                    id TEXT,
-                    userId TEXT,
-                    creationTime TEXT,
-                    updateTime TEXT,
-                    state TEXT,
-                    alternateLink TEXT,
-                    courseWorkType TEXT,
-                    submissionHistory TEXT,
-                    late TEXT,
-                    draftGrade TEXT,
-                    assignedGrade TEXT,
-                    "assignmentSubmission.attachments" TEXT,
-                    associatedWithDeveloper TEXT,
-                    Hash TEXT,
-                    CreateDate DATETIME,
-                    LastModifiedDate DATETIME,
-                    SyncNeeded BIGINT,
-                    PRIMARY KEY (id,courseId,courseWorkId,userId)
+                    {SYNC_COLUMNS_SQL}
                 )
                 """
             )
 
-        submissions_sync_df.to_sql(
+        submissions_initial_df.to_sql(
             "StudentSubmissions", test_db_fixture, if_exists="append", index=False, chunksize=1000
         )
 
@@ -156,29 +145,25 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
 
         return test_db_fixture
 
-    def it_should_have_submissionss_table_with_updated_row_and_added_new_row(
+    def it_should_have_submissions_table_with_updated_row_and_added_new_row(
         test_db_after_sync,
     ):
         EXPECTED_SUBMISSIONS_DATA_AFTER_SYNC = [
-            CHANGED_SUBMISSION_AFTER,
             UNCHANGED_SUBMISSION,
+            CHANGED_SUBMISSION_AFTER,
             NEW_SUBMISSION,
         ]
         with test_db_after_sync.connect() as con:
-            expected_submissions_df = (
-                DataFrame(EXPECTED_SUBMISSIONS_DATA_AFTER_SYNC, columns=COLUMNS)
-                .set_index(["id", "courseId", "courseWorkId"]).astype("string")  # ignore generated dataframe index
-            )
-            submissions_from_db_df = (
-                read_sql_query("SELECT * from StudentSubmissions", con)
-                .set_index(["id", "courseId", "courseWorkId"]).astype("string")  # ignore generated dataframe index
+            expected_submissions_df = prep_expected_sync_df(
+                DataFrame(EXPECTED_SUBMISSIONS_DATA_AFTER_SYNC, columns=COLUMNS).astype(
+                    "string"
+                ),
+                IDENTITY_COLUMNS,
             )
 
-            submissions_from_db_df.drop(labels=[
-                "assignmentSubmission.attachments",
-                "Hash",
-                "CreateDate",
-                "LastModifiedDate",
-                "SyncNeeded"], axis=1, inplace=True)
+            submissions_from_db_df = prep_from_sync_db_df(
+                read_sql_query("SELECT * from StudentSubmissions", con).astype("string"),
+                IDENTITY_COLUMNS,
+            )
 
             assert expected_submissions_df.to_csv() == submissions_from_db_df.to_csv()

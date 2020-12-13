@@ -131,7 +131,7 @@ def request_all_courses_as_df(
     """
 
     courses_df = request_latest_courses_as_df(resource)
-    _sync_without_cleanup(courses_df, sync_db)
+    courses_df = _sync_without_cleanup(courses_df, sync_db)
     cleanup_after_sync(COURSES_RESOURCE_NAME, sync_db)
 
     return courses_df
@@ -139,7 +139,7 @@ def request_all_courses_as_df(
 
 def _sync_without_cleanup(
     resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
-):
+) -> DataFrame:
     """
     Take fetched API data and sync with database. Creates tables when necessary,
     but ok if temporary tables are there to start. Doesn't delete temporary tables when finished.
@@ -151,30 +151,15 @@ def _sync_without_cleanup(
         will be mutated, adding Hash and CreateDate/LastModifiedDate
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
+
+    Returns
+    -------
+    DataFrame
+        a DataFrame with current fetched data and reconciled CreateDate/LastModifiedDate
     """
-    sync_to_db_without_cleanup(
+    return sync_to_db_without_cleanup(
         resource_df=resource_df,
+        identity_columns=["id"],
         resource_name=COURSES_RESOURCE_NAME,
-        table_columns_sql="""
-            id BIGINT,
-            name TEXT,
-            section BIGINT,
-            descriptionHeading TEXT,
-            room TEXT,
-            ownerId BIGINT,
-            creationTime TEXT,
-            updateTime TEXT,
-            enrollmentCode BIGINT,
-            courseState TEXT,
-            alternateLink TEXT,
-            teacherGroupEmail TEXT,
-            courseGroupEmail TEXT,
-            "teacherFolder.id" TEXT,
-            "teacherFolder.title" TEXT,
-            "teacherFolder.alternateLink" TEXT,
-            guardiansEnabled BOOLEAN,
-            calendarId BIGINT,
-            """,
-        primary_keys="id",
         sync_db=sync_db,
     )

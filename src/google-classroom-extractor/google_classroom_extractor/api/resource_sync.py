@@ -5,44 +5,107 @@
 
 import logging
 from datetime import datetime
-from pandas import DataFrame, read_sql_query
+from typing import List
+from pandas import DataFrame, Series, read_sql_query
 import sqlalchemy
 import xxhash
 
 logger = logging.getLogger(__name__)
 
+SYNC_COLUMNS = [
+    "SourceId",
+    "Json",
+    "Hash",
+    "CreateDate",
+    "LastModifiedDate",
+    "SyncNeeded",
+]
+
 SYNC_COLUMNS_SQL = """
+    SourceId TEXT,
+    Json TEXT,
     Hash TEXT,
     CreateDate DATETIME,
     LastModifiedDate DATETIME,
     SyncNeeded BIGINT,
+    PRIMARY KEY (SourceId)
     """
+
+
+def _json_hash_encode(row: Series) -> Series:
+    """
+    Take a DataFrame row, add serialized JSON and hash
+
+    Parameters
+    ----------
+    row: Series
+        a DataFrame row
+
+    Returns
+    -------
+    Series
+        the row with the json and hash columns added
+    """
+    json = row.to_json()
+    row["Json"] = json
+    row["Hash"] = xxhash.xxh64_hexdigest(json.encode("utf-8"))
+    return row
+
+
+def add_hash_and_json_to(df: DataFrame) -> DataFrame:
+    """
+    Create Hash and Json columns for DataFrame.  Do this
+    before adding any other columns e.g. SourceId
+
+    Parameters
+    ----------
+    df: DataFrame
+        a DataFrame with fetched data
+
+    Returns
+    -------
+    DataFrame
+        a new DataFrame with the json and hash columns added
+    """
+    return df.apply(_json_hash_encode, axis=1)
+
+
+def add_sourceid_to(df: DataFrame, identity_columns: List[str]):
+    """
+    Create SourceId column for DataFrame with given identity columns.
+
+    Parameters
+    ----------
+    df: DataFrame
+        a DataFrame with fetched data
+    identity_columns: List[str]
+        a List of the identity columns for the resource dataframe
+    """
+    assert (
+        Series(identity_columns).isin(df.columns).all()
+    ), "Identity columns missing from dataframe"
+
+    df["SourceId"] = df[sorted(identity_columns)].agg("-".join, axis=1)
 
 
 def _create_sync_table_from_resource_df(
     resource_df: DataFrame,
+    identity_columns: List[str],
     resource_name: str,
-    table_columns_sql: str,
-    primary_keys: str,
     sync_db: sqlalchemy.engine.base.Engine,
 ):
     """
-    Take fetched API data and push to a new temporary sync table.  Includes
+    Take fetched data and push to a new temporary sync table.  Includes
     hash and tentative extractor CreateDate/LastModifiedDates.
 
     Parameters
     ----------
     resource_df: DataFrame
-        an API DataFrame with current fetched data which
-        will be mutated, adding Hash and CreateDate/LastModifiedDate
+        a DataFrame with current fetched data.
+    identity_columns: List[str]
+        a List of the identity columns for the resource dataframe.
     resource_name: str
         the name of the API resource, e.g. "Courses", to be used in SQL
-    table_columns_sql: str
-        the columns for the resource in the database, in SQL table creation form,
-            with dangling commas
-    primary_keys: str
-        a comma separated list of the primary key columns for the resource,
-        e.g. "id,courseId"
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
     """
@@ -52,38 +115,32 @@ def _create_sync_table_from_resource_df(
         con.execute(
             f"""
             CREATE TABLE IF NOT EXISTS Sync_{resource_name} (
-                {table_columns_sql}
                 {SYNC_COLUMNS_SQL}
-                PRIMARY KEY ({primary_keys})
             )
             """
         )
 
-    # compute hash from API call data
-    resource_df["Hash"] = resource_df.apply(
-        lambda row: xxhash.xxh64_hexdigest(row.to_json().encode("utf-8")),
-        axis=1,
-    )
+    sync_df: DataFrame = resource_df.copy()
+    sync_df = add_hash_and_json_to(sync_df)
 
-    # will need index set for DataFrame update below
-    resource_df.set_index(primary_keys.split(","), inplace=True)
+    # add (possibly composite) primary key, sorting for consistent ordering
+    add_sourceid_to(sync_df, identity_columns)
 
-    # add initial Create/Update times and SyncNeeded flag
     now: datetime = datetime.now()
-    resource_df["CreateDate"] = now
-    resource_df["LastModifiedDate"] = now
-    resource_df["SyncNeeded"] = 1
+    sync_df["CreateDate"] = now
+    sync_df["LastModifiedDate"] = now
+    sync_df["SyncNeeded"] = 1
 
+    sync_df = sync_df[SYNC_COLUMNS]
+    sync_df.set_index("SourceId", inplace=True)
     # push to temporary sync table
-    resource_df.to_sql(
+    sync_df.to_sql(
         f"Sync_{resource_name}", sync_db, if_exists="append", index=True, chunksize=1000
     )
 
 
 def _ensure_main_table_exists(
     resource_name: str,
-    table_columns_sql: str,
-    primary_keys: str,
     con: sqlalchemy.engine.base.Connection,
 ):
     """
@@ -96,9 +153,6 @@ def _ensure_main_table_exists(
     table_columns_sql: str
         the columns for the resource in the database, in SQL table creation form,
             with dangling commas
-    primary_keys: str
-        a comma separated list of the primary key columns for the resource,
-        e.g. "id,courseId"
     con: sqlalchemy.engine.base.Connection
         an open database connection, which will not be closed by this function
     """
@@ -106,9 +160,7 @@ def _ensure_main_table_exists(
     con.execute(
         f"""
         CREATE TABLE IF NOT EXISTS {resource_name} (
-            {table_columns_sql}
             {SYNC_COLUMNS_SQL}
-            PRIMARY KEY ({primary_keys})
         )
         """
     )
@@ -119,7 +171,6 @@ def _ensure_main_table_exists(
 
 def _create_unmatched_records_temp_table(
     resource_name: str,
-    primary_keys: str,
     con: sqlalchemy.engine.base.Connection,
 ):
     """
@@ -133,9 +184,6 @@ def _create_unmatched_records_temp_table(
     ----------
     resource_name: str
         the name of the API resource, e.g. "Courses", to be used in SQL
-    primary_keys: str
-        a comma separated list of the primary key columns for the resource,
-        e.g. "id,courseId"
     con: sqlalchemy.engine.base.Connection
         an open database connection, which will not be closed by this function
     """
@@ -149,18 +197,17 @@ def _create_unmatched_records_temp_table(
             UNION ALL
             SELECT * FROM Sync_{resource_name}
         )
-        GROUP BY {primary_keys}, Hash
+        GROUP BY SourceId, Hash
         HAVING COUNT(*) = 1
         """
     )
     con.execute(
-        f"CREATE INDEX IF NOT EXISTS ID_{resource_name} ON Unmatched_{resource_name}({primary_keys})"
+        f"CREATE INDEX IF NOT EXISTS ID_{resource_name} ON Unmatched_{resource_name}(SourceId)"
     )
 
 
 def _get_true_create_dates_for_unmatched_records(
     resource_name: str,
-    primary_keys: str,
     con: sqlalchemy.engine.base.Connection,
 ):
     """
@@ -174,30 +221,21 @@ def _get_true_create_dates_for_unmatched_records(
     ----------
     resource_name: str
         the name of the API resource, e.g. "Courses", to be used in SQL
-    primary_keys: str
-        a comma separated list of the primary key columns for the resource,
-        e.g. "id,courseId"
     con: sqlalchemy.engine.base.Connection
         an open database connection, which will not be closed by this function
     """
-    create_date_where_clause = " AND ".join(
-        map(
-            lambda pk: f" c.{pk} = Unmatched_{resource_name}.{pk}",
-            primary_keys.split(","),
-        )
-    )
     con.execute(
         f"""
         UPDATE Unmatched_{resource_name}
             SET CreateDate = (
                 SELECT c.CreateDate
                 FROM {resource_name} c
-                WHERE {create_date_where_clause}
+                WHERE c.SourceId = Unmatched_{resource_name}.SourceId
             )
             WHERE EXISTS (
                 SELECT *
                 FROM {resource_name} c
-                WHERE {create_date_where_clause}
+                WHERE c.SourceId = Unmatched_{resource_name}.SourceId
             ) AND SyncNeeded = 1
         """
     )
@@ -205,7 +243,6 @@ def _get_true_create_dates_for_unmatched_records(
 
 def _update_resource_table_with_changes(
     resource_name: str,
-    primary_keys: str,
     con: sqlalchemy.engine.base.Connection,
 ):
     """
@@ -224,9 +261,9 @@ def _update_resource_table_with_changes(
     CHANGED_ROWS_CTE = f"""
                         changedRows AS (
                             SELECT * FROM Unmatched_{resource_name}
-                            WHERE ({primary_keys}) IN (
-                                SELECT {primary_keys} FROM Unmatched_{resource_name}
-                                GROUP BY {primary_keys}
+                            WHERE (SourceId) IN (
+                                SELECT SourceId FROM Unmatched_{resource_name}
+                                GROUP BY SourceId
                                 HAVING COUNT(*) > 1
                             ) AND SyncNeeded = 1
                         )
@@ -239,8 +276,8 @@ def _update_resource_table_with_changes(
         WITH
         {CHANGED_ROWS_CTE}
         DELETE FROM {resource_name}
-        WHERE ({primary_keys}) IN (
-            SELECT {primary_keys} from changedRows
+        WHERE (SourceId) IN (
+            SELECT SourceId from changedRows
         )
         """
     )
@@ -254,18 +291,18 @@ def _update_resource_table_with_changes(
             {CHANGED_ROWS_CTE},
             newRows AS (
                 SELECT * FROM Unmatched_{resource_name}
-                WHERE ({primary_keys}) IN (
-                    SELECT {primary_keys} FROM Unmatched_{resource_name}
-                    GROUP BY {primary_keys}
+                WHERE (SourceId) IN (
+                    SELECT SourceId FROM Unmatched_{resource_name}
+                    GROUP BY SourceId
                     HAVING COUNT(*) = 1 AND SyncNeeded = 1
                 )
             )
         INSERT INTO {resource_name}
             SELECT * FROM Unmatched_{resource_name}
-            WHERE ({primary_keys}) IN (
-                SELECT {primary_keys} FROM changedRows
+            WHERE (SourceId) IN (
+                SELECT SourceId FROM changedRows
                 UNION ALL
-                SELECT {primary_keys} FROM newRows
+                SELECT SourceId FROM newRows
             ) AND SyncNeeded = 1
         """
     )
@@ -282,10 +319,10 @@ def _update_resource_table_with_changes(
 
 def _update_dataframe_with_true_dates(
     resource_df: DataFrame,
+    identity_columns: List[str],
     resource_name: str,
-    primary_keys: str,
     con: sqlalchemy.engine.base.Connection,
-):
+) -> DataFrame:
     """
     Update main resource DataFrame with reconciled CreateDate/LastModifiedDates
 
@@ -294,6 +331,8 @@ def _update_dataframe_with_true_dates(
     resource_df: DataFrame
         an API DataFrame with current fetched data which
         will be mutated by updating CreateDate/LastModifiedDate
+    identity_columns: List[str]
+        a List of the identity columns for the resource dataframe.
     resource_name: str
         the name of the API resource, e.g. "Courses", to be used in SQL
     primary_keys: str
@@ -301,67 +340,82 @@ def _update_dataframe_with_true_dates(
         e.g. "id,courseId"
     con: sqlalchemy.engine.base.Connection
         an open database connection, which will not be closed by this function
+
+    Returns
+    -------
+    DataFrame
+        a DataFrame with reconciled CreateDate/LastModifiedDate
     """
+    assert (
+        Series(identity_columns).isin(resource_df.columns).all()
+    ), "Identity columns missing from dataframe"
+
     # fetch DataFrame with reconciled CreateDate/LastModifiedDate for sync records
     update_dates_query = f"""
-                            SELECT {primary_keys}, CreateDate, LastModifiedDate
+                            SELECT SourceId, CreateDate, LastModifiedDate
                             FROM {resource_name}
-                            WHERE ({primary_keys}) IN (
-                                SELECT {primary_keys} FROM Sync_{resource_name}
+                            WHERE (SourceId) IN (
+                                SELECT SourceId FROM Sync_{resource_name}
                             )
                             """
     create_date_df = read_sql_query(update_dates_query, con)
+    create_date_df["SourceId"] = create_date_df["SourceId"].astype("string")
 
-    # set up index for update operation
-    primary_keys_as_array = primary_keys.split(",")
-    for pk in primary_keys_as_array:
-        create_date_df[pk] = create_date_df[pk].astype("string")
-    create_date_df.set_index(primary_keys_as_array, inplace=True)
+    add_sourceid_to(resource_df, identity_columns)
+    resource_df["SourceId"] = resource_df["SourceId"].astype("string")
 
-    # update CreateDate/LastModifiedDate of sync records
-    resource_df.update(create_date_df)
+    result_df = resource_df.join(create_date_df.set_index("SourceId"), on="SourceId")
 
     # reset index so no columns are hidden
-    resource_df.reset_index(inplace=True)
+    result_df.drop(["SourceId"], axis=1, inplace=True)
+
+    return result_df
 
 
 def sync_to_db_without_cleanup(
     resource_df: DataFrame,
+    identity_columns: List[str],
     resource_name: str,
-    table_columns_sql: str,
-    primary_keys: str,
     sync_db: sqlalchemy.engine.base.Engine,
 ):
     """
-    Take fetched API data and sync with database. Creates tables when necessary,
+    Take fetched data and sync with database. Creates tables when necessary,
     but ok if temporary tables are there to start. Does not delete temporary tables when finished.
 
     Parameters
     ----------
     resource_df: DataFrame
-        an API DataFrame with current fetched data which
-        will be mutated, adding Hash and CreateDate/LastModifiedDate
+        a DataFrame with current fetched data
+    identity_columns: List[str]
+        a List of the identity columns for the resource dataframe.
     resource_name: str
         the name of the API resource, e.g. "Courses", to be used in SQL
-    table_columns_sql: str
-        the columns for the resource in the database, in SQL table creation form,
-            with dangling commas
-    primary_keys: str
-        a comma separated list of the primary key columns for the resource,
-        e.g. "id,courseId"
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
+
+    Returns
+    -------
+    DataFrame
+        a DataFrame with current fetched data and reconciled CreateDate/LastModifiedDate
     """
+    assert (
+        Series(identity_columns).isin(resource_df.columns).all()
+    ), "Identity columns missing from dataframe"
+
     _create_sync_table_from_resource_df(
-        resource_df, resource_name, table_columns_sql, primary_keys, sync_db
+        resource_df, identity_columns, resource_name, sync_db
     )
 
     with sync_db.connect() as con:
-        _ensure_main_table_exists(resource_name, table_columns_sql, primary_keys, con)
-        _create_unmatched_records_temp_table(resource_name, primary_keys, con)
-        _get_true_create_dates_for_unmatched_records(resource_name, primary_keys, con)
-        _update_resource_table_with_changes(resource_name, primary_keys, con)
-        _update_dataframe_with_true_dates(resource_df, resource_name, primary_keys, con)
+        _ensure_main_table_exists(resource_name, con)
+        _create_unmatched_records_temp_table(resource_name, con)
+        _get_true_create_dates_for_unmatched_records(resource_name, con)
+        _update_resource_table_with_changes(resource_name, con)
+        result_df: DataFrame = _update_dataframe_with_true_dates(
+            resource_df, identity_columns, resource_name, con
+        )
+
+    return result_df
 
 
 def cleanup_after_sync(resource_name: str, sync_db: sqlalchemy.engine.base.Engine):

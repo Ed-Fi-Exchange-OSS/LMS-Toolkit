@@ -5,9 +5,17 @@
 
 from datetime import datetime
 import pytest
-import xxhash
 from pandas import read_sql_query, DataFrame
 from google_classroom_extractor.api.students import _sync_without_cleanup
+from google_classroom_extractor.api.resource_sync import (
+    SYNC_COLUMNS_SQL,
+    SYNC_COLUMNS,
+    add_hash_and_json_to,
+    add_sourceid_to,
+)
+from tests.api.api_helper import prep_expected_sync_df, prep_from_sync_db_df
+
+IDENTITY_COLUMNS = ["courseId", "userId"]
 
 COLUMNS = [
     "courseId",
@@ -101,37 +109,23 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         ]
 
         students_initial_df = DataFrame(INITIAL_STUDENT_DATA, columns=COLUMNS)
-        students_initial_df["Hash"] = students_initial_df.apply(
-            lambda row: xxhash.xxh64_hexdigest(row.to_json().encode("utf-8")),
-            axis=1,
-        )
+        students_initial_df = add_hash_and_json_to(students_initial_df)
+        add_sourceid_to(students_initial_df, IDENTITY_COLUMNS)
+
         dateToUse = datetime(2020, 9, 14, 12, 0, 0)
         students_initial_df["SyncNeeded"] = 0
         students_initial_df["CreateDate"] = dateToUse
         students_initial_df["LastModifiedDate"] = dateToUse
+        students_initial_df = students_initial_df[SYNC_COLUMNS]
 
         students_sync_df = DataFrame(SYNC_DATA, columns=COLUMNS)
 
         with test_db_fixture.connect() as con:
             con.execute("DROP TABLE IF EXISTS Students")
             con.execute(
-                """
+                f"""
                 CREATE TABLE IF NOT EXISTS Students (
-                    courseId TEXT,
-                    userId TEXT,
-                    "profile.id" TEXT,
-                    "profile.name.givenName" TEXT,
-                    "profile.name.familyName" TEXT,
-                    "profile.name.fullName" TEXT,
-                    "profile.emailAddress" TEXT,
-                    "profile.permissions" TEXT,
-                    "profile.photoUrl" TEXT,
-                    "profile.verifiedTeacher" TEXT,
-                    Hash TEXT,
-                    CreateDate DATETIME,
-                    LastModifiedDate DATETIME,
-                    SyncNeeded BIGINT,
-                    PRIMARY KEY (courseId,userId)
+                    {SYNC_COLUMNS_SQL}
                 )
                 """
             )
@@ -155,30 +149,35 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
             NEW_STUDENT,
         ]
         with test_db_after_sync.connect() as con:
-            expected_students_df = (
-                DataFrame(EXPECTED_STUDENT_DATA_AFTER_SYNC, columns=COLUMNS)
-                .set_index(["courseId", "userId"])  # ignore generated dataframe index
-                .astype("string")
+            expected_students_df = prep_expected_sync_df(
+                DataFrame(EXPECTED_STUDENT_DATA_AFTER_SYNC, columns=COLUMNS).astype(
+                    "string"
+                ),
+                IDENTITY_COLUMNS,
             )
-            students_from_db_df = (
-                read_sql_query("SELECT * from Students", con)
-                .loc[:, "courseId":"profile.verifiedTeacher"]  # original columns only
-                .set_index(["courseId", "userId"])  # ignore generated dataframe index
-                .astype("string")
+
+            students_from_db_df = prep_from_sync_db_df(
+                read_sql_query("SELECT * from Students", con).astype("string"),
+                IDENTITY_COLUMNS,
             )
+
             assert expected_students_df.to_csv() == students_from_db_df.to_csv()
 
     def it_should_have_temporary_sync_table_unchanged(test_db_after_sync):
         EXPECTED_SYNC_DATA_AFTER_SYNC = SYNC_DATA
         with test_db_after_sync.connect() as con:
-            expected_sync_students_df = DataFrame(
-                EXPECTED_SYNC_DATA_AFTER_SYNC, columns=COLUMNS
-            ).astype("string")
-            sync_students_from_db_df = (
-                read_sql_query("SELECT * from Sync_Students", con)
-                .loc[:, "courseId":"profile.verifiedTeacher"]  # original columns only
-                .astype("string")
+            expected_sync_students_df = prep_expected_sync_df(
+                DataFrame(EXPECTED_SYNC_DATA_AFTER_SYNC, columns=COLUMNS).astype(
+                    "string"
+                ),
+                IDENTITY_COLUMNS,
             )
+
+            sync_students_from_db_df = prep_from_sync_db_df(
+                read_sql_query("SELECT * from Sync_Students", con).astype("string"),
+                IDENTITY_COLUMNS,
+            )
+
             assert expected_sync_students_df.to_csv() == sync_students_from_db_df.to_csv()
 
     def it_should_have_temporary_unmatched_table_with_correct_intermediate_rows(
@@ -191,12 +190,16 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
             NEW_STUDENT,
         ]
         with test_db_after_sync.connect() as con:
-            expected_unmatched_df = DataFrame(
-                EXPECTED_UNMATCHED_DATA_AFTER_SYNC, columns=COLUMNS
-            ).astype("string")
-            unmatched_from_db_df = (
-                read_sql_query("SELECT * from Unmatched_Students", con)
-                .loc[:, "courseId":"profile.verifiedTeacher"]  # original columns only
-                .astype("string")
+            expected_unmatched_df = prep_expected_sync_df(
+                DataFrame(EXPECTED_UNMATCHED_DATA_AFTER_SYNC, columns=COLUMNS).astype(
+                    "string"
+                ),
+                IDENTITY_COLUMNS,
             )
+
+            unmatched_from_db_df = prep_from_sync_db_df(
+                read_sql_query("SELECT * from Unmatched_Students", con).astype("string"),
+                IDENTITY_COLUMNS,
+            )
+
             assert expected_unmatched_df.to_csv() == unmatched_from_db_df.to_csv()

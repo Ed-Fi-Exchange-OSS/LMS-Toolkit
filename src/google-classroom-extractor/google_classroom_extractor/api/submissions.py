@@ -170,7 +170,7 @@ def request_all_submissions_as_df(
         resource, course_ids
     )
 
-    _sync_without_cleanup(submissions_df, sync_db)
+    submissions_df = _sync_without_cleanup(submissions_df, sync_db)
     cleanup_after_sync(SUBMISSIONS_RESOURCE_NAME, sync_db)
 
     return submissions_df
@@ -178,7 +178,7 @@ def request_all_submissions_as_df(
 
 def _sync_without_cleanup(
     resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
-):
+) -> DataFrame:
     """
     Take fetched API data and sync with database. Creates tables when necessary,
     but ok if temporary tables are there to start. Doesn't delete temporary tables when finished.
@@ -190,27 +190,15 @@ def _sync_without_cleanup(
         will be mutated, adding Hash and CreateDate/LastModifiedDate
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
+
+    Returns
+    -------
+    DataFrame
+        a DataFrame with current fetched data and reconciled CreateDate/LastModifiedDate
     """
-    sync_to_db_without_cleanup(
+    return sync_to_db_without_cleanup(
         resource_df=resource_df,
+        identity_columns=["id", "courseId", "courseWorkId"],
         resource_name=SUBMISSIONS_RESOURCE_NAME,
-        table_columns_sql="""
-            courseId TEXT,
-            courseWorkId TEXT,
-            id TEXT,
-            userId TEXT,
-            creationTime TEXT,
-            updateTime TEXT,
-            state TEXT,
-            alternateLink TEXT,
-            courseWorkType TEXT,
-            submissionHistory TEXT,
-            late TEXT,
-            draftGrade TEXT,
-            assignedGrade TEXT,
-            "assignmentSubmission.attachments" TEXT,
-            associatedWithDeveloper TEXT,
-            """,
-        primary_keys="courseId,id,courseWorkId",
         sync_db=sync_db,
     )
