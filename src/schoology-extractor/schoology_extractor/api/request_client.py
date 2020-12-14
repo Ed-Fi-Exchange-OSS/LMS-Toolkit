@@ -647,3 +647,59 @@ class RequestClient:
 
         result = self.get(f"sections/{section_id}/discussions/{discussion_id}/comments")
         return result["comment"]
+
+    def get_section_updates(
+        self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE
+    ) -> PaginatedResult:
+        """
+        Retrieves updates for a section.
+
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+        page_size : int
+            Number of items per page
+
+        Returns
+        -------
+        PaginatedResult
+            A parsed response from the server
+        """
+        url = f"sections/{section_id}/updates"
+        return PaginatedResult(
+            self,
+            page_size,
+            self.get(url),
+            RESOURCE_NAMES.SECTION_UPDATE_API,
+            self.base_url + url,
+        )
+
+    def get_section_update_replies(
+        self, section_id: int, update_id: int, page_size: int = DEFAULT_PAGE_SIZE
+    ) -> PaginatedResult:
+        """
+        Retrieves replies for a section update.
+
+        Parameters
+        ----------
+        section_id : int
+            A Section Id
+        update_id : int
+            An Update Id
+        page_size : int
+            Number of items per page
+
+        Returns
+        -------
+        PaginatedResult
+            A parsed response from the server
+        """
+        url = f"sections/{section_id}/updates/{update_id}/comments"
+        return PaginatedResult(
+            self,
+            page_size,
+            self.get(url),
+            RESOURCE_NAMES.SECTION_UPDATE_COMMENT,
+            self.base_url + url,
+        )

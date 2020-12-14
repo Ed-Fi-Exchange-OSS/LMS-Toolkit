@@ -333,3 +333,50 @@ def describe_when_getting_attendance():
 
     def it_should_return_one_event(result):
         assert len(result) == 1
+
+
+def describe_when_getting_section_updates():
+    @pytest.fixture
+    def result(requests_mock):
+        section_id = 3324
+        expected_url_1 = "https://api.schoology.com/v1/sections/3324/updates"
+
+        update_1 = '[{"id": 12345}]'
+        response_1 = '{"update": '+update_1+',"total": 1, "links": {"self": "ignore"}}'
+
+        # Arrange
+        requests_mock.get(expected_url_1, reason="OK", status_code=200, text=response_1)
+
+        client = RequestClient(FAKE_KEY, FAKE_SECRET)
+
+        # Act
+        result = client.get_section_updates(section_id)
+
+        return result
+
+    def it_should_return_one_update(result: PaginatedResult):
+        assert len(result.current_page_items) == 1
+
+
+def describe_when_getting_section_update_replies():
+    @pytest.fixture
+    def result(requests_mock):
+        section_id = 3324
+        update_id = 4435
+        expected_url_1 = "https://api.schoology.com/v1/sections/3324/updates/4435/comments"
+
+        update_comment_1 = '[{"id": 12345}]'
+        response_1 = '{"comment": '+update_comment_1+',"total": 1, "links": {"self": "ignore"}}'
+
+        # Arrange
+        requests_mock.get(expected_url_1, reason="OK", status_code=200, text=response_1)
+
+        client = RequestClient(FAKE_KEY, FAKE_SECRET)
+
+        # Act
+        result = client.get_section_update_replies(section_id, update_id)
+
+        return result
+
+    def it_should_return_one_update(result: PaginatedResult):
+        assert len(result.current_page_items) == 1

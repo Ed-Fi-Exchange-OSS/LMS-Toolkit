@@ -21,6 +21,7 @@ from .mapping import attendance as attendanceMap
 from .mapping import discussion_replies as discussionRepliesMap
 from .mapping import discussions as discussionsMap
 from .mapping import submissions as submissionsMap
+from .mapping import section_updates as sectionUpdatesMap
 
 
 logger = logging.getLogger(__name__)
@@ -246,28 +247,57 @@ class SchoologyExtractFacade:
         DataFrame containing the section activities
         """
 
-        discussions = self._client.get_discussions(section_id)
-        replies: list = []
-        mapped_replies = pd.DataFrame()
+        def _get_discussions_and_discussion_replies():
+            discussions = self._client.get_discussions(section_id)
+            replies: list = []
+            mapped_replies = pd.DataFrame()
+            for discussion in discussions:
+                discussion_id = discussion["id"]
+                replies = replies + self._client.get_discussion_replies(
+                    section_id, discussion_id
+                )
+                sync_replies = sync.sync_resource(
+                    RESOURCE_NAMES.DISCUSSION_REPLIES, self._db_engine, replies
+                )
+                current_replies = discussionRepliesMap.map_to_udm(
+                    sync_replies, section_id, discussion_id
+                )
+                mapped_replies = pd.concat([mapped_replies, current_replies])
 
-        for discussion in discussions:
-            discussion_id = discussion["id"]
-            replies = replies + self._client.get_discussion_replies(
-                section_id, discussion_id
+            sync_discussions = sync.sync_resource(
+                RESOURCE_NAMES.DISCUSSIONS, self._db_engine, discussions
             )
-            sync_replies = sync.sync_resource(
-                RESOURCE_NAMES.DISCUSSION_REPLIES, self._db_engine, replies
-            )
-            current_replies = discussionRepliesMap.map_to_udm(
-                sync_replies, section_id, discussion_id
-            )
-            mapped_replies = pd.concat([mapped_replies, current_replies])
+            mapped_discussions = discussionsMap.map_to_udm(sync_discussions, section_id)
+            return mapped_discussions.append(mapped_replies)
 
-        sync_discussions = sync.sync_resource(
-            RESOURCE_NAMES.DISCUSSIONS, self._db_engine, discussions
+        def _get_section_updates_and_update_comments():
+            section_updates = self.request_client.get_section_updates(
+                section_id
+            ).get_all_pages()
+
+            # TODO: The next code might be useful when working with FIZZ-170
+            # mapped_comments = pd.DataFrame()
+
+            # for update in section_updates:
+            #     update_id = update["id"]
+            #     current_comments = self.request_client.get_section_update_replies(section_id, update_id).get_all_pages()
+            #     sync_comments = sync.sync_resource(
+            #         RESOURCE_NAMES.SECTION_UPDATE_COMMENT, self._db_engine, current_comments
+            #     )
+            #     mapped_comments = sectionUpdateCommentsMap.map_to_udm(sync_comments, section_id)
+            #     mapped_comments = pd.concat([mapped_comments, sync_comments])
+
+            sync_updates = sync.sync_resource(
+                RESOURCE_NAMES.SECTION_UPDATE_TABLE, self._db_engine, section_updates
+            )
+
+            mapped_updates = sectionUpdatesMap.map_to_udm(sync_updates, section_id)
+
+            return mapped_updates
+
+        return pd.concat(
+            [
+                _get_discussions_and_discussion_replies(),
+                _get_section_updates_and_update_comments(),
+            ]
         )
-
-        mapped_discussions = discussionsMap.map_to_udm(
-            sync_discussions, section_id
-        )
-        return mapped_discussions.append(mapped_replies)

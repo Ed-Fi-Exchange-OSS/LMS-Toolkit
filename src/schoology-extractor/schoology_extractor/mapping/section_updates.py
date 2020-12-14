@@ -8,30 +8,28 @@ import pandas as pd
 
 from . import constants
 
-DISCUSSION_REPLIES_TYPE = "discussion-reply"
+SECTION_UPDATE_TYPE = "section-update"
 
 
-def map_to_udm(
-    discussion_replies_df: pd.DataFrame, section_id: int, discussion_id: int
-) -> pd.DataFrame:
+def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     """
-    Maps a DataFrame containing Schoology section associations (enrollments)
+    Maps a DataFrame containing Schoology section updates
     into the Ed-Fi LMS Unified Data Model (UDM) format.
 
     Parameters
     ----------
-    discussion_replies_df: DataFrame
+    section_updates_df: DataFrame
         Pandas DataFrame containing Schoology assignments for a section
 
     Returns
     -------
     DataFrame
-        A LMSUsers-formatted DataFrame
+        A LMSSectionActivities-formatted DataFrame
 
     Notes
     -----
     DataFrame columns are:
-        SourceSystemIdentifier: A unique number or alphanumeric code assigned to a the discussion-reply by
+        SourceSystemIdentifier: A unique number or alphanumeric code assigned to a the section-update by
             the source system
         SourceSystem: The system code or name providing the user data
         LMSUserIdentifier: A unique number or alphanumeric code assigned to a user by the source
@@ -40,8 +38,8 @@ def map_to_udm(
             source system
         EntityStatus: The status of the record
         ActivityDateTime: The date/time the replied was created.
-        ActivityStatus: The status for the reply
-        ActivityType: The type of activity: `Discussion reply`
+        ActivityStatus: The status for the update
+        ActivityType: The type of activity: `section-update`
         Content: The comment text.
         AssignmentIdentifier: A unique numeric identifier assigned to the assignment.
         ActivityTimeInMinutes: The total activity time in minutes.
@@ -50,36 +48,26 @@ def map_to_udm(
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
     """
+    if section_updates_df.empty:
+        return section_updates_df
 
-    if discussion_replies_df.empty:
-        return discussion_replies_df
-
-    df = discussion_replies_df[
-        [
-            "created",
-            "status",
-            "uid",
-            "id",
-            "CreateDate",
-            "LastModifiedDate",
-            "parent_id",
-        ]
+    df = section_updates_df[
+        ["id", "uid", "created", "LastModifiedDate", "CreateDate"]
     ].copy()
 
     df["created"] = df["created"].apply(
-        lambda x: datetime.fromtimestamp(int(x)).strftime("%Y-%m-%d %H:%M:%S")
+        lambda x: datetime.strftime(datetime.fromtimestamp(int(x)), "%Y-%m-%d %H:%M:%S")
     )
-    df["status"] = df["status"].apply(lambda x: "active" if int(x) == 1 else "deleted")
-    df["id"] = df["id"].apply(lambda x: f"sdr#{x}")
-    df["ActivityType"] = DISCUSSION_REPLIES_TYPE
+    df["status"] = None
+
+    df["id"] = df["id"].apply(lambda x: f"su#{x}")
+    df["ActivityType"] = SECTION_UPDATE_TYPE
     df["LMSSectionIdentifier"] = section_id
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["EntityStatus"] = constants.ACTIVE
-    df["parent_id"] = df["parent_id"].apply(
-        lambda x: f"sdr#{x}" if (x != 0) else f"sd{discussion_id}"
-    )
 
     df["ActivityTimeInMinutes"] = None
+    df["ParentSourceSystemIdentifier"] = None
     df["EntityStatus"] = constants.ACTIVE
     df["SourceCreateDate"] = ""
     df["SourceLastModifiedDate"] = ""
@@ -87,10 +75,9 @@ def map_to_udm(
     df.rename(
         columns={
             "created": "ActivityDateTime",
-            "status": "ActivityStatus",
             "id": "SourceSystemIdentifier",
             "uid": "LMSUserIdentifier",
-            "parent_id": "ParentSourceSystemIdentifier",
+            "status": "ActivityStatus",
         },
         inplace=True,
     )

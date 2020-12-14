@@ -22,6 +22,7 @@ from schoology_extractor.mapping import submissions as submissionsMap
 from schoology_extractor.mapping import attendance as attendanceMap
 from schoology_extractor.mapping import discussion_replies as discussionRepliesMap
 from schoology_extractor.mapping import discussions as discussionsMap
+from schoology_extractor.mapping import section_updates as sectionUpdatesMap
 from schoology_extractor.helpers import sync
 
 
@@ -484,10 +485,23 @@ def describe_when_getting_user_activities():
         discussionRepliesMap.map_to_udm.return_value = pd.DataFrame()
         discussionsMap.map_to_udm = Mock()
         discussionsMap.map_to_udm.return_value = pd.DataFrame()
+        sectionUpdatesMap.map_to_udm = Mock()
+        sectionUpdatesMap.map_to_udm.return_value = pd.DataFrame()
 
         section_id = 1234
         get_discussions_mock = request_client.get_discussions
         get_discussions_mock.return_value = [{"id": 1}, {"id": 2}]
+
+        get_updates_mock = request_client.get_section_updates
+        sections__update_response_mock = {
+            "update": [{"id": 1}, {"id": 2}],
+            "total": 1,
+            "links": {"self": "ignore"},
+        }
+        sections_updates = PaginatedResult(
+            request_client, page_size, sections__update_response_mock, "update", "ignore me"
+        )
+        get_updates_mock.return_value = sections_updates
 
         get_discussion_replies_mock = request_client.get_discussion_replies
         get_discussion_replies_mock.return_value = [
@@ -507,6 +521,7 @@ def describe_when_getting_user_activities():
             "result": result,
             "replies_mock": discussionRepliesMap.map_to_udm,
             "discussions_mock": discussionsMap.map_to_udm,
+            "updates_mock": sectionUpdatesMap.map_to_udm,
         }
 
     def it_should_return_a_data_frame(system):
