@@ -17,5 +17,6 @@ class RESOURCE_NAMES:
     ATTENDANCE_EVENTS = "attendance_events"
     DISCUSSION_REPLIES = "discussion_replies"
     DISCUSSIONS = "discussions"
-    SECTION_UPDATE = "update"
+    SECTION_UPDATE_API = "update"
+    SECTION_UPDATE_TABLE = "section_update"
     SECTION_UPDATE_COMMENT = "comment"

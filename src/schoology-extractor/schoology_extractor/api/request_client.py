@@ -671,7 +671,7 @@ class RequestClient:
             self,
             page_size,
             self.get(url),
-            RESOURCE_NAMES.SECTION_UPDATE,
+            RESOURCE_NAMES.SECTION_UPDATE_API,
             self.base_url + url,
         )
 
