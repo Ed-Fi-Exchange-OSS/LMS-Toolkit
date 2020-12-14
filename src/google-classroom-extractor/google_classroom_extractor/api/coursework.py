@@ -178,7 +178,7 @@ def request_all_coursework_as_df(
     """
 
     coursework_df: DataFrame = request_latest_coursework_as_df(resource, course_ids)
-    _sync_without_cleanup(coursework_df, sync_db)
+    coursework_df = _sync_without_cleanup(coursework_df, sync_db)
     cleanup_after_sync(ASSIGNMENTS_RESOURCE_NAME, sync_db)
 
     return coursework_df
@@ -186,7 +186,7 @@ def request_all_coursework_as_df(
 
 def _sync_without_cleanup(
     resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
-):
+) -> DataFrame:
     """
     Take fetched API data and sync with database. Creates tables when necessary,
     but ok if temporary tables are there to start. Doesn't delete temporary tables when finished.
@@ -198,36 +198,16 @@ def _sync_without_cleanup(
         will be mutated, adding Hash and CreateDate/LastModifiedDate
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
+
+
+    Returns
+    -------
+    DataFrame
+        a DataFrame with current fetched data and reconciled CreateDate/LastModifiedDate
     """
-    sync_to_db_without_cleanup(
+    return sync_to_db_without_cleanup(
         resource_df=resource_df,
+        identity_columns=["id", "courseId"],
         resource_name=ASSIGNMENTS_RESOURCE_NAME,
-        table_columns_sql="""
-            courseId TEXT,
-            id TEXT,
-            title TEXT,
-            description TEXT,
-            materials TEXT,
-            state TEXT,
-            alternateLink TEXT,
-            creationTime TEXT,
-            updateTime TEXT,
-            maxPoints TEXT,
-            workType TEXT,
-            submissionModificationMode TEXT,
-            assigneeMode TEXT,
-            creatorUserId TEXT,
-            "dueDate.year" TEXT,
-            "dueDate.month" TEXT,
-            "dueDate.day" TEXT,
-            "dueTime.hours" TEXT,
-            "dueTime.minutes" TEXT,
-            "assignment.studentWorkFolder.id" TEXT,
-            "assignment.studentWorkFolder.title" TEXT,
-            "assignment.studentWorkFolder.alternateLink" TEXT,
-            topicId TEXT,
-            scheduledTime TEXT,
-            """,
-        primary_keys="id,courseId",
         sync_db=sync_db,
     )

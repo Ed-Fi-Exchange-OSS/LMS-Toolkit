@@ -124,7 +124,7 @@ def request_all_teachers_as_df(
     """
 
     teachers_df: DataFrame = request_latest_teachers_as_df(resource, course_ids)
-    _sync_without_cleanup(teachers_df, sync_db)
+    teachers_df = _sync_without_cleanup(teachers_df, sync_db)
     cleanup_after_sync(TEACHERS_RESOURCE_NAME, sync_db)
 
     return teachers_df
@@ -132,7 +132,7 @@ def request_all_teachers_as_df(
 
 def _sync_without_cleanup(
     resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
-):
+) -> DataFrame:
     """
     Take fetched API data and sync with database. Creates tables when necessary,
     but ok if temporary tables are there to start. Doesn't delete temporary tables when finished.
@@ -145,21 +145,9 @@ def _sync_without_cleanup(
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
     """
-    sync_to_db_without_cleanup(
+    return sync_to_db_without_cleanup(
         resource_df=resource_df,
+        identity_columns=["userId", "courseId"],
         resource_name=TEACHERS_RESOURCE_NAME,
-        table_columns_sql="""
-            courseId TEXT,
-            userId TEXT,
-            "profile.id" TEXT,
-            "profile.name.givenName" TEXT,
-            "profile.name.familyName" TEXT,
-            "profile.name.fullName" TEXT,
-            "profile.emailAddress" TEXT,
-            "profile.permissions" TEXT,
-            "profile.photoUrl" TEXT,
-            "profile.verifiedTeacher" TEXT,
-            """,
-        primary_keys="courseId,userId",
         sync_db=sync_db,
     )

@@ -5,9 +5,17 @@
 
 from datetime import datetime
 import pytest
-import xxhash
 from pandas import read_sql_query, DataFrame
 from google_classroom_extractor.api.courses import _sync_without_cleanup
+from google_classroom_extractor.api.resource_sync import (
+    SYNC_COLUMNS_SQL,
+    SYNC_COLUMNS,
+    add_hash_and_json_to,
+    add_sourceid_to,
+)
+from tests.api.api_helper import prep_expected_sync_df, prep_from_sync_db_df
+
+IDENTITY_COLUMNS = ["id"]
 
 COLUMNS = [
     "id",
@@ -149,45 +157,23 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         ]
 
         courses_initial_df = DataFrame(INITIAL_COURSE_DATA, columns=COLUMNS)
-        courses_initial_df["Hash"] = courses_initial_df.apply(
-            lambda row: xxhash.xxh64_hexdigest(row.to_json().encode("utf-8")),
-            axis=1,
-        )
+        courses_initial_df = add_hash_and_json_to(courses_initial_df)
+        add_sourceid_to(courses_initial_df, IDENTITY_COLUMNS)
+
         dateToUse = datetime(2020, 9, 14, 12, 0, 0)
         courses_initial_df["SyncNeeded"] = 0
         courses_initial_df["CreateDate"] = dateToUse
         courses_initial_df["LastModifiedDate"] = dateToUse
+        courses_initial_df = courses_initial_df[SYNC_COLUMNS]
 
         courses_sync_df = DataFrame(SYNC_DATA, columns=COLUMNS)
 
         with test_db_fixture.connect() as con:
             con.execute("DROP TABLE IF EXISTS Courses")
             con.execute(
-                """
+                f"""
                 CREATE TABLE IF NOT EXISTS Courses (
-                    id BIGINT,
-                    name TEXT,
-                    section BIGINT,
-                    descriptionHeading TEXT,
-                    room TEXT,
-                    ownerId BIGINT,
-                    creationTime TEXT,
-                    updateTime TEXT,
-                    enrollmentCode BIGINT,
-                    courseState TEXT,
-                    alternateLink TEXT,
-                    teacherGroupEmail TEXT,
-                    courseGroupEmail TEXT,
-                    "teacherFolder.id" TEXT,
-                    "teacherFolder.title" TEXT,
-                    "teacherFolder.alternateLink" TEXT,
-                    guardiansEnabled BOOLEAN,
-                    calendarId BIGINT,
-                    Hash TEXT,
-                    CreateDate DATETIME,
-                    LastModifiedDate DATETIME,
-                    SyncNeeded BIGINT,
-                    PRIMARY KEY (id)
+                    {SYNC_COLUMNS_SQL}
                 )
                 """
             )
@@ -211,30 +197,35 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
             NEW_COURSE,
         ]
         with test_db_after_sync.connect() as con:
-            expected_courses_df = (
-                DataFrame(EXPECTED_COURSE_DATA_AFTER_SYNC, columns=COLUMNS)
-                .set_index("id")  # ignore generated dataframe index
-                .astype("string")
+            expected_courses_df = prep_expected_sync_df(
+                DataFrame(EXPECTED_COURSE_DATA_AFTER_SYNC, columns=COLUMNS).astype(
+                    "string"
+                ),
+                IDENTITY_COLUMNS,
             )
-            courses_from_db_df = (
-                read_sql_query("SELECT * from Courses", con)
-                .loc[:, "id":"calendarId"]  # original columns only
-                .set_index("id")  # ignore generated dataframe index
-                .astype("string")
+
+            courses_from_db_df = prep_from_sync_db_df(
+                read_sql_query("SELECT * from Courses", con).astype("string"),
+                IDENTITY_COLUMNS,
             )
+
             assert expected_courses_df.to_csv() == courses_from_db_df.to_csv()
 
     def it_should_have_temporary_sync_table_unchanged(test_db_after_sync):
         EXPECTED_SYNC_DATA_AFTER_SYNC = SYNC_DATA
         with test_db_after_sync.connect() as con:
-            expected_sync_courses_df = DataFrame(
-                EXPECTED_SYNC_DATA_AFTER_SYNC, columns=COLUMNS
-            ).astype("string")
-            sync_courses_from_db_df = (
-                read_sql_query("SELECT * from Sync_Courses", con)
-                .loc[:, "id":"calendarId"]  # original columns only
-                .astype("string")
+            expected_sync_courses_df = prep_expected_sync_df(
+                DataFrame(EXPECTED_SYNC_DATA_AFTER_SYNC, columns=COLUMNS).astype(
+                    "string"
+                ),
+                IDENTITY_COLUMNS,
             )
+
+            sync_courses_from_db_df = prep_from_sync_db_df(
+                read_sql_query("SELECT * from Sync_Courses", con).astype("string"),
+                IDENTITY_COLUMNS,
+            )
+
             assert expected_sync_courses_df.to_csv() == sync_courses_from_db_df.to_csv()
 
     def it_should_have_temporary_unmatched_table_with_correct_intermediate_rows(
@@ -247,12 +238,16 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
             NEW_COURSE,
         ]
         with test_db_after_sync.connect() as con:
-            expected_unmatched_df = DataFrame(
-                EXPECTED_UNMATCHED_DATA_AFTER_SYNC, columns=COLUMNS
-            ).astype("string")
-            unmatched_from_db_df = (
-                read_sql_query("SELECT * from Unmatched_Courses", con)
-                .loc[:, "id":"calendarId"]  # original columns only
-                .astype("string")
+            expected_unmatched_df = prep_expected_sync_df(
+                DataFrame(EXPECTED_UNMATCHED_DATA_AFTER_SYNC, columns=COLUMNS).astype(
+                    "string"
+                ),
+                IDENTITY_COLUMNS,
             )
+
+            unmatched_from_db_df = prep_from_sync_db_df(
+                read_sql_query("SELECT * from Unmatched_Courses", con).astype("string"),
+                IDENTITY_COLUMNS,
+            )
+
             assert expected_unmatched_df.to_csv() == unmatched_from_db_df.to_csv()
