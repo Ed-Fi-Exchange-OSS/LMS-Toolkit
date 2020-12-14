@@ -275,7 +275,7 @@ class SchoologyExtractFacade:
                 section_id
             ).get_all_pages()
 
-            # The next code might be useful when working with FIZZ-170
+            # TODO: The next code might be useful when working with FIZZ-170
             # mapped_comments = pd.DataFrame()
 
             # for update in section_updates:
