@@ -56,7 +56,7 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
     ].copy()
 
     df["created"] = df["created"].apply(
-        lambda x: datetime.strftime(datetime.fromtimestamp(x), "%Y-%m-%d %H:%M:%S")
+        lambda x: datetime.strftime(datetime.fromtimestamp(int(x)), "%Y-%m-%d %H:%M:%S")
     )
     df["status"] = None
 
