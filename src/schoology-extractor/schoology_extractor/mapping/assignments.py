@@ -85,5 +85,7 @@ def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     df["SubmissionType"] = None
     df["SourceCreateDate"] = ""
     df["SourceLastModifiedDate"] = ""
+    df["StartDateTime"] = ""
+    df["EndDateTime"] = ""
 
     return df
