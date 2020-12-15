@@ -32,6 +32,9 @@ Association LMSUserLMSSectionAssociation
     shared string EntityStatus
         documentation "The status of the record."
         is required
-    datetime DeletedAt
-        documentation "The datetime the record EntityStatus was changed to deleted."
+    datetime SourceCreateDate
+        documentation "The source system datetime the record was created."
+        is optional
+    datetime SourceLastModifiedDate
+        documentation "The source system datetime the record was last modified."
         is optional
