@@ -39,28 +39,28 @@ CREATE NONCLUSTERED INDEX [FK_LMSGrade_LMSUserLMSSectionAssociation]
 ON [lms].[LMSGrade] ([LMSSectionIdentifier] ASC, [LMSUserIdentifier] ASC, [LMSUserLMSSectionAssociationIdentifier] ASC)
 GO
 
-ALTER TABLE [lms].[LMSUserActivity] WITH CHECK ADD CONSTRAINT [FK_LMSUserActivity_Assignment] FOREIGN KEY ([AssignmentIdentifier])
-REFERENCES [lms].[Assignment] ([AssignmentIdentifier])
-GO
-
-CREATE NONCLUSTERED INDEX [FK_LMSUserActivity_Assignment]
-ON [lms].[LMSUserActivity] ([AssignmentIdentifier] ASC)
-GO
-
-ALTER TABLE [lms].[LMSUserActivity] WITH CHECK ADD CONSTRAINT [FK_LMSUserActivity_LMSSection] FOREIGN KEY ([LMSSectionIdentifier])
+ALTER TABLE [lms].[LMSSectionActivity] WITH CHECK ADD CONSTRAINT [FK_LMSSectionActivity_LMSSection] FOREIGN KEY ([LMSSectionIdentifier])
 REFERENCES [lms].[LMSSection] ([LMSSectionIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_LMSUserActivity_LMSSection]
-ON [lms].[LMSUserActivity] ([LMSSectionIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_LMSSectionActivity_LMSSection]
+ON [lms].[LMSSectionActivity] ([LMSSectionIdentifier] ASC)
 GO
 
-ALTER TABLE [lms].[LMSUserActivity] WITH CHECK ADD CONSTRAINT [FK_LMSUserActivity_LMSUser] FOREIGN KEY ([LMSUserIdentifier])
+ALTER TABLE [lms].[LMSSectionActivity] WITH CHECK ADD CONSTRAINT [FK_LMSSectionActivity_LMSUser] FOREIGN KEY ([LMSUserIdentifier])
 REFERENCES [lms].[LMSUser] ([LMSUserIdentifier])
 GO
 
-CREATE NONCLUSTERED INDEX [FK_LMSUserActivity_LMSUser]
-ON [lms].[LMSUserActivity] ([LMSUserIdentifier] ASC)
+CREATE NONCLUSTERED INDEX [FK_LMSSectionActivity_LMSUser]
+ON [lms].[LMSSectionActivity] ([LMSUserIdentifier] ASC)
+GO
+
+ALTER TABLE [lms].[LMSSystemActivity] WITH CHECK ADD CONSTRAINT [FK_LMSSystemActivity_LMSUser] FOREIGN KEY ([LMSUserIdentifier])
+REFERENCES [lms].[LMSUser] ([LMSUserIdentifier])
+GO
+
+CREATE NONCLUSTERED INDEX [FK_LMSSystemActivity_LMSUser]
+ON [lms].[LMSSystemActivity] ([LMSUserIdentifier] ASC)
 GO
 
 ALTER TABLE [lms].[LMSUserAttendanceEvent] WITH CHECK ADD CONSTRAINT [FK_LMSUserAttendanceEvent_LMSUser] FOREIGN KEY ([LMSUserIdentifier])
