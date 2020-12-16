@@ -3,29 +3,23 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-Domain Entity LMSUserActivity
+Domain Entity LMSSystemActivity
     documentation "An activity performed by a user within the instructional system."
     shared integer Identifier
-        documentation "A unique numeric identifier assigned to the user activity."
+        documentation "A unique numeric identifier assigned to the section activity."
         is part of identity
-        role name LMSUserActivity
+        role name LMSSystemActivity
     shared string SourceSystemIdentifier
-        documentation "A unique number or alphanumeric code assigned to a user by the source system."
+        documentation "A unique number or alphanumeric code assigned to a system activity by the source system."
         is required
     shared string SourceSystem
         documentation "The system code or name providing the user data."
         is required
     domain entity LMSUser
-        documentation "A reference to the user associated with the activity."
+        documentation "A reference to the user associated with the system activity."
         is required
-    domain entity LMSSection
-        documentation "A reference to the section associated with the activity."
-        is optional
-    domain entity Assignment
-        documentation "A reference to the assignment associated with the activity."
-        is optional
     shared string ActivityType
-        documentation "The type of activity. E.g., Discussion Post, Account Access/Log In."
+        documentation "The type of activity. E.g., Account Access/Log In."
         is required
     datetime ActivityDateTime
         documentation "The date/time the activity occurred."
@@ -34,9 +28,10 @@ Domain Entity LMSUserActivity
         documentation "The activity status."
         is required
         role name Activity
-    shared string LMSDescription named Content
-        documentation "Content associated with the activity."
+    shared string SourceSystemIdentifier
+        documentation "The unique identifier assigned to the parent system activity."
         is optional
+        role name Parent
     shared integer TimeInMinutes
         documentation "The total activity time in minutes."
         is optional
@@ -44,6 +39,9 @@ Domain Entity LMSUserActivity
     shared string EntityStatus
         documentation "The status of the record."
         is required
-    datetime DeletedAt
-        documentation "The datetime the record EntityStatus was changed to deleted."
+    datetime SourceCreateDate
+        documentation "The source system datetime the record was created."
+        is optional
+    datetime SourceLastModifiedDate
+        documentation "The source system datetime the record was last modified."
         is optional

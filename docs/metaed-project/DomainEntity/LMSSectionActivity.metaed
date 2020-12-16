@@ -1,0 +1,50 @@
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
+
+Domain Entity LMSSectionActivity
+    documentation "A section activity performed by a user within the instructional system."
+    shared integer Identifier
+        documentation "A unique numeric identifier assigned to the section activity."
+        is part of identity
+        role name LMSSectionActivity
+    shared string SourceSystemIdentifier
+        documentation "A unique number or alphanumeric code assigned to a section activity by the source system."
+        is required
+    shared string SourceSystem
+        documentation "The system code or name providing the user data."
+        is required
+    domain entity LMSUser
+        documentation "A reference to the user associated with the section activity."
+        is required
+    domain entity LMSSection
+        documentation "A reference to the section associated with the activity."
+        is required
+    shared string ActivityType
+        documentation "The type of activity. E.g., Discussion Post."
+        is required
+    datetime ActivityDateTime
+        documentation "The date/time the activity occurred."
+        is required
+    shared string Status
+        documentation "The activity status."
+        is required
+        role name Activity
+    shared string SourceSystemIdentifier
+        documentation "The unique identifier assigned to the parent section activity."
+        is optional
+        role name Parent
+    shared integer TimeInMinutes
+        documentation "The total activity time in minutes."
+        is optional
+        role name Activity
+    shared string EntityStatus
+        documentation "The status of the record."
+        is required
+    datetime SourceCreateDate
+        documentation "The source system datetime the record was created."
+        is optional
+    datetime SourceLastModifiedDate
+        documentation "The source system datetime the record was last modified."
+        is optional
