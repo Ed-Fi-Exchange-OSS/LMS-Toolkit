@@ -1,5 +1,5 @@
 {
-    "python.analysis.extraPaths": ["./google-classroomt-extractor","./tests"],
+    "python.analysis.extraPaths": ["./google_classroom_extractor","./tests"],
     "python.languageServer": "Pylance",
     "python.linting.pylintEnabled": false,
     "python.linting.enabled": true,
