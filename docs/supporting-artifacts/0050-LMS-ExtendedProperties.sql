@@ -25,7 +25,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The maximum nu
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
 
 -- Extended Properties [lms].[AssignmentSubmission] --
@@ -51,7 +53,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The grade rece
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
 
 -- Extended Properties [lms].[AssignmentSubmissionType] --
@@ -83,7 +87,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type of gr
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
 
 -- Extended Properties [lms].[LMSSection] --
@@ -107,7 +113,67 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The section st
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
+GO
+
+-- Extended Properties [lms].[LMSSectionActivity] --
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A section activity performed by a user within the instructional system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section activity.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'LMSSectionActivityIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a section activity by the source system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'SourceSystem'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type of activity. E.g., Discussion Post.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'ActivityType'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date/time the activity occurred.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'ActivityDateTime'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The activity status.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'ActivityStatus'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The unique identifier assigned to the parent section activity.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'ParentSourceSystemIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The total activity time in minutes.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'ActivityTimeInMinutes'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'EntityStatus'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
+GO
+
+-- Extended Properties [lms].[LMSSystemActivity] --
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'An activity performed by a user within the instructional system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section activity.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'LMSSystemActivityIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a system activity by the source system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'SourceSystem'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type of activity. E.g., Account Access/Log In.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'ActivityType'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date/time the activity occurred.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'ActivityDateTime'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The activity status.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'ActivityStatus'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The unique identifier assigned to the parent system activity.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'ParentSourceSystemIdentifier'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The total activity time in minutes.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'ActivityTimeInMinutes'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'EntityStatus'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
 
 -- Extended Properties [lms].[LMSUser] --
@@ -131,37 +197,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The primary e-
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
 GO
-
--- Extended Properties [lms].[LMSUserActivity] --
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'An activity performed by a user within the instructional system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user activity.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'LMSUserActivityIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'SourceSystem'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'LMSSectionIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the assignment.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type of activity. E.g., Discussion Post, Account Access/Log In.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'ActivityType'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date/time the activity occurred.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'ActivityDateTime'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The activity status.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'ActivityStatus'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Content associated with the activity.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'Content'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The total activity time in minutes.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'ActivityTimeInMinutes'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'EntityStatus'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserActivity', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
 
 -- Extended Properties [lms].[LMSUserAttendanceEvent] --
@@ -185,7 +223,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A code describ
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
 
 -- Extended Properties [lms].[LMSUserLMSSectionAssociation] --
@@ -209,6 +249,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Month, day, an
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the record.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'EntityStatus'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The datetime the record EntityStatus was changed to deleted.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
 

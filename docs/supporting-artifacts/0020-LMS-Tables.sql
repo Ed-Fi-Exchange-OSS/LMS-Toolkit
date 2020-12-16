@@ -17,7 +17,8 @@ CREATE TABLE [lms].[Assignment] (
     [DueDateTime] [DATETIME2](7) NULL,
     [MaxPoints] [INT] NULL,
     [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [Discriminator] [NVARCHAR](128) NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
@@ -46,7 +47,8 @@ CREATE TABLE [lms].[AssignmentSubmission] (
     [EarnedPoints] [INT] NULL,
     [Grade] [NVARCHAR](20) NULL,
     [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [Discriminator] [NVARCHAR](128) NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
@@ -88,7 +90,8 @@ CREATE TABLE [lms].[LMSGrade] (
     [Grade] [NVARCHAR](20) NOT NULL,
     [GradeType] [NVARCHAR](60) NULL,
     [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [Discriminator] [NVARCHAR](128) NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
@@ -116,7 +119,8 @@ CREATE TABLE [lms].[LMSSection] (
     [Term] [NVARCHAR](60) NULL,
     [LMSSectionStatus] [NVARCHAR](60) NULL,
     [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [Discriminator] [NVARCHAR](128) NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
@@ -133,6 +137,67 @@ GO
 ALTER TABLE [lms].[LMSSection] ADD CONSTRAINT [LMSSection_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
 GO
 
+-- Table [lms].[LMSSectionActivity] --
+CREATE TABLE [lms].[LMSSectionActivity] (
+    [LMSSectionActivityIdentifier] [INT] IDENTITY,
+    [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
+    [SourceSystem] [NVARCHAR](255) NOT NULL,
+    [LMSUserIdentifier] [INT] NOT NULL,
+    [LMSSectionIdentifier] [INT] NOT NULL,
+    [ActivityType] [NVARCHAR](60) NOT NULL,
+    [ActivityDateTime] [DATETIME2](7) NOT NULL,
+    [ActivityStatus] [NVARCHAR](60) NOT NULL,
+    [ParentSourceSystemIdentifier] [NVARCHAR](255) NULL,
+    [ActivityTimeInMinutes] [INT] NULL,
+    [EntityStatus] [NVARCHAR](60) NOT NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
+    [Discriminator] [NVARCHAR](128) NULL,
+    [CreateDate] [DATETIME2] NOT NULL,
+    [LastModifiedDate] [DATETIME2] NOT NULL,
+    [Id] [UNIQUEIDENTIFIER] NOT NULL,
+    CONSTRAINT [LMSSectionActivity_PK] PRIMARY KEY CLUSTERED (
+        [LMSSectionActivityIdentifier] ASC
+    ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [lms].[LMSSectionActivity] ADD CONSTRAINT [LMSSectionActivity_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [lms].[LMSSectionActivity] ADD CONSTRAINT [LMSSectionActivity_DF_Id] DEFAULT (newid()) FOR [Id]
+GO
+ALTER TABLE [lms].[LMSSectionActivity] ADD CONSTRAINT [LMSSectionActivity_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
+GO
+
+-- Table [lms].[LMSSystemActivity] --
+CREATE TABLE [lms].[LMSSystemActivity] (
+    [LMSSystemActivityIdentifier] [INT] IDENTITY,
+    [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
+    [SourceSystem] [NVARCHAR](255) NOT NULL,
+    [LMSUserIdentifier] [INT] NOT NULL,
+    [ActivityType] [NVARCHAR](60) NOT NULL,
+    [ActivityDateTime] [DATETIME2](7) NOT NULL,
+    [ActivityStatus] [NVARCHAR](60) NOT NULL,
+    [ParentSourceSystemIdentifier] [NVARCHAR](255) NULL,
+    [ActivityTimeInMinutes] [INT] NULL,
+    [EntityStatus] [NVARCHAR](60) NOT NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
+    [Discriminator] [NVARCHAR](128) NULL,
+    [CreateDate] [DATETIME2] NOT NULL,
+    [LastModifiedDate] [DATETIME2] NOT NULL,
+    [Id] [UNIQUEIDENTIFIER] NOT NULL,
+    CONSTRAINT [LMSSystemActivity_PK] PRIMARY KEY CLUSTERED (
+        [LMSSystemActivityIdentifier] ASC
+    ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [lms].[LMSSystemActivity] ADD CONSTRAINT [LMSSystemActivity_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
+GO
+ALTER TABLE [lms].[LMSSystemActivity] ADD CONSTRAINT [LMSSystemActivity_DF_Id] DEFAULT (newid()) FOR [Id]
+GO
+ALTER TABLE [lms].[LMSSystemActivity] ADD CONSTRAINT [LMSSystemActivity_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
+GO
+
 -- Table [lms].[LMSUser] --
 CREATE TABLE [lms].[LMSUser] (
     [LMSUserIdentifier] [INT] IDENTITY,
@@ -144,7 +209,8 @@ CREATE TABLE [lms].[LMSUser] (
     [Name] [NVARCHAR](255) NOT NULL,
     [EmailAddress] [NVARCHAR](255) NOT NULL,
     [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [Discriminator] [NVARCHAR](128) NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
@@ -161,37 +227,6 @@ GO
 ALTER TABLE [lms].[LMSUser] ADD CONSTRAINT [LMSUser_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
 GO
 
--- Table [lms].[LMSUserActivity] --
-CREATE TABLE [lms].[LMSUserActivity] (
-    [LMSUserActivityIdentifier] [INT] IDENTITY,
-    [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
-    [SourceSystem] [NVARCHAR](255) NOT NULL,
-    [LMSUserIdentifier] [INT] NOT NULL,
-    [LMSSectionIdentifier] [INT] NULL,
-    [AssignmentIdentifier] [INT] NULL,
-    [ActivityType] [NVARCHAR](60) NOT NULL,
-    [ActivityDateTime] [DATETIME2](7) NOT NULL,
-    [ActivityStatus] [NVARCHAR](60) NOT NULL,
-    [Content] [NVARCHAR](1024) NULL,
-    [ActivityTimeInMinutes] [INT] NULL,
-    [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
-    [Discriminator] [NVARCHAR](128) NULL,
-    [CreateDate] [DATETIME2] NOT NULL,
-    [LastModifiedDate] [DATETIME2] NOT NULL,
-    [Id] [UNIQUEIDENTIFIER] NOT NULL,
-    CONSTRAINT [LMSUserActivity_PK] PRIMARY KEY CLUSTERED (
-        [LMSUserActivityIdentifier] ASC
-    ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-ALTER TABLE [lms].[LMSUserActivity] ADD CONSTRAINT [LMSUserActivity_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
-GO
-ALTER TABLE [lms].[LMSUserActivity] ADD CONSTRAINT [LMSUserActivity_DF_Id] DEFAULT (newid()) FOR [Id]
-GO
-ALTER TABLE [lms].[LMSUserActivity] ADD CONSTRAINT [LMSUserActivity_DF_LastModifiedDate] DEFAULT (getdate()) FOR [LastModifiedDate]
-GO
-
 -- Table [lms].[LMSUserAttendanceEvent] --
 CREATE TABLE [lms].[LMSUserAttendanceEvent] (
     [LMSUserAttendanceEventIdentifier] [INT] IDENTITY,
@@ -203,7 +238,8 @@ CREATE TABLE [lms].[LMSUserAttendanceEvent] (
     [EventDate] [DATE] NOT NULL,
     [Status] [NVARCHAR](60) NOT NULL,
     [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [Discriminator] [NVARCHAR](128) NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
@@ -231,7 +267,8 @@ CREATE TABLE [lms].[LMSUserLMSSectionAssociation] (
     [StartDate] [DATE] NOT NULL,
     [EndDate] [DATE] NOT NULL,
     [EntityStatus] [NVARCHAR](60) NOT NULL,
-    [DeletedAt] [DATETIME2](7) NULL,
+    [SourceCreateDate] [DATETIME2](7) NULL,
+    [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [Discriminator] [NVARCHAR](128) NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
