@@ -17,7 +17,11 @@ class MainArguments:
     log_level: str
         The log level for the tool. (optional)
     """
+    classroom_account: str
     log_level: str
+    output_directory: str
+    usage_start_date: str
+    usage_end_date: str
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -38,6 +42,16 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     parser = ArgParser()
 
     parser.add(  # type: ignore
+        "-a",
+        "--classroom-account",
+        required=True,
+        help="The email address of the Google Classroom admin account.",
+        type=str,
+        default="",
+        env_var="CLASSROOM_ACCOUNT",
+    )
+
+    parser.add(  # type: ignore
         "-l",
         "--log-level",
         required=False,
@@ -45,17 +59,51 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         choices=constants.LOG_LEVELS,
         type=str,
         default="INFO",
-        env_var="SCHOOLOGY_LOG_LEVEL",
+        env_var="LOG_LEVEL",
+    )
+
+    parser.add(  # type: ignore
+        "-o",
+        "--output-directory",
+        required=False,
+        help="The output directory for the generated csv files.",
+        type=str,
+        default="data/",
+        env_var="OUTPUT_PATH",
+    )
+
+    parser.add(  # type: ignore
+        "-s",
+        "--usage-start-date",
+        required=False,
+        help="Start date for usage data pull in yyyy-mm-dd format.",
+        type=str,
+        default="",
+        env_var="START_DATE",
+    )
+
+    parser.add(  # type: ignore
+        "-e",
+        "--usage-end-date",
+        required=False,
+        help="End date for usage data pull in yyyy-mm-dd format.",
+        type=str,
+        default="",
+        env_var="END_DATE",
     )
 
     args_parsed = parser.parse_args(args_in)
 
-    assert (
-        args_parsed.log_level in constants.LOG_LEVELS
-    ), "The specified `log-level` is not an allowed value."
+    assert isinstance(
+        args_parsed.output_directory, str
+    ), "The specified `classroom-account` is not valid."
 
     arguments = MainArguments(
+        classroom_account=args_parsed.classroom_account,
         log_level=args_parsed.log_level,
+        output_directory=args_parsed.output_directory,
+        usage_start_date=args_parsed.usage_start_date,
+        usage_end_date=args_parsed.usage_end_date,
     )
 
     return arguments

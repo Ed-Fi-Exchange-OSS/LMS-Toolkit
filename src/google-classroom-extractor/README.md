@@ -46,10 +46,18 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 
 | Description | Required | Command Line Argument | Environment Variable |
 | ----------- | -------- | --------------------- | -------------------- |
-| Output Directory | no (default: [working directory]/data) | -o or --output-directory | SCHOOLOGY_OUTPUT_PATH |
-| Log level | no (default: INFO) | -l or --log-level | SCHOOLOGY_LOG_LEVEL |
-| Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
-| Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
+| The email address of the Google Classroom admin account. | yes | -a or --classroom-account | CLASSROOM_ACCOUNT |
+| The log level for the tool. | no (default: INFO) | -l or --log-level | LOG_LEVEL |
+| The output directory for the generated csv files. | no (default: data/) | -s or --usage-start-date | OUTPUT_PATH |
+| Start date for usage data pull in yyyy-mm-dd format. | no (default: today) | -s or --usage-start-date | START_DATE |
+| End date for usage data pull in yyyy-mm-dd format. | no (default: today) | -e or --usage-end-date | END_DATE |
+
+Valid log levels:
+* DEBUG
+* INFO(default)
+* WARNING
+* ERROR
+* CRITICAL
 
 Note: in order to make the extractor work, you still need to configure your
 `service-account.json` file. To do so, read the next section `API Permissions`
