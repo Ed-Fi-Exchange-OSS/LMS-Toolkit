@@ -6,7 +6,6 @@
 
 from datetime import datetime
 import logging
-import os
 import sys
 from typing import Optional
 
@@ -42,9 +41,18 @@ from google_classroom_extractor.csv_generation.write import (
     SUBMISSION_ROOT_DIRECTORY,
     USER_ACTIVITY_ROOT_DIRECTORY,
 )
+from google_classroom_extractor.helpers import arg_parser
 
 logger: logging.Logger
 error_tracker: ErrorHandler
+
+log_level: str = ""
+
+
+def parse_args():
+    arguments = arg_parser.parse_main_arguments(sys.argv[1:])
+    global log_level
+    log_level = arguments.log_level
 
 
 def configure_logging():
@@ -53,13 +61,12 @@ def configure_logging():
 
     logger = logging.getLogger(__name__)
 
-    level = os.environ.get("LOGLEVEL", "INFO")
     logging.basicConfig(
         handlers=[
             logging.StreamHandler(sys.stdout),
         ],
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        level=level,
+        level=log_level,
     )
     error_tracker = ErrorHandler()
 
@@ -146,5 +153,6 @@ def main():
 
 if __name__ == "__main__":
     load_dotenv()
+    parse_args()
     configure_logging()
     main()
