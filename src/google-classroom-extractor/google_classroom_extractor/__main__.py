@@ -46,13 +46,23 @@ from google_classroom_extractor.helpers import arg_parser
 logger: logging.Logger
 error_tracker: ErrorHandler
 
+classroom_account: str = ""
 log_level: str = ""
+usage_start_date: str = ""
+usage_end_date: str = ""
 
 
 def parse_args():
     arguments = arg_parser.parse_main_arguments(sys.argv[1:])
+    global classroom_account
     global log_level
+    global usage_start_date
+    global usage_end_date
+
+    classroom_account = arguments.classroom_account
     log_level = arguments.log_level
+    usage_start_date = arguments.usage_start_date
+    usage_end_date = arguments.usage_end_date
 
 
 def configure_logging():
@@ -73,7 +83,7 @@ def configure_logging():
 
 def request() -> Optional[Result]:
     try:
-        credentials: service_account.Credentials = get_credentials()
+        credentials: service_account.Credentials = get_credentials(classroom_account)
         reports_resource: Resource = build(
             "admin", "reports_v1", credentials=credentials, cache_discovery=False
         )
@@ -83,7 +93,13 @@ def request() -> Optional[Result]:
 
         sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
 
-        return request_all(classroom_resource, reports_resource, sync_db)
+        return request_all(
+            classroom_resource,
+            reports_resource,
+            sync_db,
+            usage_start_date,
+            usage_end_date,
+        )
     except Exception:
         logger.exception("An exception occurred while connecting to the API")
         return None
@@ -146,7 +162,10 @@ def main():
     logger.info("Finishing Ed-Fi LMS Google Classroom Extractor")
 
     if error_tracker.fired:
-        print("A fatal error occurred, please review the log output for more information.", file=sys.stderr)
+        print(
+            "A fatal error occurred, please review the log output for more information.",
+            file=sys.stderr,
+        )
         sys.exit(1)
     sys.exit(0)
 

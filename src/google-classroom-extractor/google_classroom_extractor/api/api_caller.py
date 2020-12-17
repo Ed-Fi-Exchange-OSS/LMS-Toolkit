@@ -5,6 +5,7 @@
 
 from collections import namedtuple
 import logging
+import os
 from typing import List, Dict, Optional, Callable, cast
 from requests import RequestException
 from opnieuw import retry
@@ -13,8 +14,10 @@ from googleapiclient.errors import Error as GoogleApiError
 
 ResourceType = namedtuple("ValidSdkFunction", ["courses", "userUsageReport"])
 
-MAX_TOTAL_CALLS = 4
-RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
+MAX_TOTAL_CALLS = int(os.getenv("REQUEST_RETRY_COUNT") or 4)
+RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = int(
+    os.environ.get("REQUEST_RETRY_TIMEOUT_SECONDS") or 60
+)
 
 logger = logging.getLogger(__name__)
 

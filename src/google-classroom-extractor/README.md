@@ -51,6 +51,8 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | The output directory for the generated csv files. | no (default: data/) | -s or --usage-start-date | OUTPUT_PATH |
 | Start date for usage data pull in yyyy-mm-dd format. | no (default: today) | -s or --usage-start-date | START_DATE |
 | End date for usage data pull in yyyy-mm-dd format. | no (default: today) | -e or --usage-end-date | END_DATE |
+| Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
+| Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
 
 Valid log levels:
 * DEBUG

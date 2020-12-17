@@ -9,6 +9,10 @@ from pandas import DataFrame, read_csv
 from google_classroom_extractor.api.usage import request_all_usage_as_df
 from tests.helper import merged_dict
 
+# Empty string is the default value for this env variables
+ENV_START_DATE = ""
+ENV_END_DATE = ""
+
 
 def dataframe_row_count(dataframe) -> int:
     return dataframe.shape[0]
@@ -37,7 +41,9 @@ def describe_when_overlap_removal_is_needed():
     ):
         # 1st pull: 17 rows
         mock_latest_usage_df.return_value = read_csv("tests/api/usage/usage-1st.csv")
-        first_usage_df = request_all_usage_as_df(None, test_db_fixture)
+        first_usage_df = request_all_usage_as_df(
+            None, test_db_fixture, ENV_START_DATE, ENV_END_DATE
+        )
         assert dataframe_row_count(first_usage_df) == 17
         assert db_row_count(test_db_fixture) == 17
         assert db_ending_email(test_db_fixture) == "luislopez@conrad-turner.com"
@@ -46,7 +52,9 @@ def describe_when_overlap_removal_is_needed():
         mock_latest_usage_df.return_value = read_csv(
             "tests/api/usage/usage-2nd-overlaps-1st.csv"
         )
-        second_usage_df = request_all_usage_as_df(None, test_db_fixture)
+        second_usage_df = request_all_usage_as_df(
+            None, test_db_fixture, ENV_START_DATE, ENV_END_DATE
+        )
         assert dataframe_row_count(second_usage_df) == 49
         assert (
             db_row_count(test_db_fixture) == 59
@@ -57,7 +65,9 @@ def describe_when_overlap_removal_is_needed():
         mock_latest_usage_df.return_value = read_csv(
             "tests/api/usage/usage-3rd-overlaps-1st-and-2nd.csv"
         )
-        third_usage_df = request_all_usage_as_df(None, test_db_fixture)
+        third_usage_df = request_all_usage_as_df(
+            None, test_db_fixture, ENV_START_DATE, ENV_END_DATE
+        )
         assert dataframe_row_count(third_usage_df) == 98
         assert (
             db_row_count(test_db_fixture) == 99
@@ -90,7 +100,9 @@ def describe_when_pulls_of_same_usage_data_differ_in_number_of_posts():
         )
 
         # initial pull
-        first_usage_df = request_all_usage_as_df(None, test_db_fixture)
+        first_usage_df = request_all_usage_as_df(
+            None, test_db_fixture, ENV_START_DATE, ENV_END_DATE
+        )
         assert dataframe_row_count(first_usage_df) == 1
         assert db_row_count(test_db_fixture) == 1
         assert db_posts_by_name_date(test_db_fixture, name_date) == initial_posts
@@ -101,7 +113,9 @@ def describe_when_pulls_of_same_usage_data_differ_in_number_of_posts():
         )
 
         # overwrite pull
-        overwrite_usage_df = request_all_usage_as_df(None, test_db_fixture)
+        overwrite_usage_df = request_all_usage_as_df(
+            None, test_db_fixture, ENV_START_DATE, ENV_END_DATE
+        )
         assert dataframe_row_count(overwrite_usage_df) == 1
         assert db_row_count(test_db_fixture) == 1
         assert db_posts_by_name_date(test_db_fixture, name_date) == update_posts
