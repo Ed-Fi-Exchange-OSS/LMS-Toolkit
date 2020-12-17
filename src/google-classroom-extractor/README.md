@@ -63,6 +63,7 @@ Valid log levels:
 
 Note: in order to make the extractor work, you still need to configure your
 `service-account.json` file. To do so, read the next section `API Permissions`
+
 ### API Permissions
 
 In order to extract data, the Google Classroom APIs must be
@@ -146,7 +147,6 @@ the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 1. Run unit tests: `poetry run pytest`
 1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
 1. View code coverage: `poetry run coverage report`
-
 
 ### Visual Studio Code (Optional)
 
