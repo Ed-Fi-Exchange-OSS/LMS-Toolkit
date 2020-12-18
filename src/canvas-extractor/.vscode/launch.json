@@ -16,7 +16,8 @@
       "name": "Python: Test debug config",
       "type": "python",
       "request": "test",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      "justMyCode": false      
     }
   ]
 }
