@@ -5,7 +5,6 @@
 
 from datetime import datetime, timedelta
 import logging
-import os
 from typing import List, Dict, Optional, Any, cast
 from dateutil.parser import parse as date_parse
 from pandas import DataFrame, json_normalize, read_sql, date_range
@@ -45,21 +44,19 @@ def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]
             return None
 
 
-def start_date(sync_db: sqlalchemy.engine.base.Engine) -> datetime:
+def start_date(sync_db: sqlalchemy.engine.base.Engine, env_start_date: str) -> datetime:
     last_date: Optional[datetime] = last_sync_date(sync_db)
     if last_date is not None:
         return last_date + timedelta(days=1)
-    start_date_env = os.getenv("START_DATE")
-    if start_date_env is None:
+    if env_start_date == "":
         return datetime.today()
-    return date_parse(start_date_env)
+    return date_parse(env_start_date)
 
 
-def end_date() -> datetime:
-    end_date_env = os.getenv("END_DATE")
-    if end_date_env is None:
+def end_date(env_end_date: str) -> datetime:
+    if env_end_date == "":
         return datetime.today()
-    return date_parse(end_date_env)
+    return date_parse(env_end_date)
 
 
 def request_latest_usage_as_df(
@@ -115,10 +112,13 @@ def request_latest_usage_as_df(
 
 
 def request_all_usage_as_df(
-    resource: Optional[Resource], sync_db: sqlalchemy.engine.base.Engine
+    resource: Optional[Resource],
+    sync_db: sqlalchemy.engine.base.Engine,
+    env_start_date: str,
+    env_end_date: str,
 ) -> DataFrame:
     usage_df: DataFrame = request_latest_usage_as_df(
-        resource, start_date(sync_db), end_date()
+        resource, start_date(sync_db, env_start_date), end_date(env_end_date)
     )
     if usage_df.empty:
         return usage_df
