@@ -1,13 +1,12 @@
 {
-    "python.analysis.extraPaths": ["./data-extractor", "./tests"],
-    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.extraPaths": ["./canvas_extractor","./tests"],
     "python.languageServer": "Pylance",
+    "python.linting.pylintEnabled": false,
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Args": [
         "--max-line-length=110"
     ],
-    "python.linting.pylintEnabled": false,
     "python.formatting.provider": "black",
     "python.testing.pytestEnabled": true,
     "python.venvPath": ".venv/Scripts/python",
@@ -92,8 +91,13 @@
     "cSpell.words": [
         "MSSQL",
         "SPDX",
-        "dbname",
-        "pytest"
+        "dbname"
     ],
+    "files.exclude": {
+        ".mypy_cache": true,
+        ".pytest_cache": true,
+        "**/__pycache__": true,
+        "**/*.egg-info": true
+    },
     "jupyter.jupyterServerType": "local"
 }
