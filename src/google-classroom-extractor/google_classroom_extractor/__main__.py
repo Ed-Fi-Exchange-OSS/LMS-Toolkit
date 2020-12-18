@@ -42,9 +42,31 @@ from google_classroom_extractor.csv_generation.write import (
     SUBMISSION_ROOT_DIRECTORY,
     USER_ACTIVITY_ROOT_DIRECTORY,
 )
+from google_classroom_extractor.helpers import arg_parser
 
 logger: logging.Logger
 error_tracker: ErrorHandler
+
+classroom_account: str = ""
+log_level: str = ""
+output_directory: str = ""
+usage_start_date: str = ""
+usage_end_date: str = ""
+
+
+def parse_args():
+    arguments = arg_parser.parse_main_arguments(sys.argv[1:])
+    global classroom_account
+    global log_level
+    global output_directory
+    global usage_start_date
+    global usage_end_date
+
+    classroom_account = arguments.classroom_account
+    log_level = arguments.log_level
+    output_directory = arguments.output_directory
+    usage_start_date = arguments.usage_start_date
+    usage_end_date = arguments.usage_end_date
 
 
 def configure_logging():
@@ -53,20 +75,19 @@ def configure_logging():
 
     logger = logging.getLogger(__name__)
 
-    level = os.environ.get("LOGLEVEL", "INFO")
     logging.basicConfig(
         handlers=[
             logging.StreamHandler(sys.stdout),
         ],
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        level=level,
+        level=log_level,
     )
     error_tracker = ErrorHandler()
 
 
 def request() -> Optional[Result]:
     try:
-        credentials: service_account.Credentials = get_credentials()
+        credentials: service_account.Credentials = get_credentials(classroom_account)
         reports_resource: Resource = build(
             "admin", "reports_v1", credentials=credentials, cache_discovery=False
         )
@@ -76,7 +97,13 @@ def request() -> Optional[Result]:
 
         sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
 
-        return request_all(classroom_resource, reports_resource, sync_db)
+        return request_all(
+            classroom_resource,
+            reports_resource,
+            sync_db,
+            usage_start_date,
+            usage_end_date,
+        )
     except Exception:
         logger.exception("An exception occurred while connecting to the API")
         return None
@@ -91,60 +118,74 @@ def main():
         return
 
     logger.info("Writing LMS UDM Users to CSV file")
+    USERS_OUTPUT_DIR = os.path.join(output_directory, USERS_ROOT_DIRECTORY)
     write_csv(
         students_and_teachers_to_users_df(
             result_dfs.students_df, result_dfs.teachers_df
         ),
         datetime.now(),
-        USERS_ROOT_DIRECTORY,
+        USERS_OUTPUT_DIR,
     )
 
     logger.info("Writing LMS UDM Sections to CSV file")
+    SECTIONS_OUTPUT_DIR = os.path.join(output_directory, SECTIONS_ROOT_DIRECTORY)
     write_csv(
         courses_to_sections_df(result_dfs.courses_df),
         datetime.now(),
-        SECTIONS_ROOT_DIRECTORY,
+        SECTIONS_OUTPUT_DIR,
     )
 
     logger.info("Writing LMS UDM UserSectionAssociations to CSV files")
+    SECTION_ASSOCIATIONS_OUTPUT_DIR = os.path.join(
+        output_directory, SECTION_ASSOCIATIONS_ROOT_DIRECTORY
+    )
     write_multi_csv(
         students_and_teachers_to_user_section_associations_dfs(
             result_dfs.students_df, result_dfs.teachers_df
         ),
         datetime.now(),
-        SECTION_ASSOCIATIONS_ROOT_DIRECTORY,
+        SECTION_ASSOCIATIONS_OUTPUT_DIR,
     )
 
     logger.info("Writing LMS UDM Assignments to CSV files")
+    ASSIGNMENT_OUTPUT_DIR = os.path.join(output_directory, ASSIGNMENT_ROOT_DIRECTORY)
     write_multi_csv(
         coursework_to_assignments_dfs(result_dfs.coursework_df),
         datetime.now(),
-        ASSIGNMENT_ROOT_DIRECTORY,
+        ASSIGNMENT_OUTPUT_DIR,
     )
 
     logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
+    SUBMISSION_OUTPUT_DIR = os.path.join(output_directory, SUBMISSION_ROOT_DIRECTORY)
     write_multi_tuple_csv(
         submissions_to_assignment_submissions_dfs(result_dfs.submissions_df),
         datetime.now(),
-        SUBMISSION_ROOT_DIRECTORY,
+        SUBMISSION_OUTPUT_DIR,
     )
 
     logger.info("Writing LMS UDM User Activities to CSV files")
+    USER_ACTIVITY_OUTPUT_DIR = os.path.join(
+        output_directory, USER_ACTIVITY_ROOT_DIRECTORY
+    )
     write_multi_csv(
         submissions_to_user_submission_activities_dfs(result_dfs.submissions_df),
         datetime.now(),
-        USER_ACTIVITY_ROOT_DIRECTORY,
+        USER_ACTIVITY_OUTPUT_DIR,
     )
 
     logger.info("Finishing Ed-Fi LMS Google Classroom Extractor")
 
     if error_tracker.fired:
-        print("A fatal error occurred, please review the log output for more information.", file=sys.stderr)
+        print(
+            "A fatal error occurred, please review the log output for more information.",
+            file=sys.stderr,
+        )
         sys.exit(1)
     sys.exit(0)
 
 
 if __name__ == "__main__":
     load_dotenv()
+    parse_args()
     configure_logging()
     main()

@@ -10,12 +10,12 @@ from datetime import datetime
 from pandas import DataFrame
 
 
-USERS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/users/"
-SECTIONS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/sections/"
-SECTION_ASSOCIATIONS_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/section-associations/"
-ASSIGNMENT_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/assignments/"
-SUBMISSION_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id1}/assignment={id2}/submissions/"
-USER_ACTIVITY_ROOT_DIRECTORY = "data/ed-fi-udm-lms/section={id}/user-activities/"
+USERS_ROOT_DIRECTORY = "users/"
+SECTIONS_ROOT_DIRECTORY = "sections/"
+SECTION_ASSOCIATIONS_ROOT_DIRECTORY = "section={id}/section-associations/"
+ASSIGNMENT_ROOT_DIRECTORY = "section={id}/assignments/"
+SUBMISSION_ROOT_DIRECTORY = "section={id1}/assignment={id2}/submissions/"
+USER_ACTIVITY_ROOT_DIRECTORY = "section={id}/user-activities/"
 
 logger = logging.getLogger(__name__)
 

@@ -49,7 +49,7 @@ def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
     return create_engine(f"sqlite:///{sync_database_directory}/sync.sqlite")
 
 
-def get_credentials() -> service_account.Credentials:
+def get_credentials(classroom_account: str) -> service_account.Credentials:
     """
     Create a Google OAuth Credentials object from a service-account.json file
 
@@ -76,5 +76,5 @@ def get_credentials() -> service_account.Credentials:
     )
 
     return service_account.Credentials.from_service_account_file(
-        filename, scopes=scopes, subject=os.getenv("CLASSROOM_ACCOUNT")
+        filename, scopes=scopes, subject=classroom_account
     )
