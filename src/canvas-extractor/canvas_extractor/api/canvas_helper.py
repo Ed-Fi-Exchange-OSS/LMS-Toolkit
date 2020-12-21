@@ -5,12 +5,12 @@
 
 from typing import Dict, List, cast
 from canvasapi.canvas_object import CanvasObject
-from pandas.core.frame import DataFrame
+from pandas import DataFrame
 
 
 def _to_dict(canvas_object: CanvasObject):
     """
-    Converts a canvas objects to a dict containing only the data values
+    Converts a canvas object to a dict containing only the data values
 
     Parameters
     ----------
@@ -22,7 +22,7 @@ def _to_dict(canvas_object: CanvasObject):
     Dict
         a Dict containing only the data value
     """
-    dictionary = vars(canvas_object)
+    dictionary = vars(canvas_object).copy()
     del dictionary["_requester"]
     return dictionary
 
