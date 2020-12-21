@@ -7,6 +7,5 @@ SOURCE_SYSTEM = "Canvas"
 ACTIVE = "active"
 INACTIVE = "inactive"
 
-
 class ROLES:
     STUDENT = "Student"
