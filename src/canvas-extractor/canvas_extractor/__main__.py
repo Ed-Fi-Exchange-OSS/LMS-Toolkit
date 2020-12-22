@@ -15,6 +15,7 @@ from canvasapi import Canvas
 from canvasapi.assignment import Assignment
 from canvasapi.course import Course
 from canvasapi.enrollment import Enrollment
+from canvasapi.section import Section
 from canvasapi.submission import Submission
 from canvasapi.user import User
 
@@ -22,10 +23,12 @@ from canvasapi.user import User
 from canvas_extractor.api.assignments import assignments_synced_as_df, request_assignments
 from canvas_extractor.api.courses import courses_synced_as_df, request_courses
 from canvas_extractor.api.enrollments import enrollments_synced_as_df, request_enrollments
+from canvas_extractor.api.sections import sections_synced_as_df, request_sections
 from canvas_extractor.api.students import request_students, students_synced_as_df
 from canvas_extractor.api.submissions import request_submissions, submissions_synced_as_df
 from canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from canvas_extractor.mapping import users as mapUsers
+from canvas_extractor.mapping.sections import map_to_udm_sections
 
 logger: logging.Logger
 error_tracker: ErrorHandler
@@ -55,6 +58,17 @@ def extract_courses(canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine) -> L
     # Temporary - just for demonstration until UDM mapping
     courses_df.to_csv("data/courses.csv", index=False)
     return courses
+
+
+def extract_sections(courses: List[Course], sync_db: sqlalchemy.engine.base.Engine) -> List[Section]:
+    logger.info("Extracting Sections from Canvas API")
+    sections: List[Section] = request_sections(courses)
+    sections_df: DataFrame = sections_synced_as_df(sections, sync_db)
+    udm_sections_df: DataFrame = map_to_udm_sections(sections_df)
+
+    # Temporary - just for demonstration until UDM mapping
+    udm_sections_df.to_csv("data/udm_sections.csv", index=False)
+    return sections
 
 
 def extract_students(courses: List[Course], sync_db: sqlalchemy.engine.base.Engine) -> List[User]:
@@ -99,6 +113,7 @@ def main():
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
 
     courses: List[Course] = extract_courses(get_canvas_api(), sync_db)
+    extract_sections(courses, sync_db)
     students: List[User] = extract_students(courses, sync_db)
     assignments: List[Assignment] = extract_assignments(courses, sync_db)
     extract_submissions(assignments, sync_db)
