@@ -27,7 +27,7 @@ from canvas_extractor.api.sections import sections_synced_as_df, request_section
 from canvas_extractor.api.students import request_students, students_synced_as_df
 from canvas_extractor.api.submissions import request_submissions, submissions_synced_as_df
 from canvas_extractor.config import get_canvas_api, get_sync_db_engine
-from canvas_extractor.mapping import users as mapUsers
+from canvas_extractor.mapping.users import map_to_udm_users
 from canvas_extractor.mapping.sections import map_to_udm_sections
 
 logger: logging.Logger
@@ -75,7 +75,7 @@ def extract_students(courses: List[Course], sync_db: sqlalchemy.engine.base.Engi
     logger.info("Extracting Students from Canvas API")
     students: List[User] = request_students(courses)
     students_df: DataFrame = students_synced_as_df(students, sync_db)
-    students_df = mapUsers.map_to_udm(students_df)
+    students_df = map_to_udm_users(students_df)
     # Temporary - just for demonstration until UDM mapping
     students_df.to_csv("data/students.csv", index=False)
     return students

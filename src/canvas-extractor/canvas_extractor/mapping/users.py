@@ -3,12 +3,13 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from datetime import datetime
 import pandas as pd
 
 from . import constants
 
 
-def map_to_udm(users_df: pd.DataFrame) -> pd.DataFrame:
+def map_to_udm_users(users_df: pd.DataFrame) -> pd.DataFrame:
     """
     Maps a DataFrame containing Canvas users into the Ed-Fi LMS Unified Data
     Model (UDM) format.
@@ -67,6 +68,7 @@ def map_to_udm(users_df: pd.DataFrame) -> pd.DataFrame:
         inplace=True,
     )
 
+    df["SourceCreateDate"] = df["SourceCreateDate"].apply(lambda x: datetime.strftime(datetime.strptime(x, "%Y-%m-%dT%H:%M:%S%z"), "%Y/%m/%d %H:%M:%S"))
     df["UserRole"] = constants.ROLES.STUDENT
     df["EntityStatus"] = constants.ACTIVE
 
