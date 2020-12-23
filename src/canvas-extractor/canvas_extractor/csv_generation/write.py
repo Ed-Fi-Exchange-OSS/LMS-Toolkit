@@ -1,3 +1,9 @@
+#####################
+# DO NOT EDIT - This is a duplicate of the Google Classroom version
+# Consider replacing with a shared library
+# DO NOT EDIT
+#####################
+
 # SPDX-License-Identifier: Apache-2.0
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
