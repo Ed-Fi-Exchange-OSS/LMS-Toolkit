@@ -2,6 +2,7 @@
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
+from datetime import datetime
 from typing import List
 import sys
 import os
@@ -27,11 +28,17 @@ from canvas_extractor.api.sections import sections_synced_as_df, request_section
 from canvas_extractor.api.students import request_students, students_synced_as_df
 from canvas_extractor.api.submissions import request_submissions, submissions_synced_as_df
 from canvas_extractor.config import get_canvas_api, get_sync_db_engine
-from canvas_extractor.mapping import users as mapUsers
+from canvas_extractor.mapping.users import map_to_udm_users
 from canvas_extractor.mapping.sections import map_to_udm_sections
+from canvas_extractor.csv_generation.write import (
+    SECTIONS_ROOT_DIRECTORY,
+    write_csv,
+    USERS_ROOT_DIRECTORY,
+)
 
 logger: logging.Logger
 error_tracker: ErrorHandler
+BASE_OUTPUT_DIRECTORY = "data"
 
 
 def configure_logging():
@@ -65,9 +72,10 @@ def extract_sections(courses: List[Course], sync_db: sqlalchemy.engine.base.Engi
     sections: List[Section] = request_sections(courses)
     sections_df: DataFrame = sections_synced_as_df(sections, sync_db)
     udm_sections_df: DataFrame = map_to_udm_sections(sections_df)
+    SECTIONS_OUTPUT_DIR = os.path.join(BASE_OUTPUT_DIRECTORY, SECTIONS_ROOT_DIRECTORY)
 
+    write_csv(udm_sections_df, datetime.now(), SECTIONS_OUTPUT_DIR)
     # Temporary - just for demonstration until UDM mapping
-    udm_sections_df.to_csv("data/udm_sections.csv", index=False)
     return sections
 
 
@@ -75,9 +83,10 @@ def extract_students(courses: List[Course], sync_db: sqlalchemy.engine.base.Engi
     logger.info("Extracting Students from Canvas API")
     students: List[User] = request_students(courses)
     students_df: DataFrame = students_synced_as_df(students, sync_db)
-    students_df = mapUsers.map_to_udm(students_df)
+    students_df = map_to_udm_users(students_df)
     # Temporary - just for demonstration until UDM mapping
-    students_df.to_csv("data/students.csv", index=False)
+    USERS_OUTPUT_DIR = os.path.join(BASE_OUTPUT_DIRECTORY, USERS_ROOT_DIRECTORY)
+    write_csv(students_df, datetime.now(), USERS_OUTPUT_DIR)
     return students
 
 
