@@ -4,12 +4,12 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from datetime import datetime
-import pandas as pd
+from pandas import DataFrame
 
 from . import constants
 
 
-def map_to_udm_users(users_df: pd.DataFrame) -> pd.DataFrame:
+def map_to_udm_users(users_df: DataFrame) -> DataFrame:
     """
     Maps a DataFrame containing Canvas users into the Ed-Fi LMS Unified Data
     Model (UDM) format.
@@ -41,7 +41,7 @@ def map_to_udm_users(users_df: pd.DataFrame) -> pd.DataFrame:
     if users_df.empty:
         return users_df
 
-    df = users_df[
+    df: DataFrame = users_df[
         [
             "id",
             "sis_user_id",

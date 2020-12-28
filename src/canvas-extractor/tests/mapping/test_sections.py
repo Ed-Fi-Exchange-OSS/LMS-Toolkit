@@ -28,7 +28,7 @@ CREATE_DATE = "14"
 LAST_MODIFIED_DATE = "15"
 
 
-def describe_when_a_single_coursework_with_unique_fields_is_mapped():
+def describe_when_a_single_section_with_unique_fields_is_mapped():
     @pytest.fixture
     def sections_df() -> DataFrame:
         section_df: DataFrame = DataFrame(

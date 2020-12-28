@@ -5,7 +5,7 @@
 #####################
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, cast
 from pandas import DataFrame, Series, read_sql_query
 import sqlalchemy
 import xxhash
@@ -131,7 +131,7 @@ def _create_sync_table_from_resource_df(
     sync_df["LastModifiedDate"] = now
     sync_df["SyncNeeded"] = 1
 
-    sync_df = sync_df[SYNC_COLUMNS]
+    sync_df = cast(DataFrame, sync_df[SYNC_COLUMNS])
     sync_df.set_index("SourceId", inplace=True)
     # push to temporary sync table
     sync_df.to_sql(

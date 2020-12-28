@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import pandas as pd
+from pandas import DataFrame
 
 from . import constants
 
@@ -23,6 +24,8 @@ def map_to_udm_sections(sections_df: pd.DataFrame) -> pd.DataFrame:
     DataFrame
         A LMSSections-formatted DataFrame
 
+    Notes
+    -----
     DataFrame columns are:
         EntityStatus: The status of the record
         LMSSectionStatus: The section status from the source system
@@ -42,7 +45,13 @@ def map_to_udm_sections(sections_df: pd.DataFrame) -> pd.DataFrame:
     if sections_df.empty:
         return sections_df
 
-    df = sections_df[
+    assert "id" in sections_df.columns
+    assert "name" in sections_df.columns
+    assert "sis_section_id" in sections_df.columns
+    assert "CreateDate" in sections_df.columns
+    assert "LastModifiedDate" in sections_df.columns
+
+    df: DataFrame = sections_df[
         [
             "id",
             "name",
