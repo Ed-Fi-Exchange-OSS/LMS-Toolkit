@@ -28,7 +28,7 @@ from canvas_extractor.api.assignments import (
 from canvas_extractor.api.courses import courses_synced_as_df, request_courses
 from canvas_extractor.api.enrollments import (
     enrollments_synced_as_df,
-    request_enrollments,
+    request_enrollments_for_section,
 )
 from canvas_extractor.api.sections import sections_synced_as_df, request_sections
 from canvas_extractor.api.students import request_students, students_synced_as_df
@@ -40,12 +40,14 @@ from canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from canvas_extractor.mapping.assignments import map_to_udm_assignments
 from canvas_extractor.mapping.users import map_to_udm_users
 from canvas_extractor.mapping.sections import map_to_udm_sections
+from canvas_extractor.mapping.section_associations import map_to_udm_section_associations
 from canvas_extractor.csv_generation.write import (
     write_csv,
     write_multi_csv,
     SECTIONS_ROOT_DIRECTORY,
     USERS_ROOT_DIRECTORY,
     ASSIGNMENT_ROOT_DIRECTORY,
+    SECTION_ASSOCIATIONS_ROOT_DIRECTORY,
 )
 
 logger: logging.Logger
@@ -138,14 +140,20 @@ def extract_submissions(
 
 
 def extract_enrollments(
-    students: List[User], sync_db: sqlalchemy.engine.base.Engine
-) -> List[Enrollment]:
+    sections: List[Section], sync_db: sqlalchemy.engine.base.Engine
+):
     logger.info("Extracting Enrollments from Canvas API")
-    enrollments: List[Enrollment] = request_enrollments(students)
-    enrollments_df: DataFrame = enrollments_synced_as_df(enrollments, sync_db)
-    # Temporary - just for demonstration until UDM mapping
-    enrollments_df.to_csv("data/enrollments.csv", index=False)
-    return enrollments
+    output: Dict[str, DataFrame] = dict()
+    SECTION_ASSOCIATIONS_OUTPUT = os.path.join(
+        BASE_OUTPUT_DIRECTORY, SECTION_ASSOCIATIONS_ROOT_DIRECTORY
+    )
+    for section in sections:
+        enrollments: List[Enrollment] = request_enrollments_for_section(section)
+        enrollments_df: DataFrame = enrollments_synced_as_df(enrollments, sync_db)
+        enrollments_df = map_to_udm_section_associations(enrollments_df)
+        output[section.id] = enrollments_df
+
+    write_multi_csv(output, datetime.now(), SECTION_ASSOCIATIONS_OUTPUT)
 
 
 def main():
@@ -154,11 +162,13 @@ def main():
 
     courses: List[Course] = extract_courses(get_canvas_api(), sync_db)
     sections_df: DataFrame
-    (_, sections_df) = extract_sections(courses, sync_db)
-    students: List[User] = extract_students(courses, sync_db)
+    sections: Section
+    (sections, sections_df) = extract_sections(courses, sync_db)
     assignments: List[Assignment] = extract_assignments(courses, sections_df, sync_db)
+
+    extract_students(courses, sync_db)
     extract_submissions(assignments, sync_db)
-    extract_enrollments(students, sync_db)
+    extract_enrollments(sections, sync_db)
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
 

@@ -8,7 +8,7 @@ from typing import List
 from pandas import DataFrame
 import sqlalchemy
 
-from canvasapi.user import User
+from canvasapi.section import Section
 from canvasapi.enrollment import Enrollment
 
 from .canvas_helper import to_df
@@ -20,9 +20,9 @@ ENROLLMENTS_RESOURCE_NAME = "Enrollments"
 logger = logging.getLogger(__name__)
 
 
-def _request_enrollments_for_student(user: User) -> List[Enrollment]:
+def request_enrollments_for_section(section: Section) -> List[Enrollment]:
     """
-    Fetch Enrollments API data for a student
+    Fetch Enrollments API data for a section
 
     Parameters
     ----------
@@ -36,30 +36,7 @@ def _request_enrollments_for_student(user: User) -> List[Enrollment]:
     List[Enrollment]
         a list of Enrollment API objects
     """
-    return call_with_retry(user.get_enrollments)
-
-
-def request_enrollments(users: List[User]) -> List[Enrollment]:
-    """
-    Fetch Enrollments API data for a range of students and return a list of enrollments as Enrollment API objects
-
-    Parameters
-    ----------
-    users: List[User]
-        a list of Canvas User objects
-
-    Returns
-    -------
-    List[Enrollment]
-        a list of Enrollment API objects
-    """
-
-    logger.info("Pulling enrollment data")
-    enrollments: List[Enrollment] = []
-    for user in users:
-        enrollments.extend(_request_enrollments_for_student(user))
-
-    return enrollments
+    return call_with_retry(section.get_enrollments)
 
 
 def enrollments_synced_as_df(
