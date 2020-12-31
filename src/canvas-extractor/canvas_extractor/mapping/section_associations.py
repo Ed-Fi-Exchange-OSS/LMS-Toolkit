@@ -20,7 +20,7 @@ def _get_enrollment_status(status: str) -> str:
 
 
 def _get_date_formated(date) -> str:
-    if not isinstance(_get_date_formated, str):
+    if not isinstance(date, str) or date == "":
         return ""
     return datetime.strftime(
         datetime.strptime(date, "%Y-%m-%dT%H:%M:%S%z"), "%Y/%m/%d %H:%M:%S"
