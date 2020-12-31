@@ -39,27 +39,21 @@ def _request_submissions_for_assignment(assignment: Assignment) -> List[Submissi
     return call_with_retry(assignment.get_submissions)
 
 
-def request_submissions(assignments: List[Assignment]) -> List[Submission]:
+def request_submissions(assignment: Assignment) -> List[Submission]:
     """
     Fetch Submissions API data for a range of assignments and return a list of submissions as Submission API objects
 
     Parameters
     ----------
-    assignments: List[Assignment]
-        a list of Canvas Assignment objects
+    assignment: Assignment
+        a Canvas Assignment object
 
     Returns
     -------
     List[Submission]
         a list of Submission API objects
     """
-
-    logger.info("Pulling submission data")
-    submissions: List[Submission] = []
-    for assignment in assignments:
-        submissions.extend(_request_submissions_for_assignment(assignment))
-
-    return submissions
+    return _request_submissions_for_assignment(assignment)
 
 
 def submissions_synced_as_df(

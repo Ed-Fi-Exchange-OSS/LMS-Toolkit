@@ -41,9 +41,12 @@ from canvas_extractor.mapping.assignments import map_to_udm_assignments
 from canvas_extractor.mapping.users import map_to_udm_users
 from canvas_extractor.mapping.sections import map_to_udm_sections
 from canvas_extractor.mapping.section_associations import map_to_udm_section_associations
+from canvas_extractor.mapping.submissions import map_to_udm_submissions
 from canvas_extractor.csv_generation.write import (
+    SUBMISSION_ROOT_DIRECTORY,
     write_csv,
     write_multi_csv,
+    write_multi_tuple_csv,
     SECTIONS_ROOT_DIRECTORY,
     USERS_ROOT_DIRECTORY,
     ASSIGNMENT_ROOT_DIRECTORY,
@@ -113,7 +116,7 @@ def extract_assignments(
     courses: List[Course],
     sections_df: DataFrame,
     sync_db: sqlalchemy.engine.base.Engine,
-) -> List[Assignment]:
+) -> Tuple[List[Assignment], DataFrame]:
     logger.info("Extracting Assignments from Canvas API")
     assignments: List[Assignment] = request_assignments(courses)
     assignments_df: DataFrame = assignments_synced_as_df(assignments, sync_db)
@@ -129,14 +132,27 @@ def extract_assignments(
 
 
 def extract_submissions(
-    assignments: List[Assignment], sync_db: sqlalchemy.engine.base.Engine
-) -> List[Submission]:
+    assignments: List[Assignment],
+    sections: List[Section],
+    sync_db: sqlalchemy.engine.base.Engine,
+):
     logger.info("Extracting Submissions from Canvas API")
-    submissions: List[Submission] = request_submissions(assignments)
-    submissions_df: DataFrame = submissions_synced_as_df(submissions, sync_db)
-    # Temporary - just for demonstration until UDM mapping
-    submissions_df.to_csv("data/submissions.csv", index=False)
-    return submissions
+    export: dict[tuple[str, str], DataFrame] = {}
+    for section in sections:
+        for assignment in [
+            assignment
+            for assignment in assignments
+            if assignment.course_id == section.course_id
+        ]:
+            submissions: List[Submission] = request_submissions(assignment)
+            submissions_df: DataFrame = submissions_synced_as_df(submissions, sync_db)
+            submissions_df = map_to_udm_submissions(submissions_df)
+            export[(section.id, assignment.id)] = submissions_df
+
+    SUBMISSIONS_OUTPUT_DIRECTORY = os.path.join(
+        BASE_OUTPUT_DIRECTORY, SUBMISSION_ROOT_DIRECTORY
+    )
+    write_multi_tuple_csv(export, datetime.now(), SUBMISSIONS_OUTPUT_DIRECTORY)
 
 
 def extract_enrollments(
