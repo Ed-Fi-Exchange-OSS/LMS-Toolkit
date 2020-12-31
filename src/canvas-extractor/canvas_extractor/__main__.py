@@ -116,7 +116,7 @@ def extract_assignments(
     courses: List[Course],
     sections_df: DataFrame,
     sync_db: sqlalchemy.engine.base.Engine,
-) -> Tuple[List[Assignment], DataFrame]:
+) -> List[Assignment]:
     logger.info("Extracting Assignments from Canvas API")
     assignments: List[Assignment] = request_assignments(courses)
     assignments_df: DataFrame = assignments_synced_as_df(assignments, sync_db)
@@ -137,7 +137,7 @@ def extract_submissions(
     sync_db: sqlalchemy.engine.base.Engine,
 ):
     logger.info("Extracting Submissions from Canvas API")
-    export: dict[tuple[str, str], DataFrame] = {}
+    export: Dict[Tuple[str, str], DataFrame] = {}
     for section in sections:
         for assignment in [
             assignment
