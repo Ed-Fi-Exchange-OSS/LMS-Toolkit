@@ -34,10 +34,10 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             )
 
             # Arrange
-            schoology_df = pd.DataFrame(section_associations)
+            df = pd.DataFrame(section_associations)
 
             # Act
-            return map_to_udm_section_associations(schoology_df)
+            return map_to_udm_section_associations(df)
 
         def it_should_have_correct_number_of_columns(result):
             assert result.shape[1] == 12
