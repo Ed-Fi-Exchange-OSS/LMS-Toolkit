@@ -9,8 +9,7 @@
       "type": "python",
       "request": "launch",
       "program": "${file}",
-      "console": "integratedTerminal",
-      "justMyCode": false
+      "console": "integratedTerminal"
     },
     {
       "name": "Python: Test debug config",
