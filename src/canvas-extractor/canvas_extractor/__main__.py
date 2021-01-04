@@ -58,6 +58,12 @@ error_tracker: ErrorHandler
 BASE_OUTPUT_DIRECTORY = "data"
 
 
+def load_dotenv_values():
+    load_dotenv()
+    global BASE_OUTPUT_DIRECTORY
+    BASE_OUTPUT_DIRECTORY = os.getenv("OUTPUT_DIRECTORY", "data")
+
+
 def configure_logging():
     global logger
     global error_tracker
@@ -198,6 +204,6 @@ def main():
 
 
 if __name__ == "__main__":
-    load_dotenv()
+    load_dotenv_values()
     configure_logging()
     main()
