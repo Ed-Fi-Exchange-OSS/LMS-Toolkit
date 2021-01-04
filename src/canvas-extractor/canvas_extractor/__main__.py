@@ -94,8 +94,8 @@ def extract_sections(
     sections_df: DataFrame = sections_synced_as_df(sections, sync_db)
     udm_sections_df: DataFrame = map_to_udm_sections(sections_df)
 
-    SECTIONS_OUTPUT_DIR = os.path.join(BASE_OUTPUT_DIRECTORY, SECTIONS_ROOT_DIRECTORY)
-    write_csv(udm_sections_df, datetime.now(), SECTIONS_OUTPUT_DIR)
+    sections_output_directory = os.path.join(BASE_OUTPUT_DIRECTORY, SECTIONS_ROOT_DIRECTORY)
+    write_csv(udm_sections_df, datetime.now(), sections_output_directory)
     return (sections, sections_df)
 
 
@@ -107,8 +107,8 @@ def extract_students(
     students_df: DataFrame = students_synced_as_df(students, sync_db)
     udm_students_df: DataFrame = map_to_udm_users(students_df)
 
-    USERS_OUTPUT_DIR = os.path.join(BASE_OUTPUT_DIRECTORY, USERS_ROOT_DIRECTORY)
-    write_csv(udm_students_df, datetime.now(), USERS_OUTPUT_DIR)
+    users_output_directory = os.path.join(BASE_OUTPUT_DIRECTORY, USERS_ROOT_DIRECTORY)
+    write_csv(udm_students_df, datetime.now(), users_output_directory)
     return students
 
 
@@ -124,10 +124,10 @@ def extract_assignments(
         assignments_df, sections_df
     )
 
-    ASSIGNMENT_OUTPUT_DIR = os.path.join(
+    assignments_output_directory = os.path.join(
         BASE_OUTPUT_DIRECTORY, ASSIGNMENT_ROOT_DIRECTORY
     )
-    write_multi_csv(udm_assignments_dfs, datetime.now(), ASSIGNMENT_OUTPUT_DIR)
+    write_multi_csv(udm_assignments_dfs, datetime.now(), assignments_output_directory)
     return assignments
 
 
@@ -149,10 +149,10 @@ def extract_submissions(
             submissions_df = map_to_udm_submissions(submissions_df)
             export[(section.id, assignment.id)] = submissions_df
 
-    SUBMISSIONS_OUTPUT_DIRECTORY = os.path.join(
+    submissions_output_directory = os.path.join(
         BASE_OUTPUT_DIRECTORY, SUBMISSION_ROOT_DIRECTORY
     )
-    write_multi_tuple_csv(export, datetime.now(), SUBMISSIONS_OUTPUT_DIRECTORY)
+    write_multi_tuple_csv(export, datetime.now(), submissions_output_directory)
 
 
 def extract_enrollments(
