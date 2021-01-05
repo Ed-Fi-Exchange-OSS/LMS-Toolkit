@@ -3,10 +3,11 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 import sys
 import os
 import logging
+
 from dotenv import load_dotenv
 from pandas import DataFrame
 import sqlalchemy
@@ -15,33 +16,10 @@ from errorhandler import ErrorHandler
 from canvasapi import Canvas
 from canvasapi.assignment import Assignment
 from canvasapi.course import Course
-from canvasapi.enrollment import Enrollment
 from canvasapi.section import Section
-from canvasapi.submission import Submission
 from canvasapi.user import User
 
-
-from canvas_extractor.api.assignments import (
-    assignments_synced_as_df,
-    request_assignments,
-)
-from canvas_extractor.api.courses import courses_synced_as_df, request_courses
-from canvas_extractor.api.enrollments import (
-    enrollments_synced_as_df,
-    request_enrollments_for_section,
-)
-from canvas_extractor.api.sections import sections_synced_as_df, request_sections
-from canvas_extractor.api.students import request_students, students_synced_as_df
-from canvas_extractor.api.submissions import (
-    request_submissions,
-    submissions_synced_as_df,
-)
 from canvas_extractor.config import get_canvas_api, get_sync_db_engine
-from canvas_extractor.mapping.assignments import map_to_udm_assignments
-from canvas_extractor.mapping.users import map_to_udm_users
-from canvas_extractor.mapping.sections import map_to_udm_sections
-from canvas_extractor.mapping.section_associations import map_to_udm_section_associations
-from canvas_extractor.mapping.submissions import map_to_udm_submissions
 from canvas_extractor.csv_generation.write import (
     SUBMISSION_ROOT_DIRECTORY,
     write_csv,
@@ -51,6 +29,14 @@ from canvas_extractor.csv_generation.write import (
     USERS_ROOT_DIRECTORY,
     ASSIGNMENT_ROOT_DIRECTORY,
     SECTION_ASSOCIATIONS_ROOT_DIRECTORY,
+)
+from canvas_extractor.extract_facade import (
+    extract_courses,
+    extract_sections,
+    extract_students,
+    extract_assignments,
+    extract_submissions,
+    extract_enrollments,
 )
 
 logger: logging.Logger
@@ -81,116 +67,92 @@ def configure_logging():
     error_tracker = ErrorHandler()
 
 
-def extract_courses(
+def _get_courses(
     canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine
-) -> List[Course]:
+) -> Tuple[List[Course], DataFrame]:
     logger.info("Extracting Courses from Canvas API")
-    courses: List[Course] = request_courses(canvas)
-    courses_df: DataFrame = courses_synced_as_df(courses, sync_db)
+    (courses, courses_df) = extract_courses(canvas, sync_db)
     # Temporary - just for demonstration until UDM mapping
     courses_df.to_csv("data/courses.csv", index=False)
-    return courses
+    return (courses, courses_df)
 
 
-def extract_sections(
+def _get_sections(
     courses: List[Course], sync_db: sqlalchemy.engine.base.Engine
 ) -> Tuple[List[Section], DataFrame]:
     logger.info("Extracting Sections from Canvas API")
-    sections: List[Section] = request_sections(courses)
-    sections_df: DataFrame = sections_synced_as_df(sections, sync_db)
-    udm_sections_df: DataFrame = map_to_udm_sections(sections_df)
+    (sections, udm_sections_df) = extract_sections(courses, sync_db)
+    write_csv(
+        udm_sections_df,
+        datetime.now(),
+        os.path.join(BASE_OUTPUT_DIRECTORY, SECTIONS_ROOT_DIRECTORY),
+    )
+    return (sections, udm_sections_df)
 
-    sections_output_directory = os.path.join(BASE_OUTPUT_DIRECTORY, SECTIONS_ROOT_DIRECTORY)
-    write_csv(udm_sections_df, datetime.now(), sections_output_directory)
-    return (sections, sections_df)
 
-
-def extract_students(
+def _get_students(
     courses: List[Course], sync_db: sqlalchemy.engine.base.Engine
 ) -> List[User]:
     logger.info("Extracting Students from Canvas API")
-    students: List[User] = request_students(courses)
-    students_df: DataFrame = students_synced_as_df(students, sync_db)
-    udm_students_df: DataFrame = map_to_udm_users(students_df)
-
-    users_output_directory = os.path.join(BASE_OUTPUT_DIRECTORY, USERS_ROOT_DIRECTORY)
-    write_csv(udm_students_df, datetime.now(), users_output_directory)
+    (students, udm_students_df) = extract_students(courses, sync_db)
+    write_csv(
+        udm_students_df,
+        datetime.now(),
+        os.path.join(BASE_OUTPUT_DIRECTORY, USERS_ROOT_DIRECTORY),
+    )
     return students
 
 
-def extract_assignments(
+def _get_assignments(
     courses: List[Course],
     sections_df: DataFrame,
     sync_db: sqlalchemy.engine.base.Engine,
-) -> List[Assignment]:
+) -> Tuple[List[Assignment], DataFrame]:
     logger.info("Extracting Assignments from Canvas API")
-    assignments: List[Assignment] = request_assignments(courses)
-    assignments_df: DataFrame = assignments_synced_as_df(assignments, sync_db)
-    udm_assignments_dfs: Dict[str, DataFrame] = map_to_udm_assignments(
-        assignments_df, sections_df
+    (assignments, udm_assignments_df) = extract_assignments(
+        courses, sections_df, sync_db
     )
-
-    assignments_output_directory = os.path.join(
-        BASE_OUTPUT_DIRECTORY, ASSIGNMENT_ROOT_DIRECTORY
+    write_multi_csv(
+        udm_assignments_df,
+        datetime.now(),
+        os.path.join(BASE_OUTPUT_DIRECTORY, ASSIGNMENT_ROOT_DIRECTORY),
     )
-    write_multi_csv(udm_assignments_dfs, datetime.now(), assignments_output_directory)
-    return assignments
+    return (assignments, udm_assignments_df)
 
 
-def extract_submissions(
+def _get_submissions(
     assignments: List[Assignment],
     sections: List[Section],
     sync_db: sqlalchemy.engine.base.Engine,
 ):
     logger.info("Extracting Submissions from Canvas API")
-    export: Dict[Tuple[str, str], DataFrame] = {}
-    for section in sections:
-        for assignment in [
-            assignment
-            for assignment in assignments
-            if assignment.course_id == section.course_id
-        ]:
-            submissions: List[Submission] = request_submissions(assignment)
-            submissions_df: DataFrame = submissions_synced_as_df(submissions, sync_db)
-            submissions_df = map_to_udm_submissions(submissions_df)
-            export[(section.id, assignment.id)] = submissions_df
-
-    submissions_output_directory = os.path.join(
-        BASE_OUTPUT_DIRECTORY, SUBMISSION_ROOT_DIRECTORY
+    write_multi_tuple_csv(
+        extract_submissions(assignments, sections, sync_db),
+        datetime.now(),
+        os.path.join(BASE_OUTPUT_DIRECTORY, SUBMISSION_ROOT_DIRECTORY),
     )
-    write_multi_tuple_csv(export, datetime.now(), submissions_output_directory)
 
 
-def extract_enrollments(
-    sections: List[Section], sync_db: sqlalchemy.engine.base.Engine
-):
+def _get_enrollments(sections: List[Section], sync_db: sqlalchemy.engine.base.Engine):
     logger.info("Extracting Enrollments from Canvas API")
-    output: Dict[str, DataFrame] = dict()
-    SECTION_ASSOCIATIONS_OUTPUT = os.path.join(
-        BASE_OUTPUT_DIRECTORY, SECTION_ASSOCIATIONS_ROOT_DIRECTORY
+    write_multi_csv(
+        extract_enrollments(sections, sync_db),
+        datetime.now(),
+        os.path.join(BASE_OUTPUT_DIRECTORY, SECTION_ASSOCIATIONS_ROOT_DIRECTORY),
     )
-    for section in sections:
-        enrollments: List[Enrollment] = request_enrollments_for_section(section)
-        enrollments_df: DataFrame = enrollments_synced_as_df(enrollments, sync_db)
-        enrollments_df = map_to_udm_section_associations(enrollments_df)
-        output[section.id] = enrollments_df
-
-    write_multi_csv(output, datetime.now(), SECTION_ASSOCIATIONS_OUTPUT)
 
 
 def main():
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
 
-    courses: List[Course] = extract_courses(get_canvas_api(), sync_db)
-    sections_df: DataFrame
-    sections: Section
-    (sections, sections_df) = extract_sections(courses, sync_db)
-    assignments: List[Assignment] = extract_assignments(courses, sections_df, sync_db)
+    (courses, _) = _get_courses(get_canvas_api(), sync_db)
+    (sections, sections_df) = _get_sections(courses, sync_db)
+    assignments: List[Assignment] = _get_assignments(courses, DataFrame(sections), sync_db)
 
-    extract_students(courses, sync_db)
-    extract_submissions(assignments, sync_db)
-    extract_enrollments(sections, sync_db)
+    _get_students(courses, sync_db)
+    _get_submissions(assignments, sync_db)
+    _get_enrollments(sections, sync_db)
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
 
