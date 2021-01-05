@@ -38,6 +38,7 @@ from canvas_extractor.extract_facade import (
     extract_submissions,
     extract_enrollments,
 )
+from canvas_extractor.api.canvas_helper import to_df
 
 logger: logging.Logger
 error_tracker: ErrorHandler
@@ -147,11 +148,11 @@ def main():
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
 
     (courses, _) = _get_courses(get_canvas_api(), sync_db)
-    (sections, sections_df) = _get_sections(courses, sync_db)
-    assignments: List[Assignment] = _get_assignments(courses, DataFrame(sections), sync_db)
+    (sections, _) = _get_sections(courses, sync_db)
+    (assignments, _) = _get_assignments(courses, to_df(sections), sync_db)
 
     _get_students(courses, sync_db)
-    _get_submissions(assignments, sync_db)
+    _get_submissions(assignments, sections, sync_db)
     _get_enrollments(sections, sync_db)
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
