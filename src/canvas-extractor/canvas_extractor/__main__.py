@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from datetime import datetime
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 import sys
 import os
 import logging
@@ -39,16 +39,35 @@ from canvas_extractor.extract_facade import (
     extract_enrollments,
 )
 from canvas_extractor.api.canvas_helper import to_df
+from canvas_extractor.helpers import arg_parser
 
 logger: logging.Logger
 error_tracker: ErrorHandler
-BASE_OUTPUT_DIRECTORY = "data"
 
 
-def load_dotenv_values():
-    load_dotenv()
-    global BASE_OUTPUT_DIRECTORY
-    BASE_OUTPUT_DIRECTORY = os.getenv("OUTPUT_DIRECTORY", "data")
+base_url: str = ""
+access_token: str = ""
+log_level: str = ""
+output_directory: str = ""
+start_date: str = ""
+end_date: str = ""
+
+
+def parse_args():
+    arguments = arg_parser.parse_main_arguments(sys.argv[1:])
+    global base_url
+    global access_token
+    global log_level
+    global output_directory
+    global start_date
+    global end_date
+
+    base_url = arguments.base_url
+    access_token = arguments.access_token
+    log_level = arguments.log_level
+    output_directory = arguments.output_directory
+    start_date = arguments.start_date
+    end_date = arguments.end_date
 
 
 def configure_logging():
@@ -72,7 +91,7 @@ def _get_courses(
     canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine
 ) -> Tuple[List[Course], DataFrame]:
     logger.info("Extracting Courses from Canvas API")
-    (courses, courses_df) = extract_courses(canvas, sync_db)
+    (courses, courses_df) = extract_courses(canvas, start_date, end_date, sync_db)
     # Temporary - just for demonstration until UDM mapping
     courses_df.to_csv("data/courses.csv", index=False)
     return (courses, courses_df)
@@ -86,7 +105,7 @@ def _get_sections(
     write_csv(
         udm_sections_df,
         datetime.now(),
-        os.path.join(BASE_OUTPUT_DIRECTORY, SECTIONS_ROOT_DIRECTORY),
+        os.path.join(output_directory, SECTIONS_ROOT_DIRECTORY),
     )
     return (sections, udm_sections_df)
 
@@ -99,7 +118,7 @@ def _get_students(
     write_csv(
         udm_students_df,
         datetime.now(),
-        os.path.join(BASE_OUTPUT_DIRECTORY, USERS_ROOT_DIRECTORY),
+        os.path.join(output_directory, USERS_ROOT_DIRECTORY),
     )
     return students
 
@@ -108,7 +127,7 @@ def _get_assignments(
     courses: List[Course],
     sections_df: DataFrame,
     sync_db: sqlalchemy.engine.base.Engine,
-) -> Tuple[List[Assignment], DataFrame]:
+) -> Tuple[List[Assignment], Dict[str, DataFrame]]:
     logger.info("Extracting Assignments from Canvas API")
     (assignments, udm_assignments_df) = extract_assignments(
         courses, sections_df, sync_db
@@ -116,7 +135,7 @@ def _get_assignments(
     write_multi_csv(
         udm_assignments_df,
         datetime.now(),
-        os.path.join(BASE_OUTPUT_DIRECTORY, ASSIGNMENT_ROOT_DIRECTORY),
+        os.path.join(output_directory, ASSIGNMENT_ROOT_DIRECTORY),
     )
     return (assignments, udm_assignments_df)
 
@@ -130,7 +149,7 @@ def _get_submissions(
     write_multi_tuple_csv(
         extract_submissions(assignments, sections, sync_db),
         datetime.now(),
-        os.path.join(BASE_OUTPUT_DIRECTORY, SUBMISSION_ROOT_DIRECTORY),
+        os.path.join(output_directory, SUBMISSION_ROOT_DIRECTORY),
     )
 
 
@@ -139,7 +158,7 @@ def _get_enrollments(sections: List[Section], sync_db: sqlalchemy.engine.base.En
     write_multi_csv(
         extract_enrollments(sections, sync_db),
         datetime.now(),
-        os.path.join(BASE_OUTPUT_DIRECTORY, SECTION_ASSOCIATIONS_ROOT_DIRECTORY),
+        os.path.join(output_directory, SECTION_ASSOCIATIONS_ROOT_DIRECTORY),
     )
 
 
@@ -147,7 +166,7 @@ def main():
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
 
-    (courses, _) = _get_courses(get_canvas_api(), sync_db)
+    (courses, _) = _get_courses(get_canvas_api(base_url, access_token), sync_db)
     (sections, _) = _get_sections(courses, sync_db)
     (assignments, _) = _get_assignments(courses, to_df(sections), sync_db)
 
@@ -167,6 +186,7 @@ def main():
 
 
 if __name__ == "__main__":
-    load_dotenv_values()
+    load_dotenv()
+    parse_args()
     configure_logging()
     main()
