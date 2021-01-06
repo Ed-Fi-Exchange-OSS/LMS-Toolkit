@@ -67,7 +67,7 @@ def describe_when_extract_sections_is_called():
             'map': sectionsMap.map_to_udm_sections
             }
 
-    def it_should_call_sync_method(system: dict[str, Mock]):
+    def it_should_call_sync_method(system: dict):
         assert system['sync'].called
 
     def it_should_call_request_method(system: dict):
@@ -92,7 +92,7 @@ def describe_when_extract_students_is_called():
             'map': usersMap.map_to_udm_users
             }
 
-    def it_should_call_sync_method(system: dict[str, Mock]):
+    def it_should_call_sync_method(system: dict):
         assert system['sync'].called
 
     def it_should_call_request_method(system: dict):
@@ -117,7 +117,7 @@ def describe_when_extract_assignments_is_called():
             'map': assignmentsMap.map_to_udm_assignments
             }
 
-    def it_should_call_sync_method(system: dict[str, Mock]):
+    def it_should_call_sync_method(system: dict):
         assert system['sync'].called
 
     def it_should_call_request_method(system: dict):
@@ -142,7 +142,7 @@ def describe_when_extract_submissions_is_called():
             'map': assignmentsMap.map_to_udm_assignments
             }
 
-    def it_should_call_sync_method(system: dict[str, Mock]):
+    def it_should_call_sync_method(system: dict):
         assert system['sync'].called
 
     def it_should_call_request_method(system: dict):
