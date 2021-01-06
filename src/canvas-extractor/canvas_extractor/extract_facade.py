@@ -15,27 +15,20 @@ from canvasapi.assignment import Assignment
 from canvasapi.submission import Submission
 from pandas import DataFrame
 
-from canvas_extractor.api.courses import courses_synced_as_df, request_courses
-from canvas_extractor.api.sections import sections_synced_as_df, request_sections
-from canvas_extractor.mapping.sections import map_to_udm_sections
-from canvas_extractor.api.students import request_students, students_synced_as_df
-from canvas_extractor.mapping.users import map_to_udm_users
-from canvas_extractor.api.assignments import (
-    assignments_synced_as_df,
-    request_assignments,
+from canvas_extractor.api import (
+    courses as coursesApi,
+    sections as sectionsApi,
+    students as studentsApi,
+    assignments as assignmentsApi,
+    submissions as submissionsApi,
+    enrollments as enrollmentsApi,
 )
-from canvas_extractor.mapping.assignments import map_to_udm_assignments
-from canvas_extractor.api.submissions import (
-    request_submissions,
-    submissions_synced_as_df,
-)
-from canvas_extractor.mapping.submissions import map_to_udm_submissions
-from canvas_extractor.api.enrollments import (
-    enrollments_synced_as_df,
-    request_enrollments_for_section,
-)
-from canvas_extractor.mapping.section_associations import (
-    map_to_udm_section_associations,
+from canvas_extractor.mapping import (
+    sections as sectionsMap,
+    users as usersMap,
+    assignments as assignmentsMap,
+    submissions as submissionsMap,
+    section_associations as section_associationsMap,
 )
 
 
@@ -57,15 +50,14 @@ def extract_courses(
     Tuple[List[Course], DataFrame]
         A tuple with the list of Canvas Course objects and the udm_courses dataframe.
     """
-    courses: List[Course] = request_courses(canvas)
-    courses_df: DataFrame = courses_synced_as_df(courses, sync_db)
+    courses: List[Course] = coursesApi.request_courses(canvas)
+    courses_df: DataFrame = coursesApi.courses_synced_as_df(courses, sync_db)
 
     return (courses, courses_df)
 
 
 def extract_sections(
-    courses: List[Course],
-    sync_db: sqlalchemy.engine.base.Engine
+    courses: List[Course], sync_db: sqlalchemy.engine.base.Engine
 ) -> Tuple[List[Section], DataFrame]:
     """
     Gets all Canvas sections, in the Ed-Fi UDM format.
@@ -82,9 +74,9 @@ def extract_sections(
     Tuple[List[Section], DataFrame]
         A tuple with the list of Canvas Section objects and the udm_sections dataframe.
     """
-    sections: List[Section] = request_sections(courses)
-    sections_df: DataFrame = sections_synced_as_df(sections, sync_db)
-    udm_sections_df: DataFrame = map_to_udm_sections(sections_df)
+    sections: List[Section] = sectionsApi.request_sections(courses)
+    sections_df: DataFrame = sectionsApi.sections_synced_as_df(sections, sync_db)
+    udm_sections_df: DataFrame = sectionsMap.map_to_udm_sections(sections_df)
 
     return (sections, udm_sections_df)
 
@@ -107,9 +99,9 @@ def extract_students(
     Tuple[List[User], DataFrame]
         A tuple with the list of Canvas User objects and the udm_users dataframe.
     """
-    students: List[User] = request_students(courses)
-    students_df: DataFrame = students_synced_as_df(students, sync_db)
-    udm_students_df: DataFrame = map_to_udm_users(students_df)
+    students: List[User] = studentsApi.request_students(courses)
+    students_df: DataFrame = studentsApi.students_synced_as_df(students, sync_db)
+    udm_students_df: DataFrame = usersMap.map_to_udm_users(students_df)
 
     return (students, udm_students_df)
 
@@ -136,9 +128,11 @@ def extract_assignments(
     Tuple[List[Assignment], DataFrame]
         A tuple with the list of Canvas Assignment objects and the udm_assignments dataframe.
     """
-    assignments: List[Assignment] = request_assignments(courses)
-    assignments_df: DataFrame = assignments_synced_as_df(assignments, sync_db)
-    udm_assignments_dfs: Dict[str, DataFrame] = map_to_udm_assignments(
+    assignments: List[Assignment] = assignmentsApi.request_assignments(courses)
+    assignments_df: DataFrame = assignmentsApi.assignments_synced_as_df(
+        assignments, sync_db
+    )
+    udm_assignments_dfs: Dict[str, DataFrame] = assignmentsMap.map_to_udm_assignments(
         assignments_df, sections_df
     )
 
@@ -175,9 +169,13 @@ def extract_submissions(
             for assignment in assignments
             if assignment.course_id == section.course_id
         ]:
-            submissions: List[Submission] = request_submissions(assignment)
-            submissions_df: DataFrame = submissions_synced_as_df(submissions, sync_db)
-            submissions_df = map_to_udm_submissions(submissions_df)
+            submissions: List[Submission] = submissionsApi.request_submissions(
+                assignment
+            )
+            submissions_df: DataFrame = submissionsApi.submissions_synced_as_df(
+                submissions, sync_db
+            )
+            submissions_df = submissionsMap.map_to_udm_submissions(submissions_df)
             export[(section.id, assignment.id)] = submissions_df
     return export
 
@@ -202,9 +200,15 @@ def extract_enrollments(
     """
     output: Dict[str, DataFrame] = dict()
     for section in sections:
-        enrollments: List[Enrollment] = request_enrollments_for_section(section)
-        enrollments_df: DataFrame = enrollments_synced_as_df(enrollments, sync_db)
-        enrollments_df = map_to_udm_section_associations(enrollments_df)
+        enrollments: List[Enrollment] = enrollmentsApi.request_enrollments_for_section(
+            section
+        )
+        enrollments_df: DataFrame = enrollmentsApi.enrollments_synced_as_df(
+            enrollments, sync_db
+        )
+        enrollments_df = section_associationsMap.map_to_udm_section_associations(
+            enrollments_df
+        )
         output[section.id] = enrollments_df
 
     return output
