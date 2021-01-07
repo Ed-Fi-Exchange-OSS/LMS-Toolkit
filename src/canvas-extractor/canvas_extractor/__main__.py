@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from datetime import datetime
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict, Tuple, Union
 import sys
 import os
 import logging
@@ -48,7 +48,7 @@ output_directory: str = ""
 start_date: str = ""
 end_date: str = ""
 
-results_store: Dict[str, Tuple[list, DataFrame]] = {}
+results_store: Dict[str, Tuple[list, Union[DataFrame, Dict[str, DataFrame]]]] = {}
 
 
 def _break_execution(failing_extraction: str) -> None:
