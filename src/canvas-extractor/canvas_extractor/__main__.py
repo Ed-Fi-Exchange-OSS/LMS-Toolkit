@@ -96,7 +96,7 @@ def configure_logging():
     logger = logging.getLogger(__name__)
 
     # We only want to log requests information on DEBUG level
-    if log_level != "DEBUG":
+    if log_level == "INFO":
         canvasapi_logger = logging.getLogger("canvasapi.requester")
         canvasapi_logger.setLevel("WARNING")
 
