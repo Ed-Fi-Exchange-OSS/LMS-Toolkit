@@ -33,7 +33,10 @@ from canvas_extractor.mapping import (
 
 
 def extract_courses(
-    canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine
+    canvas: Canvas,
+    start_date: str,
+    end_date: str,
+    sync_db: sqlalchemy.engine.base.Engine,
 ) -> Tuple[List[Course], DataFrame]:
     """
     Gets all Canvas courses, in the Ed-Fi UDM format.
@@ -50,7 +53,7 @@ def extract_courses(
     Tuple[List[Course], DataFrame]
         A tuple with the list of Canvas Course objects and the udm_courses dataframe.
     """
-    courses: List[Course] = coursesApi.request_courses(canvas)
+    courses: List[Course] = coursesApi.request_courses(canvas, start_date, end_date)
     courses_df: DataFrame = coursesApi.courses_synced_as_df(courses, sync_db)
 
     return (courses, courses_df)
@@ -110,7 +113,7 @@ def extract_assignments(
     courses: List[Course],
     sections_df: DataFrame,
     sync_db: sqlalchemy.engine.base.Engine,
-) -> Tuple[List[Assignment], DataFrame]:
+) -> Tuple[List[Assignment], Dict[str, DataFrame]]:
     """
     Gets all Canvas assignments, in the Ed-Fi UDM format.
 

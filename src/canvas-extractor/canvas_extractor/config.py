@@ -49,7 +49,7 @@ def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
     return create_engine(f"sqlite:///{sync_database_directory}/sync.sqlite")
 
 
-def get_canvas_api() -> Canvas:
+def get_canvas_api(canvas_base_url: str, canvas_access_token: str) -> Canvas:
     """
     Create new CanvasAPI object for API communication
 
@@ -58,4 +58,4 @@ def get_canvas_api() -> Canvas:
     Canvas
         a new CanvasAPI object
     """
-    return Canvas(os.getenv("CANVAS_BASE_URL"), os.getenv("CANVAS_ACCESS_TOKEN"))
+    return Canvas(canvas_base_url, canvas_access_token)

@@ -1,69 +1,116 @@
-# Canvas LMS
+# Canvas Extractor
 
-This project provides tools to extract data from Canvas via the Canvas API
-and analyze that data.
+This script retrieves and writes out to CSV all students, active sections, assignments,
+and submissions.
 
-This data extractor targets two audiences. The first is someone who wants
-the data out of Canvas LMS into a .csv file that can be loaded into a
-spreadsheet. The second for someone who is familiar with Jupyter Notebook, a
-common Python-based tool for analysis and reporting.
+## Requirements
 
-## Folder Structure
+Requires Python 3.8 and [Poetry](https://python-poetry.org/). To get started,
+run the following command in the package directory:
 
-You can explore the work done by navigating across the sub-folders.
+```bash
+poetry install
+```
 
-## Installing and running the tools
+## Configuration
 
-### Requirements
+Application configuration is provided through environment variables or command
+line interface (CLI) arguments. CLI arguments take precedence over environment
+variables. Environment variables can be set the normal way, or by using a
+dedicated [`.env` file](https://pypi.org/project/python-dotenv/). For `.env`
+support, we provided a [.env.example](.env.example) which you can copy, rename
+to `.env`, and adjust to your desired parameters. Supported parameters:
 
-1. Python 3.8
-1. Poetry 1.0.10
-1. Optional: Latest version of VS Code
+| Description | Required | Command Line Argument | Environment Variable |
+| ----------- | -------- | --------------------- | -------------------- |
+| Base Canvas URL | yes | -b or --base-url | CANVAS_BASE_URL |
+| Canvas API access token | yes |  -a or --access-token | CANVAS_ACCESS_TOKEN |
+| Output Directory | no (default: [working directory]/data) | -o or --output-directory | OUTPUT_DIRECTORY |
+| Log level | no (default: INFO) | -l or --log-level | LOG_LEVEL |
+| Start date | yes | -s or --start_date | START_DATE |
+| End date | yes | -e or --end_date | END_DATE |
 
-### Configuring Canvas
 
-To use the Canvas API, you will need to get an "API access token."
+Valid log levels:
+* DEBUG
+* INFO(default)
+* WARNING
+* ERROR
+* CRITICAL
 
-In Canvas, data privileges are by user account, and access tokens are tied to
-user accounts, so you need to be able to login to Canvas as a user who has
-access privileges over the data for your organization - i.e. probably an
-administrator account.
+## Execution
 
-1. Login to Canvas (see note above about account privileges)
-2. Go to Account >> Settings
-3. Go to the section "Approved Integrations" and click on "New Access Token"
-4. Fill out the fields and click "Generate Token". It is recommended you
-    provide an expiration date.
-5. On the popup screen, copy down the long string that appears beside "Token:"
-    - this is your access token.
+Execute the extractor with CLI args:
 
-Note that this token will provide access to data that mirrors the access of the
-user account it is connected to, so if you are not in an administrator account,
-less data will be available when you use the API using this token.
+```bash
+poetry run python.exe canvas_extractor -b your-canvas-url -a your-api-token -s start-date-range -e end-date-range
+```
 
-Copy the `.env.example` file to a file simply named `.env` and customize:
+Alternately, run with environment variables or `.env` file:
 
-* `CANVAS_BASE_URL` is the base URL for your installation, e.g. https://your-name.instructure.com
-* `CANVAS_ACCESS_TOKEN` is the access token string that you extracted above
-* `CANVAS_ADMIN_ID` is the number representing the account to access. In the web site, click on the Admin menu button, then click on the link for your account. The number is at the end of that URL, for example `1` from `https://xyx.instructure.com/accounts/1?`.
-* `START_DATE` and `END_DATE` is the date range for active courses that are to be included.
-Courses that even partially fall within the date range are included.
+```bash
+poetry run python.exe canvas_extractor
+```
 
-### Installation
+For detailed help, execute `poetry run python canvas_extractor -h`.
 
-Follow these steps to install:
+### Output
 
-1. Run the command `poetry install` in this folder.
-2. Copy the .env.example file to a file named '.env' and update its values. Most
-   of these are just system paths or the URL of the Canvas installation. You
-   will need the access token you created earlier for this step.
+CSV files in the data(or the specified output) directory with the LMS UDM format.
 
-## Running the tools
+### Logging and Exit Codes
 
-### PowerShell
+Log statements are written to the standard output. If you wish to capture log
+details, then be sure to redirect the output to a file. For example:
 
-1. Run the script
+```bash
+poetry run python.exe schoology_extractor > 2020-12-07-15-43.log
+```
 
-    ```powershell
-    poetry run python canvas_extractor
-    ```
+If any errors occurred during the script run, then there will be a final print
+message to the standard error handler as an additional mechanism for calling
+attention to the error: `"A fatal error occurred, please review the log output
+for more information."`
+
+The application will exit with status code `1` if there were any log messages at
+the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
+
+## Developer Utilities
+
+Unit test execution:
+
+```bash
+poetry run pytest
+```
+
+Code coverage:
+
+```bash
+poetry run coverage run -m pytest
+poetry run coverage report
+```
+
+Linting:
+
+```bash
+poetry run flake8
+```
+
+Static type checks:
+
+```bash
+poetry run mypy schoology_extractor
+```
+
+## Legal Information
+
+Copyright (c) 2020 Ed-Fi Alliance, LLC and contributors.
+
+Licensed under the [Apache License, Version 2.0](LICENSE) (the "License").
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+See [NOTICES](NOTICES.md) for additional copyright and license notifications.

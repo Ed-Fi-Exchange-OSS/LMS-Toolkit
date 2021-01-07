@@ -2,7 +2,6 @@
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
-import os
 import logging
 from typing import List
 from pandas import DataFrame
@@ -21,7 +20,7 @@ COURSES_RESOURCE_NAME = "Courses"
 logger = logging.getLogger(__name__)
 
 
-def request_courses(canvas: Canvas) -> List[Course]:
+def request_courses(canvas: Canvas, start_date: str, end_date: str) -> List[Course]:
     """
     Fetch Course API data for all courses
 
@@ -44,8 +43,8 @@ def request_courses(canvas: Canvas) -> List[Course]:
         courses: List[Course] = call_with_retry(
             account.get_courses,
             state=["available", "completed"],
-            starts_before=os.getenv("END_DATE"),
-            ends_after=os.getenv("START_DATE"),
+            starts_before=end_date,
+            ends_after=start_date,
         )
         results.extend(courses)
 
