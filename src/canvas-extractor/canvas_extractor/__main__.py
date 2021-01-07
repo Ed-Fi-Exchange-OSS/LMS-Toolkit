@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Callable, Dict, Tuple
 import sys
 import os
 import logging
@@ -14,10 +14,6 @@ import sqlalchemy
 from errorhandler import ErrorHandler
 
 from canvasapi import Canvas
-from canvasapi.assignment import Assignment
-from canvasapi.course import Course
-from canvasapi.section import Section
-from canvasapi.user import User
 
 from canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from canvas_extractor.csv_generation.write import (
@@ -52,7 +48,29 @@ output_directory: str = ""
 start_date: str = ""
 end_date: str = ""
 
+results_store: Dict[str, Tuple[list, DataFrame]] = {}
 
+
+def _break_execution(failing_extraction: str) -> None:
+    logger.critical(
+        f"Unable to continue file generation because the load of {failing_extraction} failed. Please review the log for more information."
+    )
+    sys.exit(1)
+
+
+def catch_exceptions(func: Callable) -> Callable:
+    def callable_function(*args, **kwargs) -> bool:
+        try:
+            func(*args, **kwargs)
+            return True
+        except BaseException as e:
+            logger.exception("An exception occurred", e)
+            return False
+
+    return callable_function
+
+
+@catch_exceptions
 def parse_args():
     arguments = arg_parser.parse_main_arguments(sys.argv[1:])
     global base_url
@@ -70,65 +88,58 @@ def parse_args():
     end_date = arguments.end_date
 
 
+@catch_exceptions
 def configure_logging():
     global logger
     global error_tracker
 
     logger = logging.getLogger(__name__)
 
-    level = os.environ.get("LOGLEVEL", "INFO")
+    # We only want to log requests information on DEBUG level
+    if log_level != "DEBUG":
+        canvasapi_logger = logging.getLogger("canvasapi.requester")
+        canvasapi_logger.setLevel("WARNING")
+
     logging.basicConfig(
         handlers=[
             logging.StreamHandler(sys.stdout),
         ],
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        level=level,
+        level=log_level,
     )
     error_tracker = ErrorHandler()
 
 
-def _get_courses(
-    canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine
-) -> Tuple[List[Course], DataFrame]:
+@catch_exceptions
+def _get_courses(canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Courses from Canvas API")
     (courses, courses_df) = extract_courses(canvas, start_date, end_date, sync_db)
     # Temporary - just for demonstration until UDM mapping
     courses_df.to_csv("data/courses.csv", index=False)
-    return (courses, courses_df)
+    results_store["courses"] = (courses, courses_df)
 
 
-def _get_sections(
-    courses: List[Course], sync_db: sqlalchemy.engine.base.Engine
-) -> Tuple[List[Section], DataFrame]:
+@catch_exceptions
+def _get_sections(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Sections from Canvas API")
+    (courses, _) = results_store["courses"]
     (sections, udm_sections_df) = extract_sections(courses, sync_db)
     write_csv(
         udm_sections_df,
         datetime.now(),
         os.path.join(output_directory, SECTIONS_ROOT_DIRECTORY),
     )
-    return (sections, udm_sections_df)
+    results_store["sections"] = (sections, udm_sections_df)
 
 
-def _get_students(
-    courses: List[Course], sync_db: sqlalchemy.engine.base.Engine
-) -> List[User]:
-    logger.info("Extracting Students from Canvas API")
-    (students, udm_students_df) = extract_students(courses, sync_db)
-    write_csv(
-        udm_students_df,
-        datetime.now(),
-        os.path.join(output_directory, USERS_ROOT_DIRECTORY),
-    )
-    return students
-
-
+@catch_exceptions
 def _get_assignments(
-    courses: List[Course],
-    sections_df: DataFrame,
     sync_db: sqlalchemy.engine.base.Engine,
-) -> Tuple[List[Assignment], Dict[str, DataFrame]]:
+) -> None:
     logger.info("Extracting Assignments from Canvas API")
+    (sections, _) = results_store["sections"]
+    (courses, _) = results_store["courses"]
+    sections_df = to_df(sections)
     (assignments, udm_assignments_df) = extract_assignments(
         courses, sections_df, sync_db
     )
@@ -137,15 +148,28 @@ def _get_assignments(
         datetime.now(),
         os.path.join(output_directory, ASSIGNMENT_ROOT_DIRECTORY),
     )
-    return (assignments, udm_assignments_df)
+    results_store["assignments"] = (assignments, udm_assignments_df)
 
 
+@catch_exceptions
+def _get_students(sync_db: sqlalchemy.engine.base.Engine) -> None:
+    logger.info("Extracting Students from Canvas API")
+    (courses, _) = results_store["courses"]
+    (_, udm_students_df) = extract_students(courses, sync_db)
+    write_csv(
+        udm_students_df,
+        datetime.now(),
+        os.path.join(output_directory, USERS_ROOT_DIRECTORY),
+    )
+
+
+@catch_exceptions
 def _get_submissions(
-    assignments: List[Assignment],
-    sections: List[Section],
     sync_db: sqlalchemy.engine.base.Engine,
-):
+) -> None:
     logger.info("Extracting Submissions from Canvas API")
+    (assignments, _) = results_store["assignments"]
+    (sections, _) = results_store["sections"]
     write_multi_tuple_csv(
         extract_submissions(assignments, sections, sync_db),
         datetime.now(),
@@ -153,8 +177,10 @@ def _get_submissions(
     )
 
 
-def _get_enrollments(sections: List[Section], sync_db: sqlalchemy.engine.base.Engine):
+@catch_exceptions
+def _get_enrollments(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Enrollments from Canvas API")
+    (sections, _) = results_store["sections"]
     write_multi_csv(
         extract_enrollments(sections, sync_db),
         datetime.now(),
@@ -165,14 +191,23 @@ def _get_enrollments(sections: List[Section], sync_db: sqlalchemy.engine.base.En
 def main():
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
+    succeeded: bool = True
 
-    (courses, _) = _get_courses(get_canvas_api(base_url, access_token), sync_db)
-    (sections, _) = _get_sections(courses, sync_db)
-    (assignments, _) = _get_assignments(courses, to_df(sections), sync_db)
+    succeeded = _get_courses(get_canvas_api(base_url, access_token), sync_db)
+    if not succeeded:
+        _break_execution("Courses")
 
-    _get_students(courses, sync_db)
-    _get_submissions(assignments, sections, sync_db)
-    _get_enrollments(sections, sync_db)
+    succeeded = _get_sections(sync_db)
+    if not succeeded:
+        _break_execution("Sections")
+
+    succeeded = _get_assignments(sync_db)
+    if not succeeded:
+        _break_execution("Assignments")
+
+    _get_students(sync_db)
+    _get_submissions(sync_db)
+    _get_enrollments(sync_db)
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
 
