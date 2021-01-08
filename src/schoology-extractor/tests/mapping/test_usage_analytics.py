@@ -89,7 +89,7 @@ def describe_when_converting_usage_analytics_to_udm():
                 return map_to_udm(df)
 
             def it_should_have_correct_number_of_columns(result):
-                assert result.shape[1] == 13
+                assert result.shape[1] == 12
 
             def it_should_have_one_row(result):
                 assert result.shape[0] == 1
@@ -104,7 +104,6 @@ def describe_when_converting_usage_analytics_to_udm():
                     ("ActivityStatus", "active"),
                     ("ParentSourceSystemIdentifier", None),
                     ("ActivityTimeInMinutes", None),
-                    ("EntityStatus", "active"),
                     ("CreateDate", EXPECTED_DATE_TIME),
                     ("LastModifiedDate", EXPECTED_DATE_TIME),
                     ("SourceCreateDate", ""),
@@ -133,7 +132,7 @@ def describe_when_converting_usage_analytics_to_udm():
                 return map_to_udm(df)
 
             def it_should_have_correct_number_of_columns(result):
-                assert result.shape[1] == 13
+                assert result.shape[1] == 12
 
             def it_should_have_one_row(result):
                 assert result.shape[0] == 1
@@ -148,7 +147,6 @@ def describe_when_converting_usage_analytics_to_udm():
                     ("ActivityStatus", "active"),
                     ("ParentSourceSystemIdentifier", None),
                     ("ActivityTimeInMinutes", None),
-                    ("EntityStatus", "active"),
                     ("CreateDate", EXPECTED_DATE_TIME),
                     ("LastModifiedDate", EXPECTED_DATE_TIME),
                     ("SourceCreateDate", ""),

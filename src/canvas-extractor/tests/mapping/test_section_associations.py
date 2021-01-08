@@ -40,16 +40,13 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             return map_to_udm_section_associations(df)
 
         def it_should_have_correct_number_of_columns(result):
-            assert result.shape[1] == 12
+            assert result.shape[1] == 11
 
         def it_should_have_canvas_as_source_system(result):
             assert result["SourceSystem"].iloc[0] == "Canvas"
 
         def it_should_map_id_to_source_system_identifier(result):
             assert result["SourceSystemIdentifier"].iloc[0] == "4"
-
-        def it_should_have_active_as_entity_status(result):
-            assert result["EntityStatus"].iloc[0] == "active"
 
         def it_should_map_id_to_user_source_system_identifier(result):
             assert result["LMSUserSourceSystemIdentifier"].iloc[0] == "5"

@@ -81,7 +81,6 @@ def map_to_udm(
         LMSUserSourceSystemIdentifier: source system identifier for the user
         LMSUserLMSSectionAssociationSourceSystemIdentifier: source system
             identifier for the section association
-        EntityStatus: The status of the record
         CreateDate: datetime at which the record was first retrieved
         LastModifiedDate: datetime when the record was modified, or when first
             retrieved
@@ -94,7 +93,6 @@ def map_to_udm(
     df = _flatten_into_dataframe(attendance)
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
-    df["EntityStatus"] = constants.ACTIVE
     df["SourceSystemIdentifier"] = df.apply(
         lambda row: f"{row['enrollment_id']}#{row['EventDate']}", axis=1
     )
@@ -125,7 +123,6 @@ def map_to_udm(
         [
             "SourceSystem",
             "SourceSystemIdentifier",
-            "EntityStatus",
             "AttendanceStatus",
             "EventDate",
             "LMSUserSourceSystemIdentifier",

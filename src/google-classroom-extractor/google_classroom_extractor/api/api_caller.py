@@ -126,4 +126,4 @@ def call_api(
         a list of dicts of the API response property requested
     """
 
-    return _call_api_recursive(resource_method, resource_parameters, response_property, results)
+    return _call_api_recursive(resource_method, resource_parameters, response_property, results)  # type: ignore

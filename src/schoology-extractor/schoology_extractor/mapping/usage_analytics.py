@@ -34,7 +34,6 @@ def map_to_udm(usage: pd.DataFrame) -> pd.DataFrame:
         ActivityStatus: will always be "active"
         ParentSourceSystemIdentifier: will always be None
         ActivityTimeInMinutes: will always be None
-        EntityStatus: will always be "active"
         CreateDate: Created date
         LastModifiedDate: Last modified date (will always be the same as the CreateDate)
         SourceCreateDate: Date this record was created in the LMS
@@ -76,7 +75,7 @@ def map_to_udm(usage: pd.DataFrame) -> pd.DataFrame:
     )
     df = df.astype({"LMSUserSourceSystemIdentifier": "int64"})
 
-    df["ActivityStatus"] = df["EntityStatus"] = "active"
+    df["ActivityStatus"] = "active"
     df["ParentSourceSystemIdentifier"] = df["ActivityTimeInMinutes"] = None
     df["CreateDate"] = df["LastModifiedDate"] = datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S"

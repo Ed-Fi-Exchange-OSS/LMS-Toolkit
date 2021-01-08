@@ -4,4 +4,3 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 SOURCE_SYSTEM = "Google Classroom"
-ENTITY_STATUS_ACTIVE = "Active"

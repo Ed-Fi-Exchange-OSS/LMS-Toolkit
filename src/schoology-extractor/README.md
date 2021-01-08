@@ -107,7 +107,7 @@ poetry run flake8
 Static type checks:
 
 ```bash
-poetry run mypy schoology_extractor
+poetry run mypy .
 ```
 
 ## Legal Information

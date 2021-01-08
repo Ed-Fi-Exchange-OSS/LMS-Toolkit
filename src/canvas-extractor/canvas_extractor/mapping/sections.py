@@ -27,7 +27,6 @@ def map_to_udm_sections(sections_df: pd.DataFrame) -> pd.DataFrame:
     Notes
     -----
     DataFrame columns are:
-        EntityStatus: The status of the record
         LMSSectionStatus: The section status from the source system
         SISSectionIdentifier: The section identifier defined in the Student Information System
         SectionDescription: The section description
@@ -73,7 +72,6 @@ def map_to_udm_sections(sections_df: pd.DataFrame) -> pd.DataFrame:
     df["Term"] = ""
     df["SectionDescription"] = ""
     df["SourceSystem"] = constants.SOURCE_SYSTEM
-    df["EntityStatus"] = constants.ACTIVE
     df["LMSSectionStatus"] = ""
     df["SourceCreateDate"] = ""
     df["SourceLastModifiedDate"] = ""

@@ -38,7 +38,6 @@ def map_to_udm(
             system
         LMSSectionIdentifier: A unique number or alphanumeric code assigned to a section by the
             source system
-        EntityStatus: The status of the record
         ActivityDateTime: The date/time the replied was created.
         ActivityStatus: The status for the reply
         ActivityType: The type of activity: `Discussion reply`
@@ -74,13 +73,11 @@ def map_to_udm(
     df["ActivityType"] = DISCUSSION_REPLIES_TYPE
     df["LMSSectionIdentifier"] = section_id
     df["SourceSystem"] = constants.SOURCE_SYSTEM
-    df["EntityStatus"] = constants.ACTIVE
     df["parent_id"] = df["parent_id"].apply(
         lambda x: f"sdr#{x}" if (x != 0) else f"sd{discussion_id}"
     )
 
     df["ActivityTimeInMinutes"] = None
-    df["EntityStatus"] = constants.ACTIVE
     df["SourceCreateDate"] = ""
     df["SourceLastModifiedDate"] = ""
 

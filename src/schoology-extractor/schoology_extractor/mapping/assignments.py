@@ -41,7 +41,6 @@ def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
         SubmissionType: Type of submission
         MaxPoints: Maximum points available for the submission
         LMSSectionSourceSystemIdentifier: Section identifier as recorded in the LMS
-        EntityStatus: The status of the record
         CreateDate: datetime at which the record was first retrieved
         LastModifiedDate: datetime when the record was modified, or when first retrieved
         SourceCreateDate: Date this record was created in the LMS
@@ -65,7 +64,6 @@ def map_to_udm(assignments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     ].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
-    df["EntityStatus"] = constants.ACTIVE
 
     df.rename(
         columns={

@@ -35,7 +35,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         return map_to_udm_submissions(df)
 
     def it_should_have_correct_number_of_columns(result):
-        assert result.shape[1] == 13
+        assert result.shape[1] == 12
 
     def it_should_have_schoology_as_SourceSystem(result):
         assert result["SourceSystem"].iloc[0] == "Canvas"

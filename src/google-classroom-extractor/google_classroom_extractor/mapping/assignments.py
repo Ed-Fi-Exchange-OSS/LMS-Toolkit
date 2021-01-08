@@ -6,10 +6,7 @@
 from typing import Dict, Optional
 from datetime import datetime
 from pandas import DataFrame, to_numeric
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 def coursework_to_assignments_dfs(
@@ -36,7 +33,6 @@ def coursework_to_assignments_dfs(
         AssignmentDescription: The assignment description
         DueDateTime: The date and time the assignment is due
         EndDateTime: The end date and time for the assignment
-        EntityStatus: The status of the record
         LMSSectionSourceSystemIdentifier: A unique numeric identifier assigned
             to the section
         MaxPoints: The maximum number of points a student may receive
@@ -101,7 +97,7 @@ def coursework_to_assignments_dfs(
             "DueDateTime",
             "SourceSystemIdentifier",
             "CreateDate",
-            "LastModifiedDate"
+            "LastModifiedDate",
         ]
     ]
 
@@ -119,7 +115,6 @@ def coursework_to_assignments_dfs(
     )
 
     assignments_df["SourceSystem"] = SOURCE_SYSTEM
-    assignments_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
     assignments_df["EndDateTime"] = ""  # No EndDateTime available from API
 
     # group by section id as a Dict of DataFrames

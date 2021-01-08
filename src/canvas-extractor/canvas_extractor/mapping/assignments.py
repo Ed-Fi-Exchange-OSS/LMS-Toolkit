@@ -35,7 +35,6 @@ def map_to_udm_assignments(
         AssignmentDescription: The assignment description
         DueDateTime: The date and time the assignment is due
         EndDateTime: The end date and time for the assignment
-        EntityStatus: The status of the record
         LMSSectionSourceSystemIdentifier: A unique numeric identifier assigned
             to the section
         MaxPoints: The maximum number of points a student may receive
@@ -110,7 +109,6 @@ def map_to_udm_assignments(
 
     assignments_df["AssignmentCategory"] = ""
     assignments_df["SourceSystem"] = constants.SOURCE_SYSTEM
-    assignments_df["EntityStatus"] = constants.ACTIVE
 
     # group by section id as a Dict of DataFrames
     result: Dict[str, DataFrame] = cast(

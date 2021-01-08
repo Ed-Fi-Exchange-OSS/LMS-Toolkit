@@ -10,10 +10,7 @@ from google_classroom_extractor.mapping.users import (
     STUDENT_USER_ROLE,
     TEACHER_USER_ROLE,
 )
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 # unique value for each column in fixture
 STUDENT_COURSE_ID = "1"
@@ -75,7 +72,7 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
     def it_should_have_correct_shape(users_df):
         row_count, column_count = users_df.shape
         assert row_count == 2
-        assert column_count == 12
+        assert column_count == 11
 
     def it_should_have_complete_student_mapping_as_first_row(users_df):
         student_row_dict = users_df.to_dict(orient="records")[0]
@@ -84,7 +81,6 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert student_row_dict["EmailAddress"] == STUDENT_EMAIL_ADDRESS
         assert student_row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert student_row_dict["UserRole"] == STUDENT_USER_ROLE
-        assert student_row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert student_row_dict["LocalUserIdentifier"] == ""
         assert student_row_dict["SISUserIdentifier"] == ""
         assert student_row_dict["SourceCreateDate"] == ""
@@ -99,7 +95,6 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert teacher_row_dict["EmailAddress"] == TEACHER_EMAIL_ADDRESS
         assert teacher_row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert teacher_row_dict["UserRole"] == TEACHER_USER_ROLE
-        assert teacher_row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert teacher_row_dict["LocalUserIdentifier"] == ""
         assert teacher_row_dict["SISUserIdentifier"] == ""
         assert teacher_row_dict["SourceCreateDate"] == ""

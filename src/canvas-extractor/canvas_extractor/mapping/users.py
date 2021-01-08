@@ -26,7 +26,6 @@ def map_to_udm_users(users_df: DataFrame) -> DataFrame:
 
     DataFrame columns are:
         EmailAddress: The primary e-mail address for the user
-        EntityStatus: The status of the record
         LocalUserIdentifier: The user identifier assigned by a school or district
         Name: The full name of the user
         SISUserIdentifier: The user identifier defined in the Student Information System (SIS)
@@ -70,7 +69,6 @@ def map_to_udm_users(users_df: DataFrame) -> DataFrame:
 
     df["SourceCreateDate"] = df["SourceCreateDate"].apply(lambda x: datetime.strftime(datetime.strptime(x, "%Y-%m-%dT%H:%M:%S%z"), "%Y/%m/%d %H:%M:%S"))
     df["UserRole"] = constants.ROLES.STUDENT
-    df["EntityStatus"] = constants.ACTIVE
 
     df["SourceLastModifiedDate"] = ""
 

@@ -6,7 +6,7 @@
 from datetime import datetime
 from pandas import DataFrame
 
-from .constants import SOURCE_SYSTEM, ACTIVE
+from .constants import SOURCE_SYSTEM
 
 
 def _get_enrollment_status(status: str) -> str:
@@ -53,7 +53,6 @@ def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
             system
         LMSSectionSourceSystemIdentifier: A unique number or alphanumeric code assigned to a section by the
             source system
-        EntityStatus: The status of the record
         CreateDate: Date/time at which the record was first retrieved
         LastModifiedDate: Date/time when the record was modified, or when first retrieved
         SourceCreateDate: Date this record was created in the LMS
@@ -118,6 +117,5 @@ def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
     )
 
     enrollments_df["SourceSystem"] = SOURCE_SYSTEM
-    enrollments_df["EntityStatus"] = ACTIVE
 
     return enrollments_df

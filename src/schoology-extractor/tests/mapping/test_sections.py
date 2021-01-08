@@ -38,7 +38,7 @@ def describe_when_mapping_schoology_sections_to_udm():
             assert result.shape[0] == 2
 
         def then_it_should_have_correct_number_of_columns(result):
-            assert result.shape[1] == 12
+            assert result.shape[1] == 11
 
         @pytest.mark.parametrize(
             "input",
@@ -49,7 +49,6 @@ def describe_when_mapping_schoology_sections_to_udm():
                 "SectionDescription",
                 "Term",
                 "LMSSectionStatus",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
             ],
@@ -84,9 +83,6 @@ def describe_when_mapping_schoology_sections_to_udm():
         def then_lms_section_status_is_mapped_inactive(result):
             # Note this is the second record
             assert result.at[1, "LMSSectionStatus"] == "inactive"
-
-        def then_entity_status_is_mapped_inactive(result):
-            assert result.at[0, "EntityStatus"] == "active"
 
         def then_create_date_is_mapped(result):
             assert result.at[0, "CreateDate"] == "2020-10-30 11:40:50"

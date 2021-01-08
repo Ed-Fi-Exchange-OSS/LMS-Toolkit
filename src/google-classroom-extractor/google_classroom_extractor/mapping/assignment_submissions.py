@@ -5,10 +5,7 @@
 
 from typing import Dict, Tuple, Any
 from pandas import DataFrame
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 TURNED_IN_STATE = "TURNED_IN"
 
@@ -36,7 +33,6 @@ def submissions_to_assignment_submissions_dfs(
     AssignmentSubmission DataFrame columns are:
         AssignmentIdentifier: A unique numeric identifier assigned to the assignment
         EarnedPoints: The points earned for the submission
-        EntityStatus: The status of the record
         Grade: The grade received for the submission
         SourceSystem: The system code or name providing the AssignmentSubmission data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to
@@ -85,7 +81,7 @@ def submissions_to_assignment_submissions_dfs(
             "updateTime",
             "state",
             "CreateDate",
-            "LastModifiedDate"
+            "LastModifiedDate",
         ]
     ]
 
@@ -102,10 +98,11 @@ def submissions_to_assignment_submissions_dfs(
     )
 
     assignment_submissions_df["SourceSystem"] = SOURCE_SYSTEM
-    assignment_submissions_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
 
     # group by section id and assignment id as a Dict of DataFrames
-    result: Dict[Any, DataFrame] = dict(  # Any because Pylance doesn't believe Tuple[str, str]
+    result: Dict[
+        Any, DataFrame
+    ] = dict(  # Any because Pylance doesn't believe Tuple[str, str]
         tuple(
             assignment_submissions_df.groupby(
                 [

@@ -6,10 +6,7 @@
 import json
 from typing import Dict
 from pandas import DataFrame, concat, Series
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 ACTIVITY_TYPE_STATE = "Submission State Change"
 ACTIVITY_TYPE_GRADE = "Submission Grade Change"
@@ -41,7 +38,6 @@ def submissions_to_user_submission_activities_dfs(
         ActivityType: The type of activity, here "Submission" or "Grade"
         AssignmentIdentifier: A unique numeric identifier assigned to the assignment
         Content: Content associated with the activity
-        EntityStatus: The status of the record
         LMSSectionIdentifier: A unique numeric identifier assigned to the section
         SourceSystem: The system code or name providing the user activity data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a
@@ -64,7 +60,7 @@ def submissions_to_user_submission_activities_dfs(
     submissions_df = submissions_df[["id", "courseId", "courseWorkId", "submissionHistory", "AssignmentIdentifier", "CreateDate", "LastModifiedDate"]]
 
     # explode submissionHistory lists into rows with other columns duplicated
-    history_df = submissions_df.explode(column="submissionHistory")
+    history_df = submissions_df.explode(column="submissionHistory")  # type: ignore
 
     # expand submissionHistory dicts (stateHistory and gradeHistory) into their own columns
     history_df = history_df["submissionHistory"].apply(Series).merge(history_df, left_index=True, right_index=True, how='outer')
@@ -146,7 +142,6 @@ def submissions_to_user_submission_activities_dfs(
     # finish with common columns
     user_submission_df["ActivityTimeInMinutes"] = ""
     user_submission_df["Content"] = ""
-    user_submission_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
     user_submission_df["SourceSystem"] = SOURCE_SYSTEM
     user_submission_df["SourceCreateDate"] = ""  # No create date available from API
     user_submission_df["SourceLastModifiedDate"] = ""  # No modified date available from API

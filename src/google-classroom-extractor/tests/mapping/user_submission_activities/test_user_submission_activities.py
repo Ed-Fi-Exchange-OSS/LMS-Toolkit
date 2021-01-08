@@ -11,10 +11,7 @@ from google_classroom_extractor.mapping.user_submission_activities import (
     ACTIVITY_TYPE_STATE,
     ACTIVITY_TYPE_GRADE,
 )
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 # unique value for each column in fixture
 COURSE_ID = "1"
@@ -76,7 +73,7 @@ def describe_when_a_single_state_submission_with_unique_fields_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 1
-        assert column_count == 15
+        assert column_count == 14
 
     def it_should_map_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]
@@ -93,7 +90,6 @@ def describe_when_a_single_state_submission_with_unique_fields_is_mapped():
             == f"S-{COURSE_ID}-{COURSEWORK_ID}-{ID}-{STATE_TIMESTAMP}"
         )
         assert state_row["Content"] == ""
-        assert state_row["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert state_row["LMSSectionIdentifier"] == COURSE_ID
         assert state_row["LMSUserIdentifier"] == ACTOR_USER_ID
 
@@ -135,7 +131,7 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 2
-        assert column_count == 15
+        assert column_count == 14
 
     def it_should_map_state_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]
@@ -152,7 +148,6 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
             == f"S-{COURSE_ID}-{COURSEWORK_ID}-{ID}-{STATE_TIMESTAMP}"
         )
         assert state_row["Content"] == ""
-        assert state_row["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert state_row["LMSSectionIdentifier"] == COURSE_ID
         assert state_row["LMSUserIdentifier"] == ACTOR_USER_ID
 
@@ -171,6 +166,5 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
             == f"G-{COURSE_ID}-{COURSEWORK_ID}-{ID}-{GRADE_TIMESTAMP}"
         )
         assert grade_row["Content"] == ""
-        assert grade_row["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert grade_row["LMSSectionIdentifier"] == COURSE_ID
         assert grade_row["LMSUserIdentifier"] == ACTOR_USER_ID

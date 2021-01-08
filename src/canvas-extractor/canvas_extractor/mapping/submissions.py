@@ -55,7 +55,6 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
         Grade: Grade for the submission
         AssignmentSourceSystemIdentifier: Unique identifier for the assignment
         LMSUserSourceSystemIdentifier: Unique identifier of the LMSUser
-        EntityStatus: Status of the entity
         CreateDate: Created date
         LastModifiedDate: Last modified date
         SourceCreateDate: Date this record was created in the LMS
@@ -93,7 +92,6 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["SubmissionStatus"] = df.apply(_get_status, axis=1)
-    df["EntityStatus"] = constants.ACTIVE
     df["EarnedPoints"] = None
     df["SourceCreateDate"] = None
     df["SourceLastModifiedDate"] = None

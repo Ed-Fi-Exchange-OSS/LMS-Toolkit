@@ -38,7 +38,7 @@ def last_sync_date(sync_db: sqlalchemy.engine.base.Engine) -> Optional[datetime]
             usage_df = read_sql("SELECT asOfDate FROM Usage", con)
             if usage_df["asOfDate"].count() == 0:
                 return None
-            return date_parse(usage_df["asOfDate"].max())
+            return date_parse(usage_df["asOfDate"].max())  # type: ignore
         except OperationalError:
             logger.debug("No Usage table yet")
             return None

@@ -8,10 +8,7 @@ import pytest
 from datetime import datetime
 from pandas import DataFrame
 from google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 from tests.helper import merged_dict
 
 # unique value for each column in fixture
@@ -80,7 +77,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
-        assert column_count == 15
+        assert column_count == 14
 
     def it_should_map_fields_correctly(assignments_dicts):
         assignments_df: DataFrame = assignments_dicts[COURSE_ID]
@@ -96,7 +93,6 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
             int(float(DUETIME_MINUTES)),
         )
         assert row_dict["EndDateTime"] == ""
-        assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert row_dict["LMSSectionSourceSystemIdentifier"] == COURSE_ID
         assert row_dict["MaxPoints"] == MAX_POINTS
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
@@ -145,7 +141,7 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
-        assert column_count == 15
+        assert column_count == 14
 
     def it_should_map_fields_correctly_with_empty_duedate(assignments_dicts):
         assignments_df: DataFrame = assignments_dicts[COURSE_ID]
@@ -155,7 +151,6 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         assert row_dict["AssignmentDescription"] == DESCRIPTION
         assert row_dict["DueDateTime"] == ""
         assert row_dict["EndDateTime"] == ""
-        assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert row_dict["LMSSectionSourceSystemIdentifier"] == COURSE_ID
         assert row_dict["MaxPoints"] == MAX_POINTS
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
