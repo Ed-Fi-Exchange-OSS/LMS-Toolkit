@@ -27,7 +27,6 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
 
     DataFrame columns are:
         EmailAddress: The primary e-mail address for the user
-        EntityStatus: The status of the record
         LocalUserIdentifier: The user identifier assigned by a school or district
         Name: The full name of the user
         SISUserIdentifier: The user identifier defined in the Student Information System (SIS)
@@ -74,12 +73,6 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
 
     df["Name"] = df[["name_first", "name_middle", "name_last"]].apply(" ".join, axis=1)
     df["Name"] = df["Name"].apply(lambda x: x.replace("  ", " "))
-
-    # Note: a Schoology user who has been marked as "inactive" does not show up
-    # in the API request results, thus everyone available at this point is an
-    # active user.
-    df["EntityStatus"] = constants.ACTIVE
-
     df["SourceCreateDate"] = ""
     df["SourceLastModifiedDate"] = ""
 

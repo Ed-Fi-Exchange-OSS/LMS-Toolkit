@@ -47,7 +47,6 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
             system
         LMSSectionSourceSystemIdentifier: A unique number or alphanumeric code assigned to a section by the
             source system
-        EntityStatus: The status of the record
         CreateDate: Date/time at which the record was first retrieved
         LastModifiedDate: Date/time when the record was modified, or when first retrieved
         SourceCreateDate: Date this record was created in the LMS
@@ -62,7 +61,6 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     df = enrollments_df[filter][["id", "uid", "status", "CreateDate", "LastModifiedDate"]].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
-    df["EntityStatus"] = constants.ACTIVE
     df["LMSSectionSourceSystemIdentifier"] = section_id
     df["SourceCreateDate"] = ""
     df["SourceLastModifiedDate"] = ""

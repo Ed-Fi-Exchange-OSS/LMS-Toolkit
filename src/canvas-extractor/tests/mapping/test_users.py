@@ -35,7 +35,7 @@ def describe_when_mapping_schoology_users_to_udm():
             assert result.shape[0] == 2
 
         def test_then_it_should_have_correct_number_of_columns(result):
-            assert result.shape[1] == 12
+            assert result.shape[1] == 11
 
         @pytest.mark.parametrize(
             "input",
@@ -47,7 +47,6 @@ def describe_when_mapping_schoology_users_to_udm():
                 "SISUserIdentifier",
                 "Name",
                 "EmailAddress",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
             ],
@@ -75,9 +74,6 @@ def describe_when_mapping_schoology_users_to_udm():
 
         def test_then_email_address_is_mapped(result):
             assert result.at[0, "EmailAddress"] == "Kyle.Hughes@studentgps.org"
-
-        def test_then_entity_status_is_mapped_inactive(result):
-            assert result.at[0, "EntityStatus"] == "active"
 
         def test_then_it_should_have_empty_SourceCreateDate(result):
             assert result.at[0, "SourceCreateDate"] == "2020/09/14 11:54:18"

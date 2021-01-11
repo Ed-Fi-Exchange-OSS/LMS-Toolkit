@@ -10,10 +10,7 @@ from google_classroom_extractor.mapping.user_section_associations import (
     students_and_teachers_to_user_section_associations_dfs,
     ENROLLMENT_STATUS_ACTIVE,
 )
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 # unique value for each column in fixture
@@ -60,7 +57,7 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         row_count, column_count = association_df.shape
 
         assert row_count == 2
-        assert column_count == 12
+        assert column_count == 11
 
     def it_should_map_student_fields_correctly(associations_dicts):
         association_df: DataFrame = associations_dicts[COURSE_ID]
@@ -70,7 +67,6 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert row_dict["LMSSectionIdentifier"] == COURSE_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{STUDENT_USER_ID}-{COURSE_ID}"
-        assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert row_dict["EnrollmentStatus"] == ENROLLMENT_STATUS_ACTIVE
         assert row_dict["StartDate"] == ""
         assert row_dict["EndDate"] == ""
@@ -87,7 +83,6 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert row_dict["LMSSectionIdentifier"] == COURSE_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{TEACHER_USER_ID}-{COURSE_ID}"
-        assert row_dict["EntityStatus"] == ENTITY_STATUS_ACTIVE
         assert row_dict["EnrollmentStatus"] == ENROLLMENT_STATUS_ACTIVE
         assert row_dict["StartDate"] == ""
         assert row_dict["EndDate"] == ""

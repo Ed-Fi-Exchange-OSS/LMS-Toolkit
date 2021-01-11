@@ -136,7 +136,7 @@ class TestRequestClient:
             def test_result_should_contain_first_assignment(self, result: PaginatedResult, requests_mock):
                 assert len([r for r in result.current_page_items if r["id"] == "b"]) == 1
 
-            def test_result_should_contain_second_assignment(self, result: PaginatedResult, requests_mock):
+            def test_result_should_contain_second_assignment(self, result, requests_mock):
                 assert len([r for r in result.get_next_page().current_page_items if r["id"] == "c"]) == 1
 
     class Test_when_get_section_by_course_id_method_is_called:
@@ -308,7 +308,7 @@ def describe_when_getting_enrollments_with_two_pages():
     def it_should_contain_the_first_enrollment(result: PaginatedResult):
         assert len([r for r in result.current_page_items if r["id"] == 12345]) == 1
 
-    def it_should_contain_the_second_enrollment(result: PaginatedResult):
+    def it_should_contain_the_second_enrollment(result):
         assert len([r for r in result.get_next_page().current_page_items if r["id"] == 99999]) == 1
 
 

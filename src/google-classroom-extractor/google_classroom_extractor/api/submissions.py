@@ -116,7 +116,7 @@ def request_latest_submissions_as_df(
 
     json_df: DataFrame = json_normalize(submissions).astype("string")
     return json_df.reindex(
-        json_df.columns.union(REQUIRED_COLUMNS, sort=False), axis=1, fill_value=""
+        json_df.columns.union(REQUIRED_COLUMNS, sort=False), axis=1, fill_value=""  # type: ignore
     )
 
 

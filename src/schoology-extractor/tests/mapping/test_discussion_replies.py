@@ -43,7 +43,7 @@ def describe_mapping_schoology_users_to_udm():
             assert result.shape[0] == 2
 
         def test_then_it_should_have_correct_number_of_columns(result):
-            assert result.shape[1] == 14
+            assert result.shape[1] == 13
 
         @pytest.mark.parametrize(
             "input",
@@ -55,7 +55,6 @@ def describe_mapping_schoology_users_to_udm():
                 "ActivityStatus",
                 "ParentSourceSystemIdentifier",
                 "ActivityTimeInMinutes",
-                "EntityStatus",
                 "LMSUserIdentifier",
                 "LMSSectionIdentifier",
             ],
@@ -74,9 +73,6 @@ def describe_mapping_schoology_users_to_udm():
 
         def test_then_section_identifier_is_mapped(result):
             assert result.at[0, "LMSSectionIdentifier"] == FAKE_SECTION_ID
-
-        def test_then_entity_status_is_not_set(result):
-            assert result.at[0, "EntityStatus"] == "active"
 
         def test_then_activity_date_time_is_mapped(result):
             assert result.at[0, "ActivityDateTime"] == "2020-11-02 15:18:50"

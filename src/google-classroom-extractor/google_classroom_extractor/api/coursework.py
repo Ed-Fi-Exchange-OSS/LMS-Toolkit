@@ -123,7 +123,7 @@ def request_latest_coursework_as_df(
 
     json_df: DataFrame = json_normalize(coursework).astype("string")
     return json_df.reindex(
-        json_df.columns.union(REQUIRED_COLUMNS, sort=False), axis=1, fill_value=""
+        json_df.columns.union(REQUIRED_COLUMNS, sort=False), axis=1, fill_value=""  # type: ignore
     )
 
 

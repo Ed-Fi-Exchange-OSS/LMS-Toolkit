@@ -38,7 +38,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         return map_to_udm(schoology_df, section_id)
 
     def it_should_have_correct_number_of_columns(result):
-        assert result.shape[1] == 16
+        assert result.shape[1] == 15
 
     def it_should_have_schoology_as_SourceSystem(result):
         assert result["SourceSystem"].iloc[0] == "Schoology"
@@ -60,9 +60,6 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
 
     def it_should_map_section_id_to_LMSSectionSourceSystemIdentifier(result):
         assert result["LMSSectionSourceSystemIdentifier"].iloc[0] == 42
-
-    def it_should_have_active_as_EntityStatus(result):
-        assert result["EntityStatus"].iloc[0] == "active"
 
     def it_should_map_type_to_AssignmentCategory(result):
         assert result["AssignmentCategory"].iloc[0] == "assignment"

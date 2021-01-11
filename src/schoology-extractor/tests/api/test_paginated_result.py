@@ -161,7 +161,7 @@ def describe_when_getting_all_pages():
         paginated_result.get_all_pages()
         return paginated_result
 
-    def it_should_call_get_next_page(paginated_result: PaginatedResult):
+    def it_should_call_get_next_page(paginated_result):
         assert paginated_result.get_next_page.called
 
     @pytest.fixture

@@ -66,7 +66,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
-                "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
                 "CreateDate": None,
@@ -78,7 +77,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
-                "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
                 "CreateDate": None,
@@ -90,7 +88,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
-                "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
             },
@@ -100,7 +97,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
-                "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
             },
@@ -113,7 +109,7 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
         return map_to_udm(attendance_events, section_associations)
 
     def it_should_have_correct_number_of_columns(result):
-        assert result.shape[1] == 9
+        assert result.shape[1] == 8
 
     def it_should_have_schoology_as_source_system(result):
         assert result["SourceSystem"].iloc[0] == "Schoology"
@@ -123,9 +119,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
 
     def it_should_map_date_to_event_date(result):
         assert result["EventDate"].iloc[0] == "2020-08-28"
-
-    def it_should_have_active_as_EntityStatus(result):
-        assert result["EntityStatus"].iloc[0] == "active"
 
     def it_should_have_empty_SourceCreateDate(result):
         assert result["SourceCreateDate"].iloc[0] == ""
@@ -205,7 +198,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
-                "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
                 "CreateDate": None,
@@ -217,7 +209,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
-                "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
                 "CreateDate": None,
@@ -229,7 +220,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
-                "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
             },
@@ -239,7 +229,6 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
                 "LMSSectionSourceSystemIdentifier": 555,
                 "EnrollmentStatus": "active",
                 "SourceSystem": "Schoology",
-                "EntityStatus": "active",
                 "StartDate": None,
                 "EndDate": None,
             },

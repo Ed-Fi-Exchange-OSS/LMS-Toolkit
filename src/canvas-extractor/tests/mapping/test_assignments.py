@@ -6,10 +6,8 @@ from typing import Dict
 import pytest
 from pandas import DataFrame
 from canvas_extractor.mapping.assignments import map_to_udm_assignments
-from canvas_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ACTIVE,
-)
+from canvas_extractor.mapping.constants import SOURCE_SYSTEM
+
 
 # unique value for each column in assignment
 ID = "1"
@@ -235,7 +233,7 @@ def describe_when_a_single_assignment_with_unique_fields_is_mapped():
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
         row_count, column_count = assignment_df.shape
         assert row_count == 1
-        assert column_count == 15
+        assert column_count == 14
 
     def it_should_map_fields_correctly(assignment_dfs):
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
@@ -244,7 +242,6 @@ def describe_when_a_single_assignment_with_unique_fields_is_mapped():
         assert row_dict["AssignmentDescription"] == DESCRIPTION
         assert row_dict["DueDateTime"] == DUE_AT
         assert row_dict["EndDateTime"] == LOCK_AT
-        assert row_dict["EntityStatus"] == ACTIVE
         assert row_dict["LMSSectionSourceSystemIdentifier"] == SECTION_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE
@@ -377,13 +374,13 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
         row_count, column_count = assignment_df.shape
         assert row_count == 1
-        assert column_count == 15
+        assert column_count == 14
 
     def it_should_have_correct_shape_for_second_df(assignment_dfs: Dict[str, DataFrame]):
         second_assignment_df: DataFrame = assignment_dfs[SECOND_SECTION_ID]
         second_row_count, second_column_count = second_assignment_df.shape
         assert second_row_count == 1
-        assert second_column_count == 15
+        assert second_column_count == 14
 
     def it_should_map_fields_correctly_for_first_df(assignment_dfs):
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
@@ -392,7 +389,6 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
         assert row_dict["AssignmentDescription"] == DESCRIPTION
         assert row_dict["DueDateTime"] == DUE_AT
         assert row_dict["EndDateTime"] == LOCK_AT
-        assert row_dict["EntityStatus"] == ACTIVE
         assert row_dict["LMSSectionSourceSystemIdentifier"] == SECTION_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE
@@ -411,7 +407,6 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
         assert row_dict["AssignmentDescription"] == DESCRIPTION
         assert row_dict["DueDateTime"] == DUE_AT
         assert row_dict["EndDateTime"] == LOCK_AT
-        assert row_dict["EntityStatus"] == ACTIVE
         assert row_dict["LMSSectionSourceSystemIdentifier"] == SECOND_SECTION_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE

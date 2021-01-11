@@ -4,10 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from pandas import DataFrame, concat
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 STUDENT_USER_ROLE = "Student"
@@ -36,7 +33,6 @@ def _students_or_teachers_to_users_df(
     -----
     DataFrame columns are:
         EmailAddress: The primary e-mail address for the user
-        EntityStatus: The status of the record
         LocalUserIdentifier: The user identifier assigned by a school or district
         Name: The full name of the user
         SISUserIdentifier: The user identifier defined in the Student Information System (SIS)
@@ -73,7 +69,6 @@ def _students_or_teachers_to_users_df(
     result.drop_duplicates(inplace=True)
     result["SourceSystem"] = SOURCE_SYSTEM
     result["UserRole"] = lms_udm_user_role
-    result["EntityStatus"] = ENTITY_STATUS_ACTIVE
 
     result["LocalUserIdentifier"] = ""  # No local id available from API
     result["SISUserIdentifier"] = ""  # No SIS id available from API
@@ -105,7 +100,6 @@ def students_and_teachers_to_users_df(
     -----
     DataFrame columns are:
         EmailAddress: The primary e-mail address for the user
-        EntityStatus: The status of the record
         LocalUserIdentifier: The user identifier assigned by a school or district
         Name: The full name of the user
         SISUserIdentifier: The user identifier defined in the Student Information System (SIS)

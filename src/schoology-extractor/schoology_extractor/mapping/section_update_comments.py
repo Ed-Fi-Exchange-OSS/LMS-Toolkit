@@ -33,7 +33,6 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
             system
         LMSSectionIdentifier: A unique number or alphanumeric code assigned to a section by the
             source system
-        EntityStatus: The status of the record
         ActivityDateTime: The date/time the replied was created.
         ActivityStatus: The status for the reply
         ActivityType: The type of activity: `Discussion reply`

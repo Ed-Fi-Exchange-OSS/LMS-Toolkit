@@ -4,10 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from pandas import DataFrame
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
@@ -27,7 +24,6 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
     Notes
     -----
     DataFrame columns are:
-        EntityStatus: The status of the record
         LMSSectionStatus: The section status from the source system
         SISSectionIdentifier: The section identifier defined in the Student Information System
         SectionDescription: The section description
@@ -69,7 +65,6 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
     )
 
     result["SourceSystem"] = SOURCE_SYSTEM
-    result["EntityStatus"] = ENTITY_STATUS_ACTIVE
     result["SISSectionIdentifier"] = ""  # No SIS id available from API
     result["Term"] = ""  # No term available from API
 

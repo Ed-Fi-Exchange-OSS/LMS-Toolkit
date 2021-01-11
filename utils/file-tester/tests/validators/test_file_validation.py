@@ -21,7 +21,6 @@ def describe_when_validating_users_file():
                 "SISUserIdentifier",
                 "Name",
                 "EmailAddress",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -36,7 +35,6 @@ def describe_when_validating_users_file():
                     "SISUserIdentifier",
                     "Name",
                     "EmailAddress",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -79,7 +77,6 @@ def describe_when_validating_users_file():
                 "SISUserIdentifier",
                 "Name",
                 "EmailAddress",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -94,7 +91,6 @@ def describe_when_validating_users_file():
                     "SISUserIdentifier",
                     "Name",
                     "EmailAddress",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -130,7 +126,6 @@ def describe_when_validating_users_file():
                 "SISUserIdentifier",
                 "Name",
                 "EmailAddress",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -146,7 +141,6 @@ def describe_when_validating_users_file():
                     "SISUserIdentifier",
                     "Name",
                     "EmailAddress",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -177,7 +171,6 @@ def describe_when_validating_users_file():
                 "SISUserIdentifier",
                 "Name",
                 "EmailAddress",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -194,7 +187,6 @@ def describe_when_validating_users_file():
                 "SISUserIdentifier",
                 "Name",
                 "EmailAddress",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -216,8 +208,6 @@ def describe_when_validating_users_file():
                 data[0].append("Name")
             if "EmailAddress" != missing:
                 data[0].append("EmailAddress")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:
@@ -270,7 +260,6 @@ def describe_when_validating_sections_file():
                 "SectionDescription",
                 "Term",
                 "LMSSectionStatus",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -285,7 +274,6 @@ def describe_when_validating_sections_file():
                     "SectionDescription",
                     "Term",
                     "LMSSectionStatus",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -328,7 +316,6 @@ def describe_when_validating_sections_file():
                 "SectionDescription",
                 "Term",
                 "LMSSectionStatus",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -343,7 +330,6 @@ def describe_when_validating_sections_file():
                     "SectionDescription",
                     "Term",
                     "LMSSectionStatus",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -382,7 +368,6 @@ def describe_when_validating_sections_file():
                 "SectionDescription",
                 "Term",
                 "LMSSectionStatus",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -398,7 +383,6 @@ def describe_when_validating_sections_file():
                     "SectionDescription",
                     "Term",
                     "LMSSectionStatus",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -429,7 +413,6 @@ def describe_when_validating_sections_file():
                 "SectionDescription",
                 "Term",
                 "LMSSectionStatus",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -446,7 +429,6 @@ def describe_when_validating_sections_file():
                 "SectionDescription",
                 "Term",
                 "LMSSectionStatus",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -467,8 +449,6 @@ def describe_when_validating_sections_file():
                 data[0].append("Term")
             if "LMSSectionStatus" != missing:
                 data[0].append("LMSSectionStatus")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:
@@ -520,7 +500,6 @@ def describe_when_validating_system_activities_file():
                 "ActivityStatus",
                 "ParentSourceSystemIdentifier",
                 "ActivityTimeInMinutes",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -536,7 +515,6 @@ def describe_when_validating_system_activities_file():
                     "ActivityStatus",
                     "ParentSourceSystemIdentifier",
                     "ActivityTimeInMinutes",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -581,7 +559,6 @@ def describe_when_validating_system_activities_file():
                 "ActivityStatus",
                 "ParentSourceSystemIdentifier",
                 "ActivityTimeInMinutes",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -597,7 +574,6 @@ def describe_when_validating_system_activities_file():
                     "ActivityStatus",
                     "ParentSourceSystemIdentifier",
                     "ActivityTimeInMinutes",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -637,7 +613,6 @@ def describe_when_validating_system_activities_file():
                 "ActivityStatus",
                 "ParentSourceSystemIdentifier",
                 "ActivityTimeInMinutes",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -654,7 +629,6 @@ def describe_when_validating_system_activities_file():
                     "ActivityStatus",
                     "ParentSourceSystemIdentifier",
                     "ActivityTimeInMinutes",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -687,7 +661,6 @@ def describe_when_validating_system_activities_file():
                 "ActivityStatus",
                 "ParentSourceSystemIdentifier",
                 "ActivityTimeInMinutes",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -705,7 +678,6 @@ def describe_when_validating_system_activities_file():
                 "ActivityStatus",
                 "ParentSourceSystemIdentifier",
                 "ActivityTimeInMinutes",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -729,8 +701,6 @@ def describe_when_validating_system_activities_file():
                 data[0].append("ParentSourceSystemIdentifier")
             if "ActivityTimeInMinutes" != missing:
                 data[0].append("ActivityTimeInMinutes")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:
@@ -782,7 +752,6 @@ def describe_when_validating_section_associations_file():
                 "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -797,7 +766,6 @@ def describe_when_validating_section_associations_file():
                     "9876-12-16 15:16:17",
                     "LMSUserSourceSystemIdentifier",
                     "LMSSectionSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -842,7 +810,6 @@ def describe_when_validating_section_associations_file():
                 "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -857,7 +824,6 @@ def describe_when_validating_section_associations_file():
                     "9876-12-16 15:16:17",
                     "LMSUserSourceSystemIdentifier",
                     "LMSSectionSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -895,7 +861,6 @@ def describe_when_validating_section_associations_file():
                 "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -911,7 +876,6 @@ def describe_when_validating_section_associations_file():
                     "9876-12-16 15:16:17",
                     "LMSUserSourceSystemIdentifier",
                     "LMSSectionSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -945,7 +909,6 @@ def describe_when_validating_section_associations_file():
                 "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -962,7 +925,6 @@ def describe_when_validating_section_associations_file():
                 "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -983,8 +945,6 @@ def describe_when_validating_section_associations_file():
                 data[0].append("LMSUserSourceSystemIdentifier")
             if "LMSSectionSourceSystemIdentifier" != missing:
                 data[0].append("LMSSectionSourceSystemIdentifier")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:
@@ -1042,7 +1002,6 @@ def describe_when_validating_section_activities_file():
                 "TotalActivityTimeInMinutes",
                 "LMSSectionSourceSystemIdentifier",
                 "UserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1059,7 +1018,6 @@ def describe_when_validating_section_activities_file():
                     "TotalActivityTimeInMinutes",
                     "LMSSectionSourceSystemIdentifier",
                     "UserSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1107,7 +1065,6 @@ def describe_when_validating_section_activities_file():
                 "TotalActivityTimeInMinutes",
                 "LMSSectionSourceSystemIdentifier",
                 "UserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1124,7 +1081,6 @@ def describe_when_validating_section_activities_file():
                     "TotalActivityTimeInMinutes",
                     "LMSSectionSourceSystemIdentifier",
                     "UserSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1167,7 +1123,6 @@ def describe_when_validating_section_activities_file():
                 "TotalActivityTimeInMinutes",
                 "LMSSectionSourceSystemIdentifier",
                 "UserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1185,7 +1140,6 @@ def describe_when_validating_section_activities_file():
                     "TotalActivityTimeInMinutes",
                     "LMSSectionSourceSystemIdentifier",
                     "UserSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1221,7 +1175,6 @@ def describe_when_validating_section_activities_file():
                 "TotalActivityTimeInMinutes",
                 "LMSSectionSourceSystemIdentifier",
                 "UserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1240,7 +1193,6 @@ def describe_when_validating_section_activities_file():
                 "TotalActivityTimeInMinutes",
                 "LMSSectionSourceSystemIdentifier",
                 "UserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1265,8 +1217,6 @@ def describe_when_validating_section_activities_file():
                 data[0].append("LMSSectionSourceSystemIdentifier")
             if "UserSourceSystemIdentifier" != missing:
                 data[0].append("UserSourceSystemIdentifier")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:
@@ -1326,7 +1276,6 @@ def describe_when_validating_assignments_file():
                 "SubmissionType",
                 "MaxPoints",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1345,7 +1294,6 @@ def describe_when_validating_assignments_file():
                     "SubmissionType",
                     "MaxPoints",
                     "LMSSectionSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1397,7 +1345,6 @@ def describe_when_validating_assignments_file():
                 "SubmissionType",
                 "MaxPoints",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1416,7 +1363,6 @@ def describe_when_validating_assignments_file():
                     "SubmissionType",
                     "MaxPoints",
                     "LMSSectionSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1468,7 +1414,6 @@ def describe_when_validating_assignments_file():
                 "SubmissionType",
                 "MaxPoints",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1487,7 +1432,6 @@ def describe_when_validating_assignments_file():
                     "SubmissionType",
                     "MaxPoints",
                     "LMSSectionSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1529,7 +1473,6 @@ def describe_when_validating_assignments_file():
                 "SubmissionType",
                 "MaxPoints",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1549,7 +1492,6 @@ def describe_when_validating_assignments_file():
                     "SubmissionType",
                     "MaxPoints",
                     "LMSSectionSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1587,7 +1529,6 @@ def describe_when_validating_assignments_file():
                 "SubmissionType",
                 "MaxPoints",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1608,7 +1549,6 @@ def describe_when_validating_assignments_file():
                 "SubmissionType",
                 "MaxPoints",
                 "LMSSectionSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1637,8 +1577,6 @@ def describe_when_validating_assignments_file():
                 data[0].append("MaxPoints")
             if "LMSSectionSourceSystemIdentifier" != missing:
                 data[0].append("LMSSectionSourceSystemIdentifier")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:
@@ -1695,7 +1633,6 @@ def describe_when_validating_submissions_file():
                 "Grade",
                 "AssignmentSourceSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1711,7 +1648,6 @@ def describe_when_validating_submissions_file():
                     "Grade",
                     "AssignmentSourceSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1758,7 +1694,6 @@ def describe_when_validating_submissions_file():
                 "Grade",
                 "AssignmentSourceSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1774,7 +1709,6 @@ def describe_when_validating_submissions_file():
                     "Grade",
                     "AssignmentSourceSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1813,7 +1747,6 @@ def describe_when_validating_submissions_file():
                 "Grade",
                 "AssignmentSourceSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1830,7 +1763,6 @@ def describe_when_validating_submissions_file():
                     "Grade",
                     "AssignmentSourceSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -1865,7 +1797,6 @@ def describe_when_validating_submissions_file():
                 "Grade",
                 "AssignmentSourceSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1883,7 +1814,6 @@ def describe_when_validating_submissions_file():
                 "Grade",
                 "AssignmentSourceSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1906,8 +1836,6 @@ def describe_when_validating_submissions_file():
                 data[0].append("AssignmentSourceSystemIdentifier")
             if "LMSUserSourceSystemIdentifier" != missing:
                 data[0].append("LMSUserSourceSystemIdentifier")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:
@@ -1961,7 +1889,6 @@ def describe_when_validating_grades_file():
                 "Grade",
                 "GradeType",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -1974,7 +1901,6 @@ def describe_when_validating_grades_file():
                     "Grade",
                     "GradeType",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -2017,7 +1943,6 @@ def describe_when_validating_grades_file():
                 "Grade",
                 "GradeType",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2030,7 +1955,6 @@ def describe_when_validating_grades_file():
                     "Grade",
                     "GradeType",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -2066,7 +1990,6 @@ def describe_when_validating_grades_file():
                 "Grade",
                 "GradeType",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2080,7 +2003,6 @@ def describe_when_validating_grades_file():
                     "Grade",
                     "GradeType",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -2112,7 +2034,6 @@ def describe_when_validating_grades_file():
                 "Grade",
                 "GradeType",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2127,7 +2048,6 @@ def describe_when_validating_grades_file():
                 "Grade",
                 "GradeType",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2144,8 +2064,6 @@ def describe_when_validating_grades_file():
                 data[0].append("GradeType")
             if "LMSUserLMSSectionAssociationSourceSystemIdentifier" != missing:
                 data[0].append("LMSUserLMSSectionAssociationSourceSystemIdentifier")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:
@@ -2200,7 +2118,6 @@ def describe_when_validating_attendance_events_file():
                 "LMSSectionAssociationSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2215,7 +2132,6 @@ def describe_when_validating_attendance_events_file():
                     "LMSSectionAssociationSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -2261,7 +2177,6 @@ def describe_when_validating_attendance_events_file():
                 "LMSSectionAssociationSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2276,7 +2191,6 @@ def describe_when_validating_attendance_events_file():
                     "LMSSectionAssociationSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -2314,7 +2228,6 @@ def describe_when_validating_attendance_events_file():
                 "LMSSectionAssociationSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2330,7 +2243,6 @@ def describe_when_validating_attendance_events_file():
                     "LMSSectionAssociationSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
                     "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                    "EntityStatus",
                     "9876-12-16 15:16:17",
                     "9876-12-17 14:15:16",
                     "9876-12-18 13:14:15",
@@ -2364,7 +2276,6 @@ def describe_when_validating_attendance_events_file():
                 "LMSSectionAssociationSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2381,7 +2292,6 @@ def describe_when_validating_attendance_events_file():
                 "LMSSectionAssociationSystemIdentifier",
                 "LMSUserSourceSystemIdentifier",
                 "LMSUserLMSSectionAssociationSourceSystemIdentifier",
-                "EntityStatus",
                 "CreateDate",
                 "LastModifiedDate",
                 "SourceCreateDate",
@@ -2402,8 +2312,6 @@ def describe_when_validating_attendance_events_file():
                 data[0].append("LMSUserSourceSystemIdentifier")
             if "LMSUserLMSSectionAssociationSourceSystemIdentifier" != missing:
                 data[0].append("LMSUserLMSSectionAssociationSourceSystemIdentifier")
-            if "EntityStatus" != missing:
-                data[0].append("EntityStatus")
             if "CreateDate" != missing:
                 data[0].append("9876-12-19 10:11:12")
             if "LastModifiedDate" != missing:

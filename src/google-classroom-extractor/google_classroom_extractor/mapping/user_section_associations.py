@@ -5,10 +5,7 @@
 
 from typing import Dict
 from pandas import DataFrame, concat
-from google_classroom_extractor.mapping.constants import (
-    SOURCE_SYSTEM,
-    ENTITY_STATUS_ACTIVE,
-)
+from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 ENROLLMENT_STATUS_ACTIVE = "Active"
 
@@ -35,7 +32,6 @@ def _students_or_teachers_to_user_section_associations_df(
         EndDate: Month, day, and year of the user's withdrawal or exit from the section
         EnrollmentStatus: The status of the user section association. E.g., Active,
             Inactive, Withdrawn
-        EntityStatus: The status of the record
         LMSSectionIdentifier: A unique numeric identifier assigned to the section
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code
@@ -73,7 +69,6 @@ def _students_or_teachers_to_user_section_associations_df(
     )
 
     user_section_associations_df["SourceSystem"] = SOURCE_SYSTEM
-    user_section_associations_df["EntityStatus"] = ENTITY_STATUS_ACTIVE
     user_section_associations_df["EnrollmentStatus"] = ENROLLMENT_STATUS_ACTIVE
     user_section_associations_df[
         "StartDate"
@@ -115,7 +110,6 @@ def students_and_teachers_to_user_section_associations_dfs(
         EndDate: Month, day, and year of the user's withdrawal or exit from the section
         EnrollmentStatus: The status of the user section association. E.g., Active,
             Inactive, Withdrawn
-        EntityStatus: The status of the record
         LMSSectionIdentifier: A unique numeric identifier assigned to the section
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code
