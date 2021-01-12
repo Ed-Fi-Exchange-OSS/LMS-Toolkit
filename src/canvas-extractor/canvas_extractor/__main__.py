@@ -193,11 +193,11 @@ def _get_enrollments(sync_db: sqlalchemy.engine.base.Engine) -> None:
 
 
 @catch_exceptions
-def _get_grades(sync_db: sqlalchemy.engine.base.Engine) -> None:
+def _get_grades() -> None:
     logger.info("Extracting Grades from Canvas API")
-    (enrollments, _) = results_store["enrollments"]
+    (enrollments, udm_enrollments) = results_store["enrollments"]
     (sections, _) = results_store["sections"]
-    (_, udm_grades) = extract_grades(enrollments, sections, sync_db)
+    (_, udm_grades) = extract_grades(enrollments, udm_enrollments, sections)
     write_multi_csv(
         udm_grades,
         datetime.now(),
@@ -225,7 +225,7 @@ def main():
     _get_students(sync_db)
     _get_submissions(sync_db)
     _get_enrollments(sync_db)
-    _get_grades(sync_db)
+    _get_grades()  # Grades don't need sync process because they are part of enrollments
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
 
