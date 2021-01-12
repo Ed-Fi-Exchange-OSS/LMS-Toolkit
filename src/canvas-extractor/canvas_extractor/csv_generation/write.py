@@ -22,6 +22,7 @@ SECTION_ASSOCIATIONS_ROOT_DIRECTORY = "section={id}/section-associations/"
 ASSIGNMENT_ROOT_DIRECTORY = "section={id}/assignments/"
 SUBMISSION_ROOT_DIRECTORY = "section={id1}/assignment={id2}/submissions/"
 USER_ACTIVITY_ROOT_DIRECTORY = "section={id}/user-activities/"
+GRADES_ROOT_DIRECTORY = "section={id}/grades/"
 
 logger = logging.getLogger(__name__)
 

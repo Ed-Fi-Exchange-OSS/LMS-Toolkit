@@ -17,6 +17,7 @@ from canvasapi import Canvas
 
 from canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from canvas_extractor.csv_generation.write import (
+    GRADES_ROOT_DIRECTORY,
     SUBMISSION_ROOT_DIRECTORY,
     write_csv,
     write_multi_csv,
@@ -28,6 +29,7 @@ from canvas_extractor.csv_generation.write import (
 )
 from canvas_extractor.extract_facade import (
     extract_courses,
+    extract_grades,
     extract_sections,
     extract_students,
     extract_assignments,
@@ -181,10 +183,25 @@ def _get_submissions(
 def _get_enrollments(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Enrollments from Canvas API")
     (sections, _) = results_store["sections"]
+    (enrollments, udm_enrollments) = extract_enrollments(sections, sync_db)
     write_multi_csv(
-        extract_enrollments(sections, sync_db),
+        udm_enrollments,
         datetime.now(),
         os.path.join(output_directory, SECTION_ASSOCIATIONS_ROOT_DIRECTORY),
+    )
+    results_store["enrollments"] = (enrollments, udm_enrollments)
+
+
+@catch_exceptions
+def _get_grades(sync_db: sqlalchemy.engine.base.Engine) -> None:
+    logger.info("Extracting Grades from Canvas API")
+    (enrollments, _) = results_store["enrollments"]
+    (sections, _) = results_store["sections"]
+    (_, udm_grades) = extract_grades(enrollments, sections, sync_db)
+    write_multi_csv(
+        udm_grades,
+        datetime.now(),
+        os.path.join(output_directory, GRADES_ROOT_DIRECTORY),
     )
 
 
@@ -208,6 +225,7 @@ def main():
     _get_students(sync_db)
     _get_submissions(sync_db)
     _get_enrollments(sync_db)
+    _get_grades(sync_db)
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
 

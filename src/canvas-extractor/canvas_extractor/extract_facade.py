@@ -185,7 +185,7 @@ def extract_submissions(
 
 def extract_enrollments(
     sections: List[Section], sync_db: sqlalchemy.engine.base.Engine
-) -> Dict[str, DataFrame]:
+) -> Tuple[List[Enrollment], Dict[str, DataFrame]]:
     """
     Gets all Canvas enrollments, in the Ed-Fi UDM format.
 
@@ -201,17 +201,56 @@ def extract_enrollments(
     Dict[str, DataFrame]
         A dict with section_id as key and udm_enrollments as value.
     """
-    output: Dict[str, DataFrame] = dict()
+    udm_enrollments: Dict[str, DataFrame] = dict()
+    enrollments: List[Enrollment] = []
     for section in sections:
-        enrollments: List[Enrollment] = enrollmentsApi.request_enrollments_for_section(
-            section
+        local_enrollments: List[Enrollment] = list(
+            enrollmentsApi.request_enrollments_for_section(section)
         )
         enrollments_df: DataFrame = enrollmentsApi.enrollments_synced_as_df(
-            enrollments, sync_db
+            local_enrollments, sync_db
         )
         enrollments_df = section_associationsMap.map_to_udm_section_associations(
             enrollments_df
         )
-        output[section.id] = enrollments_df
+        enrollments = enrollments + local_enrollments
+        udm_enrollments[section.id] = enrollments_df
 
-    return output
+    return [enrollments, udm_enrollments]
+
+
+def extract_grades(
+    enrollments: List[Enrollment], sections: List[Section], sync_db: sqlalchemy.engine.base.Engine
+) -> Tuple[List[dict], Dict[str, DataFrame]]:
+    """
+    Gets all Canvas enrollments, in the Ed-Fi UDM format.
+
+    Parameters
+    ----------
+    sections: List[Section]
+        A list of Canvas Section objects.
+    sync_db: sqlalchemy.engine.base.Engine
+        sync db.
+
+    Returns
+    -------
+    Dict[str, DataFrame]
+        A dict with section_id as key and udm_enrollments as value.
+    """
+    all_grades: List[dict] = []
+    output: Dict[str, DataFrame] = {}
+    for section in sections:
+        current_grades: List[dict] = []
+        for enrollment in [
+            enrollment
+            for enrollment in enrollments
+            if enrollment.type == "StudentEnrollment"
+            and enrollment.course_id == section.course_id
+        ]:
+            grades: dict = enrollment.grades
+            current_grades.append(grades)
+
+        all_grades = all_grades + current_grades
+        output[section.id] = DataFrame(current_grades)
+
+    return (all_grades, output)
