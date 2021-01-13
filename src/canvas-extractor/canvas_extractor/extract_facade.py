@@ -217,7 +217,7 @@ def extract_enrollments(
         enrollments = enrollments + local_enrollments
         udm_enrollments[section.id] = enrollments_df
 
-    return [enrollments, udm_enrollments]
+    return (enrollments, udm_enrollments)
 
 
 def extract_grades(
