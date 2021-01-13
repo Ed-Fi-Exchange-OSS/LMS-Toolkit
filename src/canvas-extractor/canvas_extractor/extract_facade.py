@@ -244,22 +244,26 @@ def extract_grades(
 
     for section in sections:
         current_grades: List[dict] = []
+        udm_enrollments_list: List[dict] = udm_enrollments[section.id].to_dict(
+            "records"
+        )
 
         for enrollment in [
             enrollment
             for enrollment in enrollments
             if enrollment.type == "StudentEnrollment"
-            and enrollment.course_id == section.course_id
+            and enrollment.course_section_id == section.id
         ]:
             grade: dict = enrollment.grades
-            udm_enrollments_list: List[dict] = udm_enrollments[section.id].to_dict(
-                "records"
-            )
             current_udm_enrollment = [
                 first_enrollment
                 for first_enrollment in udm_enrollments_list
                 if first_enrollment["SourceSystemIdentifier"] == str(enrollment.id)
             ][0]
+            grade["SourceSystemIdentifier"] = f"g#{str(enrollment.id)}"
+            grade["LMSUserIdentifier"] = current_udm_enrollment["LMSUserSourceSystemIdentifier"]
+            grade["LMSSectionIdentifier"] = section.id
+            grade["LMSGradeIdentifier"] = grade["SourceSystemIdentifier"]
             grade["CreateDate"] = current_udm_enrollment["CreateDate"]
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
             current_grades.append(grade)

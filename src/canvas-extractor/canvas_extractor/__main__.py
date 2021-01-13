@@ -224,7 +224,11 @@ def main():
 
     _get_students(sync_db)
     _get_submissions(sync_db)
-    _get_enrollments(sync_db)
+
+    succeeded = _get_enrollments(sync_db)
+    if not succeeded:
+        _break_execution("Enrollments")
+
     _get_grades()  # Grades don't need sync process because they are part of enrollments
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
