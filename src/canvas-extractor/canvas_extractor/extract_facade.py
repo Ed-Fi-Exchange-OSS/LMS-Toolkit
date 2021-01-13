@@ -29,6 +29,7 @@ from canvas_extractor.mapping import (
     assignments as assignmentsMap,
     submissions as submissionsMap,
     section_associations as section_associationsMap,
+    grades as gradesMap
 )
 
 
@@ -269,6 +270,6 @@ def extract_grades(
             current_grades.append(grade)
 
         all_grades = all_grades + current_grades
-        output[section.id] = DataFrame(current_grades)  # TODO: replace with mapping
+        output[section.id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
 
     return (all_grades, output)
