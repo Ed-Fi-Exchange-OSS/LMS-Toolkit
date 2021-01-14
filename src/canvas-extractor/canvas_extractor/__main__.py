@@ -197,7 +197,7 @@ def _get_grades() -> None:
     logger.info("Extracting Grades from Canvas API")
     (enrollments, udm_enrollments) = results_store["enrollments"]
     (sections, _) = results_store["sections"]
-    (_, udm_grades) = extract_grades(enrollments, udm_enrollments, sections)
+    udm_grades = extract_grades(enrollments, udm_enrollments, sections)
     write_multi_csv(
         udm_grades,
         datetime.now(),

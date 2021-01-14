@@ -224,23 +224,24 @@ def extract_grades(
     enrollments: List[Enrollment],
     udm_enrollments: Dict[str, DataFrame],
     sections: List[Section],
-) -> Tuple[List[dict], Dict[str, DataFrame]]:
+) -> Dict[str, DataFrame]:
     """
     Gets all Canvas enrollments, in the Ed-Fi UDM format.
 
     Parameters
     ----------
+    enrollments: List[Enrollment]
+        A list of Canvas Enrollment objects.
+    udm_enrollments: Dict[str, DataFrame]
+        A dict of udm enrollments with section_id as the key and DartaFrame as value.
     sections: List[Section]
         A list of Canvas Section objects.
-    sync_db: sqlalchemy.engine.base.Engine
-        sync db.
 
     Returns
     -------
     Dict[str, DataFrame]
-        A dict with section_id as key and udm_enrollments as value.
+        A dict with section_id as key and DataFrame as value.
     """
-    all_grades: List[dict] = []
     output: Dict[str, DataFrame] = {}
 
     for section in sections:
@@ -261,7 +262,7 @@ def extract_grades(
                 for first_enrollment in udm_enrollments_list
                 if first_enrollment["SourceSystemIdentifier"] == str(enrollment.id)
             ][0]
-            grade["SourceSystemIdentifier"] = f"g#{str(enrollment.id)}"
+            grade["SourceSystemIdentifier"] = f"g#{enrollment.id}"
             grade["LMSUserIdentifier"] = current_udm_enrollment["LMSUserSourceSystemIdentifier"]
             grade["LMSSectionIdentifier"] = section.id
             grade["LMSGradeIdentifier"] = grade["SourceSystemIdentifier"]
@@ -269,7 +270,6 @@ def extract_grades(
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
             current_grades.append(grade)
 
-        all_grades = all_grades + current_grades
         output[section.id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
 
-    return (all_grades, output)
+    return output
