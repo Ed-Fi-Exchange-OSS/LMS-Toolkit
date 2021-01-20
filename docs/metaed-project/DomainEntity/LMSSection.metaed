@@ -31,9 +31,6 @@ Domain Entity LMSSection
         documentation "The section status from the source system. E.g., Published, Completed."
         is optional
         role name LMSSection
-    shared string EntityStatus
-        documentation "The status of the record."
-        is required
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional
