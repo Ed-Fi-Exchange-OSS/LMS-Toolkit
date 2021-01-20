@@ -24,9 +24,6 @@ Domain Entity LMSGrade
     shared string GradeType
         documentation "The type of grade reported. E.g., Current, Final."
         is optional
-    shared string EntityStatus
-        documentation "The status of the record."
-        is required
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional

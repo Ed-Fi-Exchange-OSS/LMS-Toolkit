@@ -39,9 +39,6 @@ Domain Entity LMSSectionActivity
         documentation "The total activity time in minutes."
         is optional
         role name Activity
-    shared string EntityStatus
-        documentation "The status of the record."
-        is required
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional

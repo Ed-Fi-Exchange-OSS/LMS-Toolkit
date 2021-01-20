@@ -43,9 +43,6 @@ Domain Entity Assignment
         documentation "The maximum number of points a student may receive for a submission of the assignment."
         is optional
         role name Max
-    shared string EntityStatus
-        documentation "The status of the record."
-        is required
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional

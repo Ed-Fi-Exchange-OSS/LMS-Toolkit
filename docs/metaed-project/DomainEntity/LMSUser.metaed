@@ -30,9 +30,6 @@ Domain Entity LMSUser
     shared string EmailAddress
         documentation "The primary e-mail address for the user."
         is required
-    shared string EntityStatus
-        documentation "The status of the record."
-        is required
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional

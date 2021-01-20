@@ -29,9 +29,6 @@ Association LMSUserLMSSectionAssociation
     date EndDate
         documentation "Month, day, and year of the user's withdrawal or exit from the section."
         is required
-    shared string EntityStatus
-        documentation "The status of the record."
-        is required
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional
