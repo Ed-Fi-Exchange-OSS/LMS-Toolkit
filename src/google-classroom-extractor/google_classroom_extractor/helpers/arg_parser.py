@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from configargparse import ArgParser  # type: ignore
+from configargparse import ArgParser
 
 from . import constants
 

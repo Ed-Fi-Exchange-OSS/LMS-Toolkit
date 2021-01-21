@@ -6,7 +6,6 @@
 
 from datetime import datetime
 import logging
-import os
 import sys
 from typing import Optional
 
@@ -14,7 +13,7 @@ from dotenv import load_dotenv
 from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
 import sqlalchemy
-from errorhandler import ErrorHandler  # type: ignore
+from errorhandler import ErrorHandler
 
 from google_classroom_extractor.result import Result
 from google_classroom_extractor.config import get_credentials, get_sync_db_engine
@@ -31,16 +30,13 @@ from google_classroom_extractor.mapping.assignment_submissions import (
 from google_classroom_extractor.mapping.user_submission_activities import (
     submissions_to_user_submission_activities_dfs,
 )
-from google_classroom_extractor.csv_generation.write import (
-    write_csv,
-    write_multi_csv,
-    write_multi_tuple_csv,
-    USERS_ROOT_DIRECTORY,
-    SECTIONS_ROOT_DIRECTORY,
-    SECTION_ASSOCIATIONS_ROOT_DIRECTORY,
-    ASSIGNMENT_ROOT_DIRECTORY,
-    SUBMISSION_ROOT_DIRECTORY,
-    USER_ACTIVITY_ROOT_DIRECTORY,
+from extractor_shared.csv_generation.write import (
+    write_users,
+    write_sections,
+    write_section_associations,
+    write_assignments,
+    write_user_activities,
+    write_assignment_submissions,
 )
 from google_classroom_extractor.helpers import arg_parser
 
@@ -118,59 +114,49 @@ def main():
         return
 
     logger.info("Writing LMS UDM Users to CSV file")
-    USERS_OUTPUT_DIR = os.path.join(output_directory, USERS_ROOT_DIRECTORY)
-    write_csv(
+    write_users(
         students_and_teachers_to_users_df(
             result_dfs.students_df, result_dfs.teachers_df
         ),
         datetime.now(),
-        USERS_OUTPUT_DIR,
+        output_directory,
     )
 
     logger.info("Writing LMS UDM Sections to CSV file")
-    SECTIONS_OUTPUT_DIR = os.path.join(output_directory, SECTIONS_ROOT_DIRECTORY)
-    write_csv(
+    write_sections(
         courses_to_sections_df(result_dfs.courses_df),
         datetime.now(),
-        SECTIONS_OUTPUT_DIR,
+        output_directory,
     )
 
     logger.info("Writing LMS UDM UserSectionAssociations to CSV files")
-    SECTION_ASSOCIATIONS_OUTPUT_DIR = os.path.join(
-        output_directory, SECTION_ASSOCIATIONS_ROOT_DIRECTORY
-    )
-    write_multi_csv(
+    write_section_associations(
         students_and_teachers_to_user_section_associations_dfs(
             result_dfs.students_df, result_dfs.teachers_df
         ),
         datetime.now(),
-        SECTION_ASSOCIATIONS_OUTPUT_DIR,
+        output_directory,
     )
 
     logger.info("Writing LMS UDM Assignments to CSV files")
-    ASSIGNMENT_OUTPUT_DIR = os.path.join(output_directory, ASSIGNMENT_ROOT_DIRECTORY)
-    write_multi_csv(
+    write_assignments(
         coursework_to_assignments_dfs(result_dfs.coursework_df),
         datetime.now(),
-        ASSIGNMENT_OUTPUT_DIR,
+        output_directory,
     )
 
     logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
-    SUBMISSION_OUTPUT_DIR = os.path.join(output_directory, SUBMISSION_ROOT_DIRECTORY)
-    write_multi_tuple_csv(
+    write_assignment_submissions(
         submissions_to_assignment_submissions_dfs(result_dfs.submissions_df),
         datetime.now(),
-        SUBMISSION_OUTPUT_DIR,
+        output_directory,
     )
 
     logger.info("Writing LMS UDM User Activities to CSV files")
-    USER_ACTIVITY_OUTPUT_DIR = os.path.join(
-        output_directory, USER_ACTIVITY_ROOT_DIRECTORY
-    )
-    write_multi_csv(
+    write_user_activities(
         submissions_to_user_submission_activities_dfs(result_dfs.submissions_df),
         datetime.now(),
-        USER_ACTIVITY_OUTPUT_DIR,
+        output_directory,
     )
 
     logger.info("Finishing Ed-Fi LMS Google Classroom Extractor")

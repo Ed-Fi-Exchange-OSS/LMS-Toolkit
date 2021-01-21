@@ -14,4 +14,3 @@ DB_FILE = "tests/api/test.db"
 def test_db_fixture():
     Path(DB_FILE).unlink(missing_ok=True)
     yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
-    # Path(DB_FILE).unlink(missing_ok=True)
