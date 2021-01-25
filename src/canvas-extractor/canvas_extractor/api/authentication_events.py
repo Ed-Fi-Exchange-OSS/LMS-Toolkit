@@ -33,7 +33,7 @@ def custom_get_new_page(self: PaginatedList):
     regex = r"{}(.*)".format(re.escape(self._requester.base_url))
 
     self._next_url = (
-        re.search(regex, next_link["url"]).group(1) if next_link else None
+        re.search(regex, next_link["url"]).group(1) if next_link else None  # type: ignore
     )
 
     self._next_params = {}
@@ -48,7 +48,7 @@ def custom_get_new_page(self: PaginatedList):
             raise ValueError("Invalid root value specified.")
 
     if "audit/authentication/users" in self._first_url:
-        data = data['events']
+        data = data["events"]
 
     for element in data:
         if element is not None:
@@ -61,12 +61,16 @@ def custom_get_new_page(self: PaginatedList):
 PaginatedList._get_next_page = custom_get_new_page
 
 
-def _request_events_for_student(user: User, start_date: str, end_date: str) -> List[AuthenticationEvent]:
+def _request_events_for_student(
+    user: User, start_date: str, end_date: str
+) -> List[AuthenticationEvent]:
     response = call_with_retry(user.get_authentication_events)
     return [event for event in response]
 
 
-def request_events(users: List[User], start_date: str, end_date: str) -> List[AuthenticationEvent]:
+def request_events(
+    users: List[User], start_date: str, end_date: str
+) -> List[AuthenticationEvent]:
     """
     Fetch AuthenticationEvent API data for a range of users and return a list of AuthenticationEvent API objects
 

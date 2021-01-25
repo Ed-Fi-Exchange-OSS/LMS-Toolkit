@@ -22,7 +22,7 @@ from canvas_extractor.api import (
     assignments as assignmentsApi,
     submissions as submissionsApi,
     enrollments as enrollmentsApi,
-    authentication_events as authEventsApi
+    authentication_events as authEventsApi,
 )
 from canvas_extractor.mapping import (
     sections as sectionsMap,
@@ -31,7 +31,7 @@ from canvas_extractor.mapping import (
     submissions as submissionsMap,
     section_associations as section_associationsMap,
     grades as gradesMap,
-    authentication_events as authEventsMap
+    authentication_events as authEventsMap,
 )
 
 
@@ -304,12 +304,15 @@ def extract_system_activities(
     DataFrame
         A Dataframe with udm_system_activities.
     """
+
     def _get_authentication_events():
-        auth_events: List[User] = authEventsApi.request_events(users, start_date, end_date)
+        auth_events = authEventsApi.request_events(users, start_date, end_date)
         for event in auth_events:
-            user_id = event.links['user']
+            user_id = event.links["user"]
             event.id = f"{user_id}#{event.created_at}"
-        auth_events = authEventsApi.authentication_events_synced_as_df(auth_events, sync_db)
+        auth_events = authEventsApi.authentication_events_synced_as_df(
+            auth_events, sync_db
+        )
 
         return authEventsMap.map_to_udm_system_activities(auth_events)
 
