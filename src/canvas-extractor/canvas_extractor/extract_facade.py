@@ -306,12 +306,10 @@ def extract_system_activities(
     def _get_authentication_events():
         auth_events: List[User] = authEventsApi.request_events(users, start_date, end_date)
         for event in auth_events:
-            event.id = f"{event['user_id']}#{event['timestamp']}"
+            user_id = event.links['user']
+            event.id = f"{user_id}#{event.created_at}"
         auth_events = authEventsApi.authentication_events_synced_as_df(auth_events, sync_db)
         #  TODO: add mapping
         return auth_events
 
-    output = DataFrame()
-    output.append(_get_authentication_events())
-
-    return output
+    return _get_authentication_events()

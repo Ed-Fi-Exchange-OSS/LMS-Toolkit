@@ -5,19 +5,60 @@
 
 import logging
 from typing import List
+import re
+
 from pandas import DataFrame
 import sqlalchemy
-
 from canvasapi.authentication_event import AuthenticationEvent
 from canvasapi.user import User
+from canvasapi.paginated_list import PaginatedList
 
 from .canvas_helper import to_df
 from .resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
 from .api_caller import call_with_retry
 
-AUTH_EVENTS_RESOURCE_NAME = "Authentication Events"
+AUTH_EVENTS_RESOURCE_NAME = "Authentication_Events"
 
 logger = logging.getLogger(__name__)
+
+
+def custom_get_new_page(self: PaginatedList):
+    response = self._requester.request(
+        self._request_method, self._next_url, **self._next_params
+    )
+    data = response.json()
+    self._next_url = None
+
+    next_link = response.links.get("next")
+    regex = r"{}(.*)".format(re.escape(self._requester.base_url))
+
+    self._next_url = (
+        re.search(regex, next_link["url"]).group(1) if next_link else None
+    )
+
+    self._next_params = {}
+
+    content = []
+
+    if self._root:
+        try:
+            data = data[self._root]
+        except KeyError:
+            # TODO: Fix this message to make more sense to an end user.
+            raise ValueError("Invalid root value specified.")
+
+    if "audit/authentication/users" in self._first_url:
+        data = data['events']
+
+    for element in data:
+        if element is not None:
+            element.update(self._extra_attribs)
+            content.append(self._content_class(self._requester, element))
+
+    return content
+
+
+PaginatedList._get_next_page = custom_get_new_page
 
 
 def _request_events_for_student(user: User, start_date: str, end_date: str) -> List[AuthenticationEvent]:
