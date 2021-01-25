@@ -31,6 +31,7 @@ from canvas_extractor.mapping import (
     submissions as submissionsMap,
     section_associations as section_associationsMap,
     grades as gradesMap,
+    authentication_events as authEventsMap
 )
 
 
@@ -309,7 +310,7 @@ def extract_system_activities(
             user_id = event.links['user']
             event.id = f"{user_id}#{event.created_at}"
         auth_events = authEventsApi.authentication_events_synced_as_df(auth_events, sync_db)
-        #  TODO: add mapping
-        return auth_events
+
+        return authEventsMap.map_to_udm_system_activities(auth_events)
 
     return _get_authentication_events()
