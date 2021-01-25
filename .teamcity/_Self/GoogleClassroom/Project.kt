@@ -21,7 +21,7 @@ object GoogleClassroomProject : Project({
             +:.teamcity => .teamcity
             +:%project.directory% => %project.directory%
             +:eng => eng
-			+:./src/lib => .src/lib
+            +:./src/lib => ./src/lib
         """.trimIndent())
     }
 })
