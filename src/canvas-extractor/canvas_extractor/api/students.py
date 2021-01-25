@@ -10,9 +10,8 @@ import sqlalchemy
 
 from canvasapi.course import Course
 from canvasapi.user import User
-
+from extractor_shared.api.resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
 from .canvas_helper import remove_duplicates, to_df
-from .resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
 from .api_caller import call_with_retry
 
 STUDENTS_RESOURCE_NAME = "Students"

@@ -10,9 +10,8 @@ import sqlalchemy
 
 from canvasapi.assignment import Assignment
 from canvasapi.submission import Submission
-
+from extractor_shared.api.resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
 from .canvas_helper import to_df
-from .resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
 from .api_caller import call_with_retry
 
 SUBMISSIONS_RESOURCE_NAME = "Submissions"

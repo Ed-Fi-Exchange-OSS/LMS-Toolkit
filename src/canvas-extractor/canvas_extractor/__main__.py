@@ -3,9 +3,8 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from datetime import datetime
-from typing import Callable, Dict, Tuple, Union
+from typing import Callable, Dict, Tuple, Union, cast
 import sys
-import os
 import logging
 
 from dotenv import load_dotenv
@@ -15,18 +14,16 @@ from errorhandler import ErrorHandler
 
 from canvasapi import Canvas
 
-from canvas_extractor.config import get_canvas_api, get_sync_db_engine
-from canvas_extractor.csv_generation.write import (
-    GRADES_ROOT_DIRECTORY,
-    SUBMISSION_ROOT_DIRECTORY,
-    write_csv,
-    write_multi_csv,
-    write_multi_tuple_csv,
-    SECTIONS_ROOT_DIRECTORY,
-    USERS_ROOT_DIRECTORY,
-    ASSIGNMENT_ROOT_DIRECTORY,
-    SECTION_ASSOCIATIONS_ROOT_DIRECTORY,
+from extractor_shared.csv_generation.write import (
+    write_users,
+    write_sections,
+    write_section_associations,
+    write_assignments,
+    write_grades,
+    write_assignment_submissions,
 )
+
+from canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from canvas_extractor.extract_facade import (
     extract_courses,
     extract_grades,
@@ -116,8 +113,6 @@ def configure_logging():
 def _get_courses(canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Courses from Canvas API")
     (courses, courses_df) = extract_courses(canvas, start_date, end_date, sync_db)
-    # Temporary - just for demonstration until UDM mapping
-    courses_df.to_csv("data/courses.csv", index=False)
     results_store["courses"] = (courses, courses_df)
 
 
@@ -126,11 +121,8 @@ def _get_sections(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Sections from Canvas API")
     (courses, _) = results_store["courses"]
     (sections, udm_sections_df) = extract_sections(courses, sync_db)
-    write_csv(
-        udm_sections_df,
-        datetime.now(),
-        os.path.join(output_directory, SECTIONS_ROOT_DIRECTORY),
-    )
+    logger.info("Writing LMS UDM Sections to CSV file")
+    write_sections(udm_sections_df, datetime.now(), output_directory)
     results_store["sections"] = (sections, udm_sections_df)
 
 
@@ -145,11 +137,8 @@ def _get_assignments(
     (assignments, udm_assignments_df) = extract_assignments(
         courses, sections_df, sync_db
     )
-    write_multi_csv(
-        udm_assignments_df,
-        datetime.now(),
-        os.path.join(output_directory, ASSIGNMENT_ROOT_DIRECTORY),
-    )
+    logger.info("Writing LMS UDM Assignments to CSV files")
+    write_assignments(udm_assignments_df, datetime.now(), output_directory)
     results_store["assignments"] = (assignments, udm_assignments_df)
 
 
@@ -158,11 +147,8 @@ def _get_students(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Students from Canvas API")
     (courses, _) = results_store["courses"]
     (_, udm_students_df) = extract_students(courses, sync_db)
-    write_csv(
-        udm_students_df,
-        datetime.now(),
-        os.path.join(output_directory, USERS_ROOT_DIRECTORY),
-    )
+    logger.info("Writing LMS UDM Users to CSV file")
+    write_users(udm_students_df, datetime.now(), output_directory)
 
 
 @catch_exceptions
@@ -172,10 +158,11 @@ def _get_submissions(
     logger.info("Extracting Submissions from Canvas API")
     (assignments, _) = results_store["assignments"]
     (sections, _) = results_store["sections"]
-    write_multi_tuple_csv(
+    logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
+    write_assignment_submissions(
         extract_submissions(assignments, sections, sync_db),
         datetime.now(),
-        os.path.join(output_directory, SUBMISSION_ROOT_DIRECTORY),
+        output_directory,
     )
 
 
@@ -184,11 +171,8 @@ def _get_enrollments(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Enrollments from Canvas API")
     (sections, _) = results_store["sections"]
     (enrollments, udm_enrollments) = extract_enrollments(sections, sync_db)
-    write_multi_csv(
-        udm_enrollments,
-        datetime.now(),
-        os.path.join(output_directory, SECTION_ASSOCIATIONS_ROOT_DIRECTORY),
-    )
+    logger.info("Writing LMS UDM UserSectionAssociations to CSV files")
+    write_section_associations(udm_enrollments, datetime.now(), output_directory)
     results_store["enrollments"] = (enrollments, udm_enrollments)
 
 
@@ -197,12 +181,11 @@ def _get_grades() -> None:
     logger.info("Extracting Grades from Canvas API")
     (enrollments, udm_enrollments) = results_store["enrollments"]
     (sections, _) = results_store["sections"]
-    udm_grades = extract_grades(enrollments, udm_enrollments, sections)
-    write_multi_csv(
-        udm_grades,
-        datetime.now(),
-        os.path.join(output_directory, GRADES_ROOT_DIRECTORY),
+    udm_grades = extract_grades(
+        enrollments, cast(Dict[str, DataFrame], udm_enrollments), sections
     )
+    logger.info("Writing LMS UDM Grades to CSV files")
+    write_grades(udm_grades, datetime.now(), output_directory)
 
 
 def main():

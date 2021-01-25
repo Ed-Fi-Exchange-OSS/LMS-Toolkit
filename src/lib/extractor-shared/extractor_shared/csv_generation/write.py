@@ -16,6 +16,7 @@ SECTION_ASSOCIATIONS_ROOT_DIRECTORY = "section={id}/section-associations/"
 ASSIGNMENT_ROOT_DIRECTORY = "section={id}/assignments/"
 SUBMISSION_ROOT_DIRECTORY = "section={id1}/assignment={id2}/submissions/"
 USER_ACTIVITY_ROOT_DIRECTORY = "section={id}/user-activities/"
+GRADES_ROOT_DIRECTORY = "section={id}/grades/"
 
 logger = logging.getLogger(__name__)
 
@@ -220,4 +221,26 @@ def write_assignment_submissions(
         dfs_to_write,
         output_date,
         os.path.join(output_directory, SUBMISSION_ROOT_DIRECTORY),
+    )
+
+
+def write_grades(
+    dfs_to_write: Dict[str, DataFrame], output_date: datetime, output_directory: str
+):
+    """
+    Write a series of LMS UDM Grades DataFrames to CSV files
+
+    Parameters
+    ----------
+    dfs_to_write: Dict[str, DataFrame]
+        is a Dict of id/LMS UDM Grades DataFrame pairs
+    output_date: datetime
+        is the timestamp for the filename
+    output_directory: str
+        is the root output directory
+    """
+    _write_multi_csv(
+        dfs_to_write,
+        output_date,
+        os.path.join(output_directory, GRADES_ROOT_DIRECTORY),
     )
