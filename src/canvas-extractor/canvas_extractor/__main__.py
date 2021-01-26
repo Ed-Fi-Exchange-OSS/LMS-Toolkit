@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from datetime import datetime
-from typing import Callable, Dict, Tuple, Union, cast
+from typing import Dict, Tuple, Union, cast
 import sys
 import logging
 
@@ -23,6 +23,7 @@ from extractor_shared.csv_generation.write import (
     write_assignment_submissions,
     write_system_activities,
 )
+from extractor_shared.helpers.decorators import catch_exceptions
 
 from canvas_extractor.extract_facade import (
     extract_courses,
@@ -56,18 +57,6 @@ def _break_execution(failing_extraction: str) -> None:
         f"Unable to continue file generation because the load of {failing_extraction} failed. Please review the log for more information."
     )
     sys.exit(1)
-
-
-def catch_exceptions(func: Callable) -> Callable:
-    def callable_function(*args, **kwargs) -> bool:
-        try:
-            func(*args, **kwargs)
-            return True
-        except BaseException as e:
-            logger.exception("An exception occurred", e)
-            return False
-
-    return callable_function
 
 
 @catch_exceptions
