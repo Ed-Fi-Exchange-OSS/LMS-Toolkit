@@ -4,146 +4,80 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from datetime import datetime
+from typing import List
+from pathlib import Path
 import pytest
 from pandas import read_sql_query, DataFrame
-from google_classroom_extractor.api.courses import _sync_without_cleanup
+from sqlalchemy import create_engine
 from extractor_shared.api.resource_sync import (
     SYNC_COLUMNS_SQL,
     SYNC_COLUMNS,
     add_hash_and_json_to,
     add_sourceid_to,
+    sync_to_db_without_cleanup,
 )
-from tests.api.api_helper import prep_expected_sync_df, prep_from_sync_db_df
+
+DB_FILE = "tests/api/test.db"
 
 IDENTITY_COLUMNS = ["id"]
 
 COLUMNS = [
     "id",
     "name",
-    "section",
     "descriptionHeading",
-    "room",
-    "ownerId",
-    "creationTime",
-    "updateTime",
-    "enrollmentCode",
-    "courseState",
-    "alternateLink",
-    "teacherGroupEmail",
-    "courseGroupEmail",
-    "teacherFolder.id",
-    "teacherFolder.title",
-    "teacherFolder.alternateLink",
-    "guardiansEnabled",
-    "calendarId",
 ]
 
 CHANGED_COURSE_BEFORE = [
     "1",
     "Changed Course",
-    "11",
     "descriptionHeading1",
-    "a1",
-    "111",
-    "2020-03-01 12:00:00",
-    "2020-03-01 12:00:00",
-    "1111",
-    "ACTIVE",
-    "http://111",
-    "111@gmail.com",
-    "111@hotmail.com",
-    "111111",
-    "1111111",
-    "11111111",
-    "True",
-    "11111",
 ]
 
 CHANGED_COURSE_AFTER = [
     "1",
     "Changed Course",
-    "11",
     "*CHANGED*",
-    "a1",
-    "111",
-    "2020-03-01 12:00:00",
-    "2020-03-01 12:00:00",
-    "1111",
-    "ACTIVE",
-    "http://111",
-    "111@gmail.com",
-    "111@hotmail.com",
-    "111111",
-    "1111111",
-    "11111111",
-    "True",
-    "11111",
 ]
 
 UNCHANGED_COURSE = [
     "2",
     "Unchanged Course",
-    "22",
     "descriptionHeading2",
-    "b2",
-    "222",
-    "2020-03-02 12:00:00",
-    "2020-03-02 12:00:00",
-    "2222",
-    "ACTIVE",
-    "https://222",
-    "222@gmail.com",
-    "222@hotmail.com",
-    "222222",
-    "2222222",
-    "22222222",
-    "True",
-    "22222",
 ]
 
 OMITTED_FROM_SYNC_COURSE = [
     "3",
     "Omitted From Sync Course",
-    "33",
     "descriptionHeading3",
-    "c3",
-    "333",
-    "2020-03-03 12:00:00",
-    "2020-03-03 12:00:00",
-    "3333",
-    "ACTIVE",
-    "https://333",
-    "333@gmail.com",
-    "333@hotmail.com",
-    "333333",
-    "3333333",
-    "33333333",
-    "True",
-    "33333",
 ]
 
 NEW_COURSE = [
     "4",
     "New Course",
-    "44",
     "descriptionHeading4",
-    "c4",
-    "444",
-    "2020-04-04 12:00:00",
-    "2020-04-04 12:00:00",
-    "4444",
-    "ACTIVE",
-    "https://444",
-    "444@gmail.com",
-    "444@hotmail.com",
-    "444444",
-    "4444444",
-    "44444444",
-    "True",
-    "44444",
 ]
 
 SYNC_DATA = [CHANGED_COURSE_AFTER, UNCHANGED_COURSE, NEW_COURSE]
+
+
+def prep_expected_sync_df(df: DataFrame, identity_columns: List[str]) -> DataFrame:
+    result_df: DataFrame = add_hash_and_json_to(df)
+    add_sourceid_to(result_df, identity_columns)
+    result_df = result_df[["Json", "Hash", "SourceId"]]
+    result_df.set_index("SourceId", inplace=True)
+    return result_df
+
+
+def prep_from_sync_db_df(df: DataFrame, identity_columns: List[str]) -> DataFrame:
+    result_df: DataFrame = df[["Json", "Hash", "SourceId"]]
+    result_df.set_index("SourceId", inplace=True)
+    return result_df
+
+
+@pytest.fixture
+def test_db_fixture():
+    Path(DB_FILE).unlink(missing_ok=True)
+    yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
 
 
 def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
@@ -183,7 +117,7 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         )
 
         # act
-        _sync_without_cleanup(courses_sync_df, test_db_fixture)
+        sync_to_db_without_cleanup(courses_sync_df, IDENTITY_COLUMNS, "Courses", test_db_fixture)
 
         return test_db_fixture
 

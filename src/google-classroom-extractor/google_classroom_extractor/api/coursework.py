@@ -9,7 +9,7 @@ from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
 from .api_caller import call_api, ResourceType
-from google_classroom_extractor.api.resource_sync import (
+from extractor_shared.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
 )
