@@ -6,8 +6,10 @@
 import logging
 from typing import Callable
 
-def catch_exceptions(func: Callable) -> Callable:
+
+def catch_exceptions(func: Callable) -> Callable[..., bool]:
     logger = logging.getLogger(__name__)
+
     def callable_function(*args, **kwargs) -> bool:
         try:
             func(*args, **kwargs)

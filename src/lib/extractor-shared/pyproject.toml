@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "extractor-shared"
-version = "0.1.8"
+version = "0.1.9"
 description = ""
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
 license = "Apache-2.0"
