@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from datetime import datetime
-from typing import Callable, Dict, Tuple, Union, cast
+from typing import Dict, Tuple, Union, cast
 import sys
 import logging
 
@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 from pandas import DataFrame
 import sqlalchemy
 from errorhandler import ErrorHandler
-
 from canvasapi import Canvas
 
+from canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from extractor_shared.csv_generation.write import (
     write_users,
     write_sections,
@@ -21,9 +21,10 @@ from extractor_shared.csv_generation.write import (
     write_assignments,
     write_grades,
     write_assignment_submissions,
+    write_system_activities,
 )
+from extractor_shared.helpers.decorators import catch_exceptions
 
-from canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from canvas_extractor.extract_facade import (
     extract_courses,
     extract_grades,
@@ -32,6 +33,7 @@ from canvas_extractor.extract_facade import (
     extract_assignments,
     extract_submissions,
     extract_enrollments,
+    extract_system_activities,
 )
 from canvas_extractor.api.canvas_helper import to_df
 from canvas_extractor.helpers import arg_parser
@@ -55,18 +57,6 @@ def _break_execution(failing_extraction: str) -> None:
         f"Unable to continue file generation because the load of {failing_extraction} failed. Please review the log for more information."
     )
     sys.exit(1)
-
-
-def catch_exceptions(func: Callable) -> Callable:
-    def callable_function(*args, **kwargs) -> bool:
-        try:
-            func(*args, **kwargs)
-            return True
-        except BaseException as e:
-            logger.exception("An exception occurred", e)
-            return False
-
-    return callable_function
 
 
 @catch_exceptions
@@ -146,7 +136,8 @@ def _get_assignments(
 def _get_students(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Students from Canvas API")
     (courses, _) = results_store["courses"]
-    (_, udm_students_df) = extract_students(courses, sync_db)
+    (students, udm_students_df) = extract_students(courses, sync_db)
+    results_store["students"] = (students, udm_students_df)
     logger.info("Writing LMS UDM Users to CSV file")
     write_users(udm_students_df, datetime.now(), output_directory)
 
@@ -188,6 +179,16 @@ def _get_grades() -> None:
     write_grades(udm_grades, datetime.now(), output_directory)
 
 
+@catch_exceptions
+def _get_system_activities(sync_db: sqlalchemy.engine.base.Engine) -> None:
+    logger.info("Extracting System Activities from Canvas API")
+    (users, _) = results_store["students"]
+    udm_system_activities = extract_system_activities(
+        users, start_date, end_date, sync_db
+    )
+    write_system_activities(udm_system_activities, datetime.now(), output_directory)
+
+
 def main():
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
@@ -205,7 +206,11 @@ def main():
     if not succeeded:
         _break_execution("Assignments")
 
-    _get_students(sync_db)
+    succeeded = _get_students(sync_db)
+    if not succeeded:
+        _break_execution("Students")
+
+    _get_system_activities(sync_db)
     _get_submissions(sync_db)
 
     succeeded = _get_enrollments(sync_db)

@@ -17,6 +17,7 @@ ASSIGNMENT_ROOT_DIRECTORY = "section={id}/assignments/"
 SUBMISSION_ROOT_DIRECTORY = "section={id1}/assignment={id2}/submissions/"
 USER_ACTIVITY_ROOT_DIRECTORY = "section={id}/user-activities/"
 GRADES_ROOT_DIRECTORY = "section={id}/grades/"
+SYSTEM_ACTIVITY_ROOT_DIRECTORY = "system-activities/"
 
 logger = logging.getLogger(__name__)
 
@@ -243,4 +244,26 @@ def write_grades(
         dfs_to_write,
         output_date,
         os.path.join(output_directory, GRADES_ROOT_DIRECTORY),
+    )
+
+
+def write_system_activities(
+    df_to_write: DataFrame, output_date: datetime, output_directory: str
+):
+    """
+    Write a series of LMS UDM System Activities DataFrames to CSV files
+
+    Parameters
+    ----------
+    dfs_to_write: DataFrame
+        Dataframe to write
+    output_date: datetime
+        is the timestamp for the filename
+    output_directory: str
+        is the root output directory
+    """
+    _write_csv(
+        df_to_write,
+        output_date,
+        os.path.join(output_directory, SYSTEM_ACTIVITY_ROOT_DIRECTORY),
     )

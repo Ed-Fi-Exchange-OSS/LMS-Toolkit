@@ -22,6 +22,7 @@ from canvas_extractor.api import (
     assignments as assignmentsApi,
     submissions as submissionsApi,
     enrollments as enrollmentsApi,
+    authentication_events as authEventsApi,
 )
 from canvas_extractor.mapping import (
     sections as sectionsMap,
@@ -29,7 +30,8 @@ from canvas_extractor.mapping import (
     assignments as assignmentsMap,
     submissions as submissionsMap,
     section_associations as section_associationsMap,
-    grades as gradesMap
+    grades as gradesMap,
+    authentication_events as authEventsMap,
 )
 
 
@@ -263,7 +265,9 @@ def extract_grades(
                 if first_enrollment["SourceSystemIdentifier"] == str(enrollment.id)
             ][0]
             grade["SourceSystemIdentifier"] = f"g#{enrollment.id}"
-            grade["LMSUserIdentifier"] = current_udm_enrollment["LMSUserSourceSystemIdentifier"]
+            grade["LMSUserIdentifier"] = current_udm_enrollment[
+                "LMSUserSourceSystemIdentifier"
+            ]
             grade["LMSSectionIdentifier"] = section.id
             grade["LMSGradeIdentifier"] = grade["SourceSystemIdentifier"]
             grade["CreateDate"] = current_udm_enrollment["CreateDate"]
@@ -273,3 +277,43 @@ def extract_grades(
         output[section.id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
 
     return output
+
+
+def extract_system_activities(
+    users: List[User],
+    start_date: str,
+    end_date: str,
+    sync_db: sqlalchemy.engine.base.Engine,
+) -> DataFrame:
+    """
+    Gets all Canvas students, in the Ed-Fi UDM format.
+
+    Parameters
+    ----------
+    users: List[User]
+        A list of Canvas User objects.
+    start_date: str
+        The start date for the events.
+    end_date: str
+        The end date for the events.
+    sync_db: sqlalchemy.engine.base.Engine,
+        sync db.
+
+    Returns
+    -------
+    DataFrame
+        A Dataframe with udm_system_activities.
+    """
+
+    def _get_authentication_events():
+        auth_events = authEventsApi.request_events(users, start_date, end_date)
+        for event in auth_events:
+            user_id = event.links["user"]
+            event.id = f"{user_id}#{event.created_at}"  # type: ignore
+        auth_events = authEventsApi.authentication_events_synced_as_df(
+            auth_events, sync_db
+        )
+
+        return authEventsMap.map_to_udm_system_activities(auth_events)
+
+    return _get_authentication_events()
