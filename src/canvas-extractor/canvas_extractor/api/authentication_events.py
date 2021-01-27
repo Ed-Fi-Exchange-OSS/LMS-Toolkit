@@ -86,7 +86,7 @@ def request_events(
     """
 
     logger.info("Pulling authentication events data")
-    events: List[User] = []
+    events: List[AuthenticationEvent] = []
     for user in users:
         local_events = _request_events_for_student(user, start_date, end_date)
         events.extend(local_events)
