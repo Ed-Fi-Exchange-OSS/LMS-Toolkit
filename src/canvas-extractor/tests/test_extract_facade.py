@@ -27,7 +27,7 @@ from canvas_extractor.mapping import (
 )
 
 TEST_START_DATE = "2021-01-01"
-TEST_END_DATE = "2021-12-31"
+TEST_END_DATE = "2021-12-30"
 
 
 @pytest.fixture
