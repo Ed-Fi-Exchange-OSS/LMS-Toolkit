@@ -148,3 +148,4 @@ cython_debug/
 
 # GitHub actions local CLI
 act/
+.actrc
