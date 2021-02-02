@@ -1,0 +1,40 @@
+name: "File-Tester"
+on:
+  pull_request:
+    paths:
+      - 'utils/file-tester/**.py'
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8.x'
+
+      - name: Install Poetry
+        uses: Gr1N/setup-poetry@v4
+
+      - name: Install Python Dependencies
+        run: python ./eng/build.py install ../utils/file-tester
+
+      - name: Cache Dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Run Tests with Coverage
+        run: python ./eng/build.py coverage:html ../utils/file-tester
+
+      - name: Type Check
+        run: python ./eng/build.py typecheck:xml ../utils/file-tester
+
+      - name: Style Check
+        run: python ./eng/build.py lint ../utils/file-tester
