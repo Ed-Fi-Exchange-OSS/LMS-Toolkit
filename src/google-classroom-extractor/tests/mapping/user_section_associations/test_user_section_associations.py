@@ -63,8 +63,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         association_df: DataFrame = associations_dicts[COURSE_ID]
         row_dict = association_df.to_dict(orient="records")[0]
 
-        assert row_dict["LMSUserIdentifier"] == STUDENT_USER_ID
-        assert row_dict["LMSSectionIdentifier"] == COURSE_ID
+        assert row_dict["LMSUserSourceSystemIdentifier"] == STUDENT_USER_ID
+        assert row_dict["LMSSectionSourceSystemIdentifier"] == COURSE_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{STUDENT_USER_ID}-{COURSE_ID}"
         assert row_dict["EnrollmentStatus"] == ENROLLMENT_STATUS_ACTIVE
@@ -79,8 +79,8 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         association_df: DataFrame = associations_dicts[COURSE_ID]
         row_dict = association_df.to_dict(orient="records")[1]
 
-        assert row_dict["LMSUserIdentifier"] == TEACHER_USER_ID
-        assert row_dict["LMSSectionIdentifier"] == COURSE_ID
+        assert row_dict["LMSUserSourceSystemIdentifier"] == TEACHER_USER_ID
+        assert row_dict["LMSSectionSourceSystemIdentifier"] == COURSE_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{TEACHER_USER_ID}-{COURSE_ID}"
         assert row_dict["EnrollmentStatus"] == ENROLLMENT_STATUS_ACTIVE
@@ -146,7 +146,7 @@ def describe_when_users_in_different_courses_are_mapped():
         association_df: DataFrame = associations_dicts[COURSE_ID]
         course1_dict = association_df.to_dict(orient="records")[0]
 
-        assert course1_dict["LMSUserIdentifier"] == STUDENT_USER_ID
+        assert course1_dict["LMSUserSourceSystemIdentifier"] == STUDENT_USER_ID
 
     def it_should_have_correct_user_id_in_second_course(
         associations_dicts,
@@ -154,4 +154,4 @@ def describe_when_users_in_different_courses_are_mapped():
         association_df: DataFrame = associations_dicts[course2_id]
         course2_dict = association_df.to_dict(orient="records")[0]
 
-        assert course2_dict["LMSUserIdentifier"] == TEACHER_USER_ID
+        assert course2_dict["LMSUserSourceSystemIdentifier"] == TEACHER_USER_ID

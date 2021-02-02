@@ -4,8 +4,9 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Dict, Tuple, Any
-from pandas import DataFrame
+from pandas import DataFrame, to_datetime
 from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from google_classroom_extractor.helpers.constants import DATE_FORMAT
 
 TURNED_IN_STATE = "TURNED_IN"
 
@@ -31,15 +32,15 @@ def submissions_to_assignment_submissions_dfs(
     Notes
     -----
     AssignmentSubmission DataFrame columns are:
-        AssignmentIdentifier: A unique numeric identifier assigned to the assignment
+        AssignmentSourceSystemIdentifier: A unique numeric identifier assigned to the assignment
         EarnedPoints: The points earned for the submission
         Grade: The grade received for the submission
         SourceSystem: The system code or name providing the AssignmentSubmission data
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to
             an AssignmentSubmission by the source system
-        Status: The status of the submission in relation to the late acceptance policy
+        SubmissionStatus: The status of the submission in relation to the late acceptance policy
         SubmissionDateTime: The date and time of the assignment submission
-        LMSUserIdentifier: A unique numeric identifier assigned to the user
+        LMSUserSourceSystemIdentifier: A unique numeric identifier assigned to the user
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
     """
@@ -47,7 +48,6 @@ def submissions_to_assignment_submissions_dfs(
     assert "courseWorkId" in submissions_df.columns
     assert "id" in submissions_df.columns
     assert "userId" in submissions_df.columns
-    assert "courseWorkType" in submissions_df.columns
     assert "creationTime" in submissions_df.columns
     assert "updateTime" in submissions_df.columns
     assert "state" in submissions_df.columns
@@ -57,7 +57,7 @@ def submissions_to_assignment_submissions_dfs(
         ["courseId", "courseWorkId", "id"]
     ].agg("-".join, axis=1)
 
-    submissions_df["AssignmentIdentifier"] = submissions_df[
+    submissions_df["AssignmentSourceSystemIdentifier"] = submissions_df[
         ["courseId", "courseWorkId"]
     ].agg("-".join, axis=1)
 
@@ -70,13 +70,12 @@ def submissions_to_assignment_submissions_dfs(
     assignment_submissions_df: DataFrame = submissions_df[
         [
             "SourceSystemIdentifier",
-            "AssignmentIdentifier",
+            "AssignmentSourceSystemIdentifier",
             "Grade",
             "SubmissionDateTime",
             "assignedGrade",
             "userId",
             "courseId",
-            "courseWorkType",
             "creationTime",
             "updateTime",
             "state",
@@ -88,14 +87,20 @@ def submissions_to_assignment_submissions_dfs(
     assignment_submissions_df = assignment_submissions_df.rename(
         columns={
             "assignedGrade": "EarnedPoints",
-            "userId": "LMSUserIdentifier",
+            "userId": "LMSUserSourceSystemIdentifier",
             "courseId": "SourceSystemSectionIdentifier",
-            "courseWorkType": "SubmissionType",
             "creationTime": "SourceCreateDate",
             "updateTime": "SourceLastModifiedDate",
-            "state": "Status",
+            "state": "SubmissionStatus",
         }
     )
+
+    assignment_submissions_df["SourceCreateDate"] = to_datetime(
+        assignment_submissions_df["SourceCreateDate"]
+    ).dt.strftime(DATE_FORMAT)
+    assignment_submissions_df["SourceLastModifiedDate"] = to_datetime(
+        assignment_submissions_df["SourceLastModifiedDate"]
+    ).dt.strftime(DATE_FORMAT)
 
     assignment_submissions_df["SourceSystem"] = SOURCE_SYSTEM
 
@@ -107,7 +112,7 @@ def submissions_to_assignment_submissions_dfs(
             assignment_submissions_df.groupby(
                 [
                     "SourceSystemSectionIdentifier",
-                    "AssignmentIdentifier",
+                    "AssignmentSourceSystemIdentifier",
                 ]
             )
         )

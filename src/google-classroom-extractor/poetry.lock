@@ -139,7 +139,7 @@ test = ["coveralls", "nose", "nose-cov", "nose-fixes"]
 
 [[package]]
 name = "extractor-shared"
-version = "0.1.7"
+version = "0.1.11"
 description = ""
 category = "main"
 optional = false

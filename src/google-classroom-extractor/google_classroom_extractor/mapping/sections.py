@@ -3,8 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from pandas import DataFrame
+from pandas import DataFrame, to_datetime
 from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from google_classroom_extractor.helpers.constants import DATE_FORMAT
 
 
 def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
@@ -50,7 +51,7 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
             "creationTime",
             "updateTime",
             "CreateDate",
-            "LastModifiedDate"
+            "LastModifiedDate",
         ]
     ]
     result = result.rename(
@@ -63,6 +64,13 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
             "updateTime": "SourceLastModifiedDate",
         }
     )
+
+    result["SourceCreateDate"] = to_datetime(result["SourceCreateDate"]).dt.strftime(
+        DATE_FORMAT
+    )
+    result["SourceLastModifiedDate"] = to_datetime(
+        result["SourceLastModifiedDate"]
+    ).dt.strftime(DATE_FORMAT)
 
     result["SourceSystem"] = SOURCE_SYSTEM
     result["SISSectionIdentifier"] = ""  # No SIS id available from API
