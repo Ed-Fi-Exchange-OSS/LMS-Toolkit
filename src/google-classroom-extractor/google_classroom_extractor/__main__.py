@@ -31,9 +31,11 @@ from google_classroom_extractor.mapping.user_submission_activities import (
     submissions_to_user_submission_activities_dfs,
 )
 from extractor_shared.csv_generation.write import (
+    write_grades,
     write_users,
     write_sections,
     write_section_associations,
+    write_section_activities,
     write_assignments,
     write_user_activities,
     write_assignment_submissions,
@@ -113,19 +115,22 @@ def main():
         # Enrich this in FIZZ-150
         return
 
+    now = datetime.now()
+
     logger.info("Writing LMS UDM Users to CSV file")
     write_users(
         students_and_teachers_to_users_df(
             result_dfs.students_df, result_dfs.teachers_df
         ),
-        datetime.now(),
+        now,
         output_directory,
     )
 
     logger.info("Writing LMS UDM Sections to CSV file")
+    (sections_df, all_section_ids) = courses_to_sections_df(result_dfs.courses_df)
     write_sections(
-        courses_to_sections_df(result_dfs.courses_df),
-        datetime.now(),
+        sections_df,
+        now,
         output_directory,
     )
 
@@ -134,28 +139,47 @@ def main():
         students_and_teachers_to_user_section_associations_dfs(
             result_dfs.students_df, result_dfs.teachers_df
         ),
-        datetime.now(),
+        all_section_ids,
+        now,
         output_directory,
     )
 
     logger.info("Writing LMS UDM Assignments to CSV files")
     write_assignments(
         coursework_to_assignments_dfs(result_dfs.coursework_df),
-        datetime.now(),
+        all_section_ids,
+        now,
         output_directory,
     )
 
     logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
     write_assignment_submissions(
         submissions_to_assignment_submissions_dfs(result_dfs.submissions_df),
-        datetime.now(),
+        now,
         output_directory,
     )
 
     logger.info("Writing LMS UDM User Activities to CSV files")
     write_user_activities(
         submissions_to_user_submission_activities_dfs(result_dfs.submissions_df),
-        datetime.now(),
+        all_section_ids,
+        now,
+        output_directory,
+    )
+
+    logger.info("Writing empty LMS UDM Grades to CSV files")
+    write_grades(
+        dict(),
+        all_section_ids,
+        now,
+        output_directory,
+    )
+
+    logger.info("Writing empty LMS UDM SectionActivities to CSV files")
+    write_section_activities(
+        dict(),
+        all_section_ids,
+        now,
         output_directory,
     )
 
