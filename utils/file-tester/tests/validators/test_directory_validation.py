@@ -11,7 +11,7 @@ from lms_file_tester.validators import directory_validation as drval
 
 INPUT_DIR = "input_dir"
 SECTION_ID = "1234"
-ASSIGNMENT_ID = "2345"
+ASSIGNMENT_ID = "2346"
 
 
 @pytest.fixture

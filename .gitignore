@@ -145,3 +145,7 @@ cython_debug/
 
 # Embedded databases
 *.sqlite
+
+# GitHub actions local CLI
+act/
+.actrc
