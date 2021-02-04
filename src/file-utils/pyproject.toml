@@ -23,6 +23,8 @@ teamcity-messages = "^1.28"
 coverage = "^5.3"
 pytest-mock = "^3.3.1"
 pylint = "^2.6.0"
+twine = "^3.3.0"
+artifacts-keyring = "^0.3.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
