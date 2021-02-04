@@ -1,7 +1,9 @@
 [tool.poetry]
-name = "lms-file-utils"
+name = "edfi-lms-file-utils"
 version = "0.1.0"
 description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
+homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
+repository = "https://github.com/Ed-Fi-Exchange-OSS/Ed-Fi-X-Fizz"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
 
