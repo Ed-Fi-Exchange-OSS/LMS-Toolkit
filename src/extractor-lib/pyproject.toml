@@ -6,10 +6,8 @@ repository = "https://github.com/Ed-Fi-Exchange-OSS/Ed-Fi-X-Fizz"
 description = "Shared functions library for Ed-Fi LMS Extractor projects"
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
 license = "Apache-2.0"
-packages = [
-    { include = "extractor_shared" }
-]
-include = ["extractor_shared/py.typed"]
+# see if this is automatically included
+# include = ["edfi_lms_extractor_lib/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
