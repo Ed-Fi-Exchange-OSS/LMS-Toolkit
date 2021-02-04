@@ -7,8 +7,8 @@ from typing import Dict
 import pytest
 from datetime import datetime
 from pandas import DataFrame
-from google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 from tests.helper import merged_dict
 
 # unique value for each column in fixture

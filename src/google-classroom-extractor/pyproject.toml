@@ -1,14 +1,11 @@
 [tool.poetry]
-name = "google-classroom-extractor"
+name = "efi-google-classroom-extractor"
 version = "1.0.0-alpha.0"
 homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/Ed-Fi-X-Fizz"
 description = "Extract tool for retrieving student data from Google Classroom"
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
 license = "Apache-2.0"
-packages = [
-    { include = "google_classroom_extractor" }
-]
 
 [tool.poetry.dependencies]
 python = "^3.8"

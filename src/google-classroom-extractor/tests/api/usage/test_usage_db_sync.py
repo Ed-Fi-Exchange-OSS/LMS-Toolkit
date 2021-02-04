@@ -6,7 +6,7 @@
 from typing import Dict
 from unittest.mock import patch
 from pandas import DataFrame, read_csv
-from google_classroom_extractor.api.usage import request_all_usage_as_df
+from edfi_google_classroom_extractor.api.usage import request_all_usage_as_df
 from tests.helper import merged_dict
 
 # Empty string is the default value for this env variables

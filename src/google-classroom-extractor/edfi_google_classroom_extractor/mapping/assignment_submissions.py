@@ -5,7 +5,7 @@
 
 from typing import Dict, Tuple, Any
 from pandas import DataFrame
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 TURNED_IN_STATE = "TURNED_IN"
 

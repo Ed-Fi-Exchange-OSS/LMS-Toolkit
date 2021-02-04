@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from pandas import DataFrame
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
