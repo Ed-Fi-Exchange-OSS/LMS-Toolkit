@@ -7,7 +7,7 @@ from datetime import datetime
 import pytest
 from pandas import read_sql_query, DataFrame
 from google_classroom_extractor.api.students import _sync_without_cleanup
-from extractor_shared.api.resource_sync import (
+from edfi_lms_extractor_lib.api.resource_sync import (
     SYNC_COLUMNS_SQL,
     SYNC_COLUMNS,
     add_hash_and_json_to,

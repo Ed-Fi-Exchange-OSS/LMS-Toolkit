@@ -30,7 +30,7 @@ from google_classroom_extractor.mapping.assignment_submissions import (
 from google_classroom_extractor.mapping.user_submission_activities import (
     submissions_to_user_submission_activities_dfs,
 )
-from extractor_shared.csv_generation.write import (
+from edfi_lms_extractor_lib.csv_generation.write import (
     write_users,
     write_sections,
     write_section_associations,

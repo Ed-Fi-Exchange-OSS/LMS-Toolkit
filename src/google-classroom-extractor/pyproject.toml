@@ -25,6 +25,7 @@ xxhash = "^2.0.0"
 numpy = "1.19.3"
 errorhandler = "^2.0.1"
 ConfigArgParse = "^1.2.3"
+edfi-lms-extractor-lib = "1.0.0a0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"

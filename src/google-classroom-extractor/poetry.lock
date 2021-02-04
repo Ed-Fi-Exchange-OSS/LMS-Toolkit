@@ -177,6 +177,19 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "edfi-lms-extractor-lib"
+version = "1.0.0a0"
+description = "Shared functions library for Ed-Fi LMS Extractor projects"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+
+[package.dependencies]
+pandas = ">=1.1.1,<2.0.0"
+SQLAlchemy = ">=1.3.19,<2.0.0"
+xxhash = ">=2.0.0,<3.0.0"
+
+[[package]]
 name = "errorhandler"
 version = "2.0.1"
 description = "A logging framework handler that tracks when messages above a certain level have been logged."
@@ -1003,7 +1016,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3ea3d4168665b65f75cd07563a7f1f0553451206a26f3455bc0981fe93c3192f"
+content-hash = "4b640378d149656e26c2eada11f445c75dd04146a5bebfccaa16bd146744d9b0"
 
 [metadata.files]
 appdirs = [
@@ -1161,6 +1174,10 @@ cryptography = [
 docutils = [
     {file = "docutils-0.16-py2.py3-none-any.whl", hash = "sha256:0c5b78adfbf7762415433f5515cd5c9e762339e23369dbe8000d84a4bf4ab3af"},
     {file = "docutils-0.16.tar.gz", hash = "sha256:c2de3a60e9e7d07be26b7f2b00ca0309c207e06c100f9cc2a94931fc75a478fc"},
+]
+edfi-lms-extractor-lib = [
+    {file = "edfi-lms-extractor-lib-1.0.0a0.tar.gz", hash = "sha256:b80a7d5997b2c918eb1750c72cfad42dbf371b0415e50cd977394722742dfcb7"},
+    {file = "edfi_lms_extractor_lib-1.0.0a0-py3-none-any.whl", hash = "sha256:8f5fbaae72457503427ce01cf3dad4b5ca2e13eada5dc12bcc54f21d01a0b6f4"},
 ]
 errorhandler = [
     {file = "errorhandler-2.0.1-py2.py3-none-any.whl", hash = "sha256:dc6c54f5d9a4599e744b57aac2f925cce873188e9b02cae7c0eb120ee08a893f"},
