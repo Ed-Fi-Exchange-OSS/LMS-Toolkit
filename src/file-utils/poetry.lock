@@ -7,18 +7,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "artifacts-keyring"
-version = "0.3.1"
-description = "\"Automatically retrieve credentials for Azure Artifacts.\""
-category = "dev"
-optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
-
-[package.dependencies]
-keyring = ">=16.0"
-requests = ">=2.20.0"
-
-[[package]]
 name = "astroid"
 version = "2.4.2"
 description = "An abstract syntax tree for Python with inference support."
@@ -669,16 +657,12 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "887617101b96645325350785d163d5670d44fe1bddc733d807361215660ffd02"
+content-hash = "714cf61e744f9f715825c0e0e2c9e511c646c0e9d3ae8875db9438031964d708"
 
 [metadata.files]
 appdirs = [
     {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
-]
-artifacts-keyring = [
-    {file = "artifacts-keyring-0.3.1.tar.gz", hash = "sha256:22559cb6de86a1c062c0d81aa638ab046aceb8362db01b1a60c04040d8915438"},
-    {file = "artifacts_keyring-0.3.1-py2.py3-none-any.whl", hash = "sha256:6b97164052d026c210da1b1a74a035b19bfb7d3b2d9eacb93db0dd7935dc8128"},
 ]
 astroid = [
     {file = "astroid-2.4.2-py3-none-any.whl", hash = "sha256:bc58d83eb610252fd8de6363e39d4f1d0619c894b0ed24603b881c02e64c7386"},
