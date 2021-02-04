@@ -4,9 +4,8 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import List, Tuple
-from pandas import DataFrame, to_datetime
+from pandas import DataFrame
 from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
-from google_classroom_extractor.helpers.constants import DATE_FORMAT
 
 
 def courses_to_sections_df(courses_df: DataFrame) -> Tuple[DataFrame, List[str]]:
@@ -67,16 +66,8 @@ def courses_to_sections_df(courses_df: DataFrame) -> Tuple[DataFrame, List[str]]
         }
     )
 
-    result["SourceCreateDate"] = to_datetime(result["SourceCreateDate"]).dt.strftime(
-        DATE_FORMAT
-    )
-    result["SourceLastModifiedDate"] = to_datetime(
-        result["SourceLastModifiedDate"]
-    ).dt.strftime(DATE_FORMAT)
-
     result["SourceSystem"] = SOURCE_SYSTEM
     result["SISSectionIdentifier"] = ""  # No SIS id available from API
     result["Term"] = ""  # No term available from API
 
-    return (result, result["SourceSystemIdentifier"].tolist())
-    
+    return (result, result["SourceSystemIdentifier"].astype("string").tolist())

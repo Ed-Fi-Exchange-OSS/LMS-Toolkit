@@ -45,10 +45,9 @@ def request_all(
     course_ids: List[str] = courses_df["id"].tolist()
 
     return Result(
-        # request_all_usage_as_df(
-        #     reports_resource, sync_db, env_usage_start_date, env_usage_end_date
-        # ),
-        DataFrame(),
+        request_all_usage_as_df(
+            reports_resource, sync_db, env_usage_start_date, env_usage_end_date
+        ),
         courses_df,
         request_all_coursework_as_df(classroom_resource, course_ids, sync_db),
         request_all_submissions_as_df(classroom_resource, course_ids, sync_db),

@@ -4,9 +4,8 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Dict, Tuple, Any
-from pandas import DataFrame, to_datetime
+from pandas import DataFrame
 from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
-from google_classroom_extractor.helpers.constants import DATE_FORMAT
 
 TURNED_IN_STATE = "TURNED_IN"
 
@@ -94,13 +93,6 @@ def submissions_to_assignment_submissions_dfs(
             "state": "SubmissionStatus",
         }
     )
-
-    assignment_submissions_df["SourceCreateDate"] = to_datetime(
-        assignment_submissions_df["SourceCreateDate"]
-    ).dt.strftime(DATE_FORMAT)
-    assignment_submissions_df["SourceLastModifiedDate"] = to_datetime(
-        assignment_submissions_df["SourceLastModifiedDate"]
-    ).dt.strftime(DATE_FORMAT)
 
     assignment_submissions_df["SourceSystem"] = SOURCE_SYSTEM
 

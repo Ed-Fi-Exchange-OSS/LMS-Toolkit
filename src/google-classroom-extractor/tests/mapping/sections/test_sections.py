@@ -2,6 +2,7 @@
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
+from typing import Tuple, List
 import pytest
 from pandas import DataFrame
 from google_classroom_extractor.mapping.sections import courses_to_sections_df
@@ -30,7 +31,7 @@ LAST_MODIFIED_DATE = "18"
 
 def describe_when_a_single_coursework_with_unique_fields_is_mapped():
     @pytest.fixture
-    def sections_df() -> DataFrame:
+    def sections_df() -> Tuple[DataFrame, List[str]]:
         courses_df: DataFrame = DataFrame(
             {
                 "id": [COURSE_ID],
@@ -58,12 +59,14 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         return courses_to_sections_df(courses_df)
 
     def it_should_have_correct_shape(sections_df):
-        row_count, column_count = sections_df.shape
+        (df, _) = sections_df
+        row_count, column_count = df.shape
         assert row_count == 1
         assert column_count == 11
 
     def it_should_map_fields_correctly(sections_df):
-        row_dict = sections_df.to_dict(orient="records")[0]
+        (df, _) = sections_df
+        row_dict = df.to_dict(orient="records")[0]
         assert row_dict["SourceSystemIdentifier"] == COURSE_ID
         assert row_dict["LMSSectionStatus"] == COURSE_STATE
         assert row_dict["SectionDescription"] == DESCRIPTION_HEADING

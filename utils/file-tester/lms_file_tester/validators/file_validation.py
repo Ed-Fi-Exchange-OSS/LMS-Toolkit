@@ -38,7 +38,13 @@ def _validate_columns(expected: set, df: pd.DataFrame, file_type: str) -> List[s
 
 
 def _file_is_empty(file_type: str) -> List[str]:
-    return [f"{file_type} file could not be read or the file does not exist."]
+    return [f"{file_type} files are either empty, cannot be read, or do not exist. If this extractor does not support {file_type}, empty files are to be expected."]
+
+
+def _is_date_column_to_validate(name: str) -> bool:
+    if (name == "SourceCreateDate" or name == "SourceLastModifiedDate"):
+        return False
+    return name.endswith("Date") or name.endswith("DateTime")
 
 
 def _validate_date_formats(
@@ -48,7 +54,7 @@ def _validate_date_formats(
 
     cols = list(df.columns)
 
-    for column in [c for c in cols if (c.endswith("Date") or c.endswith("DateTime"))]:
+    for column in [c for c in cols if _is_date_column_to_validate(c)]:
         test_value = df.iloc[0][column]
         if pd.notna(test_value) and date_pattern.match(str(test_value)) is None:
             errors.append(f"{file_type} file has an invalid timestamp format for {column}")

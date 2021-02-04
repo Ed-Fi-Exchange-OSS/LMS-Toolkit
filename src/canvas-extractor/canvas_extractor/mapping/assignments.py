@@ -110,6 +110,8 @@ def map_to_udm_assignments(
     assignments_df["AssignmentCategory"] = ""
     assignments_df["SourceSystem"] = constants.SOURCE_SYSTEM
 
+    assignments_df["LMSSectionSourceSystemIdentifier"] = assignments_df["LMSSectionSourceSystemIdentifier"].astype("string")
+
     # group by section id as a Dict of DataFrames
     result: Dict[str, DataFrame] = cast(
         Dict[str, DataFrame],

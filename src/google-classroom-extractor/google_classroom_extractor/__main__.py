@@ -12,6 +12,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from googleapiclient.discovery import build, Resource
 from google.oauth2 import service_account
+from pandas import DataFrame
 import sqlalchemy
 from errorhandler import ErrorHandler
 
@@ -39,6 +40,7 @@ from extractor_shared.csv_generation.write import (
     write_assignments,
     write_user_activities,
     write_assignment_submissions,
+    write_system_activities,
 )
 from google_classroom_extractor.helpers import arg_parser
 
@@ -179,6 +181,13 @@ def main():
     write_section_activities(
         dict(),
         all_section_ids,
+        now,
+        output_directory,
+    )
+
+    logger.info("Writing empty LMS UDM SystemActivities to CSV file")
+    write_system_activities(
+        DataFrame(),
         now,
         output_directory,
     )

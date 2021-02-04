@@ -118,7 +118,8 @@ def _fill_in_missing_section_ids(
     """
     full_dfs_to_write = dfs_to_write.copy()
     for section_id in all_section_ids:
-        full_dfs_to_write.setdefault(section_id, DataFrame())
+        if section_id not in full_dfs_to_write:
+            full_dfs_to_write[section_id] = DataFrame()
     return full_dfs_to_write
 
 
@@ -340,5 +341,9 @@ def write_system_activities(
     _write_csv(
         df_to_write,
         output_date,
-        os.path.join(output_directory, SYSTEM_ACTIVITY_ROOT_DIRECTORY),
+        os.path.join(
+            output_directory,
+            SYSTEM_ACTIVITY_ROOT_DIRECTORY,
+            f"date={output_date.strftime('%Y-%m-%d')}/",
+        ),
     )

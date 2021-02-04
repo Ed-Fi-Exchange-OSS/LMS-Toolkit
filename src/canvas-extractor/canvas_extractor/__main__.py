@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from datetime import datetime
-from typing import Dict, Tuple, Union, cast
+from typing import Dict, Tuple, cast
 import sys
 import logging
 
@@ -49,7 +49,7 @@ output_directory: str = ""
 start_date: str = ""
 end_date: str = ""
 
-results_store: Dict[str, Tuple[list, Union[DataFrame, Dict[str, DataFrame]]]] = {}
+results_store: Dict[str, Tuple] = {}
 
 
 def _break_execution(failing_extraction: str) -> None:
@@ -110,10 +110,10 @@ def _get_courses(canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine) -> None
 def _get_sections(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Sections from Canvas API")
     (courses, _) = results_store["courses"]
-    (sections, udm_sections_df) = extract_sections(courses, sync_db)
+    (sections, udm_sections_df, all_section_ids) = extract_sections(courses, sync_db)
     logger.info("Writing LMS UDM Sections to CSV file")
     write_sections(udm_sections_df, datetime.now(), output_directory)
-    results_store["sections"] = (sections, udm_sections_df)
+    results_store["sections"] = (sections, udm_sections_df, all_section_ids)
 
 
 @catch_exceptions
@@ -121,14 +121,16 @@ def _get_assignments(
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> None:
     logger.info("Extracting Assignments from Canvas API")
-    (sections, _) = results_store["sections"]
+    (sections, _, all_section_ids) = results_store["sections"]
     (courses, _) = results_store["courses"]
     sections_df = to_df(sections)
     (assignments, udm_assignments_df) = extract_assignments(
         courses, sections_df, sync_db
     )
     logger.info("Writing LMS UDM Assignments to CSV files")
-    write_assignments(udm_assignments_df, datetime.now(), output_directory)
+    write_assignments(
+        udm_assignments_df, all_section_ids, datetime.now(), output_directory
+    )
     results_store["assignments"] = (assignments, udm_assignments_df)
 
 
@@ -148,7 +150,7 @@ def _get_submissions(
 ) -> None:
     logger.info("Extracting Submissions from Canvas API")
     (assignments, _) = results_store["assignments"]
-    (sections, _) = results_store["sections"]
+    (sections, _, _) = results_store["sections"]
     logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
     write_assignment_submissions(
         extract_submissions(assignments, sections, sync_db),
@@ -160,10 +162,12 @@ def _get_submissions(
 @catch_exceptions
 def _get_enrollments(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Extracting Enrollments from Canvas API")
-    (sections, _) = results_store["sections"]
+    (sections, _, all_section_ids) = results_store["sections"]
     (enrollments, udm_enrollments) = extract_enrollments(sections, sync_db)
     logger.info("Writing LMS UDM UserSectionAssociations to CSV files")
-    write_section_associations(udm_enrollments, datetime.now(), output_directory)
+    write_section_associations(
+        udm_enrollments, all_section_ids, datetime.now(), output_directory
+    )
     results_store["enrollments"] = (enrollments, udm_enrollments)
 
 
@@ -171,12 +175,12 @@ def _get_enrollments(sync_db: sqlalchemy.engine.base.Engine) -> None:
 def _get_grades() -> None:
     logger.info("Extracting Grades from Canvas API")
     (enrollments, udm_enrollments) = results_store["enrollments"]
-    (sections, _) = results_store["sections"]
-    udm_grades = extract_grades(
+    (sections, _, all_section_ids) = results_store["sections"]
+    udm_grades: Dict[str, DataFrame] = extract_grades(
         enrollments, cast(Dict[str, DataFrame], udm_enrollments), sections
     )
     logger.info("Writing LMS UDM Grades to CSV files")
-    write_grades(udm_grades, datetime.now(), output_directory)
+    write_grades(udm_grades, all_section_ids, datetime.now(), output_directory)
 
 
 @catch_exceptions

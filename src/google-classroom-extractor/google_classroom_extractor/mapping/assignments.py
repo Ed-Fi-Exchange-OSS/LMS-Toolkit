@@ -5,9 +5,8 @@
 
 from typing import Dict, Optional
 from datetime import datetime
-from pandas import DataFrame, to_numeric, to_datetime
+from pandas import DataFrame, to_numeric
 from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
-from google_classroom_extractor.helpers.constants import DATE_FORMAT
 
 
 def coursework_to_assignments_dfs(
@@ -116,14 +115,6 @@ def coursework_to_assignments_dfs(
     )
 
     assignments_df["SubmissionType"] = assignments_df["AssignmentCategory"]
-
-    assignments_df["SourceCreateDate"] = to_datetime(
-        assignments_df["SourceCreateDate"]
-    ).dt.strftime(DATE_FORMAT)
-    assignments_df["SourceLastModifiedDate"] = to_datetime(
-        assignments_df["SourceLastModifiedDate"]
-    ).dt.strftime(DATE_FORMAT)
-
     assignments_df["SourceSystem"] = SOURCE_SYSTEM
     assignments_df["EndDateTime"] = ""  # No EndDateTime available from API
 
