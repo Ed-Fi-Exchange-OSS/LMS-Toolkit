@@ -1,4 +1,4 @@
-# Ed-Fi-X-Fizz
+# LMS-Toolkit
 
 The goal is to provide access to guidance, pointers to tools, and peer
 bench-marking possibilities for school districts to get to the data they need

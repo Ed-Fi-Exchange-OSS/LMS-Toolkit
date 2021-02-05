@@ -30,7 +30,7 @@ version: TeamCity - `2019.2.x`, Python - `3.8.x`, Poetry - 1.0.x):
 1. Create a VCS Root:
     * Type: `Git`
     * Name: `Fizz`
-    * Fetch Url: `https://github.com/%github.organization%/Ed-Fi-X-Fizz`
+    * Fetch Url: `https://github.com/%github.organization%/LMS-Toolkit`
     * Default Branch: `%git.branch.default%`
     * Branch Specification: `%git.branch.specification%`
     * Authentication method: `password`

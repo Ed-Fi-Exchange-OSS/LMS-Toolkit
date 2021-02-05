@@ -1,4 +1,4 @@
-# Ed-Fi-X-Fizz
+# LMS-Toolkit
 
 This product includes software developed at the [Ed-Fi
 Alliance](https://www.ed-fi.org).
@@ -403,7 +403,7 @@ https://github.com/numpy/numpy
 ## requests
 
 https://github.com/psf/requests
-    
+
 
                                  Apache License
                            Version 2.0, January 2004
@@ -1129,7 +1129,7 @@ https://github.com/chardet/chardet
     that what they have is not the original version, so that the original
     author's reputation will not be affected by problems that might be
     introduced by others.
-    
+
     Finally, software patents pose a constant threat to the existence of
     any free program.  We wish to make sure that a company cannot
     effectively restrict the users of a free program by obtaining a
@@ -1185,7 +1185,7 @@ https://github.com/chardet/chardet
     "work based on the library" and a "work that uses the library".  The
     former contains code derived from the library, whereas the latter must
     be combined with the library in order to run.
-    
+
             GNU LESSER GENERAL PUBLIC LICENSE
     TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
@@ -1220,7 +1220,7 @@ https://github.com/chardet/chardet
     on the Library (independent of the use of the Library in a tool for
     writing it).  Whether that is true depends on what the Library does
     and what the program that uses the Library does.
-    
+
     1. You may copy and distribute verbatim copies of the Library's
     complete source code as you receive it, in any medium, provided that
     you conspicuously and appropriately publish on each copy an
@@ -1232,7 +1232,7 @@ https://github.com/chardet/chardet
     You may charge a fee for the physical act of transferring a copy,
     and you may at your option offer warranty protection in exchange for a
     fee.
-    
+
     2. You may modify your copy or copies of the Library or any portion
     of it, thus forming a work based on the Library, and copy and
     distribute such modifications or work under the terms of Section 1
@@ -1290,7 +1290,7 @@ https://github.com/chardet/chardet
     ordinary GNU General Public License has appeared, then you can specify
     that version instead if you wish.)  Do not make any other change in
     these notices.
-    
+
     Once this change is made in a given copy, it is irreversible for
     that copy, so the ordinary GNU General Public License applies to all
     subsequent copies and derivative works made from that copy.
@@ -1341,7 +1341,7 @@ https://github.com/chardet/chardet
     distribute the object code for the work under the terms of Section 6.
     Any executables containing that work also fall under Section 6,
     whether or not they are linked directly with the Library itself.
-    
+
     6. As an exception to the Sections above, you may also combine or
     link a "work that uses the Library" with the Library to produce a
     work containing portions of the Library, and distribute that work
@@ -1403,7 +1403,7 @@ https://github.com/chardet/chardet
     accompany the operating system.  Such a contradiction means you cannot
     use both them and the Library together in an executable that you
     distribute.
-    
+
     7. You may place library facilities that are a work based on the
     Library side-by-side in a single library together with other library
     facilities not covered by this License, and distribute such a combined
@@ -1444,7 +1444,7 @@ https://github.com/chardet/chardet
     restrictions on the recipients' exercise of the rights granted herein.
     You are not responsible for enforcing compliance by third parties with
     this License.
-    
+
     11. If, as a consequence of a court judgment or allegation of patent
     infringement or for any other reason (not limited to patent issues),
     conditions are imposed on you (whether by court order, agreement or
@@ -1496,7 +1496,7 @@ https://github.com/chardet/chardet
     the Free Software Foundation.  If the Library does not specify a
     license version number, you may choose any version ever published by
     the Free Software Foundation.
-    
+
     14. If you wish to incorporate parts of the Library into other free
     programs whose distribution conditions are incompatible with these,
     write to the author to ask for permission.  For software which is
@@ -1530,7 +1530,7 @@ https://github.com/chardet/chardet
     DAMAGES.
 
                 END OF TERMS AND CONDITIONS
-    
+
             How to Apply These Terms to Your New Libraries
 
     If you develop a new library, and you want it to be of the greatest
@@ -1627,16 +1627,16 @@ https://github.com/kjd/idna
     disclaimer in the documentation and/or other materials provided with
     the distribution.
 
-    #. Neither the name of the copyright holder nor the names of the 
-    contributors may be used to endorse or promote products derived 
+    #. Neither the name of the copyright holder nor the names of the
+    contributors may be used to endorse or promote products derived
     from this software without specific prior written permission.
 
     #. THIS SOFTWARE IS PROVIDED BY THE CONTRIBUTORS "AS IS" AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
     IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR 
-    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
     LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
     DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
     THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
@@ -1859,7 +1859,7 @@ https://github.com/pytest-dev/pytest
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
-    
+
 ## pyint
 
 https://github.com/ymcmrs/PyINT
@@ -3172,7 +3172,7 @@ https://github.com/jmcgeheeiv/pyfakefs
             defend, and hold each Contributor harmless for any liability
             incurred by, or claims asserted against, such Contributor by reason
             of your accepting any such warranty or additional liability.
-        
+
     ## pytest-describe
 
     https://github.com/pytest-dev/pytest-describe
@@ -3202,7 +3202,7 @@ https://github.com/jmcgeheeiv/pyfakefs
         Apache License
         ==============
 
-        _Version 2.0, January 2004_  
+        _Version 2.0, January 2004_
         _&lt;<http://www.apache.org/licenses/>&gt;_
 
         ### Terms and Conditions for use, reproduction, and distribution
@@ -4351,7 +4351,7 @@ https://github.com/mkleehammer/pyodbc
     documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
     rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
     permit persons to whom the Software is furnished to do so.
-    
+
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
     WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
     OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
@@ -4550,7 +4550,7 @@ https://github.com/ipython/ipykernel
 
         # Copyright (c) IPython Development Team.
         # Distributed under the terms of the Modified BSD License.
-    
+
 ## requests_oauthlib
 
 https://github.com/requests/requests-oauthlib
