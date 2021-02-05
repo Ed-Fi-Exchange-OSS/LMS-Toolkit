@@ -29,17 +29,17 @@ version: TeamCity - `2019.2.x`, Python - `3.8.x`, Poetry - 1.0.x):
 
 1. Create a VCS Root:
     * Type: `Git`
-    * Name: `Fizz`
+    * Name: `LMS-Toolkit`
     * Fetch Url: `https://github.com/%github.organization%/LMS-Toolkit`
     * Default Branch: `%git.branch.default%`
     * Branch Specification: `%git.branch.specification%`
     * Authentication method: `password`
     * Username: `%github.username%`
     * Password: `%github.accessToken%`
-1. Create a sub-project named "Fizz"
+1. Create a sub-project named "LMS Toolkit"
 1. Turn on Versioned Settings:
     * Synchronization enabled: `true`
-    * Project settings VCS root: `Fizz`
+    * Project settings VCS root: `LMS-Toolkit`
     * When build starts: `use settings from VCS`
     * Store secure values outside of VCS: `true`
     * Settings format: `kotlin`

@@ -7,9 +7,9 @@ package _self
 
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 
-object FizzProject : Project({
-    name = "Fizz"
-    description = "Project Fizz Utilities for Learning Management System Data"
+object LmsToolkitProject : Project({
+    name = "LMS Toolkit"
+    description = "LMS Toolkit Utilities for Learning Management System Data"
 
     params {
         param("teamcity.ui.settings.readOnly","true")
