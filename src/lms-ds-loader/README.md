@@ -36,7 +36,7 @@ Sample call using full integrated security, loading from the sample files
 directory:
 
 ```bash
-poetry run python ./lms_ds_loader/main.py --server localhost --dbname fizz --useintegratedsecurity --csvpath ../../docs/sample-out
+poetry run python ./lms_ds_loader/main.py --server localhost --dbname lms_toolkit --useintegratedsecurity --csvpath ../../docs/sample-out
 ```
 
 ## Dev Operations
