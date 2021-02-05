@@ -16,6 +16,10 @@ as well as exploratory code. These are not necessarily polished tools. The code
 supporting this project will evolve continuously, and this readme will be
 updated as tools become formalized.
 
+## Documentation
+
+* [Build script](docs/build.md)
+
 ## Legal Information
 
 Copyright (c) 2020 Ed-Fi Alliance, LLC and contributors.
