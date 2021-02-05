@@ -6,7 +6,7 @@
 import os
 from typing import Optional, Union
 
-import lms_file_utils.constants as c
+import edfi_lms_file_utils.constants as c
 
 
 def _get_directory_for_section(
