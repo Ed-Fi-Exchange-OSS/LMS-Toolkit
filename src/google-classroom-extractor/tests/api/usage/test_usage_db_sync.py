@@ -35,7 +35,7 @@ def db_posts_by_name_date(test_db, name_date) -> int:
 
 
 def describe_when_overlap_removal_is_needed():
-    @patch("google_classroom_extractor.api.usage.request_latest_usage_as_df")
+    @patch("edfi_google_classroom_extractor.api.usage.request_latest_usage_as_df")
     def it_should_load_three_pulls_in_a_row_with_overlap_correctly(
         mock_latest_usage_df, test_db_fixture
     ):
@@ -91,7 +91,7 @@ def describe_when_pulls_of_same_usage_data_differ_in_number_of_posts():
     initial_posts = "3"
     update_posts = "5"
 
-    @patch("google_classroom_extractor.api.usage.request_latest_usage_as_df")
+    @patch("edfi_google_classroom_extractor.api.usage.request_latest_usage_as_df")
     def it_should_replace_old_post_count_with_new(
         mock_latest_usage_df, test_db_fixture
     ):
