@@ -1,6 +1,6 @@
 # Build Script
 
-The `eng` directory contains a Python script, `build.py`, that supports
+The `eng` directory contains a Python script, [`build.py`](../eng/build.py), that supports
 common development tasks on all of the packages in this repository. Usage:
 
 ```bash
