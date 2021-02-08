@@ -229,21 +229,21 @@ def extract_grades(
     sections: List[Section],
 ) -> Dict[str, DataFrame]:
     """
-    Gets all Canvas enrollments, in the Ed-Fi UDM format.
+    Gets all Canvas grades, in the Ed-Fi UDM format.
 
     Parameters
     ----------
     enrollments: List[Enrollment]
         A list of Canvas Enrollment objects.
     udm_enrollments: Dict[str, DataFrame]
-        A dict of udm enrollments with section_id as the key and DartaFrame as value.
+        A dict of udm enrollments with section_id as the key and DataFrame as value.
     sections: List[Section]
         A list of Canvas Section objects.
 
     Returns
     -------
     Dict[str, DataFrame]
-        A dict with section_id as key and DataFrame as value.
+        A dict with section_id as key and UDM Grades DataFrame as value.
     """
     output: Dict[str, DataFrame] = {}
 
@@ -266,11 +266,8 @@ def extract_grades(
                 if first_enrollment["SourceSystemIdentifier"] == str(enrollment.id)
             ][0]
             grade["SourceSystemIdentifier"] = f"g#{enrollment.id}"
-            grade["LMSUserIdentifier"] = current_udm_enrollment[
-                "LMSUserSourceSystemIdentifier"
-            ]
-            grade["LMSSectionIdentifier"] = section.id
-            grade["LMSGradeIdentifier"] = grade["SourceSystemIdentifier"]
+            grade["LMSUserLMSSectionAssociationSourceSystemIdentifier"] = str(enrollment.id)
+            grade["LMSSectionIdentifier"] = str(section.id)
             grade["CreateDate"] = current_udm_enrollment["CreateDate"]
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
             current_grades.append(grade)

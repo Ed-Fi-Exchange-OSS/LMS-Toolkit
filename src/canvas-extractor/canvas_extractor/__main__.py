@@ -15,7 +15,7 @@ from canvasapi import Canvas
 
 from canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from extractor_shared.csv_generation.write import (
-    write_users,
+    write_section_activities, write_users,
     write_sections,
     write_section_associations,
     write_assignments,
@@ -114,6 +114,13 @@ def _get_sections(sync_db: sqlalchemy.engine.base.Engine) -> None:
     logger.info("Writing LMS UDM Sections to CSV file")
     write_sections(udm_sections_df, datetime.now(), output_directory)
     results_store["sections"] = (sections, udm_sections_df, all_section_ids)
+
+
+@catch_exceptions
+def _get_section_activities() -> None:
+    (_, _, all_section_ids) = results_store["sections"]
+    logger.info("Writing empty LMS UDM SectionActivities to CSV files")
+    write_section_activities(dict(), all_section_ids, datetime.now(), output_directory)
 
 
 @catch_exceptions
@@ -222,6 +229,7 @@ def main():
         _break_execution("Enrollments")
 
     _get_grades()  # Grades don't need sync process because they are part of enrollments
+    _get_section_activities()  # SectionActivities are empty
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
 

@@ -47,7 +47,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         assert result["LMSUserSourceSystemIdentifier"].iloc[0] == "113"
 
     def it_should_map_created_to_SubmissionDateTime(result):
-        assert result["SubmissionDateTime"].iloc[0] == "2020/09/14 17:23:46"
+        assert result["SubmissionDateTime"].iloc[0] == "2020-09-14 17:23:46"
 
     def it_should_have_empty_SourceCreateDate(result):
         assert result["SourceCreateDate"].iloc[0] is None
