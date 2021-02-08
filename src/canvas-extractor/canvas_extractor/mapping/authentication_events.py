@@ -9,6 +9,10 @@ from pandas import DataFrame
 from . import constants
 
 
+def _map_type(lms_type: str):
+    return "sign-in" if lms_type == "login" else "sign-out"
+
+
 def map_to_udm_system_activities(authentication_events: pd.DataFrame) -> pd.DataFrame:
     """
     Maps a DataFrame containing Canvas authentication_events into the Ed-Fi LMS Unified Data
@@ -56,7 +60,7 @@ def map_to_udm_system_activities(authentication_events: pd.DataFrame) -> pd.Data
         ]
     ].copy()
 
-    df["LMSUserSourceSystemIdentifier"] = df["id"].apply(lambda x: x.split("#")[0])
+    df["LMSUserSourceSystemIdentifier"] = df["id"].apply(lambda x: x.split("#")[1])
 
     df.rename(
         columns={
@@ -67,6 +71,7 @@ def map_to_udm_system_activities(authentication_events: pd.DataFrame) -> pd.Data
         inplace=True,
     )
 
+    df["ActivityType"] = df["ActivityType"].apply(_map_type)
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["ActivityStatus"] = "active"
     df["ParentSourceSystemIdentifier"] = ""

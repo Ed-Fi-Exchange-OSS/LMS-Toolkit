@@ -24,7 +24,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         def result() -> pd.DataFrame:
 
             csv = """id,created_at,created_at_date,event_type,links,CreateDate,LastModifiedDate
-111#2021-01-20T21:12:16Z,2021-01-20T21:12:16Z,2021-01-20 21:12:16+00:00,login,"test",2021-01-25 09:24:05.978277,2021-01-25 09:24:05.978277"""
+in#111#2021-01-20T21:12:16Z,2021-01-20T21:12:16Z,2021-01-20 21:12:16+00:00,login,"test",2021-01-25 09:24:05.978277,2021-01-25 09:24:05.978277"""
 
             lines = csv.split("\n")
             df = pd.DataFrame(
@@ -44,7 +44,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             assert result["SourceSystem"].iloc[0] == "Canvas"
 
         def it_should_map_id_to_source_system_identifier(result):
-            assert result["SourceSystemIdentifier"].iloc[0] == "111#2021-01-20T21:12:16Z"
+            assert result["SourceSystemIdentifier"].iloc[0] == "in#111#2021-01-20T21:12:16Z"
 
         def it_should_map_id_to_user_source_system_identifier(result):
             assert result["LMSUserSourceSystemIdentifier"].iloc[0] == "111"
