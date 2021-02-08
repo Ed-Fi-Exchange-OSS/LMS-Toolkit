@@ -262,8 +262,11 @@ def write_system_activities(
     output_directory: str
         is the root output directory
     """
+    output_path = os.path.join(output_directory, SYSTEM_ACTIVITY_ROOT_DIRECTORY)
+    output_path = os.path.join(output_path, "date=" + output_date.strftime("%Y-%m-%d"))
+
     _write_csv(
         df_to_write,
         output_date,
-        os.path.join(output_directory, SYSTEM_ACTIVITY_ROOT_DIRECTORY),
+        output_path,
     )
