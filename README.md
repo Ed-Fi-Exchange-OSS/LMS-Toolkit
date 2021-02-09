@@ -36,8 +36,8 @@ data with data from SIS and assessment systems.
 
 ## Data Analysis Documentation
 
-Several Jupyter Notebooks have been developed to document the output files and
-provide sample analyses:
+Several [Jupyter Notebooks](src/notebooks/readme.md) have been developed to
+document the output files and provide sample analyses:
 
 * [Filesystem Tutorial/In Danger of
   Failing](src/notebooks/filesystem-tutorial.ipynb)
