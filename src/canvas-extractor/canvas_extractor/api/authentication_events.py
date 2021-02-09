@@ -14,7 +14,7 @@ from canvasapi.user import User
 from canvasapi.paginated_list import PaginatedList
 
 from .canvas_helper import to_df
-from extractor_shared.api.resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
+from edfi_lms_extractor_lib.api.resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
 from .api_caller import call_with_retry
 
 AUTH_EVENTS_RESOURCE_NAME = "Authentication_Events"

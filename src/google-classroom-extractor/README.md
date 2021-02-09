@@ -55,6 +55,7 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
 
 Valid log levels:
+
 * DEBUG
 * INFO(default)
 * WARNING
@@ -147,6 +148,8 @@ the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 1. Run unit tests: `poetry run pytest`
 1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
 1. View code coverage: `poetry run coverage report`
+
+_Also see [build.py](../../docs/build.md)_.
 
 ### Visual Studio Code (Optional)
 

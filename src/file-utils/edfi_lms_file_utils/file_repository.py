@@ -7,7 +7,7 @@ import os
 from typing import List, Optional
 
 
-import lms_file_utils.directory_repository as dr
+import edfi_lms_file_utils.directory_repository as dr
 
 
 def _get_newest_file(directory: Optional[str]) -> Optional[str]:

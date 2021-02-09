@@ -5,7 +5,7 @@
 
 import pytest
 
-from google_classroom_extractor.helpers.arg_parser import (
+from edfi_google_classroom_extractor.helpers.arg_parser import (
     parse_main_arguments,
     MainArguments
 )

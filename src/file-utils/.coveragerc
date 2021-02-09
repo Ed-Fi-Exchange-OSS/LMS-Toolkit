@@ -1,5 +1,5 @@
 [run]
 branch = True
-source = lms_file_utils
+source = edfi_lms_file_utils
 
 [report]

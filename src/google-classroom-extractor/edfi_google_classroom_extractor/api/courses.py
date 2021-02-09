@@ -8,8 +8,8 @@ from typing import List, Dict, Optional, cast
 from pandas import DataFrame, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
-from google_classroom_extractor.api.api_caller import call_api, ResourceType
-from extractor_shared.api.resource_sync import (
+from edfi_google_classroom_extractor.api.api_caller import call_api, ResourceType
+from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
 )

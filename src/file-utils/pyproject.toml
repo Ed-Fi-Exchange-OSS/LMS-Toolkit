@@ -1,7 +1,9 @@
 [tool.poetry]
-name = "lms-file-utils"
-version = "0.1.0"
+name = "edfi-lms-file-utils"
+version = "1.0.0-alpha.0"
 description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
+homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
+repository = "https://github.com/Ed-Fi-Exchange-OSS/Ed-Fi-X-Fizz"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
 
@@ -21,6 +23,7 @@ teamcity-messages = "^1.28"
 coverage = "^5.3"
 pytest-mock = "^3.3.1"
 pylint = "^2.6.0"
+twine = "^3.3.0"
 
 [build-system]
 requires = ["poetry>=0.12"]

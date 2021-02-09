@@ -6,11 +6,11 @@
 from typing import Dict
 import pytest
 from pandas import DataFrame
-from google_classroom_extractor.mapping.user_section_associations import (
+from edfi_google_classroom_extractor.mapping.user_section_associations import (
     students_and_teachers_to_user_section_associations_dfs,
     ENROLLMENT_STATUS_ACTIVE,
 )
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 # unique value for each column in fixture

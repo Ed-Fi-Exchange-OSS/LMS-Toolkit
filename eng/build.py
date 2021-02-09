@@ -23,6 +23,7 @@ def _display_help():
 * typecheck
 * typecheck:xml
 * build
+* publish
 
 For example, to run unit tests with code coverage, optimized for TeamCity
 output, on utility `lms-ds-loader`:
@@ -34,6 +35,8 @@ output, on utility `lms-ds-loader`:
 
 
 def _run_command(command: List[str], exit_immediately: bool = True):
+
+    print('\033[95m' + " ".join(command) + '\033[0m')
 
     # Some system configurations on Windows-based CI servers have trouble
     # finding poetry, others do not. Explicitly calling "cmd /c" seems to help,
@@ -162,6 +165,33 @@ def _run_build():
     ])
 
 
+def _run_publish():
+    if (os.name == "nt"):
+        _run_command([
+            "del",
+            "/q",
+            "dist\\*.*"
+        ], exit_immediately=False)
+    else:
+        _run_command([
+            "rm",
+            "dist/*"
+        ], exit_immediately=False)
+
+    _run_command([
+        "poetry",
+        "build"
+    ], exit_immediately=False)
+
+    _run_command([
+        "poetry",
+        "run",
+        "twine",
+        "upload",
+        "dist/*"
+    ])
+
+
 if __name__ == "__main__":
     if not sys.version_info >= (3, 8):
         print("This program requires Python 3.8 or newer.", file=sys.stderr)
@@ -179,7 +209,8 @@ if __name__ == "__main__":
         "lint": _run_lint,
         "typecheck": _run_typecheck,
         "typecheck:xml": _run_typecheck_xml,
-        "build": _run_build
+        "build": _run_build,
+        "publish": _run_publish,
     }
 
     switcher.get(sys.argv[1], _display_help)()

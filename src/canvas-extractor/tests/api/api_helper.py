@@ -5,7 +5,7 @@
 from typing import List
 from canvasapi.canvas import Canvas
 from pandas import DataFrame
-from extractor_shared.api.resource_sync import (
+from edfi_lms_extractor_lib.api.resource_sync import (
     add_hash_and_json_to,
     add_sourceid_to,
 )

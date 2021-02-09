@@ -6,7 +6,7 @@
 
 import pytest
 
-from lms_file_utils.file_repository import (
+from edfi_lms_file_utils.file_repository import (
     get_users_file,
     get_sections_file,
     get_section_associations_file,

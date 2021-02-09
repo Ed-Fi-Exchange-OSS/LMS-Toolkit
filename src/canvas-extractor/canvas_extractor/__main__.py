@@ -14,7 +14,7 @@ from errorhandler import ErrorHandler
 from canvasapi import Canvas
 
 from canvas_extractor.config import get_canvas_api, get_sync_db_engine
-from extractor_shared.csv_generation.write import (
+from edfi_lms_extractor_lib.csv_generation.write import (
     write_users,
     write_sections,
     write_section_associations,
@@ -23,7 +23,7 @@ from extractor_shared.csv_generation.write import (
     write_assignment_submissions,
     write_system_activities,
 )
-from extractor_shared.helpers.decorators import catch_exceptions
+from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 
 from canvas_extractor.extract_facade import (
     extract_courses,

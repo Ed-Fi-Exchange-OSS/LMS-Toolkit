@@ -8,8 +8,8 @@ from typing import Callable, Union
 
 import pandas as pd
 
-import lms_file_utils.file_repository as fr
-import lms_file_utils.constants as c
+import edfi_lms_file_utils.file_repository as fr
+import edfi_lms_file_utils.constants as c
 
 logger = logging.getLogger(__name__)
 

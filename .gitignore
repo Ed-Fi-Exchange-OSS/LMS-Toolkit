@@ -1,5 +1,6 @@
 node_modules/
 *.csv
+src/extractor-lib/tests/api/test.db
 
 
 # Byte-compiled / optimized / DLL files

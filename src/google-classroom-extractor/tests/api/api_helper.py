@@ -8,7 +8,7 @@ import pook
 from pathlib import Path
 from googleapiclient.discovery import build, Resource
 from google.oauth2.service_account import Credentials
-from extractor_shared.api.resource_sync import (
+from edfi_lms_extractor_lib.api.resource_sync import (
     add_hash_and_json_to,
     add_sourceid_to,
 )

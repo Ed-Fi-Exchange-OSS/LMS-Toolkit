@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 from pandas import read_sql_query, DataFrame
 from sqlalchemy import create_engine
-from extractor_shared.api.resource_sync import (
+from edfi_lms_extractor_lib.api.resource_sync import (
     SYNC_COLUMNS_SQL,
     SYNC_COLUMNS,
     add_hash_and_json_to,

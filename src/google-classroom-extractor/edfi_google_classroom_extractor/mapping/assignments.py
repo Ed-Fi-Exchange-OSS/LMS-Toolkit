@@ -6,7 +6,7 @@
 from typing import Dict, Optional
 from datetime import datetime
 from pandas import DataFrame, to_numeric
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 def coursework_to_assignments_dfs(

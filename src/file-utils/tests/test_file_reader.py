@@ -7,7 +7,7 @@ import pandas as pd
 from unittest.mock import Mock
 import pytest
 
-from lms_file_utils.file_reader import (
+from edfi_lms_file_utils.file_reader import (
     get_all_users,
     get_all_sections,
     get_all_section_associations,
@@ -58,36 +58,36 @@ def describe_given_files_exist():
     def fixture(mocker):
 
         mocker.patch(
-            "lms_file_utils.file_repository.get_users_file", lambda _: USERS_FILE
+            "edfi_lms_file_utils.file_repository.get_users_file", lambda _: USERS_FILE
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_sections_file", lambda _: SECTIONS_FILE
+            "edfi_lms_file_utils.file_repository.get_sections_file", lambda _: SECTIONS_FILE
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_system_activities_files",
+            "edfi_lms_file_utils.file_repository.get_system_activities_files",
             lambda _: [SYSTEM_ACTIVITIES_FILE],
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_section_associations_file",
+            "edfi_lms_file_utils.file_repository.get_section_associations_file",
             lambda _a, _b: ASSOCIATIONS_FILE,
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_section_activities_file",
+            "edfi_lms_file_utils.file_repository.get_section_activities_file",
             lambda _a, _b: SECTION_ACTIVITIES_FILE,
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_assignments_file",
+            "edfi_lms_file_utils.file_repository.get_assignments_file",
             lambda _a, _b: ASSIGNMENTS_FILE,
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_grades_file", lambda _a, _b: GRADES_FILE
+            "edfi_lms_file_utils.file_repository.get_grades_file", lambda _a, _b: GRADES_FILE
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_submissions_file",
+            "edfi_lms_file_utils.file_repository.get_submissions_file",
             lambda _a, _b, _c: SUBMISSIONS_FILE,
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_attendance_events_file",
+            "edfi_lms_file_utils.file_repository.get_attendance_events_file",
             lambda _a, _b: ATTENDANCE_FILE,
         )
 
@@ -210,31 +210,31 @@ def describe_given_there_are_no_files_to_read():
     @pytest.fixture
     def fixture(mocker):
 
-        mocker.patch("lms_file_utils.file_repository.get_users_file", lambda _: None)
-        mocker.patch("lms_file_utils.file_repository.get_sections_file", lambda _: None)
+        mocker.patch("edfi_lms_file_utils.file_repository.get_users_file", lambda _: None)
+        mocker.patch("edfi_lms_file_utils.file_repository.get_sections_file", lambda _: None)
         mocker.patch(
-            "lms_file_utils.file_repository.get_system_activities_files", lambda _: None
+            "edfi_lms_file_utils.file_repository.get_system_activities_files", lambda _: None
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_section_associations_file",
+            "edfi_lms_file_utils.file_repository.get_section_associations_file",
             lambda _a, _b: None,
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_section_activities_file",
+            "edfi_lms_file_utils.file_repository.get_section_activities_file",
             lambda _a, _b: None,
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_assignments_file", lambda _a, _b: None
+            "edfi_lms_file_utils.file_repository.get_assignments_file", lambda _a, _b: None
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_grades_file", lambda _a, _b: None
+            "edfi_lms_file_utils.file_repository.get_grades_file", lambda _a, _b: None
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_submissions_file",
+            "edfi_lms_file_utils.file_repository.get_submissions_file",
             lambda _a, _b, _c: None,
         )
         mocker.patch(
-            "lms_file_utils.file_repository.get_attendance_events_file",
+            "edfi_lms_file_utils.file_repository.get_attendance_events_file",
             lambda _a, _b: None,
         )
 
