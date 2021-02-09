@@ -45,7 +45,6 @@ project {
             refs/heads/(*)
             refs/(pull/*)/head
         """.trimIndent())
-        param("teamcity.ui.settings.readOnly", "true")
     }
 
     subProject(SchoologyProject)
