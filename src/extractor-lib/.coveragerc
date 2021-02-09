@@ -1,5 +1,5 @@
 [run]
 branch = True
-source = extractor_shared
+source = edfi_lms_extractor_lib
 
 [report]

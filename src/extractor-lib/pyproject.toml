@@ -1,15 +1,11 @@
 [tool.poetry]
 name = "edfi-lms-extractor-lib"
-version = "0.1.20"
+version = "1.0.0-alpha.1"
 homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/Ed-Fi-X-Fizz"
 description = "Shared functions library for Ed-Fi LMS Extractor projects"
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
 license = "Apache-2.0"
-packages = [
-    { include = "edfi-lms-extractor-lib" }
-]
-include = ["edfi-lms-extractor-lib/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
