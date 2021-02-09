@@ -309,7 +309,11 @@ def extract_system_activities(
         auth_events = authEventsApi.request_events(users, start_date, end_date)
         for event in auth_events:
             user_id = event.links["user"]
-            event.id = f"{user_id}#{event.created_at}"  # type: ignore
+            event_type = event.event_type
+            # according to Canvas docs, login and logout are the only possible values
+            event_type = "in" if event_type == "login" else "out"
+
+            event.id = f"{event_type}#{user_id}#{event.created_at}"  # type: ignore
         auth_events = authEventsApi.authentication_events_synced_as_df(
             auth_events, sync_db
         )
