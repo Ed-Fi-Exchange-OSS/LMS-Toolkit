@@ -8,6 +8,14 @@ delinquency, and on general student activity and "presence" in instructional
 systems. You can read more about this on [Ed-Fi Tech
 Docs](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit).
 
+## Getting Started
+
+All of the tools in this repository require [Python
+3.8](https://www.python.org/downloads/release/python-380/) or higher and
+[Poetry](https://python-poetry.org/docs/). Please install both and insure the
+`python` and `poetry` commands are available in your command path before trying
+to run any of the tools.
+
 ## Tools
 
 The Toolkit consists of extractors and loaders:
