@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <name>EdFi_RDTeam_Exchange_LmsToolkit Config DSL Script</name>
-  <groupId>EdFi_RDTeam_Exchange_LmsToolkit</groupId>
-  <artifactId>EdFi_RDTeam_Exchange_LmsToolkit_dsl</artifactId>
+  <name>EdFi_RandD_Exchange_LMSToolkit Config DSL Script</name>
+  <groupId>EdFi_RandD_Exchange_LMSToolkit</groupId>
+  <artifactId>EdFi_RandD_Exchange_LMSToolkit_dsl</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <parent>
