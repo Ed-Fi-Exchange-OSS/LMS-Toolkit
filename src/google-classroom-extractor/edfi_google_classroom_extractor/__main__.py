@@ -16,22 +16,22 @@ from pandas import DataFrame
 import sqlalchemy
 from errorhandler import ErrorHandler
 
-from google_classroom_extractor.result import Result
-from google_classroom_extractor.config import get_credentials, get_sync_db_engine
-from google_classroom_extractor.request import request_all
-from google_classroom_extractor.mapping.users import students_and_teachers_to_users_df
-from google_classroom_extractor.mapping.user_section_associations import (
+from edfi_google_classroom_extractor.result import Result
+from edfi_google_classroom_extractor.config import get_credentials, get_sync_db_engine
+from edfi_google_classroom_extractor.request import request_all
+from edfi_google_classroom_extractor.mapping.users import students_and_teachers_to_users_df
+from edfi_google_classroom_extractor.mapping.user_section_associations import (
     students_and_teachers_to_user_section_associations_dfs,
 )
-from google_classroom_extractor.mapping.sections import courses_to_sections_df
-from google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
-from google_classroom_extractor.mapping.assignment_submissions import (
+from edfi_google_classroom_extractor.mapping.sections import courses_to_sections_df
+from edfi_google_classroom_extractor.mapping.assignments import coursework_to_assignments_dfs
+from edfi_google_classroom_extractor.mapping.assignment_submissions import (
     submissions_to_assignment_submissions_dfs,
 )
-from google_classroom_extractor.mapping.user_submission_activities import (
+from edfi_google_classroom_extractor.mapping.user_submission_activities import (
     submissions_to_user_submission_activities_dfs,
 )
-from extractor_shared.csv_generation.write import (
+from edfi_lms_extractor_lib.csv_generation.write import (
     write_grades,
     write_users,
     write_sections,
@@ -42,7 +42,7 @@ from extractor_shared.csv_generation.write import (
     write_assignment_submissions,
     write_system_activities,
 )
-from google_classroom_extractor.helpers import arg_parser
+from edfi_google_classroom_extractor.helpers import arg_parser
 
 logger: logging.Logger
 error_tracker: ErrorHandler

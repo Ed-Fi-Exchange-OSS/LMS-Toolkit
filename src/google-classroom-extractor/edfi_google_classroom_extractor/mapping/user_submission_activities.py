@@ -6,7 +6,7 @@
 import json
 from typing import Dict
 from pandas import DataFrame, concat, Series
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 ACTIVITY_TYPE_STATE = "Submission State Change"
 ACTIVITY_TYPE_GRADE = "Submission Grade Change"

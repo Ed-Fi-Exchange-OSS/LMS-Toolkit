@@ -1,13 +1,15 @@
 [tool.poetry]
-name = "extractor-shared"
-version = "0.1.19"
-description = ""
+name = "edfi-lms-extractor-lib"
+version = "0.1.20"
+homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
+repository = "https://github.com/Ed-Fi-Exchange-OSS/Ed-Fi-X-Fizz"
+description = "Shared functions library for Ed-Fi LMS Extractor projects"
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
 license = "Apache-2.0"
 packages = [
-    { include = "extractor_shared" }
+    { include = "edfi-lms-extractor-lib" }
 ]
-include = ["extractor_shared/py.typed"]
+include = ["edfi-lms-extractor-lib/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -22,6 +24,7 @@ flake8 = "^3.8.3"
 coverage = "^5.3"
 mypy = "^0.782"
 pytest-describe = "^1.0.0"
+twine = "^3.3.0"
 
 [build-system]
 requires = ["poetry>=1.0.10"]

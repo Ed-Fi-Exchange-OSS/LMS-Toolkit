@@ -5,7 +5,7 @@
 
 from typing import List, Tuple
 from pandas import DataFrame
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 def courses_to_sections_df(courses_df: DataFrame) -> Tuple[DataFrame, List[str]]:

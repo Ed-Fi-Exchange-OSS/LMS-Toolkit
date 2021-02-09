@@ -6,7 +6,7 @@
 import pytest
 import pook
 from pandas.core.frame import DataFrame
-from google_classroom_extractor.api.submissions import request_latest_submissions_as_df
+from edfi_google_classroom_extractor.api.submissions import request_latest_submissions_as_df
 from tests.api.api_helper import setup_fake_classroom_api
 
 # unique value for each column in fixture

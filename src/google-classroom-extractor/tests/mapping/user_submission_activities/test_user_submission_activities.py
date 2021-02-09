@@ -6,12 +6,12 @@
 from typing import Dict
 import pytest
 from pandas import DataFrame
-from google_classroom_extractor.mapping.user_submission_activities import (
+from edfi_google_classroom_extractor.mapping.user_submission_activities import (
     submissions_to_user_submission_activities_dfs,
     ACTIVITY_TYPE_STATE,
     ACTIVITY_TYPE_GRADE,
 )
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 # unique value for each column in fixture
 COURSE_ID = "1"

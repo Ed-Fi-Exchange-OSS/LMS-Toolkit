@@ -5,12 +5,12 @@
 
 import pytest
 from pandas import DataFrame
-from google_classroom_extractor.mapping.users import (
+from edfi_google_classroom_extractor.mapping.users import (
     students_and_teachers_to_users_df,
     STUDENT_USER_ROLE,
     TEACHER_USER_ROLE,
 )
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 # unique value for each column in fixture
 STUDENT_COURSE_ID = "1"

@@ -4,230 +4,80 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from datetime import datetime
+from typing import List
+from pathlib import Path
 import pytest
 from pandas import read_sql_query, DataFrame
-from canvas_extractor.api.courses import _sync_without_cleanup
+from sqlalchemy import create_engine
 from edfi_lms_extractor_lib.api.resource_sync import (
     SYNC_COLUMNS_SQL,
     SYNC_COLUMNS,
     add_hash_and_json_to,
     add_sourceid_to,
+    sync_to_db_without_cleanup,
 )
-from tests.api.api_helper import prep_expected_sync_df, prep_from_sync_db_df
+
+DB_FILE = "tests/api/test.db"
 
 IDENTITY_COLUMNS = ["id"]
 
 COLUMNS = [
     "id",
     "name",
-    "account_id",
-    "uuid",
-    "start_at",
-    "start_at_date",
-    "grading_standard_id",
-    "is_public",
-    "created_at",
-    "created_at_date",
-    "course_code",
-    "default_view",
-    "root_account_id",
-    "enrollment_term_id",
-    "license",
-    "grade_passback_setting",
-    "end_at",
-    "public_syllabus",
-    "public_syllabus_to_auth",
-    "storage_quota_mb",
-    "is_public_to_auth_users",
-    "apply_assignment_group_weights",
-    "calendar",
-    "time_zone",
-    "blueprint",
-    "sis_course_id",
-    "sis_import_id",
-    "integration_id",
-    "hide_final_grades",
-    "workflow_state",
-    "restrict_enrollments_to_course_dates:",
-    "overridden_course_visibility",
+    "descriptionHeading",
 ]
 
 CHANGED_COURSE_BEFORE = [
     "1",
-    "Changed Course Before",
-    "11",
-    "111",
-    "1111",
-    "2020-11-01",
-    "11111",
-    "111111",
-    "1111111",
-    "2020-11-01",
-    "11111111",
-    "111111111",
-    "1111111111",
-    "11111111111",
-    "111111111111",
-    "1111111111111",
-    "11111111111111",
-    "111111111111111",
-    "1111111111111111",
-    "11111111111111111",
-    "111111111111111111",
-    "1111111111111111111",
-    "11111111111111111111",
-    "111111111111111111111",
-    "1111111111111111111111",
-    "11111111111111111111111",
-    "111111111111111111111111",
-    "1111111111111111111111111",
-    "11111111111111111111111111",
-    "111111111111111111111111111",
-    "1111111111111111111111111111",
-    "11111111111111111111111111111",
+    "Changed Course",
+    "descriptionHeading1",
 ]
 
 CHANGED_COURSE_AFTER = [
     "1",
-    "*Changed Course After*",
-    "11",
-    "111",
-    "1111",
-    "2020-11-01",
-    "11111",
-    "111111",
-    "1111111",
-    "2020-11-01",
-    "11111111",
-    "111111111",
-    "1111111111",
-    "11111111111",
-    "111111111111",
-    "1111111111111",
-    "11111111111111",
-    "111111111111111",
-    "1111111111111111",
-    "11111111111111111",
-    "111111111111111111",
-    "1111111111111111111",
-    "11111111111111111111",
-    "111111111111111111111",
-    "1111111111111111111111",
-    "11111111111111111111111",
-    "111111111111111111111111",
-    "1111111111111111111111111",
-    "11111111111111111111111111",
-    "111111111111111111111111111",
-    "1111111111111111111111111111",
-    "11111111111111111111111111111",
+    "Changed Course",
+    "*CHANGED*",
 ]
 
 UNCHANGED_COURSE = [
     "2",
     "Unchanged Course",
-    "22",
-    "222",
-    "2222",
-    "2020-11-02",
-    "22222",
-    "222222",
-    "2222222",
-    "2020-11-02",
-    "22222222",
-    "222222222",
-    "2222222222",
-    "22222222222",
-    "222222222222",
-    "2222222222222",
-    "22222222222222",
-    "222222222222222",
-    "2222222222222222",
-    "22222222222222222",
-    "222222222222222222",
-    "2222222222222222222",
-    "22222222222222222222",
-    "222222222222222222222",
-    "2222222222222222222222",
-    "22222222222222222222222",
-    "222222222222222222222222",
-    "2222222222222222222222222",
-    "22222222222222222222222222",
-    "222222222222222222222222222",
-    "2222222222222222222222222222",
-    "22222222222222222222222222222",
+    "descriptionHeading2",
 ]
 
 OMITTED_FROM_SYNC_COURSE = [
     "3",
     "Omitted From Sync Course",
-    "33",
-    "333",
-    "3333",
-    "2020-11-03",
-    "33333",
-    "333333",
-    "3333333",
-    "2020-11-03",
-    "33333333",
-    "333333333",
-    "3333333333",
-    "33333333333",
-    "333333333333",
-    "3333333333333",
-    "33333333333333",
-    "333333333333333",
-    "3333333333333333",
-    "33333333333333333",
-    "333333333333333333",
-    "3333333333333333333",
-    "33333333333333333333",
-    "333333333333333333333",
-    "3333333333333333333333",
-    "33333333333333333333333",
-    "333333333333333333333333",
-    "3333333333333333333333333",
-    "33333333333333333333333333",
-    "333333333333333333333333333",
-    "3333333333333333333333333333",
-    "33333333333333333333333333333",
+    "descriptionHeading3",
 ]
 
 NEW_COURSE = [
     "4",
     "New Course",
-    "44",
-    "444",
-    "4444",
-    "2020-11-04",
-    "44444",
-    "444444",
-    "4444444",
-    "2020-11-04",
-    "44444444",
-    "444444444",
-    "4444444444",
-    "44444444444",
-    "444444444444",
-    "4444444444444",
-    "44444444444444",
-    "444444444444444",
-    "4444444444444444",
-    "44444444444444444",
-    "444444444444444444",
-    "4444444444444444444",
-    "44444444444444444444",
-    "444444444444444444444",
-    "4444444444444444444444",
-    "44444444444444444444444",
-    "444444444444444444444444",
-    "4444444444444444444444444",
-    "44444444444444444444444444",
-    "444444444444444444444444444",
-    "4444444444444444444444444444",
-    "44444444444444444444444444444",
+    "descriptionHeading4",
 ]
 
 SYNC_DATA = [CHANGED_COURSE_AFTER, UNCHANGED_COURSE, NEW_COURSE]
+
+
+def prep_expected_sync_df(df: DataFrame, identity_columns: List[str]) -> DataFrame:
+    result_df: DataFrame = add_hash_and_json_to(df)
+    add_sourceid_to(result_df, identity_columns)
+    result_df = result_df[["Json", "Hash", "SourceId"]]
+    result_df.set_index("SourceId", inplace=True)
+    return result_df
+
+
+def prep_from_sync_db_df(df: DataFrame, identity_columns: List[str]) -> DataFrame:
+    result_df: DataFrame = df[["Json", "Hash", "SourceId"]]
+    result_df.set_index("SourceId", inplace=True)
+    return result_df
+
+
+@pytest.fixture
+def test_db_fixture():
+    Path(DB_FILE).unlink(missing_ok=True)
+    yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
 
 
 def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
@@ -267,7 +117,7 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         )
 
         # act
-        _sync_without_cleanup(courses_sync_df, test_db_fixture)
+        sync_to_db_without_cleanup(courses_sync_df, IDENTITY_COLUMNS, "Courses", test_db_fixture)
 
         return test_db_fixture
 
@@ -316,8 +166,8 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
         test_db_after_sync,
     ):
         EXPECTED_UNMATCHED_DATA_AFTER_SYNC = [
-            CHANGED_COURSE_AFTER,
             CHANGED_COURSE_BEFORE,
+            CHANGED_COURSE_AFTER,
             OMITTED_FROM_SYNC_COURSE,
             NEW_COURSE,
         ]

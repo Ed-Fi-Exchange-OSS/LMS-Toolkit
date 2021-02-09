@@ -1,4 +1,4 @@
-# Ed-Fi-X-Fizz
+# LMS-Toolkit
 
 The goal is to provide access to guidance, pointers to tools, and peer
 bench-marking possibilities for school districts to get to the data they need
@@ -15,6 +15,10 @@ The current set of directories contain sample input data for loading into LMS's
 as well as exploratory code. These are not necessarily polished tools. The code
 supporting this project will evolve continuously, and this readme will be
 updated as tools become formalized.
+
+## Documentation
+
+* [Build script](docs/build.md)
 
 ## Legal Information
 

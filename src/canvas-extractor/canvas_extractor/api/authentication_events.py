@@ -14,7 +14,7 @@ from canvasapi.user import User
 from canvasapi.paginated_list import PaginatedList
 
 from .canvas_helper import to_df
-from extractor_shared.api.resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
+from edfi_lms_extractor_lib.api.resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
 from .api_caller import call_with_retry
 
 AUTH_EVENTS_RESOURCE_NAME = "Authentication_Events"
@@ -64,8 +64,10 @@ PaginatedList._get_next_page = custom_get_new_page
 def _request_events_for_student(
     user: User, start_date: str, end_date: str
 ) -> List[AuthenticationEvent]:
-    response = call_with_retry(user.get_authentication_events)
-    return [event for event in response]
+    def _get_auth_events():
+        return user.get_authentication_events(start_time=start_date, end_time=end_date)
+    response = call_with_retry(_get_auth_events)
+    return response
 
 
 def request_events(

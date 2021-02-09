@@ -34,7 +34,7 @@ jobs:
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
       - name: Install Python Dependencies
-        run: python ./eng/build.py install ../utils/file-tester
+        run: python ./eng/build.py install canvas-extractor
 
       - name: Cache Dependencies
         # very carefully use the tag when testing with act-cli on localhost, commit the hash version
@@ -47,10 +47,10 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Run Tests with Coverage
-        run: python ./eng/build.py coverage:html ../utils/file-tester
+        run: python ./eng/build.py coverage:html canvas-extractor
 
       - name: Type Check
-        run: python ./eng/build.py typecheck:xml ../utils/file-tester
+        run: python ./eng/build.py typecheck:xml canvas-extractor
 
       - name: Style Check
-        run: python ./eng/build.py lint ../utils/file-tester
+        run: python ./eng/build.py lint canvas-extractor

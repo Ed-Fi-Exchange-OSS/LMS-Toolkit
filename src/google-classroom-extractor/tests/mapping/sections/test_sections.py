@@ -5,8 +5,8 @@
 from typing import Tuple, List
 import pytest
 from pandas import DataFrame
-from google_classroom_extractor.mapping.sections import courses_to_sections_df
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.sections import courses_to_sections_df
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 # unique value for each column in fixture
 COURSE_ID = "1"

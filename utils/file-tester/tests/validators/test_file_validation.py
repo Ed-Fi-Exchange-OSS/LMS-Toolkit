@@ -47,7 +47,7 @@ def describe_when_validating_users_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_users",
+                "edfi_lms_file_utils.file_reader.get_all_users",
                 lambda dir, nrows: df if nrows == 2 else None,
             )
 
@@ -100,7 +100,7 @@ def describe_when_validating_users_file():
             df.iloc[0][bad_column] = "1234T12:34:56Z"
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_users",
+                "edfi_lms_file_utils.file_reader.get_all_users",
                 lambda dir, nrows: df,
             )
 
@@ -149,7 +149,7 @@ def describe_when_validating_users_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_users", lambda dir, nrows: df
+                "edfi_lms_file_utils.file_reader.get_all_users", lambda dir, nrows: df
             )
 
             # Act
@@ -221,7 +221,7 @@ def describe_when_validating_users_file():
             )
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_users", lambda dir, nrows: df
+                "edfi_lms_file_utils.file_reader.get_all_users", lambda dir, nrows: df
             )
 
             # Act
@@ -233,7 +233,7 @@ def describe_when_validating_users_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_users",
+                "edfi_lms_file_utils.file_reader.get_all_users",
                 lambda dir, nrows: pd.DataFrame(),
             )
 
@@ -284,7 +284,7 @@ def describe_when_validating_sections_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_sections",
+                "edfi_lms_file_utils.file_reader.get_all_sections",
                 lambda dir, nrows: df if nrows == 2 else None,
             )
 
@@ -340,7 +340,7 @@ def describe_when_validating_sections_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_sections",
+                "edfi_lms_file_utils.file_reader.get_all_sections",
                 lambda dir, nrows: df if nrows == 2 else None,
             )
 
@@ -389,7 +389,7 @@ def describe_when_validating_sections_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_sections", lambda dir, nrows: df
+                "edfi_lms_file_utils.file_reader.get_all_sections", lambda dir, nrows: df
             )
 
             # Act
@@ -457,7 +457,7 @@ def describe_when_validating_sections_file():
             df = pd.DataFrame(columns=[c for c in columns if c != missing], data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_sections", lambda dir, nrows: df
+                "edfi_lms_file_utils.file_reader.get_all_sections", lambda dir, nrows: df
             )
 
             # Act
@@ -469,7 +469,7 @@ def describe_when_validating_sections_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_sections",
+                "edfi_lms_file_utils.file_reader.get_all_sections",
                 lambda dir, nrows: pd.DataFrame(),
             )
 
@@ -523,7 +523,7 @@ def describe_when_validating_system_activities_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_system_activities",
+                "edfi_lms_file_utils.file_reader.get_all_system_activities",
                 lambda dir, nrows: df if nrows == 2 else None,
             )
 
@@ -582,7 +582,7 @@ def describe_when_validating_system_activities_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_system_activities",
+                "edfi_lms_file_utils.file_reader.get_all_system_activities",
                 lambda dir, nrows: df if nrows == 2 else None,
             )
 
@@ -633,7 +633,7 @@ def describe_when_validating_system_activities_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_system_activities",
+                "edfi_lms_file_utils.file_reader.get_all_system_activities",
                 lambda dir, nrows: df,
             )
 
@@ -707,7 +707,7 @@ def describe_when_validating_system_activities_file():
             df = pd.DataFrame(columns=[c for c in columns if c != missing], data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_system_activities",
+                "edfi_lms_file_utils.file_reader.get_all_system_activities",
                 lambda dir, nrows: df,
             )
 
@@ -720,7 +720,7 @@ def describe_when_validating_system_activities_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_system_activities",
+                "edfi_lms_file_utils.file_reader.get_all_system_activities",
                 lambda dir, nrows: pd.DataFrame(),
             )
 
@@ -772,7 +772,7 @@ def describe_when_validating_section_associations_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_section_associations",
+                "edfi_lms_file_utils.file_reader.get_all_section_associations",
                 lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
@@ -827,7 +827,7 @@ def describe_when_validating_section_associations_file():
             df.iloc[0][bad_column] = "1234T12:34:56Z"
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_section_associations",
+                "edfi_lms_file_utils.file_reader.get_all_section_associations",
                 lambda dir, sections, nrows: df,
             )
 
@@ -878,7 +878,7 @@ def describe_when_validating_section_associations_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_section_associations",
+                "edfi_lms_file_utils.file_reader.get_all_section_associations",
                 lambda dir, sections, nrows: df,
             )
 
@@ -949,7 +949,7 @@ def describe_when_validating_section_associations_file():
             df = pd.DataFrame(columns=[c for c in columns if c != missing], data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_section_associations",
+                "edfi_lms_file_utils.file_reader.get_all_section_associations",
                 lambda dir, sections, nrows: df,
             )
 
@@ -964,7 +964,7 @@ def describe_when_validating_section_associations_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_section_associations",
+                "edfi_lms_file_utils.file_reader.get_all_section_associations",
                 lambda dir, sections, nrows: pd.DataFrame(),
             )
 
@@ -1022,7 +1022,7 @@ def describe_when_validating_section_activities_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_section_activities",
+                "edfi_lms_file_utils.file_reader.get_all_section_activities",
                 lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
@@ -1085,7 +1085,7 @@ def describe_when_validating_section_activities_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_section_activities",
+                "edfi_lms_file_utils.file_reader.get_all_section_activities",
                 lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
@@ -1140,7 +1140,7 @@ def describe_when_validating_section_activities_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_section_activities",
+                "edfi_lms_file_utils.file_reader.get_all_section_activities",
                 lambda dir, sections, nrows: df,
             )
 
@@ -1219,7 +1219,7 @@ def describe_when_validating_section_activities_file():
             df = pd.DataFrame(columns=[c for c in columns if c != missing], data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_section_activities",
+                "edfi_lms_file_utils.file_reader.get_all_section_activities",
                 lambda dir, sections, nrows: df,
             )
 
@@ -1234,7 +1234,7 @@ def describe_when_validating_section_activities_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_section_activities",
+                "edfi_lms_file_utils.file_reader.get_all_section_activities",
                 lambda dir, sections, nrows: pd.DataFrame(),
             )
 
@@ -1296,7 +1296,7 @@ def describe_when_validating_assignments_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_assignments",
+                "edfi_lms_file_utils.file_reader.get_all_assignments",
                 lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
@@ -1365,7 +1365,7 @@ def describe_when_validating_assignments_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_assignments",
+                "edfi_lms_file_utils.file_reader.get_all_assignments",
                 lambda dir, sections, nrows: df,
             )
 
@@ -1434,7 +1434,7 @@ def describe_when_validating_assignments_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_assignments",
+                "edfi_lms_file_utils.file_reader.get_all_assignments",
                 lambda dir, sections, nrows: df,
             )
 
@@ -1490,7 +1490,7 @@ def describe_when_validating_assignments_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_assignments",
+                "edfi_lms_file_utils.file_reader.get_all_assignments",
                 lambda dir, sections, nrows: df,
             )
 
@@ -1577,7 +1577,7 @@ def describe_when_validating_assignments_file():
             df = pd.DataFrame(columns=[c for c in columns if c != missing], data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_assignments",
+                "edfi_lms_file_utils.file_reader.get_all_assignments",
                 lambda dir, sections, nrows: df,
             )
 
@@ -1592,7 +1592,7 @@ def describe_when_validating_assignments_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_assignments",
+                "edfi_lms_file_utils.file_reader.get_all_assignments",
                 lambda dir, sections, nrows: pd.DataFrame(),
             )
 
@@ -1648,7 +1648,7 @@ def describe_when_validating_submissions_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_submissions",
+                "edfi_lms_file_utils.file_reader.get_all_submissions",
                 lambda dir, assignments, nrows: df if nrows == 2 else None,
             )
 
@@ -1706,7 +1706,7 @@ def describe_when_validating_submissions_file():
             df.iloc[0][bad_column] = "1234T12:34:56Z"
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_submissions",
+                "edfi_lms_file_utils.file_reader.get_all_submissions",
                 lambda dir, assignments, nrows: df,
             )
 
@@ -1759,7 +1759,7 @@ def describe_when_validating_submissions_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_submissions",
+                "edfi_lms_file_utils.file_reader.get_all_submissions",
                 lambda dir, assignments, nrows: df,
             )
 
@@ -1834,7 +1834,7 @@ def describe_when_validating_submissions_file():
             df = pd.DataFrame(columns=[c for c in columns if c != missing], data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_submissions",
+                "edfi_lms_file_utils.file_reader.get_all_submissions",
                 lambda dir, assignments, nrows: df,
             )
 
@@ -1849,7 +1849,7 @@ def describe_when_validating_submissions_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_submissions",
+                "edfi_lms_file_utils.file_reader.get_all_submissions",
                 lambda dir, assignments, nrows: pd.DataFrame(),
             )
 
@@ -1899,7 +1899,7 @@ def describe_when_validating_grades_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_grades",
+                "edfi_lms_file_utils.file_reader.get_all_grades",
                 lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
@@ -1950,7 +1950,7 @@ def describe_when_validating_grades_file():
             df.iloc[0][bad_column] = "1234T12:34:56Z"
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_grades",
+                "edfi_lms_file_utils.file_reader.get_all_grades",
                 lambda dir, sections, nrows: df,
             )
 
@@ -1997,7 +1997,7 @@ def describe_when_validating_grades_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_grades",
+                "edfi_lms_file_utils.file_reader.get_all_grades",
                 lambda dir, sections, nrows: df,
             )
 
@@ -2060,7 +2060,7 @@ def describe_when_validating_grades_file():
             df = pd.DataFrame(columns=[c for c in columns if c != missing], data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_grades",
+                "edfi_lms_file_utils.file_reader.get_all_grades",
                 lambda dir, sections, nrows: df,
             )
 
@@ -2075,7 +2075,7 @@ def describe_when_validating_grades_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_grades",
+                "edfi_lms_file_utils.file_reader.get_all_grades",
                 lambda dir, sections, nrows: pd.DataFrame(),
             )
 
@@ -2128,7 +2128,7 @@ def describe_when_validating_attendance_events_file():
                 # This has an implicit assertion built in (if nrows == 2).
                 # There is a better way to do this, just not remembering it at
                 # the moment...
-                "lms_file_utils.file_reader.get_all_attendance_events",
+                "edfi_lms_file_utils.file_reader.get_all_attendance_events",
                 lambda dir, sections, nrows: df if nrows == 2 else None,
             )
 
@@ -2184,7 +2184,7 @@ def describe_when_validating_attendance_events_file():
             df.iloc[0][bad_column] = "1234T12:34:56Z"
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_attendance_events",
+                "edfi_lms_file_utils.file_reader.get_all_attendance_events",
                 lambda dir, sections, nrows: df,
             )
 
@@ -2235,7 +2235,7 @@ def describe_when_validating_attendance_events_file():
             df = pd.DataFrame(columns=columns, data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_attendance_events",
+                "edfi_lms_file_utils.file_reader.get_all_attendance_events",
                 lambda dir, sections, nrows: df,
             )
 
@@ -2306,7 +2306,7 @@ def describe_when_validating_attendance_events_file():
             df = pd.DataFrame(columns=[c for c in columns if c != missing], data=data)
 
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_attendance_events",
+                "edfi_lms_file_utils.file_reader.get_all_attendance_events",
                 lambda dir, sections, nrows: df,
             )
 
@@ -2321,7 +2321,7 @@ def describe_when_validating_attendance_events_file():
     def describe_given_file_does_not_exist():
         def it_returns_an_error(mocker):
             mocker.patch(
-                "lms_file_utils.file_reader.get_all_attendance_events",
+                "edfi_lms_file_utils.file_reader.get_all_attendance_events",
                 lambda dir, sections, nrows: pd.DataFrame(),
             )
 

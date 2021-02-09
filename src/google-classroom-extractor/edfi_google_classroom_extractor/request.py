@@ -8,12 +8,12 @@ from pandas import DataFrame
 from googleapiclient.discovery import Resource
 import sqlalchemy
 
-from google_classroom_extractor.api.courses import request_all_courses_as_df
-from google_classroom_extractor.api.coursework import request_all_coursework_as_df
-from google_classroom_extractor.api.students import request_all_students_as_df
-from google_classroom_extractor.api.teachers import request_all_teachers_as_df
-from google_classroom_extractor.api.submissions import request_all_submissions_as_df
-from google_classroom_extractor.api.usage import request_all_usage_as_df
+from edfi_google_classroom_extractor.api.courses import request_all_courses_as_df
+from edfi_google_classroom_extractor.api.coursework import request_all_coursework_as_df
+from edfi_google_classroom_extractor.api.students import request_all_students_as_df
+from edfi_google_classroom_extractor.api.teachers import request_all_teachers_as_df
+from edfi_google_classroom_extractor.api.submissions import request_all_submissions_as_df
+from edfi_google_classroom_extractor.api.usage import request_all_usage_as_df
 from .result import Result
 
 

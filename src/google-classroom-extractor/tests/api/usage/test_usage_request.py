@@ -7,7 +7,7 @@ from datetime import datetime
 import pytest
 import pook
 from pandas.core.frame import DataFrame
-from google_classroom_extractor.api.usage import request_latest_usage_as_df
+from edfi_google_classroom_extractor.api.usage import request_latest_usage_as_df
 from tests.api.api_helper import setup_fake_reports_api
 
 # unique value for each column in fixture

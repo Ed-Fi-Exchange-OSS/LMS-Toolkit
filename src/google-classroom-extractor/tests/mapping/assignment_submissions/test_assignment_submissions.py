@@ -6,10 +6,10 @@
 from typing import Dict, Tuple
 import pytest
 from pandas import DataFrame
-from google_classroom_extractor.mapping.assignment_submissions import (
+from edfi_google_classroom_extractor.mapping.assignment_submissions import (
     submissions_to_assignment_submissions_dfs,
 )
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 from tests.helper import merged_dict
 
 # unique value for each column in fixture

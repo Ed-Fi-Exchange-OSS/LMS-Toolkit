@@ -5,7 +5,7 @@
 
 from typing import Dict
 from pandas import DataFrame, concat
-from google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 ENROLLMENT_STATUS_ACTIVE = "Active"
 
