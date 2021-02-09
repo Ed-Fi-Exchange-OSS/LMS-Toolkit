@@ -2,7 +2,8 @@
 
 ## User Story
 
-As an Ed-Fi developer, I want to run extractor output files through a simple automated tester, so that I can validate the file formatting.
+As an Ed-Fi developer, I want to run extractor output files through a simple
+automated tester, so that I can validate the file formatting.
 
 ## Acceptance Criteria
 
@@ -86,7 +87,8 @@ Of note:
 * Some datetime values are incorrect.
 * A few directories are missing (we now prefer to create directories and files
   even when there are no data to report on).
-* The attendance event file is out of date with some changes, e.g. "User" to "LMSUser".
+* The attendance event file is out of date with some changes, e.g. "User" to
+  "LMSUser".
 * None of the files has the new `SourceCreateDate` and `SourceLastModifiedDate`
   columns.
 
