@@ -60,7 +60,7 @@ except Exception as ex:
     logger.exception(ex)
 
 
-NUMBER_OF_USERS = 5
+NUMBER_OF_USERS = 100
 users = []
 try:
     users = generate_and_load_users(request_client, NUMBER_OF_USERS)
@@ -141,43 +141,43 @@ except Exception as ex:
 
 # **** Rollback section from here to end of file. Comment out to prevent rollbacks.
 
-try:
-    rollback_loaded_discussion_comments(request_client, discussion_comments)
-except Exception as ex:
-    logger.exception(ex)
+# try:
+#     rollback_loaded_discussion_comments(request_client, discussion_comments)
+# except Exception as ex:
+#     logger.exception(ex)
 
 
-try:
-    rollback_loaded_discussions(request_client, discussions)
-except Exception as ex:
-    logger.exception(ex)
+# try:
+#     rollback_loaded_discussions(request_client, discussions)
+# except Exception as ex:
+#     logger.exception(ex)
 
 
-try:
-    rollback_loaded_assignments(request_client, assignments)
-except Exception as ex:
-    logger.exception(ex)
+# try:
+#     rollback_loaded_assignments(request_client, assignments)
+# except Exception as ex:
+#     logger.exception(ex)
 
 
-try:
-    rollback_loaded_enrollments(request_client, enrollments)
-except Exception as ex:
-    logger.exception(ex)
+# try:
+#     rollback_loaded_enrollments(request_client, enrollments)
+# except Exception as ex:
+#     logger.exception(ex)
 
 
-try:
-    rollback_loaded_sections(request_client, sections)
-except Exception as ex:
-    logger.exception(ex)
+# try:
+#     rollback_loaded_sections(request_client, sections)
+# except Exception as ex:
+#     logger.exception(ex)
 
 
-try:
-    rollback_loaded_courses(request_client, courses)
-except Exception as ex:
-    logger.exception(ex)
+# try:
+#     rollback_loaded_courses(request_client, courses)
+# except Exception as ex:
+#     logger.exception(ex)
 
 
-try:
-    rollback_loaded_users(request_client, users)
-except Exception as ex:
-    logger.exception(ex)
+# try:
+#     rollback_loaded_users(request_client, users)
+# except Exception as ex:
+#     logger.exception(ex)
