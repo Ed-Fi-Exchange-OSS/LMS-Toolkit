@@ -42,14 +42,18 @@ def extract_courses(
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> Tuple[List[Course], DataFrame]:
     """
-    Gets all Canvas courses, in the Ed-Fi UDM format.
+    Gets all Canvas courses for the given date range, in the Ed-Fi UDM format.
 
     Parameters
     ----------
     canvas: Canvas
         Canvas object.
+    start_date: str
+        Retrieve Courses starting on or after this date.
+    end_date:
+        Retrieve Courses ending on or before this date.
     sync_db: sqlalchemy.engine.base.Engine
-        sync db.
+        Sync database connection.
 
     Returns
     -------
@@ -73,7 +77,7 @@ def extract_sections(
     courses: List[Course]
         A list of Canvas Course objects.
     sync_db: sqlalchemy.engine.base.Engine
-        sync db.
+        Sync database connection.
 
     Returns
     -------
@@ -98,7 +102,7 @@ def extract_students(
     courses: List[Course]
         A list of Canvas Course objects.
     sync_db: sqlalchemy.engine.base.Engine
-        sync db.
+        Sync database connection.
 
     Returns
     -------
@@ -127,7 +131,7 @@ def extract_assignments(
     sections_df: DataFrame
         A DataFrame of Canvas Section objects.
     sync_db: sqlalchemy.engine.base.Engine
-        sync db.
+        Sync database connection.
 
     Returns
     -------
@@ -160,7 +164,7 @@ def extract_submissions(
     sections: List[Section]
         A List of Canvas Section objects.
     sync_db: sqlalchemy.engine.base.Engine
-        sync db.
+        Sync database connection.
 
     Returns
     -------
@@ -197,7 +201,7 @@ def extract_enrollments(
     sections: List[Section]
         A list of Canvas Section objects.
     sync_db: sqlalchemy.engine.base.Engine
-        sync db.
+        Sync database connection.
 
     Returns
     -------
@@ -293,11 +297,11 @@ def extract_system_activities(
     users: List[User]
         A list of Canvas User objects.
     start_date: str
-        The start date for the events.
+        Retrieve events occurring on or after this date.
     end_date: str
-        The end date for the events.
-    sync_db: sqlalchemy.engine.base.Engine,
-        sync db.
+        Retrieve events occurring on or before this date.
+    sync_db: sqlalchemy.engine.base.Engine
+        Sync database connection.
 
     Returns
     -------
