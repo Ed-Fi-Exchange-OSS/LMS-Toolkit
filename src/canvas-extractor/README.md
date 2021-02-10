@@ -1,16 +1,35 @@
 # Canvas Extractor
 
-This script retrieves and writes out to CSV all students, active sections, assignments,
-and submissions.
+This script retrieves and writes out to CSV all students, active sections,
+assignments, and submissions. For more information on the this tool and its
+output files, please see the main repository [readme](../../README.md).
 
-## Requirements
+## Getting Started
 
-Requires Python 3.8 and [Poetry](https://python-poetry.org/). To get started,
-run the following command in the package directory:
+1. Ensure you have [Python 3.8+ and Poetry](../README.md#getting-started)
+1. At a command prompt, install all required dependencies:
 
-```bash
-poetry install
-```
+   ```bash
+   poetry install
+   ```
+
+1. Optional: make a copy of the `.env.example` file, named simply `.env`, and
+   customize the settings as described in the Configuration section below.
+1. Run the extractor one of two ways:
+   * Execute the extractor with command line arguments:
+
+      ```bash
+      poetry run python.exe canvas_extractor -b your-canvas-url -a your-api-token
+          -s start-date-range -e end-date-range
+      ```
+
+   * Alternately, run with environment variables or `.env` file:
+
+     ```bash
+     poetry run python.exe canvas_extractor
+     ```
+
+   * For detailed help, execute `poetry run python canvas_extractor -h`.
 
 ## Configuration
 
@@ -26,33 +45,20 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | Base Canvas URL | yes | -b or --base-url | CANVAS_BASE_URL |
 | Canvas API access token | yes |  -a or --access-token | CANVAS_ACCESS_TOKEN |
 | Output Directory | no (default: [working directory]/data) | -o or --output-directory | OUTPUT_DIRECTORY |
-| Log level | no (default: INFO) | -l or --log-level | LOG_LEVEL |
-| Start date | yes | -s or --start_date | START_DATE |
-| End date | yes | -e or --end_date | END_DATE |
+| Start date* | yes | -s or --start_date | START_DATE |
+| End date* | yes | -e or --end_date | END_DATE |
+| Log level** | no (default: INFO) | -l or --log-level | LOG_LEVEL |
 
+\* _Start Date_ and _End Date_ are used in pulling course and system activity
+data and would typically span a semester or equivalent school calendar timespan.
 
-Valid log levels:
+\** Valid values for the optional _log level_:
+
 * DEBUG
 * INFO(default)
 * WARNING
 * ERROR
 * CRITICAL
-
-## Execution
-
-Execute the extractor with CLI args:
-
-```bash
-poetry run python.exe canvas_extractor -b your-canvas-url -a your-api-token -s start-date-range -e end-date-range
-```
-
-Alternately, run with environment variables or `.env` file:
-
-```bash
-poetry run python.exe canvas_extractor
-```
-
-For detailed help, execute `poetry run python canvas_extractor -h`.
 
 ### Output
 
