@@ -6,11 +6,13 @@
 import logging
 from datetime import datetime
 from typing import List
-from pandas import DataFrame, Series, read_sql_query
+from pandas import DataFrame, Series, read_sql_query, to_datetime
 import sqlalchemy
 import xxhash
 
 logger = logging.getLogger(__name__)
+
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 SYNC_COLUMNS = [
     "SourceId",
@@ -368,6 +370,10 @@ def _update_dataframe_with_true_dates(
 
     # reset index so no columns are hidden
     result_df.drop(["SourceId"], axis=1, inplace=True)
+
+    # convert dates to string format
+    result_df["CreateDate"] = to_datetime(result_df["CreateDate"]).dt.strftime(DATE_FORMAT)
+    result_df["LastModifiedDate"] = to_datetime(result_df["LastModifiedDate"]).dt.strftime(DATE_FORMAT)
 
     return result_df
 

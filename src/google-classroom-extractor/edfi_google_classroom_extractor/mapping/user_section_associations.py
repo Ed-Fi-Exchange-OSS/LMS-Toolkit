@@ -32,12 +32,12 @@ def _students_or_teachers_to_user_section_associations_df(
         EndDate: Month, day, and year of the user's withdrawal or exit from the section
         EnrollmentStatus: The status of the user section association. E.g., Active,
             Inactive, Withdrawn
-        LMSSectionIdentifier: A unique numeric identifier assigned to the section
+        LMSSectionSourceSystemIdentifier: A unique numeric identifier assigned to the section
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code
             assigned to a user by the source system
         StartDate: Month, day, and year of the user's entry or assignment to the section
-        LMSUserIdentifier: A unique numeric identifier assigned to the user
+        LMSUserSourceSystemIdentifier: A unique numeric identifier assigned to the user
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
         CreateDate: Date this record was created in the extractor
@@ -57,14 +57,14 @@ def _students_or_teachers_to_user_section_associations_df(
 
     user_section_associations_df = user_section_associations_df.rename(
         columns={
-            "userId": "LMSUserIdentifier",
-            "courseId": "LMSSectionIdentifier",
+            "userId": "LMSUserSourceSystemIdentifier",
+            "courseId": "LMSSectionSourceSystemIdentifier",
         }
     )
 
     user_section_associations_df[
         "SourceSystemIdentifier"
-    ] = user_section_associations_df[["LMSUserIdentifier", "LMSSectionIdentifier"]].agg(
+    ] = user_section_associations_df[["LMSUserSourceSystemIdentifier", "LMSSectionSourceSystemIdentifier"]].agg(
         "-".join, axis=1
     )
 
@@ -110,12 +110,12 @@ def students_and_teachers_to_user_section_associations_dfs(
         EndDate: Month, day, and year of the user's withdrawal or exit from the section
         EnrollmentStatus: The status of the user section association. E.g., Active,
             Inactive, Withdrawn
-        LMSSectionIdentifier: A unique numeric identifier assigned to the section
+        LMSSectionSourceSystemIdentifier: A unique numeric identifier assigned to the section
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code
             assigned to a user by the source system
         StartDate: Month, day, and year of the user's entry or assignment to the section
-        LMSUserIdentifier: A unique numeric identifier assigned to the user
+        LMSUserSourceSystemIdentifier: A unique numeric identifier assigned to the user
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
         CreateDate: Date this record was created in the extractor
@@ -148,7 +148,7 @@ def students_and_teachers_to_user_section_associations_dfs(
         tuple(
             user_section_associations_df.groupby(
                 [
-                    "LMSSectionIdentifier",
+                    "LMSSectionSourceSystemIdentifier",
                 ]
             )
         )

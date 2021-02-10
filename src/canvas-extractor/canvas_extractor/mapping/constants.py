@@ -5,6 +5,7 @@
 
 SOURCE_SYSTEM = "Canvas"
 INACTIVE = "inactive"
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 class ROLES:

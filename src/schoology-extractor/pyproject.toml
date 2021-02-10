@@ -16,7 +16,7 @@ python-dotenv = "^0.14.0"
 opnieuw = "^1.1.0"
 SQLAlchemy = "^1.3.20"
 errorhandler = "^2.0.1"
-edfi-lms-extractor-lib = "1.0.0a0"
+edfi-lms-extractor-lib = {version = "1.0.0a1", allow-prereleases = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

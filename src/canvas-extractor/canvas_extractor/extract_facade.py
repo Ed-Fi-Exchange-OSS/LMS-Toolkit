@@ -64,7 +64,7 @@ def extract_courses(
 
 def extract_sections(
     courses: List[Course], sync_db: sqlalchemy.engine.base.Engine
-) -> Tuple[List[Section], DataFrame]:
+) -> Tuple[List[Section], DataFrame, List[str]]:
     """
     Gets all Canvas sections, in the Ed-Fi UDM format.
 
@@ -77,14 +77,15 @@ def extract_sections(
 
     Returns
     -------
-    Tuple[List[Section], DataFrame]
-        A tuple with the list of Canvas Section objects and the udm_sections dataframe.
+    Tuple[List[Section], DataFrame, List[str]]
+        A tuple with the list of Canvas Section objects, the udm_sections dataframe,
+        and a list of all section ids as strings.
     """
     sections: List[Section] = sectionsApi.request_sections(courses)
     sections_df: DataFrame = sectionsApi.sections_synced_as_df(sections, sync_db)
     udm_sections_df: DataFrame = sectionsMap.map_to_udm_sections(sections_df)
-
-    return (sections, udm_sections_df)
+    section_ids = udm_sections_df["SourceSystemIdentifier"].astype("string").tolist()
+    return (sections, udm_sections_df, section_ids)
 
 
 def extract_students(
@@ -182,7 +183,7 @@ def extract_submissions(
                 submissions, sync_db
             )
             submissions_df = submissionsMap.map_to_udm_submissions(submissions_df)
-            export[(section.id, assignment.id)] = submissions_df
+            export[(str(section.id), str(assignment.id))] = submissions_df
     return export
 
 
@@ -217,7 +218,7 @@ def extract_enrollments(
             enrollments_df
         )
         enrollments = enrollments + local_enrollments
-        udm_enrollments[section.id] = enrollments_df
+        udm_enrollments[str(section.id)] = enrollments_df
 
     return (enrollments, udm_enrollments)
 
@@ -228,27 +229,27 @@ def extract_grades(
     sections: List[Section],
 ) -> Dict[str, DataFrame]:
     """
-    Gets all Canvas enrollments, in the Ed-Fi UDM format.
+    Gets all Canvas grades, in the Ed-Fi UDM format.
 
     Parameters
     ----------
     enrollments: List[Enrollment]
         A list of Canvas Enrollment objects.
     udm_enrollments: Dict[str, DataFrame]
-        A dict of udm enrollments with section_id as the key and DartaFrame as value.
+        A dict of udm enrollments with section_id as the key and DataFrame as value.
     sections: List[Section]
         A list of Canvas Section objects.
 
     Returns
     -------
     Dict[str, DataFrame]
-        A dict with section_id as key and DataFrame as value.
+        A dict with section_id as key and UDM Grades DataFrame as value.
     """
     output: Dict[str, DataFrame] = {}
 
     for section in sections:
         current_grades: List[dict] = []
-        udm_enrollments_list: List[dict] = udm_enrollments[section.id].to_dict(
+        udm_enrollments_list: List[dict] = udm_enrollments[str(section.id)].to_dict(
             "records"
         )
 
@@ -265,16 +266,13 @@ def extract_grades(
                 if first_enrollment["SourceSystemIdentifier"] == str(enrollment.id)
             ][0]
             grade["SourceSystemIdentifier"] = f"g#{enrollment.id}"
-            grade["LMSUserIdentifier"] = current_udm_enrollment[
-                "LMSUserSourceSystemIdentifier"
-            ]
-            grade["LMSSectionIdentifier"] = section.id
-            grade["LMSGradeIdentifier"] = grade["SourceSystemIdentifier"]
+            grade["LMSUserLMSSectionAssociationSourceSystemIdentifier"] = str(enrollment.id)
+            grade["LMSSectionIdentifier"] = str(section.id)
             grade["CreateDate"] = current_udm_enrollment["CreateDate"]
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
             current_grades.append(grade)
 
-        output[section.id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
+        output[str(section.id)] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
 
     return output
 

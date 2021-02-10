@@ -64,7 +64,7 @@ def describe_when_extract_sections_is_called():
     def system(sync_db_mock):
         sectionsApi.sections_synced_as_df = Mock(return_value=[])
         sectionsApi.request_sections = Mock(return_value=DataFrame())
-        sectionsMap.map_to_udm_sections = Mock(return_value=DataFrame())
+        sectionsMap.map_to_udm_sections = Mock(return_value=DataFrame(columns=["SourceSystemIdentifier"]))
 
         extract_facade.extract_sections([], sync_db_mock)
         return {

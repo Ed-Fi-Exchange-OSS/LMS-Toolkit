@@ -60,6 +60,7 @@ def map_to_udm_assignments(
     assert "lock_at" in assignments_df.columns
     assert "unlock_at" in assignments_df.columns
     assert "due_at" in assignments_df.columns
+    assert "submission_types" in assignments_df.columns
     assert "course_id" in assignments_df.columns
     assert "points_possible" in assignments_df.columns
     assert "CreateDate" in assignments_df.columns
@@ -80,6 +81,7 @@ def map_to_udm_assignments(
             "course_id",
             "points_possible",
             "due_at",
+            "submission_types",
             "CreateDate",
             "LastModifiedDate",
         ]
@@ -103,12 +105,15 @@ def map_to_udm_assignments(
             "unlock_at": "StartDateTime",
             "points_possible": "MaxPoints",
             "due_at": "DueDateTime",
+            "submission_types": "SubmissionType",
         },
         inplace=True,
     )
 
     assignments_df["AssignmentCategory"] = ""
     assignments_df["SourceSystem"] = constants.SOURCE_SYSTEM
+
+    assignments_df["LMSSectionSourceSystemIdentifier"] = assignments_df["LMSSectionSourceSystemIdentifier"].astype("string")
 
     # group by section id as a Dict of DataFrames
     result: Dict[str, DataFrame] = cast(
