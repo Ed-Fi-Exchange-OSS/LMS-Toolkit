@@ -90,6 +90,7 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
             "grade": "Grade"
         }, inplace=True)
 
+    df["SubmissionDateTime"] = pd.to_datetime(df["SubmissionDateTime"]).dt.strftime(constants.DATE_FORMAT)
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["SubmissionStatus"] = df.apply(_get_status, axis=1)
     df["EarnedPoints"] = None

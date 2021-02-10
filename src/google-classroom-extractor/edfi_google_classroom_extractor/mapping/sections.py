@@ -3,11 +3,12 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from typing import List, Tuple
 from pandas import DataFrame
 from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
-def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
+def courses_to_sections_df(courses_df: DataFrame) -> Tuple[DataFrame, List[str]]:
     """
     Convert a Courses API DataFrame to an LMSSections UDM DataFrame
 
@@ -18,8 +19,9 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
 
     Returns
     -------
-    DataFrame
-        a LMSSections DataFrame based on the given Courses API DataFrame
+    Tuple[DataFrame, List[str]]
+        a LMSSections DataFrame based on the given Courses API DataFrame, and
+        a List of all LMSSection section ids
 
     Notes
     -----
@@ -50,7 +52,7 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
             "creationTime",
             "updateTime",
             "CreateDate",
-            "LastModifiedDate"
+            "LastModifiedDate",
         ]
     ]
     result = result.rename(
@@ -68,4 +70,4 @@ def courses_to_sections_df(courses_df: DataFrame) -> DataFrame:
     result["SISSectionIdentifier"] = ""  # No SIS id available from API
     result["Term"] = ""  # No term available from API
 
-    return result
+    return (result, result["SourceSystemIdentifier"].astype("string").tolist())

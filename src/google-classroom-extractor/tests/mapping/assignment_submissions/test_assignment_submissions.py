@@ -17,14 +17,13 @@ COURSE_ID = "1"
 COURSEWORK_ID = "2"
 ID = "3"
 USER_ID = "4"
-CREATION_TIME = "5"
-UPDATE_TIME = "6"
+CREATION_TIME = "2005-05-05 00:00:00"
+UPDATE_TIME = "2006-06-06 00:00:00"
 STATE = "7"
 LATE = "8"
 DRAFT_GRADE = "9"
 ASSIGNED_GRADE = "10"
 ALTERNATE_LINK = "11"
-COURSEWORK_TYPE = "12"
 ASSOCIATED_WITH_DEVELOPER = "13"
 SUBMISSION_HISTORY = "14"
 CREATE_DATE = "2020-01-01"
@@ -48,7 +47,6 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
                 "draftGrade": [DRAFT_GRADE],
                 "assignedGrade": [ASSIGNED_GRADE],
                 "alternateLink": [ALTERNATE_LINK],
-                "courseWorkType": [COURSEWORK_TYPE],
                 "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
                 "submissionHistory": [SUBMISSION_HISTORY],
                 "CreateDate": [CREATE_DATE],
@@ -68,7 +66,7 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         row_count, column_count = submissions_df.shape
 
         assert row_count == 1
-        assert column_count == 13
+        assert column_count == 12
 
     def it_should_map_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[
@@ -76,14 +74,14 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         ]
         row_dict = submissions_df.to_dict(orient="records")[0]
 
-        assert row_dict["AssignmentIdentifier"] == f"{COURSE_ID}-{COURSEWORK_ID}"
+        assert row_dict["AssignmentSourceSystemIdentifier"] == f"{COURSE_ID}-{COURSEWORK_ID}"
         assert row_dict["EarnedPoints"] == ASSIGNED_GRADE
         assert row_dict["Grade"] == ASSIGNED_GRADE
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{COURSEWORK_ID}-{ID}"
-        assert row_dict["Status"] == STATE
+        assert row_dict["SubmissionStatus"] == STATE
         assert row_dict["SubmissionDateTime"] == ""
-        assert row_dict["LMSUserIdentifier"] == USER_ID
+        assert row_dict["LMSUserSourceSystemIdentifier"] == USER_ID
         assert row_dict["SourceCreateDate"] == CREATION_TIME
         assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
         assert row_dict["CreateDate"] == CREATE_DATE
@@ -99,7 +97,6 @@ BOILERPLATE: Dict[str, str] = {
     "draftGrade": DRAFT_GRADE,
     "assignedGrade": ASSIGNED_GRADE,
     "alternateLink": ALTERNATE_LINK,
-    "courseWorkType": COURSEWORK_TYPE,
     "associatedWithDeveloper": ASSOCIATED_WITH_DEVELOPER,
     "submissionHistory": SUBMISSION_HISTORY,
     "CreateDate": CREATE_DATE,

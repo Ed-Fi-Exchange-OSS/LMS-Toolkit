@@ -114,6 +114,7 @@ def coursework_to_assignments_dfs(
         }
     )
 
+    assignments_df["SubmissionType"] = assignments_df["AssignmentCategory"]
     assignments_df["SourceSystem"] = SOURCE_SYSTEM
     assignments_df["EndDateTime"] = ""  # No EndDateTime available from API
 

@@ -23,8 +23,8 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         @pytest.fixture
         def result() -> pd.DataFrame:
 
-            grades_csv = """html_url,current_grade,current_score,final_grade,final_score,unposted_current_score,unposted_current_grade,unposted_final_score,unposted_final_grade,SourceSystemIdentifier,LMSUserIdentifier,LMSSectionIdentifier,LMSGradeIdentifier,CreateDate,LastModifiedDate
-https://edfialliance.instructure.com/courses/103/grades/113,,89.5,,89.5,89.5,,89.5,,g#111,113,104,g#111,2021-01-12 15:29:34.999238,2021-01-12 16:13:40.212388"""
+            grades_csv = """html_url,current_grade,current_score,final_grade,final_score,unposted_current_score,unposted_current_grade,unposted_final_score,unposted_final_grade,SourceSystemIdentifier,LMSUserLMSSectionAssociationSourceSystemIdentifier,CreateDate,LastModifiedDate
+https://edfialliance.instructure.com/courses/103/grades/113,,89.5,,89.5,89.5,,89.5,,g#111,111,2021-01-12 15:29:34.999238,2021-01-12 16:13:40.212388"""
 
             lines = grades_csv.split("\n")
             grades = pd.DataFrame(
@@ -38,7 +38,7 @@ https://edfialliance.instructure.com/courses/103/grades/113,,89.5,,89.5,89.5,,89
             return map_to_udm_grades(df)
 
         def it_should_have_correct_number_of_columns(result):
-            assert result.shape[1] == 11
+            assert result.shape[1] == 9
 
         def it_should_have_canvas_as_source_system(result):
             assert result["SourceSystem"].iloc[0] == "Canvas"
@@ -47,13 +47,7 @@ https://edfialliance.instructure.com/courses/103/grades/113,,89.5,,89.5,89.5,,89
             assert result["SourceSystemIdentifier"].iloc[0] == "g#111"
 
         def it_should_map_id_to_user_source_system_identifier(result):
-            assert result["LMSUserIdentifier"].iloc[0] == "113"
-
-        def it_should_map_input_section_id_to_lms_section_identifier(result):
-            assert result["LMSSectionIdentifier"].iloc[0] == "104"
-
-        def it_should_have_grade_identifier(result):
-            assert result["LMSGradeIdentifier"].iloc[0] == "g#111"
+            assert result["LMSUserLMSSectionAssociationSourceSystemIdentifier"].iloc[0] == "111"
 
         def it_should_have_grade(result):
             assert result["Grade"].iloc[0] == "89.5"

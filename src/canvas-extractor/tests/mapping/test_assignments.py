@@ -233,7 +233,7 @@ def describe_when_a_single_assignment_with_unique_fields_is_mapped():
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
         row_count, column_count = assignment_df.shape
         assert row_count == 1
-        assert column_count == 14
+        assert column_count == 15
 
     def it_should_map_fields_correctly(assignment_dfs):
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
@@ -245,6 +245,7 @@ def describe_when_a_single_assignment_with_unique_fields_is_mapped():
         assert row_dict["LMSSectionSourceSystemIdentifier"] == SECTION_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE
+        assert row_dict["SubmissionType"] == SUBMISSION_TYPES
         assert row_dict["SourceSystemIdentifier"] == ID
         assert row_dict["StartDateTime"] == UNLOCK_AT
         assert row_dict["SourceCreateDate"] == CREATED_AT
@@ -349,18 +350,33 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
                 "start_at": [SECTION_START_AT, SECOND_SECTION_START_AT],
                 "end_at": [SECTION_END_AT, SECOND_SECTION_END_AT],
                 "created_at": [SECTION_CREATED_AT, SECOND_SECTION_CREATED_AT],
-                "created_at_date": [SECTION_CREATED_AT_DATE, SECOND_SECTION_CREATED_AT_DATE],
+                "created_at_date": [
+                    SECTION_CREATED_AT_DATE,
+                    SECOND_SECTION_CREATED_AT_DATE,
+                ],
                 "restrict_enrollments_to_section_dates": [
                     SECTION_RESTRICT_ENROLLMENTS_TO_SECTION_DATES,
                     SECOND_SECTION_RESTRICT_ENROLLMENTS_TO_SECTION_DATES,
                 ],
-                "nonxlist_course_id": [SECTION_NONXLIST_COURSE_ID, SECOND_SECTION_NONXLIST_COURSE_ID],
-                "sis_section_id": [SECTION_SIS_SECTION_ID, SECOND_SECTION_SIS_SECTION_ID],
+                "nonxlist_course_id": [
+                    SECTION_NONXLIST_COURSE_ID,
+                    SECOND_SECTION_NONXLIST_COURSE_ID,
+                ],
+                "sis_section_id": [
+                    SECTION_SIS_SECTION_ID,
+                    SECOND_SECTION_SIS_SECTION_ID,
+                ],
                 "sis_course_id": [SECTION_SIS_COURSE_ID, SECOND_SECTION_SIS_COURSE_ID],
-                "integration_id": [SECTION_INTEGRATION_ID, SECOND_SECTION_INTEGRATION_ID],
+                "integration_id": [
+                    SECTION_INTEGRATION_ID,
+                    SECOND_SECTION_INTEGRATION_ID,
+                ],
                 "sis_import_id": [SECTION_SIS_IMPORT_ID, SECOND_SECTION_SIS_IMPORT_ID],
                 "CreateDate": [SECTION_CREATE_DATE, CREATE_DATE],
-                "LastModifiedDate": [SECTION_LAST_MODIFIED_DATE, SECOND_SECTION_LAST_MODIFIED_DATE],
+                "LastModifiedDate": [
+                    SECTION_LAST_MODIFIED_DATE,
+                    SECOND_SECTION_LAST_MODIFIED_DATE,
+                ],
             }
         )
 
@@ -374,13 +390,15 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
         row_count, column_count = assignment_df.shape
         assert row_count == 1
-        assert column_count == 14
+        assert column_count == 15
 
-    def it_should_have_correct_shape_for_second_df(assignment_dfs: Dict[str, DataFrame]):
+    def it_should_have_correct_shape_for_second_df(
+        assignment_dfs: Dict[str, DataFrame]
+    ):
         second_assignment_df: DataFrame = assignment_dfs[SECOND_SECTION_ID]
         second_row_count, second_column_count = second_assignment_df.shape
         assert second_row_count == 1
-        assert second_column_count == 14
+        assert second_column_count == 15
 
     def it_should_map_fields_correctly_for_first_df(assignment_dfs):
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
@@ -392,6 +410,7 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
         assert row_dict["LMSSectionSourceSystemIdentifier"] == SECTION_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE
+        assert row_dict["SubmissionType"] == SUBMISSION_TYPES
         assert row_dict["SourceSystemIdentifier"] == ID
         assert row_dict["StartDateTime"] == UNLOCK_AT
         assert row_dict["SourceCreateDate"] == CREATED_AT
@@ -410,6 +429,7 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
         assert row_dict["LMSSectionSourceSystemIdentifier"] == SECOND_SECTION_ID
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE
+        assert row_dict["SubmissionType"] == SUBMISSION_TYPES
         assert row_dict["SourceSystemIdentifier"] == ID
         assert row_dict["StartDateTime"] == UNLOCK_AT
         assert row_dict["SourceCreateDate"] == CREATED_AT

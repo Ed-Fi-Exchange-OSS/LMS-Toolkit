@@ -99,5 +99,6 @@
         "**/__pycache__": true,
         "**/*.egg-info": true
     },
-    "jupyter.jupyterServerType": "local"
+    "jupyter.jupyterServerType": "local",
+    "python.pythonPath": ".venv\\Scripts\\python.exe"
 }

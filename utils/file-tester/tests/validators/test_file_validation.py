@@ -2,7 +2,7 @@
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
-
+from typing import List
 import pandas as pd
 import pytest
 
@@ -63,8 +63,6 @@ def describe_when_validating_users_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
             ],
         )
         def it_returns_an_error_for(mocker, bad_column):
@@ -193,7 +191,7 @@ def describe_when_validating_users_file():
                 "SourceLastModifiedDate",
             ]
 
-            data = [[]]
+            data: List = [[]]
             if "SourceSystemIdentifier" != missing:
                 data[0].append("SourceSystemIdentifier")
             if "SourceSystem" != missing:
@@ -244,7 +242,7 @@ def describe_when_validating_users_file():
 
             # Arrange
             assert (
-                result[0] == "Users file could not be read or the file does not exist."
+                result[0] == "Users files are either empty, cannot be read, or do not exist. If this extractor does not support Users, empty files are to be expected."
             )
 
 
@@ -302,8 +300,6 @@ def describe_when_validating_sections_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
             ],
         )
         def it_returns_an_error_for(mocker, bad_column):
@@ -483,7 +479,7 @@ def describe_when_validating_sections_file():
             # Arrange
             assert (
                 result[0]
-                == "Sections file could not be read or the file does not exist."
+                == "Sections files are either empty, cannot be read, or do not exist. If this extractor does not support Sections, empty files are to be expected."
             )
 
 
@@ -543,8 +539,6 @@ def describe_when_validating_system_activities_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
                 "ActivityDateTime"
             ],
         )
@@ -736,7 +730,7 @@ def describe_when_validating_system_activities_file():
             # Arrange
             assert (
                 result[0]
-                == "System Activities file could not be read or the file does not exist."
+                == "System Activities files are either empty, cannot be read, or do not exist. If this extractor does not support System Activities, empty files are to be expected."
             )
 
 
@@ -796,8 +790,6 @@ def describe_when_validating_section_associations_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
             ],
         )
         def it_returns_an_error_for(mocker, bad_column):
@@ -984,7 +976,7 @@ def describe_when_validating_section_associations_file():
             # Arrange
             assert (
                 result[0]
-                == "Section Associations file could not be read or the file does not exist."
+                == "Section Associations files are either empty, cannot be read, or do not exist. If this extractor does not support Section Associations, empty files are to be expected."
             )
 
 
@@ -1048,8 +1040,6 @@ def describe_when_validating_section_activities_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
                 "ActivityDateTime"
             ],
         )
@@ -1256,7 +1246,7 @@ def describe_when_validating_section_activities_file():
             # Arrange
             assert (
                 result[0]
-                == "Section Activities file could not be read or the file does not exist."
+                == "Section Activities files are either empty, cannot be read, or do not exist. If this extractor does not support Section Activities, empty files are to be expected."
             )
 
 
@@ -1324,8 +1314,6 @@ def describe_when_validating_assignments_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
                 "EndDateTime",
                 "StartDateTime",
                 "DueDateTime",
@@ -1616,7 +1604,7 @@ def describe_when_validating_assignments_file():
             # Arrange
             assert (
                 result[0]
-                == "Assignments file could not be read or the file does not exist."
+                == "Assignments files are either empty, cannot be read, or do not exist. If this extractor does not support Assignments, empty files are to be expected."
             )
 
 
@@ -1678,8 +1666,6 @@ def describe_when_validating_submissions_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
                 "SubmissionDateTime",
             ],
         )
@@ -1875,7 +1861,7 @@ def describe_when_validating_submissions_file():
             # Arrange
             assert (
                 result[0]
-                == "Submissions file could not be read or the file does not exist."
+                == "Submissions files are either empty, cannot be read, or do not exist. If this extractor does not support Submissions, empty files are to be expected."
             )
 
 
@@ -1931,8 +1917,6 @@ def describe_when_validating_grades_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
             ],
         )
         def it_returns_an_error_for(mocker, bad_column):
@@ -2102,7 +2086,7 @@ def describe_when_validating_grades_file():
 
             # Arrange
             assert (
-                result[0] == "Grades file could not be read or the file does not exist."
+                result[0] == "Grades files are either empty, cannot be read, or do not exist. If this extractor does not support Grades, empty files are to be expected."
             )
 
 
@@ -2162,8 +2146,6 @@ def describe_when_validating_attendance_events_file():
             [
                 "CreateDate",
                 "LastModifiedDate",
-                "SourceCreateDate",
-                "SourceLastModifiedDate",
                 "EventDate",
             ],
         )
@@ -2351,5 +2333,5 @@ def describe_when_validating_attendance_events_file():
             # Arrange
             assert (
                 result[0]
-                == "Attendance Events file could not be read or the file does not exist."
+                == "Attendance Events files are either empty, cannot be read, or do not exist. If this extractor does not support Attendance Events, empty files are to be expected."
             )

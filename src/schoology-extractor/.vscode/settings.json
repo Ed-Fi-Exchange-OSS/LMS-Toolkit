@@ -102,5 +102,6 @@
         "dbname",
         "pytest"
     ],
-    "jupyter.jupyterServerType": "local"
+    "jupyter.jupyterServerType": "local",
+    "python.pythonPath": ".venv\\Scripts\\python.exe"
 }

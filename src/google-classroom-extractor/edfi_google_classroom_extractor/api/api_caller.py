@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from collections import namedtuple
+import socket
 import logging
 import os
 from typing import List, Dict, Optional, Callable, cast
@@ -23,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 @retry(
-    retry_on_exceptions=(IOError, RequestException, GoogleApiError),
+    retry_on_exceptions=(IOError, RequestException, GoogleApiError, socket.timeout, socket.error),
     max_calls_total=MAX_TOTAL_CALLS,
     retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
 )

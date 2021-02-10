@@ -45,9 +45,7 @@ def map_to_udm_grades(grades_df: pd.DataFrame) -> pd.DataFrame:
         return grades_df
 
     assert "SourceSystemIdentifier" in grades_df.columns
-    assert "LMSUserIdentifier" in grades_df.columns
-    assert "LMSSectionIdentifier" in grades_df.columns
-    assert "LMSGradeIdentifier" in grades_df.columns
+    assert "LMSUserLMSSectionAssociationSourceSystemIdentifier" in grades_df.columns
     assert "final_score" in grades_df.columns
     assert "CreateDate" in grades_df.columns
     assert "LastModifiedDate" in grades_df.columns
@@ -55,9 +53,7 @@ def map_to_udm_grades(grades_df: pd.DataFrame) -> pd.DataFrame:
     df: DataFrame = grades_df[
         [
             "SourceSystemIdentifier",
-            "LMSUserIdentifier",
-            "LMSSectionIdentifier",
-            "LMSGradeIdentifier",
+            "LMSUserLMSSectionAssociationSourceSystemIdentifier",
             "final_score",
             "CreateDate",
             "LastModifiedDate",

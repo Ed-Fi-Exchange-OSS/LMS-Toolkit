@@ -18,8 +18,8 @@ TITLE = "3"
 DESCRIPTION = "4"
 STATE = "5"
 ALTERNATE_LINK = "6"
-CREATION_TIME = "7"
-UPDATE_TIME = "8"
+CREATION_TIME = "2007-07-07 00:00:00"
+UPDATE_TIME = "2008-08-08 00:00:00"
 MAX_POINTS = "9"
 DUEDATE_YEAR = "2000"
 DUEDATE_MONTH = "10"
@@ -77,7 +77,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
-        assert column_count == 14
+        assert column_count == 15
 
     def it_should_map_fields_correctly(assignments_dicts):
         assignments_df: DataFrame = assignments_dicts[COURSE_ID]
@@ -103,6 +103,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
         assert row_dict["CreateDate"] == CREATE_DATE
         assert row_dict["LastModifiedDate"] == LAST_MODIFIED_DATE
+        assert row_dict["SubmissionType"] == WORK_TYPE
 
 
 def describe_when_a_single_coursework_without_due_date_info_is_mapped():
@@ -141,7 +142,7 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         row_count, column_count = assignments_df.shape
 
         assert row_count == 1
-        assert column_count == 14
+        assert column_count == 15
 
     def it_should_map_fields_correctly_with_empty_duedate(assignments_dicts):
         assignments_df: DataFrame = assignments_dicts[COURSE_ID]
@@ -159,6 +160,7 @@ def describe_when_a_single_coursework_without_due_date_info_is_mapped():
         assert row_dict["Title"] == TITLE
         assert row_dict["SourceCreateDate"] == CREATION_TIME
         assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
+        assert row_dict["SubmissionType"] == WORK_TYPE
 
 
 BOILERPLATE: Dict[str, str] = {
