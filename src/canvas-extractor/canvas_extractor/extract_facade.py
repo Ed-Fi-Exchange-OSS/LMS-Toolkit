@@ -84,8 +84,8 @@ def extract_sections(
     sections: List[Section] = sectionsApi.request_sections(courses)
     sections_df: DataFrame = sectionsApi.sections_synced_as_df(sections, sync_db)
     udm_sections_df: DataFrame = sectionsMap.map_to_udm_sections(sections_df)
-
-    return (sections, udm_sections_df, udm_sections_df["SourceSystemIdentifier"].astype("string").tolist())
+    section_ids = udm_sections_df["SourceSystemIdentifier"].astype("string").tolist()
+    return (sections, udm_sections_df, section_ids)
 
 
 def extract_students(
