@@ -17,6 +17,8 @@ All of the tools in this repository require [Python
 `python` and `poetry` commands are available in your command path before trying
 to run any of the tools.
 
+To do so, try running `python --version` in the command line which should output a version >= 3.8 for python and try `poetry --version` for poetry.
+
 ## Tools
 
 The Toolkit consists of extractors and loaders:
