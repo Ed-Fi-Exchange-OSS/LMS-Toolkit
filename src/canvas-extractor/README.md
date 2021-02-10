@@ -1,8 +1,9 @@
 # Canvas Extractor
 
-This script retrieves and writes out to CSV all students, active sections,
-assignments, and submissions. For more information on the this tool and its
-output files, please see the main repository [readme](../../README.md).
+This tool retrieves and writes out to CSV students, active sections,
+assignments, and submissions by querying the Canvas API. For more information on
+the this tool and its output files, please see the main repository
+[readme](../../README.md).
 
 ## Getting Started
 
@@ -15,18 +16,19 @@ output files, please see the main repository [readme](../../README.md).
 
 1. Optional: make a copy of the `.env.example` file, named simply `.env`, and
    customize the settings as described in the Configuration section below.
+1. API Token...
 1. Run the extractor one of two ways:
-   * Execute the extractor with command line arguments:
+   * Execute the extractor with minimum command line arguments:
 
       ```bash
-      poetry run python.exe canvas_extractor -b your-canvas-url -a your-api-token
-          -s start-date-range -e end-date-range
+      poetry run python canvas_extractor -b [canvas url] -a [api-token]
+          -s [start date range] -e [end date range]
       ```
 
    * Alternately, run with environment variables or `.env` file:
 
      ```bash
-     poetry run python.exe canvas_extractor
+     poetry run python canvas_extractor
      ```
 
    * For detailed help, execute `poetry run python canvas_extractor -h`.
@@ -42,12 +44,12 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 
 | Description | Required | Command Line Argument | Environment Variable |
 | ----------- | -------- | --------------------- | -------------------- |
-| Base Canvas URL | yes | -b or --base-url | CANVAS_BASE_URL |
-| Canvas API access token | yes |  -a or --access-token | CANVAS_ACCESS_TOKEN |
-| Output Directory | no (default: [working directory]/data) | -o or --output-directory | OUTPUT_DIRECTORY |
-| Start date* | yes | -s or --start_date | START_DATE |
-| End date* | yes | -e or --end_date | END_DATE |
-| Log level** | no (default: INFO) | -l or --log-level | LOG_LEVEL |
+| Base Canvas URL | yes | `-b` or `--base-url` | CANVAS_BASE_URL |
+| Canvas API access token | yes | `-a` or `--access-token` | CANVAS_ACCESS_TOKEN |
+| Output Directory | no (default: [working directory]/data) | `-o` or `--output-directory` | OUTPUT_DIRECTORY |
+| Start date*, yyyy-mm-dd format | yes | `-s` or `--start_date` | START_DATE |
+| End date*, yyyy-mm-dd format | yes | `-e` or `--end_date` | END_DATE |
+| Log level** | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
 
 \* _Start Date_ and _End Date_ are used in pulling course and system activity
 data and would typically span a semester or equivalent school calendar timespan.
@@ -70,7 +72,7 @@ Log statements are written to the standard output. If you wish to capture log
 details, then be sure to redirect the output to a file. For example:
 
 ```bash
-poetry run python.exe schoology_extractor > 2020-12-07-15-43.log
+poetry run python schoology_extractor > 2020-12-07-15-43.log
 ```
 
 If any errors occurred during the script run, then there will be a final print
@@ -81,36 +83,25 @@ for more information."`
 The application will exit with status code `1` if there were any log messages at
 the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 
-## Developer Utilities
+## Developer Operations
 
-Unit test execution:
+1. Style check: `poetry run flake8`
+1. Static typing check: `poetry run mypy .`
+1. Run unit tests: `poetry run pytest`
+1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
+1. View code coverage: `poetry run coverage report`
 
-```bash
-poetry run pytest
-```
+_Also see [build.py](../../docs/build.md)_ for use of the build script.
 
-Code coverage:
+### Visual Studio Code (Optional)
 
-```bash
-poetry run coverage run -m pytest
-poetry run coverage report
-```
-
-Linting:
-
-```bash
-poetry run flake8
-```
-
-Static type checks:
-
-```bash
-poetry run mypy schoology_extractor
-```
+To work in Visual Studio Code install the Python Extension.
+Then type `Ctrl-Shift-P`, then choose `Python:Select Interpreter`,
+then choose the environment that includes `.venv` in the name.
 
 ## Legal Information
 
-Copyright (c) 2020 Ed-Fi Alliance, LLC and contributors.
+Copyright (c) 2021 Ed-Fi Alliance, LLC and contributors.
 
 Licensed under the [Apache License, Version 2.0](LICENSE) (the "License").
 

@@ -1,37 +1,37 @@
 # Google Classroom Extractor
 
-The purpose of this project is to make it easy to extract
-Google Classroom data in order to monitor the progress and
-participation of students in virtual or blended models.
+This tool retrieves and writes out to CSV students, active sections,
+assignments, and submissions by querying the Google Classroom API. For more
+information on the this tool and its output files, please see the main
+repository [readme](../../README.md).
 
-This data extractor targets two audiences.  The first is
-someone who just wants the data out of Google Classroom into a
-.csv file that can be loaded into a spreadsheet.  The second
-for someone who is familiar with Jupyter Notebook, a common
-Python-based tool for analysis and reporting.
+## Getting Started
 
-## Installing the Extractor
+1. Ensure you have [Python 3.8+ and Poetry](../README.md#getting-started)
+1. At a command prompt, install all required dependencies:
 
-1. Install a current version of Python.  The extractor has
-   been tested against Python 3.8.5.  You can find it
-   [here](https://www.python.org/downloads/).
-1. Install Poetry, a Python tool for downloading third-party
-   libraries.  You can find installation instructions
-   [here](https://python-poetry.org/docs/#installation). The
-   instructions are basically a long single-line command to
-   copy and run on Powershell (for Windows) or bash (for
-   Mac/Linux).
-1. Clone this GitHub repository and open a command prompt in
-   the root directory of this project (where this README file
-   resides).
-1. Configure Poetry to put Python enivronments in the right place: `poetry
-   config virtualenvs.in-project true`.
-1. Install the third-party libraries used by the extractor:
-   `poetry install`. This may take a while.
-1. Copy the "example.env" file to ".env" in the same directory
-   and set the variables as documented in the file.
-1. Place the service-account.json file downloaded earlier in
+   ```bash
+   poetry install
+   ```
+
+1. Optional: make a copy of the `.env.example` file, named simply `.env`, and
+   customize the settings as described in the Configuration section below.
+1. Place the service-account.json file described below into
    the root directory of this project.
+1. Run the extractor one of two ways:
+   * Execute the extractor with minimum command line arguments:
+
+      ```bash
+      poetry run python edfi_google_classroom_extractor -a [admin account email]
+      ```
+
+   * Alternately, run with environment variables or `.env` file:
+
+     ```bash
+     poetry run python edfi_google_classroom_extractor
+     ```
+
+   * For detailed help, execute `poetry run python canvas_extractor -h`.
 
 ## Running the Extractor
 
@@ -46,15 +46,18 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 
 | Description | Required | Command Line Argument | Environment Variable |
 | ----------- | -------- | --------------------- | -------------------- |
-| The email address of the Google Classroom admin account. | yes | -a or --classroom-account | CLASSROOM_ACCOUNT |
-| The log level for the tool. | no (default: INFO) | -l or --log-level | LOG_LEVEL |
-| The output directory for the generated csv files. | no (default: data/) | -s or --usage-start-date | OUTPUT_PATH |
-| Start date for usage data pull in yyyy-mm-dd format. | no (default: today) | -s or --usage-start-date | START_DATE |
-| End date for usage data pull in yyyy-mm-dd format. | no (default: today) | -e or --usage-end-date | END_DATE |
+| The email address of the Google Classroom admin account. | yes | `-a` or `--classroom-account` | CLASSROOM_ACCOUNT |
+| The log level for the tool. | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
+| The output directory for the generated csv files. | no (default: data/) | `-s` or `--usage-start-date` | OUTPUT_PATH |
+| Start date*, yyyy-mm-dd format | no (default: today) | `-s` or `--usage-start-date` | START_DATE |
+| End date*, yyyy-mm-dd format | no (default: today) | `-e` or `--usage-end-date` | END_DATE |
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
 
-Valid log levels:
+\* _Start Date_ and _End Date_ are used in pulling system activity (usage)
+data and could span any relevant date range.
+
+\** Valid values for the optional _log level_:
 
 * DEBUG
 * INFO(default)
@@ -79,18 +82,18 @@ and API key.  This is the account the application will use for
 access.  This can be done
 [here](https://console.cloud.google.com/iam-admin/serviceaccounts/create).
 
- 1. Give the new service account a name like "Ed-Fi Extractor"
-    and click Create.
- 1. Grant the service account the Project Viewer role and click
-    Continue then Done.
- 1. The new service account will be displayed in a table.
-    Click on the three dots for the account and select Create
-    Key.
- 1. Choose JSON and click Create.
- 1. A JSON file will be downloaded from your browser, which is
-    the API key.  Rename it to service-account.json.
- 1. Finally, click on the service account to view details and
-    copy the Unique ID field for the next step.
+1. Give the new service account a name like "Ed-Fi Extractor"
+   and click Create.
+1. Grant the service account the Project Viewer role and click
+   Continue then Done.
+1. The new service account will be displayed in a table.
+   Click on the three dots for the account and select Create
+   Key.
+1. Choose JSON and click Create.
+1. A JSON file will be downloaded from your browser, which is the API key.
+   Rename it to `service-account.json`. Save this into the project directory.
+1. Finally, click on the service account to view details and
+   copy the Unique ID field for the next step.
 
 Finally, the administrator will need to specify the scope of
 access for the service account.  This can be done
@@ -119,10 +122,11 @@ directory of this project. CSV files are output into the
 
 ### TLS/SSL proxying
 
-Users on a corporate network that intercepts TLS/SSL traffic will need
-to have a copy of the corporate root certificate on file, and then add
-an environment variable pointing to this file:
-`HTTPLIB2_CA_CERTS=<absolute path to certificate>`
+Users on a corporate network that intercepts TLS/SSL traffic will need to have a
+copy of the corporate root certificate on file, and then add an environment
+variable pointing to this file: `HTTPLIB2_CA_CERTS=[absolute path to
+certificate]`. NOTE: this does not load properly through the `.env` file, and
+must be set as an actual environment variable.
 
 ### Logging and Exit Codes
 
@@ -130,7 +134,7 @@ Log statements are written to the standard output. If you wish to capture log
 details, then be sure to redirect the output to a file. For example:
 
 ```bash
-poetry run python.exe google_classroom_extractor/main.py > 2020-12-07-15-43.log
+poetry run python google_classroom_extractor > 2020-12-07-15-43.log
 ```
 
 If any errors occurred during the script run, then there will be a final print
@@ -141,7 +145,7 @@ for more information."`
 The application will exit with status code `1` if there were any log messages at
 the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 
-## Dev Operations
+## Developer Operations
 
 1. Style check: `poetry run flake8`
 1. Static typing check: `poetry run mypy .`
@@ -149,10 +153,23 @@ the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
 1. View code coverage: `poetry run coverage report`
 
-_Also see [build.py](../../docs/build.md)_.
+_Also see [build.py](../../docs/build.md)_ for use of the build script.
 
 ### Visual Studio Code (Optional)
 
 To work in Visual Studio Code install the Python Extension.
 Then type `Ctrl-Shift-P`, then choose `Python:Select Interpreter`,
 then choose the environment that includes `.venv` in the name.
+
+## Legal Information
+
+Copyright (c) 2021 Ed-Fi Alliance, LLC and contributors.
+
+Licensed under the [Apache License, Version 2.0](LICENSE) (the "License").
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
+See [NOTICES](NOTICES.md) for additional copyright and license notifications.

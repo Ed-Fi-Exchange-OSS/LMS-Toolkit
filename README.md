@@ -48,7 +48,8 @@ document the output files and provide sample analyses:
 
 * [Build script](docs/build.md): a Python script to automate common developer
   operations.
-* [Continuous Integration](actions/): automated unit testing and more, using GitHub Actions.
+* [Continuous Integration](actions/): automated unit testing and more, using
+  GitHub Actions.
 * [File Tester](utils/file-tester): a script for validating the directory
   structure, columns, and some formatting details for files created by the
   extractor utilities.
@@ -57,11 +58,14 @@ document the output files and provide sample analyses:
   to help develop the extractors. These projects have been kept for historical
   access by the core development team, and are unlikely to be of interest to
   anyone else.
-* The [docs](docs) directory contains additional documentation, including diagrams developed using [draw.io](https://draw.io), sample output files, MetaEd files defining the data model, and SQL scripts for generating database tables that will eventually be populated using the LMS Data Store Loader.
+* The [docs](docs) directory contains additional documentation, including
+  diagrams developed using [draw.io](https://draw.io), sample output files,
+  MetaEd files defining the data model, and SQL scripts for generating database
+  tables that will eventually be populated using the LMS Data Store Loader.
 
 ## Legal Information
 
-Copyright (c) 2020 Ed-Fi Alliance, LLC and contributors.
+Copyright (c) 2021 Ed-Fi Alliance, LLC and contributors.
 
 Licensed under the [Apache License, Version 2.0](LICENSE) (the "License").
 
