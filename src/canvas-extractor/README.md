@@ -68,7 +68,7 @@ data and would typically span a semester or equivalent school calendar timespan.
 
 ### Output
 
-CSV files in the data(or the specified output) directory with the LMS UDM format.
+CSV files in the data(or the specified output) directory with the [LMS Unifying Data Model](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Unifying+Data+Model) format.
 
 ### Logging and Exit Codes
 

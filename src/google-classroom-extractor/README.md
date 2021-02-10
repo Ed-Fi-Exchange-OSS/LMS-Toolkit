@@ -34,7 +34,7 @@ repository [readme](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit).
 
    * For detailed help, execute `poetry run python canvas_extractor -h`.
 
-## Running the Extractor
+## Configuration
 
 ### Configuration
 
