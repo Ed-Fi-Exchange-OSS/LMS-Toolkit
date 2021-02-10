@@ -3,7 +3,8 @@
 This tool retrieves and writes out to CSV students, active sections†,
 assignments, and submissions by querying the Schoology API († sections that are
 in an active grading period). For more information on the this tool and its
-output files, please see the main repository [readme](../../README.md).
+output files, please see the main repository
+[readme](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/README.md).
 
 ## Special Notes About Working With Schoology
 
@@ -20,7 +21,8 @@ directory must be provided to the extractor configuration.
 
 ## Getting Started
 
-1. Ensure you have [Python 3.8+ and Poetry](../README.md#getting-started)
+1. Ensure you have [Python 3.8+ and
+   Poetry](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/README.md#getting-started)
 1. At a command prompt, install all required dependencies:
 
    ```bash
@@ -101,7 +103,9 @@ the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
 1. View code coverage: `poetry run coverage report`
 
-_Also see [build.py](../../docs/build.md)_ for use of the build script.
+_Also see
+[build.py](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/docs/build.md)_ for
+use of the build script.
 
 ### Visual Studio Code (Optional)
 
@@ -113,11 +117,12 @@ then choose the environment that includes `.venv` in the name.
 
 Copyright (c) 2021 Ed-Fi Alliance, LLC and contributors.
 
-Licensed under the [Apache License, Version 2.0](LICENSE) (the "License").
+Licensed under the [Apache License, Version 2.0](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/LICENSE) (the "License").
 
 Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
-See [NOTICES](NOTICES.md) for additional copyright and license notifications.
+See [NOTICES](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/NOTICES.md) for
+additional copyright and license notifications.

@@ -27,7 +27,7 @@ The Toolkit consists of extractors and loaders:
   * [Canvas](src/canvas-extractor)
   * [Google Classroom](src/google-classroom-extractor)
   * [Schoology](src/schoology-extractor)
-* **LMS Loader**: pushes CSV files into a relational database. :exclamation:
+* **LMS Loader**: pushes CSV files into a relational database. :warning:
     [LMS Data Store Loader](src/lms-ds-loader) is currently in proof-of-concept stage,
     only capable of uploading User files.
 
@@ -48,7 +48,7 @@ document the output files and provide sample analyses:
 
 * [Build script](docs/build.md): a Python script to automate common developer
   operations.
-* [Continuous Integration](actions/): automated unit testing and more, using
+* [Continuous Integration](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/actions/): automated unit testing and more, using
   GitHub Actions.
 * [File Tester](utils/file-tester): a script for validating the directory
   structure, columns, and some formatting details for files created by the
