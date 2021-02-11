@@ -44,7 +44,7 @@ def generate_sections(record_count: int, grading_period_ids: List[int]) -> List[
             {
                 "title": fake.catch_phrase(),
                 "description": fake.sentence(),
-                "section_school_code": str(fake.random_number(digits=4)),
+                "section_school_code": str(fake.random_number(digits=8)),
                 "grading_periods": grading_period_ids,
             }
         )
@@ -157,8 +157,11 @@ def generate_and_load_sections(
 
     result: List[Dict] = []
     for course_id in course_ids:
-        course_sections: List[Dict] = generate_sections(record_count, grading_period_ids)
-        section_result = load_sections(request_client, course_id, course_sections)
-        result.extend(section_result)
+        try:
+            course_sections: List[Dict] = generate_sections(record_count, grading_period_ids)
+            section_result = load_sections(request_client, course_id, course_sections)
+            result.extend(section_result)
+        except Exception as ex:
+            logger.exception(ex)
 
     return result
