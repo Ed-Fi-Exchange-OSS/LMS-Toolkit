@@ -47,9 +47,17 @@ the this tool and its output files, please see the main repository
 Application configuration is provided through environment variables or command
 line interface (CLI) arguments. CLI arguments take precedence over environment
 variables. Environment variables can be set the normal way, or by using a
-dedicated [`.env` file](https://pypi.org/project/python-dotenv/). For `.env`
-support, we provided a [.env.example](.env.example) which you can copy, rename
-to `.env`, and adjust to your desired parameters. Supported parameters:
+dedicated [`.env` file](https://pypi.org/project/python-dotenv/) like
+
+```none
+CANVAS_BASE_URL=[CANVAS_BASE_URL]
+CANVAS_ACCESS_TOKEN=[CANVAS_ACCESS_TOKEN]
+START_DATE=[CLASS_START_DATE]
+END_DATE=[CLASS_END_DATE]
+OUTPUT_DIRECTORY=data
+```
+
+Supported parameters:
 
 | Description | Required | Command Line Argument | Environment Variable |
 | ----------- | -------- | --------------------- | -------------------- |
