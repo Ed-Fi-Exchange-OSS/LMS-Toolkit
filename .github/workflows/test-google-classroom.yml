@@ -7,10 +7,12 @@ name: Google Classroom Extractor
 on:
   pull_request:
     paths:
-      - 'src/google-classroom-extractor/**.py'
+      - 'src/google-classroom-extractor/**'
+      - '!src/google-classroom-extractor/**/*.md'
   push:
     paths:
-      - 'src/google-classroom-extractor/**.py'
+      - 'src/google-classroom-extractor/**'
+      - '!src/google-classroom-extractor/**/*.md'
 jobs:
   test-google-classroom-extractor:
     name: Run unit, style, and type checks

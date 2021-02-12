@@ -8,9 +8,11 @@ on:
   pull_request:
     paths:
       - 'src/schoology-extractor/**'
+      - '!src/schoology-extractor/**/*.md'
   push:
     paths:
       - 'src/schoology-extractor/**'
+      - '!src/schoology-extractor/**/*.md'
 jobs:
   test-schoology-extractor:
     name: Run unit, style, and type checks

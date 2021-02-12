@@ -7,10 +7,12 @@ name: File Tester
 on:
   pull_request:
     paths:
-      - 'utils/file-tester/**.py'
+      - 'utils/file-tester/**'
+      - '!utils/file-tester/**/*.md'
   push:
     paths:
-      - 'utils/file-tester/**.py'
+      - 'utils/file-tester/**'
+      - '!utils/file-tester/**/*.md'
 jobs:
   test-file-tester:
     name: Run unit, style, and type checks

@@ -7,10 +7,12 @@ name: Canvas Extractor
 on:
   pull_request:
     paths:
-      - 'src/canvas-extractor/**.py'
+      - 'src/canvas-extractor/**'
+      - '!src/canvas-extractor/**/*.md'
   push:
     paths:
-      - 'src/canvas-extractor/**.py'
+      - 'src/canvas-extractor/**'
+      - '!src/canvas-extractor/**/*.md'
 jobs:
   test-canvas-extractor:
     name: Run unit, style, and type checks
