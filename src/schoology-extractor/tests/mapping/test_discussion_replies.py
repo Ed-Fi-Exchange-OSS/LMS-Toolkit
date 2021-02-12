@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from datetime import datetime
 
 import pandas as pd
 import pytest
@@ -75,7 +76,10 @@ def describe_mapping_schoology_users_to_udm():
             assert result.at[0, "LMSSectionIdentifier"] == FAKE_SECTION_ID
 
         def test_then_activity_date_time_is_mapped(result):
-            assert result.at[0, "ActivityDateTime"] == "2020-11-02 15:18:50"
+            # This is a timezone-safe test
+            expected = datetime.fromtimestamp(1604351930)
+            actual = datetime.fromisoformat(result.at[0, "ActivityDateTime"])
+            assert actual == expected
 
         def test_then_activity_status_is_mapped(result):
             assert result.at[0, "ActivityStatus"] == "active"
