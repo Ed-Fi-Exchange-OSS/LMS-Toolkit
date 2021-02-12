@@ -4,8 +4,8 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 import pytest
 from pandas import DataFrame
-from canvas_extractor.mapping.sections import map_to_udm_sections
-from canvas_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_canvas_extractor.mapping.sections import map_to_udm_sections
+from edfi_canvas_extractor.mapping.constants import SOURCE_SYSTEM
 
 # unique value for each column in fixture
 ID = "1"

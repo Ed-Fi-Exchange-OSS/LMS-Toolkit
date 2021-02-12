@@ -6,7 +6,7 @@
 import pandas as pd
 import pytest
 
-from canvas_extractor.mapping.grades import map_to_udm_grades
+from edfi_canvas_extractor.mapping.grades import map_to_udm_grades
 
 
 def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():

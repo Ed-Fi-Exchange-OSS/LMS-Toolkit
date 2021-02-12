@@ -15,7 +15,7 @@ from canvasapi.assignment import Assignment
 from canvasapi.submission import Submission
 from pandas import DataFrame
 
-from canvas_extractor.api import (
+from edfi_canvas_extractor.api import (
     courses as coursesApi,
     sections as sectionsApi,
     students as studentsApi,
@@ -24,7 +24,7 @@ from canvas_extractor.api import (
     enrollments as enrollmentsApi,
     authentication_events as authEventsApi,
 )
-from canvas_extractor.mapping import (
+from edfi_canvas_extractor.mapping import (
     sections as sectionsMap,
     users as usersMap,
     assignments as assignmentsMap,

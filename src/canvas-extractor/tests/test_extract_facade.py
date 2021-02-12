@@ -11,15 +11,15 @@ from pandas import DataFrame
 import pytest
 import sqlalchemy
 
-from canvas_extractor import extract_facade
-from canvas_extractor.api import (
+from edfi_canvas_extractor import extract_facade
+from edfi_canvas_extractor.api import (
     courses as coursesApi,
     sections as sectionsApi,
     students as studentsApi,
     assignments as assignmentsApi,
     authentication_events as authEventsApi,
 )
-from canvas_extractor.mapping import (
+from edfi_canvas_extractor.mapping import (
     sections as sectionsMap,
     users as usersMap,
     assignments as assignmentsMap,

@@ -6,7 +6,7 @@
 from datetime import datetime
 import pytest
 from pandas import read_sql_query, DataFrame
-from canvas_extractor.api.submissions import _sync_without_cleanup
+from edfi_canvas_extractor.api.submissions import _sync_without_cleanup
 from edfi_lms_extractor_lib.api.resource_sync import (
     SYNC_COLUMNS_SQL,
     SYNC_COLUMNS,
