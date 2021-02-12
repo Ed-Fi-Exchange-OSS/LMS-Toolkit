@@ -7,8 +7,12 @@ the this tool and its output files, please see the main repository
 
 ## Getting Started
 
-1. Download the latest code from [the project homepage](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit) by clicking on the green "CODE" button and choosing an appropriate option. If choosing the Zip option, extract the file contents using your favorite zip tool.
-1. Open a command prompt* and change to this file's directory (* e.g. cmd.exe, PowerShell, bash).
+1. Download the latest code from [the project
+   homepage](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit) by clicking on
+   the green "CODE" button and choosing an appropriate option. If choosing the
+   Zip option, extract the file contents using your favorite zip tool.
+1. Open a command prompt\* and change to this file's directory (* e.g. cmd.exe,
+   PowerShell, bash).
 1. Ensure you have [Python 3.8+ and Poetry](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit#getting-started).
 1. At a command prompt, install all required dependencies:
 
@@ -69,7 +73,10 @@ data and would typically span a semester or equivalent school calendar timespan.
 
 ### Output
 
-CSV files in the data(or the specified output) directory with the [LMS Unifying Data Model](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Unifying+Data+Model) format.
+CSV files in the data(or the specified output) directory with the [LMS Unifying
+Data
+Model](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Unifying+Data+Model)
+format.
 
 ### Logging and Exit Codes
 
