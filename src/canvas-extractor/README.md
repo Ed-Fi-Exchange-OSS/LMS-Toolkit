@@ -30,17 +30,17 @@ the this tool and its output files, please see the main repository
    * Execute the extractor with minimum command line arguments:
 
       ```bash
-      poetry run python canvas_extractor -b [canvas url] -a [api token]
+      poetry run python edfi_canvas_extractor -b [canvas url] -a [api token]
           -s [start date range] -e [end date range]
       ```
 
    * Alternately, run with environment variables or `.env` file:
 
      ```bash
-     poetry run python canvas_extractor
+     poetry run python edfi_canvas_extractor
      ```
 
-   * For detailed help, execute `poetry run python canvas_extractor -h`.
+   * For detailed help, execute `poetry run python edfi_canvas_extractor -h`.
 
 ## Configuration
 
@@ -84,7 +84,7 @@ Log statements are written to the standard output. If you wish to capture log
 details, then be sure to redirect the output to a file. For example:
 
 ```bash
-poetry run python schoology_extractor > 2020-12-07-15-43.log
+poetry run python edfi_canvas_extractor > 2020-12-07-15-43.log
 ```
 
 If any errors occurred during the script run, then there will be a final print
