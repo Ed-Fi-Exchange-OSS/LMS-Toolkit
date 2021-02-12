@@ -3,18 +3,18 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-name: Canvas Extractor
+name: Schoology Extractor
 on:
   pull_request:
     paths:
-      - 'src/canvas-extractor/**.py'
+      - 'src/schoology-extractor/**.py'
   push:
     branches:
       - main
     paths:
-      - 'src/canvas-extractor/**.py'
+      - 'src/schoology-extractor/**.py'
 jobs:
-  test-canvas-extractor:
+  test-schoology-extractor:
     name: Run unit, style, and type checks
     runs-on: ubuntu-20.04
     steps:
@@ -34,7 +34,7 @@ jobs:
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
       - name: Install Python Dependencies
-        run: python ./eng/build.py install canvas-extractor
+        run: python ./eng/build.py install schoology-extractor
 
       - name: Cache Dependencies
         # very carefully use the tag when testing with act-cli on localhost, commit the hash version
@@ -47,7 +47,7 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Run Tests with Coverage
-        run: python ./eng/build.py coverage:html canvas-extractor
+        run: python ./eng/build.py coverage:html schoology-extractor
 
       - name: Archive code coverage results
         users: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
@@ -56,7 +56,7 @@ jobs:
           path: htmlcov/
 
       - name: Type Check
-        run: python ./eng/build.py typecheck:xml canvas-extractor
+        run: python ./eng/build.py typecheck:xml schoology-extractor
 
       - name: Style Check
-        run: python ./eng/build.py lint canvas-extractor
+        run: python ./eng/build.py lint schoology-extractor
