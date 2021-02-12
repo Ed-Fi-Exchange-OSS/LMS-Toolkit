@@ -9,8 +9,6 @@ on:
     paths:
       - 'src/canvas-extractor/**.py'
   push:
-    branches:
-      - main
     paths:
       - 'src/canvas-extractor/**.py'
 jobs:
@@ -50,10 +48,10 @@ jobs:
         run: python ./eng/build.py coverage:html canvas-extractor
 
       - name: Archive code coverage results
-        users: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
+        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
         with:
           name: code-coverage-report
-          path: htmlcov/
+          path: src/canvas-extractor/htmlcov/
 
       - name: Type Check
         run: python ./eng/build.py typecheck:xml canvas-extractor

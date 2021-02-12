@@ -7,12 +7,10 @@ name: Schoology Extractor
 on:
   pull_request:
     paths:
-      - 'src/schoology-extractor/**.py'
+      - 'src/schoology-extractor/**'
   push:
-    branches:
-      - main
     paths:
-      - 'src/schoology-extractor/**.py'
+      - 'src/schoology-extractor/**'
 jobs:
   test-schoology-extractor:
     name: Run unit, style, and type checks
@@ -50,10 +48,10 @@ jobs:
         run: python ./eng/build.py coverage:html schoology-extractor
 
       - name: Archive code coverage results
-        users: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
+        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
         with:
           name: code-coverage-report
-          path: htmlcov/
+          path: src/schoology-extractor/htmlcov/
 
       - name: Type Check
         run: python ./eng/build.py typecheck:xml schoology-extractor

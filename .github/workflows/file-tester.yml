@@ -9,8 +9,6 @@ on:
     paths:
       - 'utils/file-tester/**.py'
   push:
-    branches:
-      - main
     paths:
       - 'utils/file-tester/**.py'
 jobs:
@@ -42,6 +40,12 @@ jobs:
 
       - name: Run Tests with Coverage
         run: python ./eng/build.py coverage:html ../utils/file-tester
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
+        with:
+          name: code-coverage-report
+          path: utils/file-tester/htmlcov/
 
       - name: Type Check
         run: python ./eng/build.py typecheck:xml ../utils/file-tester
