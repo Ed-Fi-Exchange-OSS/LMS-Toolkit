@@ -47,7 +47,7 @@ def generate_users(record_count: int) -> List[Dict]:
                 "school_uid": str(fake.random_number(digits=8)),
                 "name_first": first_name,
                 "name_last": fake.last_name(),
-                "primary_email": f"{first_name}{fake.random_number(digits=3)}@{VALID_EMAIL_DOMAIN}",
+                "primary_email": f"{first_name}.{fake.random_number(digits=8)}@{VALID_EMAIL_DOMAIN}",
                 "role_id": VALID_ROLE_ID,
             }
         )
@@ -151,6 +151,10 @@ def generate_and_load_users(
 
     result: List[Dict] = []
     for user_chunk in chunked_users:
-        chunked_result = load_users(request_client, user_chunk)
-        result.extend(chunked_result)
+        try:
+            chunked_result = load_users(request_client, user_chunk)
+            result.extend(chunked_result)
+        except Exception as ex:
+            logger.exception(ex)
+
     return result

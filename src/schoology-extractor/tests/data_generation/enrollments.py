@@ -122,21 +122,24 @@ def generate_and_load_enrollments(
     result: Dict[str, List[Dict]] = {}
 
     for section in sections:
-        users_in_section = fake.random_sample(
-            elements=users, length=users_per_section_count
-        )
-        enrollments = list(
-            map(
-                lambda user: {
-                    "uid": user["id"],
-                    "admin": IS_STUDENT,
-                    "status": IS_ACTIVE,
-                },
-                users_in_section,
+        try:
+            users_in_section = fake.random_sample(
+                elements=users, length=users_per_section_count
             )
-        )
+            enrollments = list(
+                map(
+                    lambda user: {
+                        "uid": user["id"],
+                        "admin": IS_STUDENT,
+                        "status": IS_ACTIVE,
+                    },
+                    users_in_section,
+                )
+            )
 
-        enrollment_result = load_enrollments(request_client, section["id"], enrollments)
-        result[section["id"]] = enrollment_result
+            enrollment_result = load_enrollments(request_client, section["id"], enrollments)
+            result[section["id"]] = enrollment_result
+        except Exception as ex:
+            logger.exception(ex)
 
     return result

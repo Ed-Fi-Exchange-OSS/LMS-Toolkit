@@ -40,7 +40,7 @@ def generate_courses(record_count: int) -> List[Dict]:
             {
                 "title": fake.catch_phrase(),
                 "description": fake.sentence(),
-                "course_code": fake.bothify("?###"),
+                "course_code": fake.bothify("?#######"),
                 "department": " ".join(fake.words(2)),
             }
         )
@@ -147,6 +147,10 @@ def generate_and_load_courses(
 
     result: List[Dict] = []
     for course_chunk in chunked_courses:
-        chunked_result = load_courses(request_client, course_chunk)
-        result.extend(chunked_result)
+        try:
+            chunked_result = load_courses(request_client, course_chunk)
+            result.extend(chunked_result)
+        except Exception as ex:
+            logger.exception(ex)
+
     return result

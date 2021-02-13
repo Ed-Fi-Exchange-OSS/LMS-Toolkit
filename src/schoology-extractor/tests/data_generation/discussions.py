@@ -167,9 +167,12 @@ def generate_and_load_discussions(
 
         result[section_id] = []
         for discussion_chunk in chunked_discussions:
-            chunked_result = load_discussions(
-                request_client, section_id, discussion_chunk
-            )
-            result[section_id].extend(chunked_result)
+            try:
+                chunked_result = load_discussions(
+                    request_client, section_id, discussion_chunk
+                )
+                result[section_id].extend(chunked_result)
+            except Exception as ex:
+                logger.exception(ex)
 
     return result
