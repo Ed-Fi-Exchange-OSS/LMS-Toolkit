@@ -209,11 +209,14 @@ def generate_and_load_discussion_comments(
             discussion_id,
             discussion_comments,
         ) in discussions.items():
-            result[section_id][discussion_id] = load_discussion_comments(
-                request_client=request_client,
-                section_id=section_id,
-                discussion_id=discussion_id,
-                discussion_comments=discussion_comments,
-            )
+            try:
+                result[section_id][discussion_id] = load_discussion_comments(
+                    request_client=request_client,
+                    section_id=section_id,
+                    discussion_id=discussion_id,
+                    discussion_comments=discussion_comments,
+                )
+            except Exception as ex:
+                logger.exception(ex)
 
     return result

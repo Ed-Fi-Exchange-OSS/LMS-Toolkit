@@ -179,9 +179,12 @@ def generate_and_load_assignments(
 
         result[section_id] = []
         for assignment_chunk in chunked_assignments:
-            chunked_result = load_assignments(
-                request_client, section_id, assignment_chunk
-            )
-            result[section_id].extend(chunked_result)
+            try:
+                chunked_result = load_assignments(
+                    request_client, section_id, assignment_chunk
+                )
+                result[section_id].extend(chunked_result)
+            except Exception as ex:
+                logger.exception(ex)
 
     return result
