@@ -75,6 +75,10 @@
             "begin": "",
             "end": "",
             "prefix": "-- "
+        },
+        {
+            "language": "yaml",
+            "mapTo": "python"
         }
     ],
     "psi-header.changes-tracking": {

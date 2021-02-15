@@ -3,18 +3,18 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-name: File Tester
+name: Google Classroom Extractor
 on:
   pull_request:
     paths:
-      - 'utils/file-tester/**'
-      - '!utils/file-tester/**/*.md'
+      - 'src/google-classroom-extractor/**'
+      - '!src/google-classroom-extractor/**/*.md'
   push:
     paths:
-      - 'utils/file-tester/**'
-      - '!utils/file-tester/**/*.md'
+      - 'src/google-classroom-extractor/**'
+      - '!src/google-classroom-extractor/**/*.md'
 jobs:
-  test-file-tester:
+  test-google-classroom-extractor:
     name: Run unit, style, and type checks
     runs-on: ubuntu-20.04
     steps:
@@ -22,17 +22,23 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
       - name: Install Python 3.8
+        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
+        # uses: actions/setup-python@v2
         uses: actions/setup-python@3105fb18c05ddd93efea5f9e0bef7a03a6e9e7df
         with:
           python-version: '3.8.x'
 
       - name: Install Poetry
+        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
+        # uses: Gr1N/setup-poetry@v4
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
       - name: Install Python Dependencies
-        run: python ./eng/build.py install ../utils/file-tester
+        run: python ./eng/build.py install google-classroom-extractor
 
       - name: Cache Dependencies
+        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
+        # uses: actions/cache@v2
         uses: actions/cache@0781355a23dac32fd3bac414512f4b903437991a
         with:
           path: ~/.cache/pypoetry/virtualenvs
@@ -41,16 +47,16 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Run Tests with Coverage
-        run: python ./eng/build.py coverage:html ../utils/file-tester
+        run: python ./eng/build.py coverage:html google-classroom-extractor
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
         with:
           name: code-coverage-report
-          path: utils/file-tester/htmlcov/
+          path: src/google-classroom-extractor/htmlcov/
 
       - name: Type Check
-        run: python ./eng/build.py typecheck:xml ../utils/file-tester
+        run: python ./eng/build.py typecheck:xml google-classroom-extractor
 
       - name: Style Check
-        run: python ./eng/build.py lint ../utils/file-tester
+        run: python ./eng/build.py lint google-classroom-extractor

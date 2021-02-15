@@ -3,6 +3,8 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License,  Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from datetime import datetime
+
 import pandas as pd
 import pytest
 
@@ -50,7 +52,14 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         assert result["LMSUserSourceSystemIdentifier"].iloc[0] == 100032890
 
     def it_should_map_created_to_SubmissionDateTime(result):
-        assert result["SubmissionDateTime"].iloc[0] == "2020-11-04 11:29:44"
+        # The Unix timestamp is converted based on timezone, so the answer below
+        # depends on the test agent's time zone. Thus we can't hard-code a time.
+        # This test is not as meaningful now that a conversion is being done in
+        # both places - but at least the test is still validating that a date
+        # _has been_ converted from the timestamp.
+        expected = datetime.fromtimestamp(1604510984)
+        actual = datetime.fromisoformat(result["SubmissionDateTime"].iloc[0])
+        assert expected == actual
 
     def it_should_have_empty_SourceCreateDate(result):
         assert result["SourceCreateDate"].iloc[0] == ""
