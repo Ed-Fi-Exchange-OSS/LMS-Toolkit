@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "edfi-lms-file-utils"
 version = "1.0.0-alpha.0"
-description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
 homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/Ed-Fi-X-Fizz"
+description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
 
@@ -11,6 +11,7 @@ license = "Apache-2.0"
 python = "^3.8"
 numpy = "1.19.3"
 pandas = "^1.1.4"
+twine = "^3.3.0"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
