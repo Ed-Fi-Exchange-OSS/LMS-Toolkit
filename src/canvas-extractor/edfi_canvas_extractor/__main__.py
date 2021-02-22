@@ -13,7 +13,7 @@ import sqlalchemy
 from errorhandler import ErrorHandler
 from canvasapi import Canvas
 
-from canvas_extractor.config import get_canvas_api, get_sync_db_engine
+from edfi_canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from edfi_lms_extractor_lib.csv_generation.write import (
     write_section_activities,
     write_users,
@@ -26,7 +26,7 @@ from edfi_lms_extractor_lib.csv_generation.write import (
 )
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 
-from canvas_extractor.extract_facade import (
+from edfi_canvas_extractor.extract_facade import (
     extract_courses,
     extract_grades,
     extract_sections,
@@ -36,8 +36,8 @@ from canvas_extractor.extract_facade import (
     extract_enrollments,
     extract_system_activities,
 )
-from canvas_extractor.api.canvas_helper import to_df
-from canvas_extractor.helpers import arg_parser
+from edfi_canvas_extractor.api.canvas_helper import to_df
+from edfi_canvas_extractor.helpers import arg_parser
 
 logger: logging.Logger
 error_tracker: ErrorHandler
