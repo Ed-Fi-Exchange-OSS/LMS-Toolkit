@@ -226,7 +226,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "edfi-lms-extractor-lib"
-version = "1.0.0a2"
+version = "1.0.0a3"
 description = "Shared functions library for Ed-Fi LMS Extractor projects"
 category = "main"
 optional = false
@@ -1308,7 +1308,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "6b109750f1a5099730a6af02f889104fc070c24cb201c4b9849142a8880d14f4"
+content-hash = "ad8ae07df37d21150b2f0494050cfbfe0f161eb709136a60ba20273134036708"
 
 [metadata.files]
 appdirs = [
@@ -1417,6 +1417,7 @@ click = [
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
+    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 configargparse = [
     {file = "ConfigArgParse-1.3.tar.gz", hash = "sha256:0428b975ab6c48bb101ccb732e1b5cb616296e28268e032aa806f32b647a1cc1"},
@@ -1499,8 +1500,8 @@ docutils = [
     {file = "docutils-0.16.tar.gz", hash = "sha256:c2de3a60e9e7d07be26b7f2b00ca0309c207e06c100f9cc2a94931fc75a478fc"},
 ]
 edfi-lms-extractor-lib = [
-    {file = "edfi-lms-extractor-lib-1.0.0a2.tar.gz", hash = "sha256:f6dc6b28495bb4fe619c787550db3b0c8a658a187fa764f2f74ea0206b4bc783"},
-    {file = "edfi_lms_extractor_lib-1.0.0a2-py3-none-any.whl", hash = "sha256:ee2b06c11cd8138a814e6a10701398de52dd65312ff1b9faa24ee88df030aa23"},
+    {file = "edfi-lms-extractor-lib-1.0.0a3.tar.gz", hash = "sha256:7a176506f3a31e5b0053f07ac60ac0e7a372d5255812b30bd0b6f68435f199d8"},
+    {file = "edfi_lms_extractor_lib-1.0.0a3-py3-none-any.whl", hash = "sha256:531a9b550e953512b5f29962311abc5c28acc14ddeaca96957b34b433ab7ee6f"},
 ]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},

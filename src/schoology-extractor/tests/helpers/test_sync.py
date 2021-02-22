@@ -3,18 +3,11 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from datetime import datetime
 from pandas.core.frame import DataFrame
 import pytest
-from unittest.mock import MagicMock, Mock
-from freezegun import freeze_time
-
+from unittest.mock import Mock
 import sqlalchemy
-
 from schoology_extractor.helpers import sync
-
-
-DATE_TIME_INPUT_STRING = "2020-10-16 1:00:01 PM"
 
 
 @pytest.fixture
@@ -48,137 +41,32 @@ def db_engine_mock_returns_value():
 class Test_when_get_sync_db_engine_is_called:
     def test_then_engine_type_object_is_returned(self):
         engine = sync.get_sync_db_engine()
-        assert isinstance(
-            engine,
-            sqlalchemy.engine.base.Engine
-        )
-
-
-class Test_when__get_current_date_with_format_is_called:
-    def test_then_date_is_returned_in_right_format(self):
-        date_with_format = sync._get_current_date_with_format()
-
-        # If wrong format is returned, exception is thrown
-        datetime.strptime(date_with_format, "%Y-%m-%d %H:%M:%S")
+        assert isinstance(engine, sqlalchemy.engine.base.Engine)
 
 
 class Test_when__table_exist_is_called:
-    class Test_given_table_does_not_exist():
+    class Test_given_table_does_not_exist:
         def test_then_returns_false(self, db_engine_mock_returns_none):
             result = sync._table_exist("fake_table_name", db_engine_mock_returns_none)
             assert result is False
 
-    class Test_given_table_exists():
+    class Test_given_table_exists:
         def test_then_returns_true(self, db_engine_mock_returns_value):
             result = sync._table_exist("fake_table_name", db_engine_mock_returns_value)
             assert result is True
-
-
-class Test_when__remove_duplicates_is_called:
-    class Test_given_db_execute_method_is_called():
-        def test_then_query_is_built_correctly(self, db_engine_mock_returns_value):
-            sync._remove_duplicates(
-                "fake_table_name",
-                db_engine_mock_returns_value)
-
-            query = "DELETE from fake_table_name WHERE rowid not in (select max(rowid) FROM fake_table_name GROUP BY SourceId)"
-
-            db_engine_mock_returns_value.connect().__enter__().execute.assert_called_with(query)
-
-
-class Test_when__get_created_date_is_called:
-    class Test_given_db_execute_method_is_called():
-        def test_then_query_is_built_correctly(self):
-            execute_mock = Mock()
-            execute_mock.execute.return_value = MagicMock()
-
-            mock_connection = Mock()
-            mock_connection.__enter__ = Mock(return_value=execute_mock)
-            mock_connection.__exit__ = Mock()
-
-            mock_db_engine = Mock()
-            mock_db_engine.connect.return_value = mock_connection
-
-            sync._get_created_date(
-                "fake_table_name",
-                mock_db_engine,
-                3)
-
-            query = "SELECT CreateDate from fake_table_name WHERE SourceId == '3'"
-
-            execute_mock.execute.assert_called_with(query)
-
-        @freeze_time(DATE_TIME_INPUT_STRING)
-        def test_return_current_date_if_there_is_no_record(self):
-            execute_mock = Mock()
-            execute_mock.execute.return_value = None
-
-            mock_connection = Mock()
-            mock_connection.__enter__ = Mock(return_value=execute_mock)
-            mock_connection.__exit__ = Mock()
-
-            mock_db_engine = Mock()
-            mock_db_engine.connect.return_value = mock_connection
-
-            result = sync._get_created_date(
-                "fake_table_name",
-                mock_db_engine,
-                3)
-
-            assert str(result) == "2020-10-16 13:00:01"
-
-
-class Test_when__get_last_modified_date_is_called:
-    class Test_given_db_execute_method_is_called():
-        def test_then_query_is_built_correctly(self):
-            execute_mock = Mock()
-            execute_mock.execute.return_value = MagicMock()
-
-            mock_connection = Mock()
-            mock_connection.__enter__ = Mock(return_value=execute_mock)
-            mock_connection.__exit__ = Mock()
-
-            mock_db_engine = Mock()
-            mock_db_engine.connect.return_value = mock_connection
-
-            sync._get_last_modified_date(
-                "fake_table_name",
-                mock_db_engine,
-                3)
-
-            query = "SELECT LastModifiedDate from fake_table_name WHERE SourceId == '3'"
-
-            execute_mock.execute.assert_called_with(query)
-
-        @freeze_time(DATE_TIME_INPUT_STRING)
-        def test_return_current_date_if_there_is_no_record(self):
-            execute_mock = Mock()
-            execute_mock.execute.return_value = None
-
-            mock_connection = Mock()
-            mock_connection.__enter__ = Mock(return_value=execute_mock)
-            mock_connection.__exit__ = Mock()
-
-            mock_db_engine = Mock()
-            mock_db_engine.connect.return_value = mock_connection
-
-            result = sync._get_last_modified_date(
-                "fake_table_name",
-                mock_db_engine,
-                3)
-
-            assert str(result) == "2020-10-16 13:00:01"
 
 
 @pytest.fixture
 def db_engine_mock_returns_fake_resource():
     row = Mock()
     row.items.return_value = [
-        ('JsonResponse',
+        (
+            "JsonResponse",
             r"""{
                 "id": 1,
                 "name": "fake_name"
-            }""")
+            }""",
+        )
     ]
     execute_mock = Mock()
     execute_mock.execute.return_value = [row]
@@ -192,68 +80,8 @@ def db_engine_mock_returns_fake_resource():
     return mock_db_engine
 
 
-class Test_given__resource_has_changed_is_called:
-    class Test_given_resource_has_changed:
-        def test_then_returns_true(self, db_engine_mock_returns_fake_resource):
-            result = sync._resource_has_changed(
-                {
-                    'id': 1,
-                    'name': 'fake_name_modified'
-                },
-                'fake_resource_name',
-                db_engine_mock_returns_fake_resource)
-
-            assert result is True
-
-    class Test_given_resource_has_not_changed:
-        def test_then_returns_false(self, db_engine_mock_returns_fake_resource):
-            result = sync._resource_has_changed(
-                {
-                    'id': 1,
-                    'name': 'fake_name'
-                },
-                'fake_resource_name',
-                db_engine_mock_returns_fake_resource)
-
-            assert result is False
-
-
-def describe_when_checking_if_resource_has_changed():
-    def describe_given_new_resource():
-        @pytest.fixture
-        def db_engine() -> Mock:
-            row = Mock()
-            row.items.return_value = []
-            execute_mock = Mock()
-            execute_mock.execute.return_value = [row]
-
-            mock_connection = Mock()
-            mock_connection.__enter__ = Mock(return_value=execute_mock)
-            mock_connection.__exit__ = Mock()
-
-            mock_db_engine = Mock()
-            mock_db_engine.connect.return_value = mock_connection
-
-            return mock_db_engine
-
-        def it_should_return_false(db_engine: Mock):
-            result = sync._resource_has_changed(
-                {
-                    'id': 1,
-                    'name': 'fake_name'
-                },
-                'fake_resource_name',
-                db_engine)
-
-            assert not result
-
-
 def mock_sync_internal_functions(sync):
     sync._table_exist = Mock(return_value=True)
-    sync._write_resource_to_db = Mock()
-    sync._remove_duplicates = Mock()
-    sync._get_created_date = Mock()
-    sync._resource_has_changed = Mock()
 
 
 class Test_given_sync_resource_is_called:
@@ -263,16 +91,17 @@ class Test_given_sync_resource_is_called:
             "fake_resource_name",
             db_engine_mock_returns_none,
             [
-                {"fake_column": 'fake_value', "id": 'fake_id'},
-                {"fake_column": 'fake_value', "id": 'fake_id'}
-            ])
+                {"fake_column": "fake_value", "id": "fake_id"},
+                {"fake_column": "fake_value", "id": "fake_id"},
+            ],
+        )
         assert isinstance(result, DataFrame)
 
 
 @pytest.fixture
 def db_engine_mock_returns_existing_file():
     execute_mock = Mock()
-    execute_mock.execute.return_value = {'exists': 1}
+    execute_mock.execute.return_value = {"exists": 1}
 
     mock_connection = Mock()
     mock_connection.__enter__ = Mock(return_value=execute_mock)
@@ -287,14 +116,14 @@ class Test_given_usage_file_is_processed_is_called:
     def test_then_returns_boolean(self, db_engine_mock_returns_existing_file):
         mock_sync_internal_functions(sync)
         result = sync.usage_file_is_processed(
-            "fake_resource_name",
-            db_engine_mock_returns_existing_file)
+            "fake_resource_name", db_engine_mock_returns_existing_file
+        )
         assert isinstance(result, bool)
 
-    class Test_given_db_returns_false():
+    class Test_given_db_returns_false:
         def test_then_returns_false(self, db_engine_mock_returns_existing_file):
             mock_sync_internal_functions(sync)
             result = sync.usage_file_is_processed(
-                "fake_resource_name",
-                db_engine_mock_returns_existing_file)
+                "fake_resource_name", db_engine_mock_returns_existing_file
+            )
             assert result is False

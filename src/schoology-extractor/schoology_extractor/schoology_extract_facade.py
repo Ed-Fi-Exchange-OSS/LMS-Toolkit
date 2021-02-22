@@ -6,8 +6,7 @@
 from dataclasses import dataclass
 import logging
 from typing import Union
-
-import pandas as pd
+from pandas import DataFrame, concat
 import sqlalchemy
 
 from .helpers import sync
@@ -62,13 +61,14 @@ class SchoologyExtractFacade:
         assert isinstance(self.db_engine, sqlalchemy.engine.base.Engine)
         return self.db_engine
 
-    def get_users(self) -> pd.DataFrame:
+    def get_users(self) -> DataFrame:
         """
         Gets all Schoology users.
 
         Returns
         -------
-        pd.DataFrame
+        DataFrame
+            DataFrame with all user data, in the unified data model format.
         """
 
         logger.debug("Exporting users: get users")
@@ -77,22 +77,23 @@ class SchoologyExtractFacade:
         logger.debug("Exporting users: get roles")
         roles_list = self._client.get_roles(self._page_size).get_all_pages()
 
-        users_df = sync.sync_resource(RESOURCE_NAMES.USER, self._db_engine, users_list)
-        roles_df = sync.sync_resource(RESOURCE_NAMES.ROLE, self._db_engine, roles_list)
+        users_df: DataFrame = sync.sync_resource(RESOURCE_NAMES.USER, self._db_engine, users_list)
+        roles_df: DataFrame = sync.sync_resource(RESOURCE_NAMES.ROLE, self._db_engine, roles_list)
 
         return (
             usersMap.map_to_udm(users_df, roles_df)
             if not users_df.empty
-            else pd.DataFrame()
+            else DataFrame()
         )
 
-    def get_sections(self) -> pd.DataFrame:
+    def get_sections(self) -> DataFrame:
         """
         Gets all Schoology sections.
 
         Returns
         -------
-        list
+        DataFrame
+            DataFrame with all section data, in the unified data model format.
         """
 
         logger.debug("Exporting sections: get active courses")
@@ -106,13 +107,13 @@ class SchoologyExtractFacade:
         for course in courses_list:
             all_sections = all_sections + _get_section_for_course(course["id"])
 
-        sections = sync.sync_resource(
+        sections_df: DataFrame = sync.sync_resource(
             RESOURCE_NAMES.SECTION, self._db_engine, all_sections
         )
 
-        return sectionsMap.map_to_udm(sections)
+        return sectionsMap.map_to_udm(sections_df)
 
-    def get_assignments(self, section_id: int) -> pd.DataFrame:
+    def get_assignments(self, section_id: int) -> DataFrame:
         """
         Gets all Schoology assignments for the given sections, with separate
         DataFrame output for each section.
@@ -124,19 +125,19 @@ class SchoologyExtractFacade:
 
         Returns
         -------
-        pd.DataFrame
+        DataFrame
             DataFrame with all assignment data, in the unified data model format.
         """
 
-        assignments = sync.sync_resource(
+        assignments_df: DataFrame = sync.sync_resource(
             RESOURCE_NAMES.ASSIGNMENT,
             self._db_engine,
             self._client.get_assignments(section_id, self._page_size).get_all_pages(),
         )
 
-        return assignmentsMap.map_to_udm(assignments, section_id)
+        return assignmentsMap.map_to_udm(assignments_df, section_id)
 
-    def get_submissions(self, assignment_id: int, section_id: int) -> pd.DataFrame:
+    def get_submissions(self, assignment_id: int, section_id: int) -> DataFrame:
         """
         Gets all Schoology submissions for the given assignments.
 
@@ -148,8 +149,8 @@ class SchoologyExtractFacade:
             The id of the section
         Returns
         -------
-        pd.DataFrame
-            List of submissions
+        DataFrame
+            DataFrame with all submission data, in the unified data model format.
         """
 
         all_submissions = self._client.get_submissions_by_section_id_and_grade_item_id(
@@ -163,12 +164,12 @@ class SchoologyExtractFacade:
             for row in all_submissions
         ]
 
-        data = sync.sync_resource(
+        submissions_df: DataFrame = sync.sync_resource(
             RESOURCE_NAMES.SUBMISSION, self._db_engine, all_submissions
         )
-        return submissionsMap.map_to_udm(data)
+        return submissionsMap.map_to_udm(submissions_df)
 
-    def get_section_associations(self, section_id: int) -> pd.DataFrame:
+    def get_section_associations(self, section_id: int) -> DataFrame:
         """
         Gets all Schoology enrollments (section associations) for the given section.
 
@@ -179,21 +180,21 @@ class SchoologyExtractFacade:
 
         Returns
         -------
-        pd.DataFrame
-            DataFrame with all assignment data, in the unified data model format.
+        DataFrame
+            DataFrame with all section association data, in the unified data model format.
         """
 
-        enrollments = sync.sync_resource(
+        enrollments_df: DataFrame = sync.sync_resource(
             RESOURCE_NAMES.ENROLLMENT,
             self._db_engine,
             self._client.get_enrollments(section_id).get_all_pages(),
         )
 
-        return sectionAssocMap.map_to_udm(enrollments, section_id)
+        return sectionAssocMap.map_to_udm(enrollments_df, section_id)
 
     def get_attendance_events(
-        self, section_id: int, section_associations: pd.DataFrame
-    ) -> pd.DataFrame:
+        self, section_id: int, section_associations: DataFrame
+    ) -> DataFrame:
         """
         Gets all Schoology attendance events for a section, in the Ed-Fi UDM format.
 
@@ -201,19 +202,20 @@ class SchoologyExtractFacade:
         ----------
         section_id: int
             Schoology section identifiers
-        section_associations: pd.DataFrame
+        section_associations: DataFrame
             DataFrame containing Section Associations in the UDM format, used to
             traverse enrollment information to find the correct User and Section
             identifiers
 
         Returns
         -------
-        DataFrame containing the attendance events
+        DataFrame
+            DataFrame with all attendance event data, in the unified data model format.
         """
 
         events = self._client.get_attendance(section_id)
 
-        def _sync_wrapper(data: pd.DataFrame) -> pd.DataFrame:
+        def _sync_wrapper(data: DataFrame) -> DataFrame:
             """Attendance_events entity has a more complex mapping. For most
             entities, sync process running before mapping is fine, but considering
             the process involved for this entity, the mapper for attendance events
@@ -227,13 +229,13 @@ class SchoologyExtractFacade:
                 "SourceSystemIdentifier",
             )
 
-        events_df = attendanceMap.map_to_udm(
+        events_df: DataFrame = attendanceMap.map_to_udm(
             events, section_associations, sync_callback=_sync_wrapper
         )
 
         return events_df
 
-    def get_section_activities(self, section_id: int) -> pd.DataFrame:
+    def get_section_activities(self, section_id: int) -> DataFrame:
         """
         Gets all Schoology section-activities for a section, in the Ed-Fi UDM format.
 
@@ -244,60 +246,47 @@ class SchoologyExtractFacade:
 
         Returns
         -------
-        DataFrame containing the section activities
+        DataFrame
+            DataFrame with all section activity data, in the unified data model format.
         """
 
         def _get_discussions_and_discussion_replies():
             discussions = self._client.get_discussions(section_id)
             replies: list = []
-            mapped_replies = pd.DataFrame()
+            mapped_replies = DataFrame()
             for discussion in discussions:
                 discussion_id = discussion["id"]
                 replies = replies + self._client.get_discussion_replies(
                     section_id, discussion_id
                 )
-                sync_replies = sync.sync_resource(
+                sync_replies: DataFrame = sync.sync_resource(
                     RESOURCE_NAMES.DISCUSSION_REPLIES, self._db_engine, replies
                 )
-                current_replies = discussionRepliesMap.map_to_udm(
+                current_replies: DataFrame = discussionRepliesMap.map_to_udm(
                     sync_replies, section_id, discussion_id
                 )
-                mapped_replies = pd.concat([mapped_replies, current_replies])
+                mapped_replies: DataFrame = concat([mapped_replies, current_replies])
 
-            sync_discussions = sync.sync_resource(
+            sync_discussions: DataFrame = sync.sync_resource(
                 RESOURCE_NAMES.DISCUSSIONS, self._db_engine, discussions
             )
-            mapped_discussions = discussionsMap.map_to_udm(sync_discussions, section_id)
+            mapped_discussions: DataFrame = discussionsMap.map_to_udm(sync_discussions, section_id)
             return mapped_discussions.append(mapped_replies)
 
-        def _get_section_updates_and_update_comments():
+        def _get_section_updates():
             section_updates = self.request_client.get_section_updates(
                 section_id
             ).get_all_pages()
 
-            # TODO: The next code might be useful when working with FIZZ-170
-            # mapped_comments = pd.DataFrame()
-
-            # for update in section_updates:
-            #     update_id = update["id"]
-            #     current_comments = self.request_client.get_section_update_replies(section_id, update_id).get_all_pages()
-            #     sync_comments = sync.sync_resource(
-            #         RESOURCE_NAMES.SECTION_UPDATE_COMMENT, self._db_engine, current_comments
-            #     )
-            #     mapped_comments = sectionUpdateCommentsMap.map_to_udm(sync_comments, section_id)
-            #     mapped_comments = pd.concat([mapped_comments, sync_comments])
-
-            sync_updates = sync.sync_resource(
+            section_updates_df: DataFrame = sync.sync_resource(
                 RESOURCE_NAMES.SECTION_UPDATE_TABLE, self._db_engine, section_updates
             )
 
-            mapped_updates = sectionUpdatesMap.map_to_udm(sync_updates, section_id)
+            return sectionUpdatesMap.map_to_udm(section_updates_df, section_id)
 
-            return mapped_updates
-
-        return pd.concat(
+        return concat(
             [
                 _get_discussions_and_discussion_replies(),
-                _get_section_updates_and_update_comments(),
+                _get_section_updates(),
             ]
         )

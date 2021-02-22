@@ -39,8 +39,8 @@ def describe_when_parsing_arguments():
         def it_should_default_to_warn_level(result: MainArguments):
             assert result.log_level == "INFO"
 
-        def it_should_default_to_page_size_20(result: MainArguments):
-            assert result.page_size == 20
+        def it_should_default_to_page_size_200(result: MainArguments):
+            assert result.page_size == 200
 
         def it_should_default_to_current_directory(result: MainArguments):
             assert result.output_directory == ""
