@@ -4,7 +4,6 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-import os
 import sys
 from typing import List, Union
 
