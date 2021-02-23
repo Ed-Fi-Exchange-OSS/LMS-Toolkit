@@ -7,8 +7,12 @@ the this tool and its output files, please see the main repository
 
 ## Getting Started
 
-1. Download the latest code from [the project homepage](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit) by clicking on the green "CODE" button and choosing an appropriate option. If choosing the Zip option, extract the file contents using your favorite zip tool.
-1. Open a command prompt* and change to this file's directory (* e.g. cmd.exe, PowerShell, bash).
+1. Download the latest code from [the project
+   homepage](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit) by clicking on
+   the green "CODE" button and choosing an appropriate option. If choosing the
+   Zip option, extract the file contents using your favorite zip tool.
+1. Open a command prompt\* and change to this file's directory (* e.g. cmd.exe,
+   PowerShell, bash).
 1. Ensure you have [Python 3.8+ and Poetry](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit#getting-started).
 1. At a command prompt, install all required dependencies:
 
@@ -26,26 +30,34 @@ the this tool and its output files, please see the main repository
    * Execute the extractor with minimum command line arguments:
 
       ```bash
-      poetry run python canvas_extractor -b [canvas url] -a [api token]
+      poetry run python edfi_canvas_extractor -b [canvas url] -a [api token]
           -s [start date range] -e [end date range]
       ```
 
    * Alternately, run with environment variables or `.env` file:
 
      ```bash
-     poetry run python canvas_extractor
+     poetry run python edfi_canvas_extractor
      ```
 
-   * For detailed help, execute `poetry run python canvas_extractor -h`.
+   * For detailed help, execute `poetry run python edfi_canvas_extractor -h`.
 
 ## Configuration
 
 Application configuration is provided through environment variables or command
 line interface (CLI) arguments. CLI arguments take precedence over environment
 variables. Environment variables can be set the normal way, or by using a
-dedicated [`.env` file](https://pypi.org/project/python-dotenv/). For `.env`
-support, we provided a [.env.example](.env.example) which you can copy, rename
-to `.env`, and adjust to your desired parameters. Supported parameters:
+dedicated [`.env` file](https://pypi.org/project/python-dotenv/) like
+
+```none
+CANVAS_BASE_URL=[CANVAS_BASE_URL]
+CANVAS_ACCESS_TOKEN=[CANVAS_ACCESS_TOKEN]
+START_DATE=[CLASS_START_DATE]
+END_DATE=[CLASS_END_DATE]
+OUTPUT_DIRECTORY=data
+```
+
+Supported parameters:
 
 | Description | Required | Command Line Argument | Environment Variable |
 | ----------- | -------- | --------------------- | -------------------- |
@@ -69,7 +81,10 @@ data and would typically span a semester or equivalent school calendar timespan.
 
 ### Output
 
-CSV files in the data(or the specified output) directory with the [LMS Unifying Data Model](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Unifying+Data+Model) format.
+CSV files in the data(or the specified output) directory with the [LMS Unifying
+Data
+Model](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Unifying+Data+Model)
+format.
 
 ### Logging and Exit Codes
 
@@ -77,7 +92,7 @@ Log statements are written to the standard output. If you wish to capture log
 details, then be sure to redirect the output to a file. For example:
 
 ```bash
-poetry run python schoology_extractor > 2020-12-07-15-43.log
+poetry run python edfi_canvas_extractor > 2020-12-07-15-43.log
 ```
 
 If any errors occurred during the script run, then there will be a final print

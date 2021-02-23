@@ -14,7 +14,7 @@
 # import pytest
 # import pook
 # from canvasapi.course import Course
-# from canvas_extractor.api.courses import request_courses
+# from edfi_canvas_extractor.api.courses import request_courses
 # from tests.api.api_helper import MOCK_CANVAS_BASE_URL, setup_fake_canvas_object
 
 # # unique value for each column in fixture

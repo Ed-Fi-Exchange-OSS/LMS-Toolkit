@@ -5,7 +5,7 @@
 
 import pytest
 
-from canvas_extractor.helpers.arg_parser import parse_main_arguments, MainArguments
+from edfi_canvas_extractor.helpers.arg_parser import parse_main_arguments, MainArguments
 
 
 def assert_error_message(capsys):

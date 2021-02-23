@@ -1,5 +1,5 @@
 [run]
 branch = True
-source = canvas_extractor
+source = edfi_canvas_extractor
 
 [report]

@@ -6,7 +6,7 @@
 import pandas as pd
 import pytest
 
-from canvas_extractor.mapping.authentication_events import map_to_udm_system_activities
+from edfi_canvas_extractor.mapping.authentication_events import map_to_udm_system_activities
 
 
 def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():

@@ -6,7 +6,7 @@
 import pandas as pd
 import pytest
 
-from canvas_extractor.mapping.submissions import map_to_udm_submissions
+from edfi_canvas_extractor.mapping.submissions import map_to_udm_submissions
 
 
 def describe_when_mapping_empty_DataFrame():

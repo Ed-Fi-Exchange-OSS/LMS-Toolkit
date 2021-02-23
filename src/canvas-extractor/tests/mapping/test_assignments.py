@@ -5,8 +5,8 @@
 from typing import Dict
 import pytest
 from pandas import DataFrame
-from canvas_extractor.mapping.assignments import map_to_udm_assignments
-from canvas_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_canvas_extractor.mapping.assignments import map_to_udm_assignments
+from edfi_canvas_extractor.mapping.constants import SOURCE_SYSTEM
 
 
 # unique value for each column in assignment

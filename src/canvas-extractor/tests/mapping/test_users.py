@@ -7,7 +7,7 @@
 import pandas as pd
 import pytest
 
-from canvas_extractor.mapping.users import map_to_udm_users
+from edfi_canvas_extractor.mapping.users import map_to_udm_users
 
 
 def describe_when_mapping_schoology_users_to_udm():

@@ -7,9 +7,14 @@ repository [readme](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit).
 
 ## Getting Started
 
-1. Download the latest code from [the project homepage](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit) by clicking on the green "CODE" button and choosing an appropriate option. If choosing the Zip option, extract the file contents using your favorite zip tool.
-1. Open a command prompt* and change to this file's directory (* e.g. cmd.exe, PowerShell, bash).
-1. Ensure you have [Python 3.8+ and Poetry](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit#getting-started).
+1. Download the latest code from [the project
+   homepage](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit) by clicking on
+   the green "CODE" button and choosing an appropriate option. If choosing the
+   Zip option, extract the file contents using your favorite zip tool.
+1. Open a command prompt\* and change to this file's directory (\* e.g. cmd.exe,
+   PowerShell, bash).
+1. Ensure you have [Python 3.8+ and
+   Poetry](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit#getting-started).
 1. At a command prompt, install all required dependencies:
 
    ```bash
@@ -42,9 +47,17 @@ repository [readme](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit).
 Application configuration is provided through environment variables or command
 line interface (CLI) arguments. CLI arguments take precedence over environment
 variables. Environment variables can be set the normal way, or by using a
-dedicated [`.env` file](https://pypi.org/project/python-dotenv/). For `.env`
-support, we provided a [.env.example](.env.example) which you can copy, rename
-to `.env`, and adjust to your desired parameters. Supported parameters:
+dedicated [`.env` file](https://pypi.org/project/python-dotenv/) like:
+
+```none
+CLASSROOM_ACCOUNT[<email address of the Google Classroom admin account, required]
+LOG_LEVEL=[Log level, optional]
+OUTPUT_PATH=[The output directory for the csv files, optional]
+START_DATE=[start date for usage data pull in yyyy-mm-dd format, optional]
+END_DATE=[end date for usage data pull in yyyy-mm-dd format, optional]
+```
+
+Supported parameters:
 
 | Description | Required | Command Line Argument | Environment Variable |
 | ----------- | -------- | --------------------- | -------------------- |
@@ -156,8 +169,8 @@ the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 1. View code coverage: `poetry run coverage report`
 
 _Also see
-[build.py](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/blob/main/docs/build.md)_ for
-use of the build script.
+[build.py](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/blob/main/docs/build.md)_
+for use of the build script.
 
 ### Visual Studio Code (Optional)
 
