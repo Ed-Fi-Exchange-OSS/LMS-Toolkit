@@ -1,4 +1,4 @@
-# FIZZ-16: Extract login and access data for students in Canvas LMS
+# LMS-16: Extract login and access data for students in Canvas LMS
 
 ## Goal
 

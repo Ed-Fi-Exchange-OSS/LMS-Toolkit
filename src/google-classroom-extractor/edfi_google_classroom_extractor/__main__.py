@@ -114,7 +114,7 @@ def main():
     result_dfs: Optional[Result] = request()
 
     if not result_dfs:
-        # Enrich this in FIZZ-150
+        # Enrich this in LMS-150
         return
 
     now = datetime.now()
