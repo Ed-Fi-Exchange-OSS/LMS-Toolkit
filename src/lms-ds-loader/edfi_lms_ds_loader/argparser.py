@@ -4,8 +4,8 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import configargparse
-from lms_ds_loader.constants import Constants
-from lms_ds_loader.arguments import Arguments
+from edfi_lms_ds_loader.constants import Constants
+from edfi_lms_ds_loader.arguments import Arguments
 
 
 def parse_arguments(args_in) -> Arguments:

@@ -9,7 +9,7 @@ from typing import Type
 
 import pandas as pd
 
-from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 @dataclass

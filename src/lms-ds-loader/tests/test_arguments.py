@@ -5,9 +5,9 @@
 
 import pytest
 
-from lms_ds_loader.arguments import Arguments
-from lms_ds_loader.constants import Constants
-from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.arguments import Arguments
+from edfi_lms_ds_loader.constants import Constants
+from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 class Test_Arguments:

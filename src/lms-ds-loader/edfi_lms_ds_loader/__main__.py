@@ -7,7 +7,7 @@
 A utility for loading CSV files in the Learning Management System Unified Data
 Model (LMS-UDM) into a Learning Management System Data Store (LMS-DS) database.
 
-call `python main.py -h` for a detailed listing of command arguments.
+call `python . -h` for a detailed listing of command arguments.
 """
 
 import logging
@@ -15,9 +15,9 @@ import os
 import sys
 import time
 
-from lms_ds_loader.argparser import parse_arguments
-from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
-from lms_ds_loader.file_processor import FileProcessor
+from edfi_lms_ds_loader.argparser import parse_arguments
+from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
+from edfi_lms_ds_loader.file_processor import FileProcessor
 
 
 def _configure_logging(verbose: bool):

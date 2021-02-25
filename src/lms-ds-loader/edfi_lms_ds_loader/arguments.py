@@ -5,8 +5,8 @@
 
 from dataclasses import dataclass
 
-from lms_ds_loader.constants import Constants
-from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.constants import Constants
+from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 @dataclass
