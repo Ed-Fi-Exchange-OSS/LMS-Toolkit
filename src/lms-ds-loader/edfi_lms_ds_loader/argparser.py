@@ -31,6 +31,7 @@ def parse_arguments(args_in) -> Arguments:
         "-e",
         "--engine",
         help="database engine",
+        # TODO: more flexibility
         choices=[Constants.DbEngine.MSSQL, Constants.DbEngine.POSTGRESQL],
         default=Constants.DbEngine.MSSQL,
     )
@@ -57,6 +58,7 @@ def parse_arguments(args_in) -> Arguments:
         "-p", "--password", required=user_name_required, env_var="MSSQL_PASSWORD"
     )
 
+    # TODO: replace with proper logging like the extractors
     parser.add("-v", "--verbose", help="Enable verbose logging", action="store_true")
 
     args_parsed = parser.parse_args(args_in)

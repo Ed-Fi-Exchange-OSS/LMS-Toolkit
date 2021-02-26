@@ -37,6 +37,15 @@ class Arguments:
 
         return port
 
+    @staticmethod
+    def _get_postgresql_port(port):
+        if not port:
+            port = 5432
+        if type(port) == str and port.strip() == "":
+            port = 5432
+
+        return port
+
     def set_connection_string_using_integrated_security(self, server, port, db_name):
         """
         Creates a PyODBC connection string using integrated security.
@@ -59,9 +68,8 @@ class Arguments:
         if self.engine == Constants.DbEngine.MSSQL:
             port = Arguments._get_mssql_port(port)
             self.connection_string = f"mssql+pyodbc://{server},{port}/{db_name}?driver=SQL Server?Trusted_Connection=yes"
-
         else:
-            raise ValueError(f"Invalid `engine` parameter value: {self.engine}")
+            raise ValueError(f"Invalid `engine` parameter value for integrated database security: {self.engine}")
 
     def set_connection_string(self, server, port, db_name, username, password):
         """
@@ -96,7 +104,9 @@ class Arguments:
         if self.engine == Constants.DbEngine.MSSQL:
             port = Arguments._get_mssql_port(port)
             self.connection_string = f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=SQL Server"
-
+        elif self.engine == Constants.DbEngine.POSTGRESQL:
+            port = Arguments._get_postgresql_port(port)
+            self.connection_string = f"postgresql://{username}:{password}@{server}:{port}/{db_name}"
         else:
             raise ValueError(f"Invalid `engine` parameter value: {self.engine}")
 
