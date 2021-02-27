@@ -67,7 +67,7 @@ class Arguments:
 
         if self.engine == Constants.DbEngine.MSSQL:
             port = Arguments._get_mssql_port(port)
-            self.connection_string = f"mssql+pyodbc://{server},{port}/{db_name}?driver=SQL Server?Trusted_Connection=yes"
+            self.connection_string = f"mssql+pyodbc://{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
         else:
             raise ValueError(f"Invalid `engine` parameter value for integrated database security: {self.engine}")
 
@@ -103,7 +103,7 @@ class Arguments:
 
         if self.engine == Constants.DbEngine.MSSQL:
             port = Arguments._get_mssql_port(port)
-            self.connection_string = f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=SQL Server"
+            self.connection_string = f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
         elif self.engine == Constants.DbEngine.POSTGRESQL:
             port = Arguments._get_postgresql_port(port)
             self.connection_string = f"postgresql://{username}:{password}@{server}:{port}/{db_name}"

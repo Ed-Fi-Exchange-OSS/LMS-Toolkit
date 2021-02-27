@@ -38,23 +38,16 @@ def _execute_statements(engine: Engine, statements: List[str]):
     session = Session()
 
     for statement in statements:
+        # Ignore MSSQL "GO" statements
+        if statement == "GO":
+            continue
+
         # Deliberately throwing away all results. Counting on exception handling
         # if there are any errors
         session.execute(statement)
 
     session.commit()
     session.close()
-
-
-def _execute_scalar(engine: Engine, statement: str) -> int:
-    Session = sessionmaker(bind=engine)
-
-    response: int
-    with Session() as session:
-        response = session.execute(statement).scalar()
-        session.commit()
-
-    return response
 
 
 def _execute_transaction(engine: Engine, function: Callable[[object], Any]) -> Any:
@@ -86,9 +79,12 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
         return response == 1
     except ProgrammingError as error:
         # TODO: try this on SQL Server and find the appropriate error message
-        # logger.warn(type(error))
-        # logger.warn(error.args)
-        if "psycopg2.errors.UndefinedTable" in error.args[0]:
+        logger.warn(type(error))
+        logger.warn(error.args)
+        if (
+            "psycopg2.errors.UndefinedTable" in error.args[0] or
+            "Invalid object name" in error.args[0]
+           ):
             # This means it is a fresh database where the migrationjournal table
             # has not been installed yet.
             return False

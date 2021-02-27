@@ -12,6 +12,11 @@ Limitations as of September 23, 2020:
 
 ## Getting Started
 
+quick note for cleanup: when running on windows for SQL Server, must
+install a newer ODBC driver: `choco install sqlserver-odbcdriver`. The
+default driver that comes with Windows is old; the newer one provides better
+error messages. [Linux instructions](https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver15) (UNTESTED!)
+
 1. Requires Python 3.8+ and Poetry.
 1. Install required Python packages:
 
