@@ -5,10 +5,10 @@
 
 import logging
 from os import path
-from typing import List
+from typing import Any, Callable, List
 
 from sqlalchemy.engine.base import Engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, session as sa_session
 from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
 
@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 MIGRATION_SCRIPTS = [
     "initialize_lms_database",
+    "create_user_tables"
 ]
 
 
@@ -32,7 +33,7 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     return split(raw_sql)
 
 
-def _execute(engine: Engine, statements: List[str]):
+def _execute_statements(engine: Engine, statements: List[str]):
     Session = sessionmaker(bind=engine)
     session = Session()
 
@@ -45,12 +46,44 @@ def _execute(engine: Engine, statements: List[str]):
     session.close()
 
 
+def _execute_scalar(engine: Engine, statement: str) -> int:
+    Session = sessionmaker(bind=engine)
+
+    response: int
+    with Session() as session:
+        response = session.execute(statement).scalar()
+        session.commit()
+
+    return response
+
+
+def _execute_transaction(engine: Engine, function: Callable[[object], Any]) -> Any:
+    Session = sessionmaker(bind=engine)
+
+    session = Session()
+    response: Any
+    try:
+        response = function(session)
+
+        session.commit()
+
+        return response
+    except ProgrammingError:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
+
 def _script_has_been_run(engine: Engine, migration: str) -> bool:
-    statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
+    def __callback(session: sa_session):
+        statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
+        return session.execute(statement).scalar()
 
     try:
-        response = _execute(engine, [statement])
-        return response is None or (len(response) == 1 and response[0] == 1)
+        response = _execute_transaction(engine, __callback)
+
+        return response == 1
     except ProgrammingError as error:
         # TODO: try this on SQL Server and find the appropriate error message
         # logger.warn(type(error))
@@ -58,7 +91,7 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
         if "psycopg2.errors.UndefinedTable" in error.args[0]:
             # This means it is a fresh database where the migrationjournal table
             # has not been installed yet.
-            return 0
+            return False
 
         raise
 
@@ -66,7 +99,7 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
 def _record_migration_in_journal(engine: Engine, migration: str):
     statement = f"INSERT INTO lms.migrationjournal (script) values ('{migration}');"
 
-    _execute(engine, [statement])
+    _execute_statements(engine, [statement])
 
 
 def _run_file(engine: Engine, migration: str):
@@ -80,7 +113,7 @@ def _run_file(engine: Engine, migration: str):
     migration_script = _get_script_path(engine, script_name)
 
     statements = _read_statements_from_file(migration_script)
-    _execute(engine, statements)
+    _execute_statements(engine, statements)
 
     _record_migration_in_journal(engine, migration)
 
