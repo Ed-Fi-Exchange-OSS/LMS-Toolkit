@@ -16,6 +16,8 @@ pandas = "^1.1.2"
 configargparse = "^1.2.3"
 sqlparse = "^0.4.1"
 psycopg2 = "^2.8.6"
+errorhandler = "^2.0.1"
+python-dotenv = "^0.15.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

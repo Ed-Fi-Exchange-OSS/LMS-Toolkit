@@ -14,35 +14,49 @@ import logging
 import os
 import sys
 
+from dotenv import load_dotenv
+from errorhandler import ErrorHandler  # type: ignore
 from sqlalchemy import create_engine
 
-from edfi_lms_ds_loader.argparser import parse_arguments
+from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments
 from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
 from edfi_lms_ds_loader.file_processor import FileProcessor
 from edfi_lms_ds_loader.migrator import migrate
 
+# Load configuration
+load_dotenv()
 
-def _configure_logging(verbose: bool):
-    default_level = "INFO"
-    if verbose:
-        default_level = "DEBUG"
-        logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
+logger: logging.Logger
+error_tracker: ErrorHandler
+
+arguments = parse_main_arguments(sys.argv[1:])
+engine = arguments.engine
+connection_string = arguments.connection_string
+
+
+def _configure_logging():
+    global logger
+    global error_tracker
+
+    logger = logging.getLogger(__name__)
+
+    level = os.environ.get("LOGLEVEL", "INFO")
     logging.basicConfig(
         handlers=[
             logging.StreamHandler(sys.stdout),
         ],
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        level=os.environ.get("LOGLEVEL", default_level),
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        level=level,
     )
+    error_tracker = ErrorHandler()
 
 
 def main():
 
-    arguments = parse_arguments(sys.argv[1:])
-    _configure_logging(arguments.verbose)
+    _configure_logging()
 
-    db_engine = create_engine(arguments.connection_string)
+    db_engine = create_engine(connection_string)
 
     migrate(db_engine)
 
