@@ -27,6 +27,7 @@ class MainArguments:
 
     csv_path: str
     engine: str
+    log_level: str
 
     @staticmethod
     def _get_mssql_port(port: Union[int, None]) -> int:
@@ -191,7 +192,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
 
     args_parsed = parser.parse_args(args_in)
 
-    arguments = MainArguments(args_parsed.csvpath, args_parsed.engine)
+    arguments = MainArguments(args_parsed.csvpath, args_parsed.engine, args_parsed.log_level)
 
     if args_parsed.useintegratedsecurity:
         arguments.set_connection_string_using_integrated_security(

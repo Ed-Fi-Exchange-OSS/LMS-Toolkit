@@ -6,7 +6,7 @@
 import pytest
 
 from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments, MainArguments
-from edfi_lms_ds_loader.helpers.constants import DbEngine
+from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
@@ -54,11 +54,6 @@ class Test_parse_main_arguments:
 
         assert err != "", "There should be an error message"
         assert out == "", "There should not be an output message"
-
-    def test_when_arguments_object_is_None_then_throw_error(self):
-
-        with pytest.raises(AssertionError):
-            parse_main_arguments(None)
 
     def test_when_arguments_is_an_empty_list_then_show_help(self, capsys):
 
@@ -375,25 +370,27 @@ class Test_MainArguments:
     def test_initializer(self):
         csv_path = "some/path"
         engine = DbEngine.MSSQL
+        logging = LOG_LEVELS[0]
 
-        a = MainArguments(csv_path, engine)
+        a = MainArguments(csv_path, engine, logging)
 
         assert a.csv_path == csv_path
         assert a.engine == engine
+        assert a.log_level == logging
 
     class Test_when_setting_connection_string:
         class Test_given_invalid_engine:
             def test_given_using_integrated_security(self):
                 with pytest.raises(ValueError):
                     MainArguments(
-                        "bogus", "bogus"
+                        "bogus", "bogus", LOG_LEVELS[0]
                     ).set_connection_string_using_integrated_security(
                         "server", 20, "db_name"
                     )
 
             def test_given_username_and_password(self):
                 with pytest.raises(ValueError):
-                    MainArguments("bogus", "bogus").set_connection_string(
+                    MainArguments("bogus", "bogus", LOG_LEVELS[0]).set_connection_string(
                         "server", 20, "db_name", "username", "password"
                     )
 
@@ -405,9 +402,9 @@ class Test_MainArguments:
                     server = "my-server"
                     database = "my-database"
                     port = 1234
-                    expect = "mssql+pyodbc://my-server,1234/my-database?driver=SQL Server?Trusted_Connection=yes"
+                    expect = "mssql+pyodbc://my-server,1234/my-database?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
 
-                    a = MainArguments("some/path", DbEngine.MSSQL)
+                    a = MainArguments("some/path", DbEngine.MSSQL, LOG_LEVELS[0])
                     a.set_connection_string_using_integrated_security(
                         server,
                         port,
@@ -416,29 +413,13 @@ class Test_MainArguments:
 
                     assert a.connection_string == expect
 
-                def test_given_server_is_None_then_expect_assertion_error(self):
-                    with pytest.raises(AssertionError):
-                        MainArguments(
-                            "some/path", DbEngine.MSSQL
-                        ).set_connection_string_using_integrated_security(
-                            None, "a", "a"
-                        )
-
-                def test_given_server_is_whitepsace_then_expect_assertion_error(self):
-                    with pytest.raises(AssertionError):
-                        MainArguments(
-                            "some/path", DbEngine.MSSQL
-                        ).set_connection_string_using_integrated_security(
-                            "    ", "a", "a"
-                        )
-
                 def test_given_port_is_None_then_override_with_1433(self):
                     server = "my-server"
                     database = "my-database"
                     port = None
-                    expected = "mssql+pyodbc://my-server,1433/my-database?driver=SQL Server?Trusted_Connection=yes"
+                    expected = "mssql+pyodbc://my-server,1433/my-database?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
 
-                    a = MainArguments("some/path", DbEngine.MSSQL)
+                    a = MainArguments("some/path", DbEngine.MSSQL, LOG_LEVELS[0])
                     a.set_connection_string_using_integrated_security(
                         server,
                         port,
@@ -446,39 +427,6 @@ class Test_MainArguments:
                     )
 
                     assert a.connection_string == expected
-
-                def test_given_port_is_whitepsace_then_override_with_1433(self):
-                    server = "my-server"
-                    database = "my-database"
-                    port = "   "
-                    expected = "mssql+pyodbc://my-server,1433/my-database?driver=SQL Server?Trusted_Connection=yes"
-
-                    a = MainArguments("some/path", DbEngine.MSSQL)
-                    a.set_connection_string_using_integrated_security(
-                        server,
-                        port,
-                        database,
-                    )
-
-                    assert a.connection_string == expected
-
-                def test_given_database_name_is_None_then_expect_assertion_error(self):
-                    with pytest.raises(AssertionError):
-                        MainArguments(
-                            "some/path", DbEngine.MSSQL
-                        ).set_connection_string_using_integrated_security(
-                            "a", "a", None
-                        )
-
-                def test_given_database_name_is_whitepsace_then_expect_assertion_error(
-                    self,
-                ):
-                    with pytest.raises(AssertionError):
-                        MainArguments(
-                            "some/path", DbEngine.MSSQL
-                        ).set_connection_string_using_integrated_security(
-                            "a", "a", "   "
-                        )
 
             class Test_given_not_using_integrated_security:
                 def test_given_all_arguments_provided_then_return_pyodbc_connection_string(
@@ -489,43 +437,15 @@ class Test_MainArguments:
                     port = 1234
                     username = "me"
                     password = "yo"
-                    expected = "mssql+pyodbc://me:yo@my-server,1234/my-database?driver=SQL Server"
+                    expected = "mssql+pyodbc://me:yo@my-server,1234/my-database?driver=ODBC+Driver+17+for+SQL+Server"
 
-                    a = MainArguments("some/path", DbEngine.MSSQL)
+                    a = MainArguments("some/path", DbEngine.MSSQL, LOG_LEVELS[0])
                     a.set_connection_string(server, port, database, username, password)
 
                     assert a.connection_string == expected
 
-                def test_given_server_is_None_then_expect_assertion_error(self):
-                    with pytest.raises(AssertionError):
-                        server = None
-                        database = "my-database"
-                        port = 1234
-                        username = "me"
-                        password = "yo"
-
-                        MainArguments(
-                            "some/path", DbEngine.MSSQL
-                        ).set_connection_string(
-                            server, port, database, username, password
-                        )
-
-                def test_given_server_is_whitepsace_then_expect_assertion_error(self):
-                    with pytest.raises(AssertionError):
-                        server = "     "
-                        database = "my-database"
-                        port = 1234
-                        username = "me"
-                        password = "yo"
-
-                        MainArguments(
-                            "some/path", DbEngine.MSSQL
-                        ).set_connection_string(
-                            server, port, database, username, password
-                        )
-
                 def test_given_port_is_None_then_override_with_1433(self):
-                    expected = "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=SQL Server"
+                    expected = "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=ODBC+Driver+17+for+SQL+Server"
 
                     server = "my-server"
                     database = "my-database"
@@ -533,60 +453,16 @@ class Test_MainArguments:
                     username = "me"
                     password = "yo"
 
-                    a = MainArguments("some/path", DbEngine.MSSQL)
+                    a = MainArguments("some/path", DbEngine.MSSQL, LOG_LEVELS[0])
                     a.set_connection_string(server, port, database, username, password)
 
                     assert a.connection_string == expected
-
-                def test_given_port_is_whitepsace_then_override_with_1433(self):
-                    expected = "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=SQL Server"
-
-                    server = "my-server"
-                    database = "my-database"
-                    port = "    "
-                    username = "me"
-                    password = "yo"
-
-                    a = MainArguments("some/path", DbEngine.MSSQL)
-                    a.set_connection_string(server, port, database, username, password)
-
-                    assert a.connection_string == expected
-
-                def test_given_database_name_is_None_then_expect_assertion_error(self):
-                    with pytest.raises(AssertionError):
-                        server = "my-server"
-                        database = None
-                        port = 1234
-                        username = "me"
-                        password = "yo"
-
-                        MainArguments(
-                            "some/path", DbEngine.MSSQL
-                        ).set_connection_string(
-                            server, port, database, username, password
-                        )
-
-                def test_given_database_name_is_whitepsace_then_expect_assertion_error(
-                    self,
-                ):
-                    with pytest.raises(AssertionError):
-                        server = "my-server"
-                        database = "     "
-                        port = 1234
-                        username = "me"
-                        password = "yo"
-
-                        MainArguments(
-                            "some/path", DbEngine.MSSQL
-                        ).set_connection_string(
-                            server, port, database, username, password
-                        )
 
         class Test_when_getting_db_operations_adapter:
             def test_given_engine_is_postgresql_then_raise_NotImplementedError(self):
                 with pytest.raises(NotImplementedError):
                     a = MainArguments(
-                        "some/path", DbEngine.MSSQL
+                        "some/path", DbEngine.MSSQL, LOG_LEVELS[0]
                     ).set_connection_string(
                         "server", None, "database", "username", "password"
                     )
@@ -596,7 +472,7 @@ class Test_MainArguments:
 
             def test_given_engine_is_mssql_then_return_proper_object(self):
                 actual = (
-                    MainArguments("some/path", DbEngine.MSSQL)
+                    MainArguments("some/path", DbEngine.MSSQL, LOG_LEVELS[0])
                     .set_connection_string(
                         "server", None, "database", "username", "password"
                     )
