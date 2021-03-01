@@ -24,7 +24,8 @@ class Columns:
         "SISUserIdentifier",
         "Name",
         "EmailAddress",
-        "EntityStatus",
         "CreateDate",
         "LastModifiedDate",
+        "SourceCreateDate",
+        "LastModifiedDate"
     ]
