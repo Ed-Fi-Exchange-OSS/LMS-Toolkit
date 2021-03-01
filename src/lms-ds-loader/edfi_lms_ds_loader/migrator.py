@@ -20,36 +20,6 @@ MIGRATION_SCRIPTS = [
 ]
 
 
-def _get_script_path(engine: Engine, script_name: str) -> str:
-    script_dir = path.join(path.dirname(__file__), "scripts", engine.name)
-    return path.join(script_dir, script_name)
-
-
-def _read_statements_from_file(full_path: str) -> List[str]:
-    raw_sql: str
-    with open(full_path) as f:
-        raw_sql = f.read()
-
-    return split(raw_sql)
-
-
-def _execute_statements(engine: Engine, statements: List[str]):
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
-    for statement in statements:
-        # Ignore MSSQL "GO" statements
-        if statement == "GO":
-            continue
-
-        # Deliberately throwing away all results. Counting on exception handling
-        # if there are any errors
-        session.execute(statement)
-
-    session.commit()
-    session.close()
-
-
 def _execute_transaction(engine: Engine, function: Callable[[object], Any]) -> Any:
     Session = sessionmaker(bind=engine)
 
@@ -68,6 +38,34 @@ def _execute_transaction(engine: Engine, function: Callable[[object], Any]) -> A
         session.close()
 
 
+def _get_script_path(engine: Engine, script_name: str) -> str:
+    script_dir = path.join(path.dirname(__file__), "scripts", engine.name)
+    return path.join(script_dir, script_name)
+
+
+def _read_statements_from_file(full_path: str) -> List[str]:
+    raw_sql: str
+    with open(full_path) as f:
+        raw_sql = f.read()
+
+    return split(raw_sql)
+
+
+def _execute_statements(engine: Engine, statements: List[str]):
+    def __callback(session: sa_session):
+        for statement in statements:
+            # Ignore MSSQL "GO" statements
+            if statement == "GO":
+                continue
+
+            # Deliberately throwing away all results. Counting on exception handling
+            # if there are any errors, and migration scripts should not be returning
+            # any results.
+            session.execute(statement)
+
+    _execute_transaction(engine, __callback)
+
+
 def _script_has_been_run(engine: Engine, migration: str) -> bool:
     def __callback(session: sa_session):
         statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
@@ -78,11 +76,10 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
 
         return response == 1
     except ProgrammingError as error:
-        # TODO: try this on SQL Server and find the appropriate error message
-        logger.warn(type(error))
-        logger.warn(error.args)
         if (
+            # PostgreSLQ error
             "psycopg2.errors.UndefinedTable" in error.args[0] or
+            # SQL Server error
             "Invalid object name" in error.args[0]
            ):
             # This means it is a fresh database where the migrationjournal table
@@ -98,27 +95,23 @@ def _record_migration_in_journal(engine: Engine, migration: str):
     _execute_statements(engine, [statement])
 
 
-def _run_file(engine: Engine, migration: str):
-    if _script_has_been_run(engine, migration):
-        logger.debug(f"Migration {migration} has already run and will not be re-run.")
-        return
-
-    logger.info(f"Running migration {migration}...")
-
-    script_name = f"{migration}.sql"
-    migration_script = _get_script_path(engine, script_name)
-
-    statements = _read_statements_from_file(migration_script)
-    _execute_statements(engine, statements)
-
-    _record_migration_in_journal(engine, migration)
-
-    logger.debug(f"Done with migration {migration}.")
-
-
 def migrate(engine: Engine):
     logger.info("Begin database auto-migration...")
     for migration in MIGRATION_SCRIPTS:
-        _run_file(engine, migration)
+        if _script_has_been_run(engine, migration):
+            logger.debug(f"Migration {migration} has already run and will not be re-run.")
+            return
+
+        logger.debug(f"Running migration {migration}...")
+
+        script_name = f"{migration}.sql"
+        migration_script = _get_script_path(engine, script_name)
+
+        statements = _read_statements_from_file(migration_script)
+        _execute_statements(engine, statements)
+
+        _record_migration_in_journal(engine, migration)
+
+        logger.debug(f"Done with migration {migration}.")
 
     logger.info("Done with database auto-migration.")
