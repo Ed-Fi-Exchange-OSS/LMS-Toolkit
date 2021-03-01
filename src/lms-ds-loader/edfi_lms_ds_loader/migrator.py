@@ -15,6 +15,8 @@ from sqlparse import split
 logger = logging.getLogger(__name__)
 
 MIGRATION_SCRIPTS = [
+    # CAUTION: these scripts will run in order from "top to bottom", so it is
+    # critical to maintain the script order at all times.
     "initialize_lms_database",
     "create_user_tables"
 ]
