@@ -102,7 +102,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         required=False,
         help="Page size for the paginated requests.",
         type=int,
-        default=20,
+        default=200,
         env_var="PAGE_SIZE",
     )
 

@@ -23,7 +23,7 @@ xxhash = "^2.0.0"
 numpy = "1.19.3"
 errorhandler = "^2.0.1"
 ConfigArgParse = "^1.2.3"
-edfi-lms-extractor-lib = {version = "1.0.0a2", allow-prereleases = true}
+edfi-lms-extractor-lib = {version = "1.0.0a3", allow-prereleases = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"

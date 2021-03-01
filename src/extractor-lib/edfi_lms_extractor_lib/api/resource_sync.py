@@ -87,6 +87,7 @@ def add_sourceid_to(df: DataFrame, identity_columns: List[str]):
         Series(identity_columns).isin(df.columns).all()
     ), "Identity columns missing from dataframe"
 
+    df[identity_columns] = df[identity_columns].astype("string")
     df["SourceId"] = df[sorted(identity_columns)].agg("-".join, axis=1)
 
 

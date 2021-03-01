@@ -55,7 +55,7 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
             "LastModifiedDate"
         ]
     ].copy()
-
+    df["role_id"] = df["role_id"].astype("string")
     df["SourceSystem"] = constants.SOURCE_SYSTEM
 
     df.rename(
@@ -67,7 +67,6 @@ def map_to_udm(users_df: pd.DataFrame, roles_df: pd.DataFrame) -> pd.DataFrame:
         },
         inplace=True,
     )
-
     df = df.merge(roles_df[["id", "title"]], left_on="role_id", right_on="id")
     df.rename(columns={"title": "UserRole"}, inplace=True)
 
