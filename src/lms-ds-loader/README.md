@@ -4,6 +4,15 @@ The Ed-Fi LMS Data Store Loader is a utility for loading CSV files in the
 Learning Management System Unified Data Model (LMS-UDM) into a Learning
 Management System Data Store (LMS-DS) database.
 
+The application processes each file in the input file system by date order, as
+indicated in the file name. If a record is in a file one day, and missing on the
+next day, then the system "soft deletes" that record by setting the current
+timestamp into the `deletedat` column. This functionality requires that a root
+level directory only contains files for one LMS provider. Thus if an education
+organization uses multiple LMS providers, then each LMS Extractor needs to write
+files to a separate, dedicated directory, and the LMS DS Loader must be run once
+for each extractor's output directory.
+
 Limitations as of March 2021:
 
 * Data loads only supports SQL Server (tested on MSSQL 2019).
