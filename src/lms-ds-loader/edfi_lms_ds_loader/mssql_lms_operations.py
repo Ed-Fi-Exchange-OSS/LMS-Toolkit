@@ -199,7 +199,7 @@ and t.lastmodifieddate <> stg.lastmodifieddate
 
         self._exec(statement)
 
-    def soft_delete_from_production(self, table):
+    def soft_delete_from_production(self, table, sourceSystem: str):
         """
         Updates production records that do not have a match in the staging table
         by setting their `deletedat` value to the current timestamp.
@@ -221,6 +221,7 @@ select 1 from lms.stg_{table} as stg
 where t.sourcesystemidentifier = stg.sourcesystemidentifier
 and t.sourcesystem = stg.sourcesystem
 ) and deletedat is null
+and t.sourceSystem = '{sourceSystem}'
 """.strip()
 
         rowcount = self._exec(statement)

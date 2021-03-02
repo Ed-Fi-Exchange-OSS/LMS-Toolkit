@@ -253,15 +253,6 @@ and t.lastmodifieddate <> stg.lastmodifieddate
             exec_mock.assert_called_with(expected)
 
     class Test_when_soft_deleting_a_record:
-        class Test_given_invalid_arguments:
-            def test_given_table_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").soft_delete_from_production(None)
-
-            def test_given_table_is_whitespace_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").soft_delete_from_production("   ")
-
         class Test_given_valid_input:
             def test_then_update_records_that_are_not_in_the_staging_table(self, mocker):
 
@@ -273,14 +264,15 @@ where not exists (
 select 1 from lms.stg_tbl as stg
 where t.sourcesystemidentifier = stg.sourcesystemidentifier
 and t.sourcesystem = stg.sourcesystem
-) and deletedat is null"""
+) and deletedat is null
+and t.sourceSystem = 'Schoology'"""
                 expected = expected.strip()
 
                 # Arrange
                 exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
                 # Act
-                MssqlLmsOperations("aaa").soft_delete_from_production(table)
+                MssqlLmsOperations("aaa").soft_delete_from_production(table, "Schoology")
 
                 # Assert
                 exec_mock.assert_called_with(expected)
