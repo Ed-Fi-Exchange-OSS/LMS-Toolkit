@@ -8,7 +8,7 @@ from unittest.mock import Mock
 
 import pandas as pd
 
-from lms_ds_loader.csv_to_sql import CsvToSql
+from edfi_lms_ds_loader.csv_to_sql import CsvToSql
 
 
 class Test_when_reading_csv_and_loading_into_a_database:

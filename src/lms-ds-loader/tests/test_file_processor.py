@@ -6,11 +6,11 @@
 import pytest
 from unittest.mock import Mock
 
-from lms_ds_loader.constants import Constants
-from lms_ds_loader.csv_to_sql import CsvToSql
-from lms_ds_loader.file_processor import FileProcessor
-from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
-from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.helpers.constants import Table, Columns
+from edfi_lms_ds_loader.csv_to_sql import CsvToSql
+from edfi_lms_ds_loader.file_processor import FileProcessor
+from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
+from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 class Test_FileProcessor:
@@ -43,10 +43,10 @@ class Test_FileProcessor:
                 # Assert
                 assert file_processor.db_operations_adapter == db_operations_adapter
                 mock_csv_to_sql.assert_called_with(
-                    file_1, Constants.Table.USER, Constants.Columns.USER
+                    file_1, Table.USER, Columns.USER
                 )
                 mock_csv_to_sql.assert_called_with(
-                    file_2, Constants.Table.USER, Constants.Columns.USER
+                    file_2, Table.USER, Columns.USER
                 )
 
             def test_given_there_are_no_user_files(self, mocker):

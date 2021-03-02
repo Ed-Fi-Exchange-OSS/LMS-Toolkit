@@ -44,5 +44,5 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
     """
-    # TODO: complete the mapping under ticket FIZZ-170
+    # TODO: complete the mapping under ticket LMS-170
     return section_updates_df

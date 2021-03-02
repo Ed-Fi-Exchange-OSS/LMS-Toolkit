@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = lms_ds_loader
-omit = lms_ds_loader/main.py
+source = edfi_lms_ds_loader
+omit = edfi_lms_ds_loader/__main__.py
 
 [report]

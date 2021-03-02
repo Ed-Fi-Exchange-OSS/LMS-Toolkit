@@ -7,10 +7,10 @@ from dataclasses import dataclass
 from typing import Type
 
 
-from lms_ds_loader.csv_to_sql import CsvToSql
-from lms_ds_loader.constants import Constants
-from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
-from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.csv_to_sql import CsvToSql
+from edfi_lms_ds_loader.helpers.constants import Table, Columns
+from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
+from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 @dataclass
@@ -47,4 +47,4 @@ class FileProcessor:
         csv_to_sql = CsvToSql(self.db_operations_adapter)
 
         for f in self.file_system.Users:
-            csv_to_sql.load_file(f, Constants.Table.USER, Constants.Columns.USER)
+            csv_to_sql.load_file(f, Table.USER, Columns.USER)

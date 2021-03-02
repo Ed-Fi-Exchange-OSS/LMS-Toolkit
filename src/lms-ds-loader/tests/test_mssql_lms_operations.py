@@ -9,7 +9,7 @@ from unittest.mock import Mock
 import pandas as pd
 
 
-from lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
 class Test_MssqlLmsOperations:

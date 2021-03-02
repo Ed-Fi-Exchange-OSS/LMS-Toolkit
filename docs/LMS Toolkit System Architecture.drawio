@@ -691,7 +691,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="LES7szQddW6AVuObh80V-0" value="Project Fizz for Instructional / Learning Management System Data Access" style="swimlane;html=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontal=1;startSize=30;horizontalStack=0;" parent="Mk_my-drdJQh2HX9_0_3-1" vertex="1">
+                <mxCell id="LES7szQddW6AVuObh80V-0" value="LMS Toolkit for Instructional / Learning Management System Data Access" style="swimlane;html=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontal=1;startSize=30;horizontalStack=0;" parent="Mk_my-drdJQh2HX9_0_3-1" vertex="1">
                     <mxGeometry x="40" y="30" width="460" height="500" as="geometry">
                         <mxRectangle x="180" y="210" width="60" height="20" as="alternateBounds"/>
                     </mxGeometry>

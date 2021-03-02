@@ -1,9 +1,12 @@
 [tool.poetry]
-name = "lms-ds-loader"
-version = "0.1.0"
-description = ""
+name = "edfi-lms-ds-loader"
+version = "1.0.0-alpha0"
+description = "Ed-Fi LMS Toolkit Data Store Loader"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
+repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -11,6 +14,10 @@ pyodbc = "^4.0.30"
 sqlalchemy = "^1.3.19"
 pandas = "^1.1.2"
 configargparse = "^1.2.3"
+sqlparse = "^0.4.1"
+psycopg2 = "^2.8.6"
+errorhandler = "^2.0.1"
+python-dotenv = "^0.15.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -20,6 +27,9 @@ pytest-mock = "^3.3.1"
 pyfakefs = "^4.1.0"
 coverage = "^5.3"
 teamcity-messages = "^1.28"
+twine = "^3.3.0"
+mypy = "^0.812"
+pytest-describe = "^1.0.0"
 
 [build-system]
 requires = ["poetry>=0.12"]

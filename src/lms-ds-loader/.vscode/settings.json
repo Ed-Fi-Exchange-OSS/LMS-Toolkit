@@ -1,5 +1,5 @@
 {
-    "python.analysis.extraPaths": ["./lms_ds_loader","./tests"],
+    "python.analysis.extraPaths": ["./edfi_lms_ds_loader","./tests"],
     "python.languageServer": "Pylance",
     "python.linting.pylintEnabled": false,
     "python.linting.enabled": true,
@@ -10,7 +10,6 @@
     "python.formatting.provider": "black",
     "python.testing.pytestEnabled": true,
     "python.venvPath": ".venv/Scripts/python",
-    "python.dataScience.jupyterServerURI": "local",
     "files.associations": {
         "*.metaed": "csharp"
     },
@@ -93,5 +92,12 @@
         "MSSQL",
         "SPDX",
         "dbname"
-    ]
+    ],
+    "files.exclude": {
+        ".mypy_cache": true,
+        ".pytest_cache": true,
+        "**/__pycache__": true,
+        "**/*.egg-info": true
+    },
+    "jupyter.jupyterServerType": "local"
 }

@@ -6,7 +6,7 @@
 import os
 import pytest
 
-from lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
+from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
 
 
 class Test_LmsFilesystemProvider:

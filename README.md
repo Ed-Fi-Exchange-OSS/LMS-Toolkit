@@ -56,7 +56,7 @@ document the output files and provide sample analyses:
 * [File Tester](utils/file-tester): a script for validating the directory
   structure, columns, and some formatting details for files created by the
   extractor utilities.
-* [Ed-Fi Tracker: Project Fizz](https://tracker.ed-fi.org/browse/FIZZ): issue tracking.
+* [Ed-Fi Tracker: LMS Toolkit](https://tracker.ed-fi.org/browse/LMS): issue tracking.
 * The [experimental](experimental) directory contains proof of concept code used
   to help develop the extractors. These projects have been kept for historical
   access by the core development team, and are unlikely to be of interest to
