@@ -63,7 +63,13 @@ use of the build script.
 
 1. Create SQL Server and PostgreSQL SQL scripts under
    `edfi_lms_ds_loader/scripts/<engine name>`, using the same file name for
-   both.
+   both. Start from the artifact created by MetaEd, and then update the script
+   with these modifications:
+   * Remove the `Id` column and the default constraint for that column.
+   * Add a `DeletedAt` column as a nullable `Datetime2`.
+   * Duplicate the table definition and prefix the duplicate with "stg_".
+   * In the staging table, change the `xyzIdentifier` primary key column name to
+     `StagingId`, and leave out the `DeletedAt` column.
 1. Use `;` (semi-colon) terminators at the end of each SQL statement for both
    languages. Do not use `GO` in the SQL Server files, as the application is not
    coded to parse it.
