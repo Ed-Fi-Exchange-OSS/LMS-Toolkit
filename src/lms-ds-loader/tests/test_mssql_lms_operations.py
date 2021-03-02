@@ -208,6 +208,7 @@ where not exists (
                 if_exists="append",
                 index=False,
                 method="multi",
+                chunksize=190
             )
 
     class Test_when_updating_records:

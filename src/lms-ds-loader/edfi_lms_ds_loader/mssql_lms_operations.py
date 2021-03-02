@@ -131,6 +131,8 @@ class MssqlLmsOperations:
             if_exists="append",
             index=False,
             method="multi",
+            # The ODBC driver complains and exits with chunksize > 190
+            chunksize=190
         )
 
     def insert_new_records_to_production(self, table, columns):
