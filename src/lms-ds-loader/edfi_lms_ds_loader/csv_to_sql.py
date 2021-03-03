@@ -57,6 +57,8 @@ class CsvToSql:
 
         adapter.insert_new_records_to_production(table, columns)
         adapter.copy_updates_to_production(table, columns)
-        adapter.soft_delete_from_production(table)
+
+        sourceSystem = df.loc[0, "SourceSystem"]
+        adapter.soft_delete_from_production(table, sourceSystem)
 
         adapter.enable_staging_natural_key_index(table)

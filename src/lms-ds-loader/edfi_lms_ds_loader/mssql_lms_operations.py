@@ -131,6 +131,8 @@ class MssqlLmsOperations:
             if_exists="append",
             index=False,
             method="multi",
+            # The ODBC driver complains and exits with chunksize > 190
+            chunksize=190
         )
 
     def insert_new_records_to_production(self, table, columns):
@@ -199,7 +201,7 @@ and t.lastmodifieddate <> stg.lastmodifieddate
 
         self._exec(statement)
 
-    def soft_delete_from_production(self, table):
+    def soft_delete_from_production(self, table: str, sourceSystem: str):
         """
         Updates production records that do not have a match in the staging table
         by setting their `deletedat` value to the current timestamp.
@@ -207,11 +209,10 @@ and t.lastmodifieddate <> stg.lastmodifieddate
         Parameters
         ----------
         table: str
-            Name of the table to truncate, not including the `stg_`
+            Name of the table to truncate, not including the `stg_`.
+        sourceSystem: str
+            The SourceSystem currently being processed.
         """
-
-        assert isinstance(table, str), "Argument `table` must be a string"
-        assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         statement = f"""
 update t set t.deletedat = getdate()
@@ -221,7 +222,8 @@ select 1 from lms.stg_{table} as stg
 where t.sourcesystemidentifier = stg.sourcesystemidentifier
 and t.sourcesystem = stg.sourcesystem
 ) and deletedat is null
+and t.sourceSystem = '{sourceSystem}'
 """.strip()
 
         rowcount = self._exec(statement)
-        logging.info(f"Deleted {rowcount} records from table `{table}`")
+        logging.info(f"Soft-deleted {rowcount} records from table `{table}`")

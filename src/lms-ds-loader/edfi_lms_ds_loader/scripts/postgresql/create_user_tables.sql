@@ -16,6 +16,7 @@ CREATE TABLE lms.LMSUser (
     SourceLastModifiedDate TIMESTAMP(7) NULL,
     CreateDate TIMESTAMP NOT NULL DEFAULT (now()),
     LastModifiedDate TIMESTAMP NOT NULL DEFAULT (now()),
+    DeletedAt TIMESTAMP NULL,
     CONSTRAINT LMSUser_PK PRIMARY KEY (
         LMSUserIdentifier
     )
