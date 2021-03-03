@@ -7,6 +7,7 @@
 
 import os
 import subprocess
+import shutil
 import sys
 from typing import List
 
@@ -166,17 +167,7 @@ def _run_build():
 
 
 def _run_publish():
-    if (os.name == "nt"):
-        _run_command([
-            "del",
-            "/q",
-            "dist\\*.*"
-        ], exit_immediately=False)
-    else:
-        _run_command([
-            "rm",
-            "dist/*"
-        ], exit_immediately=False)
+    shutil.rmtree('dist', ignore_errors=True)
 
     _run_command([
         "poetry",
