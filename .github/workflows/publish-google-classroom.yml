@@ -41,20 +41,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Run Tests with Coverage
-        run: python ./eng/build.py coverage:html google-classroom-extractor
-
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
-        with:
-          name: code-coverage-report
-          path: src/google-classroom-extractor/htmlcov/
-
-      - name: Type Check
-        run: python ./eng/build.py typecheck:xml google-classroom-extractor
-
-      - name: Style Check
-        run: python ./eng/build.py lint google-classroom-extractor
+      - name: Run Tests
+        run: python ./eng/build.py test google-classroom-extractor
 
       - name: Publish
         env:
