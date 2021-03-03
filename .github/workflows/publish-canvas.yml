@@ -3,13 +3,12 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-name: GC Extractor - Publish
-
+name: Canvas Extractor - Publish
 on:
   workflow_dispatch
 
 jobs:
-  publish-google-classroom-extractor:
+  publish-canvas-extractor:
     name: Run unit tests and publish
     runs-on: ubuntu-20.04
     steps:
@@ -29,7 +28,7 @@ jobs:
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
       - name: Install Python Dependencies
-        run: python ./eng/build.py install google-classroom-extractor
+        run: python ./eng/build.py install canvas-extractor
 
       - name: Cache Dependencies
         # very carefully use the tag when testing with act-cli on localhost, commit the hash version
@@ -42,10 +41,10 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Run Tests
-        run: python ./eng/build.py test google-classroom-extractor
+        run: python ./eng/build.py test canvas-extractor
 
       - name: Publish
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-        run: python ./eng/build.py publish google-classroom-extractor
+        run: python ./eng/build.py publish canvas-extractor
