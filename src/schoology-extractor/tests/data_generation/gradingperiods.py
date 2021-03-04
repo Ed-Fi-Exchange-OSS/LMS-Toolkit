@@ -5,7 +5,7 @@
 
 import logging
 from typing import Dict, List
-from schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.request_client import RequestClient
 
 
 logger = logging.getLogger(__name__)

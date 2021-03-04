@@ -1,6 +1,6 @@
 [run]
 branch = True
-source = schoology_extractor
-omit = schoology_extractor/main.py
+source = edfi_schoology_extractor
+omit = edfi_schoology_extractor/main.py
 
 [report]

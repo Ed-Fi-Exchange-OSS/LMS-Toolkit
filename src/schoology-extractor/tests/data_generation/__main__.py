@@ -33,8 +33,8 @@ from tests.data_generation.courses import (
     rollback_loaded_courses,
 )
 from tests.data_generation.users import generate_and_load_users, rollback_loaded_users
-from schoology_extractor.api.request_client import RequestClient
-from schoology_extractor.helpers import arg_parser
+from edfi_schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.helpers import arg_parser
 
 load_dotenv()
 arguments = arg_parser.parse_main_arguments(argv[1:])

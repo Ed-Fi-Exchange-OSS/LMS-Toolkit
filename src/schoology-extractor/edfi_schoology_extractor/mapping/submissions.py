@@ -47,19 +47,11 @@ def map_to_udm(submissions_df: pd.DataFrame) -> pd.DataFrame:
         return submissions_df
 
     df = submissions_df[
-        [
-            "id",
-            "created",
-            "late",
-            "draft",
-            "uid",
-            "CreateDate",
-            "LastModifiedDate"
-        ]
+        ["id", "created", "late", "draft", "uid", "CreateDate", "LastModifiedDate"]
     ].copy()
 
     df["SourceSystem"] = constants.SOURCE_SYSTEM
-    df["SubmissionStatus"] = 'on-time'
+    df["SubmissionStatus"] = "on-time"
 
     def _get_status(row: pd.Series):
         if row["late"] == 1:
@@ -72,7 +64,7 @@ def map_to_udm(submissions_df: pd.DataFrame) -> pd.DataFrame:
 
     df.drop(columns=["late", "draft"], inplace=True)
 
-    df["AssignmentSourceSystemIdentifier"] = df["id"].apply(lambda x: x.split('#')[1])
+    df["AssignmentSourceSystemIdentifier"] = df["id"].apply(lambda x: x.split("#")[1])
     df["EarnedPoints"] = None
     df["Grade"] = None
     df["SourceCreateDate"] = ""
@@ -82,11 +74,13 @@ def map_to_udm(submissions_df: pd.DataFrame) -> pd.DataFrame:
         columns={
             "id": "SourceSystemIdentifier",
             "created": "SubmissionDateTime",
-            "uid": "LMSUserSourceSystemIdentifier"
+            "uid": "LMSUserSourceSystemIdentifier",
         },
         inplace=True,
     )
 
-    df["SubmissionDateTime"] = df["SubmissionDateTime"].apply(lambda x: datetime.strftime(datetime.fromtimestamp(x), "%Y-%m-%d %H:%M:%S"))
+    df["SubmissionDateTime"] = df["SubmissionDateTime"].apply(
+        lambda x: datetime.strftime(datetime.fromtimestamp(x), "%Y-%m-%d %H:%M:%S")
+    )
 
     return df

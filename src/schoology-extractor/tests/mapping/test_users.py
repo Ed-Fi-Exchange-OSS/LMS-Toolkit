@@ -7,7 +7,7 @@
 import pandas as pd
 import pytest
 
-from schoology_extractor.mapping.users import map_to_udm
+from edfi_schoology_extractor.mapping.users import map_to_udm
 
 
 def describe_when_mapping_schoology_users_to_udm():

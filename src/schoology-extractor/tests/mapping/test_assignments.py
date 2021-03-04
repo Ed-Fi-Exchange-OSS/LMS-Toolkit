@@ -6,7 +6,7 @@
 import pandas as pd
 import pytest
 
-from schoology_extractor.mapping.assignments import map_to_udm
+from edfi_schoology_extractor.mapping.assignments import map_to_udm
 
 
 def describe_when_mapping_empty_DataFrame():

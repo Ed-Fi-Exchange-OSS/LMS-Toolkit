@@ -13,14 +13,14 @@ from errorhandler import ErrorHandler
 from pandas import DataFrame
 import sqlalchemy
 
-from schoology_extractor.helpers import csv_writer
-from schoology_extractor.api.request_client import RequestClient
-from schoology_extractor.helpers import arg_parser
-from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
-from schoology_extractor import usage_analytics_facade
-import schoology_extractor.lms_filesystem as lms
+from edfi_schoology_extractor.helpers import csv_writer
+from edfi_schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.helpers import arg_parser
+from edfi_schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
+from edfi_schoology_extractor import usage_analytics_facade
+import edfi_schoology_extractor.lms_filesystem as lms
 
-from schoology_extractor.helpers.sync import get_sync_db_engine
+from edfi_schoology_extractor.helpers.sync import get_sync_db_engine
 
 
 # Load configuration
@@ -111,7 +111,9 @@ def _get_assignments(section_id: int) -> Optional[DataFrame]:
 
 
 def _get_section_activities(section_id: int) -> Optional[DataFrame]:
-    section_activities_df: DataFrame = extractorFacade.get_section_activities(section_id)
+    section_activities_df: DataFrame = extractorFacade.get_section_activities(
+        section_id
+    )
     result_bucket["section_activities"] = section_activities_df
 
     return section_activities_df
@@ -122,7 +124,9 @@ def _get_submissions(assignment_id: int, section_id: int) -> Optional[DataFrame]
 
 
 def _get_section_associations(section_id: int) -> DataFrame:
-    section_associations_df: DataFrame = extractorFacade.get_section_associations(section_id)
+    section_associations_df: DataFrame = extractorFacade.get_section_associations(
+        section_id
+    )
     result_bucket["section_associations"] = section_associations_df
 
     return section_associations_df
@@ -182,7 +186,8 @@ def main():
                         schoology_output_path, section_id, assignment_id
                     )
                     _create_file_from_dataframe(
-                        _get_submissions(assignment_id, section_id), submission_file_name
+                        _get_submissions(assignment_id, section_id),
+                        submission_file_name,
                     )
 
         section_activities_file_path: str = lms.get_section_activities_file_path(

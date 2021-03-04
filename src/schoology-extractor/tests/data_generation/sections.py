@@ -8,7 +8,7 @@ from pandas import DataFrame, json_normalize, merge
 from typing import Dict, List
 from faker import Faker
 from tests.data_generation.generation_helper import validate_multi_status
-from schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.request_client import RequestClient
 
 fake = Faker("en_US")
 logger = logging.getLogger(__name__)
@@ -149,8 +149,12 @@ def generate_and_load_sections(
         A list of JSON-like section objects incorporating the response values from the
         Schoology API, e.g. resource ids and status from individual POSTing
     """
-    assert record_count > 0, "Number of sections to generate per course must be greater than zero"
-    assert record_count < 51, "Number of sections to generate per course must be less then 51"
+    assert (
+        record_count > 0
+    ), "Number of sections to generate per course must be greater than zero"
+    assert (
+        record_count < 51
+    ), "Number of sections to generate per course must be less then 51"
 
     course_ids: List[str] = list(map(lambda course: str(course["id"]), courses))
     grading_period_ids: List[int] = list(map(lambda gp: int(gp["id"]), grading_periods))
@@ -158,7 +162,9 @@ def generate_and_load_sections(
     result: List[Dict] = []
     for course_id in course_ids:
         try:
-            course_sections: List[Dict] = generate_sections(record_count, grading_period_ids)
+            course_sections: List[Dict] = generate_sections(
+                record_count, grading_period_ids
+            )
             section_result = load_sections(request_client, course_id, course_sections)
             result.extend(section_result)
         except Exception as ex:

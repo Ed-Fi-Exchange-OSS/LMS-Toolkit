@@ -9,13 +9,13 @@ import re
 import pytest
 from freezegun import freeze_time
 
-from schoology_extractor.lms_filesystem import (
+from edfi_schoology_extractor.lms_filesystem import (
     get_assignment_file_path,
     get_user_file_path,
     get_section_file_path,
     get_section_association_file_path,
     get_attendance_events_file_path,
-    get_system_activities_file_path
+    get_system_activities_file_path,
 )
 
 
@@ -103,7 +103,8 @@ def describe_when_getting_the_section_associations_file_name():
 
     def it_should_use_the_lms_filesystem_path_for_the_section(result, fs):
         assert (
-            re.match(r"./output/section=123/section-associations/[^/]+\.csv", result) is not None
+            re.match(r"./output/section=123/section-associations/[^/]+\.csv", result)
+            is not None
         ), f"actual: {result}"
 
     def it_should_use_timestamp_for_file_name(result):
@@ -143,7 +144,8 @@ def describe_when_getting_system_activities_file_path():
 
     def it_should_use_the_current_date_in_the_directory_path(result, fs):
         assert (
-            re.match(r"./output/system-activities/date=2020-10-16/[^/]+\.csv", result) is not None
+            re.match(r"./output/system-activities/date=2020-10-16/[^/]+\.csv", result)
+            is not None
         ), f"actual: {result}"
 
     def it_should_use_timestamp_for_file_name(result):

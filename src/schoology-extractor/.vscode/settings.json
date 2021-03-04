@@ -1,5 +1,5 @@
 {
-    "python.analysis.extraPaths": ["./schoology_extractor", "./tests"],
+    "python.analysis.extraPaths": ["./edfi_schoology_extractor", "./tests"],
     "python.analysis.typeCheckingMode": "basic",
     "python.languageServer": "Pylance",
     "python.linting.enabled": true,
@@ -103,5 +103,5 @@
         "pytest"
     ],
     "jupyter.jupyterServerType": "local",
-    "python.pythonPath": ".venv\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\work\\fizz\\Ed-Fi-X-Fizz\\src\\schoology-extractor\\.venv\\Scripts\\python.exe"
 }

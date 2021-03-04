@@ -6,7 +6,7 @@
 import logging
 from typing import Dict, List
 from faker import Faker
-from schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.request_client import RequestClient
 
 fake = Faker("en_US")
 logger = logging.getLogger(__name__)
@@ -113,7 +113,9 @@ def rollback_loaded_discussion_comments(
             )
 
             for id in ids:
-                request_client.delete(f"sections/{section_id}/discussions/{discussion_id}/comments", id)
+                request_client.delete(
+                    f"sections/{section_id}/discussions/{discussion_id}/comments", id
+                )
                 logger.info("******** Deleted discussion_comment with id %s", id)
 
 

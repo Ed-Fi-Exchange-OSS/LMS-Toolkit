@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 from freezegun import freeze_time
 
-from schoology_extractor.mapping.usage_analytics import map_to_udm
+from edfi_schoology_extractor.mapping.usage_analytics import map_to_udm
 
 DATE_TIME_INPUT_STRING = "2020-10-16 1:00:01 PM"
 EXPECTED_DATE_TIME = "2020-10-16 13:00:01"
@@ -17,13 +17,15 @@ def describe_when_converting_usage_analytics_to_udm():
     def describe_given_item_type_assignment_then_ignore_the_record():
         # Arrange
         df = pd.DataFrame(
-            [{
-                "action_type": "CREATE",
-                "item_type": "ASSIGNMENT",
-                "schoology_user_id": "100032891",
-                "unique_user_id": 604874,
-                "last_event_timestamp": "2020-11-04 17:28:43.097"
-            }]
+            [
+                {
+                    "action_type": "CREATE",
+                    "item_type": "ASSIGNMENT",
+                    "schoology_user_id": "100032891",
+                    "unique_user_id": 604874,
+                    "last_event_timestamp": "2020-11-04 17:28:43.097",
+                }
+            ]
         )
 
         # Act
@@ -35,13 +37,15 @@ def describe_when_converting_usage_analytics_to_udm():
     def describe_given_item_type_discussion_then_ignore_the_record():
         # Arrange
         df = pd.DataFrame(
-            [{
-                "action_type": "CREATE",
-                "item_type": "DISCUSSION",
-                "schoology_user_id": "100032891",
-                "unique_user_id": 604874,
-                "last_event_timestamp": "2020-11-04 17:28:43.097"
-            }]
+            [
+                {
+                    "action_type": "CREATE",
+                    "item_type": "DISCUSSION",
+                    "schoology_user_id": "100032891",
+                    "unique_user_id": 604874,
+                    "last_event_timestamp": "2020-11-04 17:28:43.097",
+                }
+            ]
         )
 
         # Act
@@ -55,13 +59,15 @@ def describe_when_converting_usage_analytics_to_udm():
             def it_should_ignore_the_record():
                 # Arrange
                 df = pd.DataFrame(
-                    [{
-                        "action_type": "UPDATE",
-                        "item_type": "SESSION",
-                        "schoology_user_id": "100032891",
-                        "unique_user_id": 604874,
-                        "last_event_timestamp": "2020-11-04 17:28:43.097"
-                    }]
+                    [
+                        {
+                            "action_type": "UPDATE",
+                            "item_type": "SESSION",
+                            "schoology_user_id": "100032891",
+                            "unique_user_id": 604874,
+                            "last_event_timestamp": "2020-11-04 17:28:43.097",
+                        }
+                    ]
                 )
 
                 # Act
@@ -76,13 +82,15 @@ def describe_when_converting_usage_analytics_to_udm():
             def result() -> pd.DataFrame:
                 # Arrange
                 df = pd.DataFrame(
-                    [{
-                        "action_type": "CREATE",
-                        "item_type": "SESSION",
-                        "schoology_user_id": "100032891",
-                        "unique_user_id": 604874,
-                        "last_event_timestamp": "2020-11-04 17:28:43.097"
-                    }]
+                    [
+                        {
+                            "action_type": "CREATE",
+                            "item_type": "SESSION",
+                            "schoology_user_id": "100032891",
+                            "unique_user_id": 604874,
+                            "last_event_timestamp": "2020-11-04 17:28:43.097",
+                        }
+                    ]
                 )
 
                 # Act
@@ -95,7 +103,8 @@ def describe_when_converting_usage_analytics_to_udm():
                 assert result.shape[0] == 1
 
             @pytest.mark.parametrize(
-                "field,expected", [
+                "field,expected",
+                [
                     ("SourceSystemIdentifier", "in#100032891#1604510923.097"),
                     ("SourceSystem", "Schoology"),
                     ("LMSUserSourceSystemIdentifier", 100032891),
@@ -108,7 +117,7 @@ def describe_when_converting_usage_analytics_to_udm():
                     ("LastModifiedDate", EXPECTED_DATE_TIME),
                     ("SourceCreateDate", ""),
                     ("SourceLastModifiedDate", ""),
-                ]
+                ],
             )
             def it_should_map_fields(result, field, expected):
                 assert result.iloc[0][field] == expected
@@ -119,13 +128,15 @@ def describe_when_converting_usage_analytics_to_udm():
             def result() -> pd.DataFrame:
                 # Arrange
                 df = pd.DataFrame(
-                    [{
-                        "action_type": "DELETE",
-                        "item_type": "SESSION",
-                        "schoology_user_id": "100032891",
-                        "unique_user_id": 604874,
-                        "last_event_timestamp": "2020-11-04 17:28:43.097"
-                    }]
+                    [
+                        {
+                            "action_type": "DELETE",
+                            "item_type": "SESSION",
+                            "schoology_user_id": "100032891",
+                            "unique_user_id": 604874,
+                            "last_event_timestamp": "2020-11-04 17:28:43.097",
+                        }
+                    ]
                 )
 
                 # Act
@@ -138,7 +149,8 @@ def describe_when_converting_usage_analytics_to_udm():
                 assert result.shape[0] == 1
 
             @pytest.mark.parametrize(
-                "field,expected", [
+                "field,expected",
+                [
                     ("SourceSystemIdentifier", "out#100032891#1604510923.097"),
                     ("SourceSystem", "Schoology"),
                     ("LMSUserSourceSystemIdentifier", 100032891),
@@ -151,7 +163,7 @@ def describe_when_converting_usage_analytics_to_udm():
                     ("LastModifiedDate", EXPECTED_DATE_TIME),
                     ("SourceCreateDate", ""),
                     ("SourceLastModifiedDate", ""),
-                ]
+                ],
             )
             def it_should_map_fields(result, field, expected):
                 assert result.iloc[0][field] == expected

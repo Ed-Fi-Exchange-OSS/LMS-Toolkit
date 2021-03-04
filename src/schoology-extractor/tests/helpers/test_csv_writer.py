@@ -7,7 +7,7 @@ import os
 
 import pandas as pd
 
-from schoology_extractor.helpers.csv_writer import df_to_csv
+from edfi_schoology_extractor.helpers.csv_writer import df_to_csv
 
 
 def describe_when_writing_dataframe_to_csv():

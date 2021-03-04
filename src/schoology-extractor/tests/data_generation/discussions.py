@@ -6,7 +6,7 @@
 import logging
 from typing import Dict, List
 from faker import Faker
-from schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.request_client import RequestClient
 
 fake = Faker("en_US")
 logger = logging.getLogger(__name__)
@@ -36,7 +36,9 @@ def generate_discussions(
         discussions_per_assignment_count > 0
     ), "Number of discussions per section to generate must be greater than zero"
 
-    logging.info(f"Generating {discussions_per_assignment_count} discussions per section")
+    logging.info(
+        f"Generating {discussions_per_assignment_count} discussions per section"
+    )
     discussions: Dict[str, List[Dict]] = {}
     for section_id, assignments_for_section in assignments.items():
         for assignment in assignments_for_section:

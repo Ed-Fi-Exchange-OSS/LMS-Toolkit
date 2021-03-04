@@ -39,14 +39,14 @@ directory must be provided to the extractor configuration.
    * Execute the extractor with minimum command line arguments:
 
       ```bash
-      poetry run python schoology_extractor -k [schoology client key]
+      poetry run python edfi_schoology_extractor -k [schoology client key]
           -s [schoology client secret]
       ```
 
    * Alternately, run with environment variables or `.env` file:
 
      ```bash
-     poetry run python schoology_extractor
+     poetry run python edfi_schoology_extractor
      ```
 
    * For detailed help, execute `poetry run python canvas_extractor -h`.
@@ -85,7 +85,7 @@ Log statements are written to the standard output. If you wish to capture log
 details, then be sure to redirect the output to a file. For example:
 
 ```bash
-poetry run python schoology_extractor > 2020-12-07-15-43.log
+poetry run python edfi_schoology_extractor > 2020-12-07-15-43.log
 ```
 
 If any errors occurred during the script run, then there will be a final print
