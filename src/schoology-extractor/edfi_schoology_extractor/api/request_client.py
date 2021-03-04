@@ -18,7 +18,7 @@ from requests.packages.urllib3.exceptions import ProtocolError  # type: ignore
 from requests_oauthlib import OAuth1Session  # type: ignore
 
 from .paginated_result import PaginatedResult
-from schoology_extractor.helpers.constants import RESOURCE_NAMES
+from edfi_schoology_extractor.helpers.constants import RESOURCE_NAMES
 
 DEFAULT_URL = os.environ.get("SCHOOLOGY_BASE_URL") or "https://api.schoology.com/v1/"
 DEFAULT_PAGE_SIZE = 20

@@ -8,7 +8,7 @@ from pandas import DataFrame, json_normalize, merge
 from typing import Dict, List
 from faker import Faker
 from tests.data_generation.generation_helper import validate_multi_status
-from schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.request_client import RequestClient
 
 fake = Faker("en_US")
 logger = logging.getLogger(__name__)
@@ -54,9 +54,7 @@ def generate_users(record_count: int) -> List[Dict]:
     return users
 
 
-def rollback_loaded_users(
-    request_client: RequestClient, creation_response: List[Dict]
-):
+def rollback_loaded_users(request_client: RequestClient, creation_response: List[Dict]):
     """
     Delete already loaded users via the Schoology API.
     **** Used during testing of the load functionality ****
@@ -75,7 +73,9 @@ def rollback_loaded_users(
 
     ids: str = ",".join(map(lambda user: str(user["id"]), creation_response))
 
-    delete_response = request_client.bulk_delete("users", f"uids={ids}&email_notification=0")["user"]
+    delete_response = request_client.bulk_delete(
+        "users", f"uids={ids}&email_notification=0"
+    )["user"]
 
     validate_multi_status(delete_response)
     logger.info("**** Successfully deleted %s users", len(delete_response))

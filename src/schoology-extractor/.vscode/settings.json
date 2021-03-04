@@ -1,5 +1,5 @@
 {
-    "python.analysis.extraPaths": ["./schoology_extractor", "./tests"],
+    "python.analysis.extraPaths": ["./edfi_schoology_extractor", "./tests"],
     "python.analysis.typeCheckingMode": "basic",
     "python.languageServer": "Pylance",
     "python.linting.enabled": true,

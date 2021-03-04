@@ -9,7 +9,7 @@ from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 import pytest
 
-from schoology_extractor.helpers.csv_reader import load_data_frame
+from edfi_schoology_extractor.helpers.csv_reader import load_data_frame
 
 DIR_NAME = os.path.dirname(os.path.realpath(__file__))
 

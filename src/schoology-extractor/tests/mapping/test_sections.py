@@ -7,7 +7,7 @@
 import pandas as pd
 import pytest
 
-from schoology_extractor.mapping.sections import map_to_udm
+from edfi_schoology_extractor.mapping.sections import map_to_udm
 
 
 def describe_when_mapping_schoology_sections_to_udm():

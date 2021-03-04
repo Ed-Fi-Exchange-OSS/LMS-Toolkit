@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 from typing import Dict, List
 from faker import Faker
-from schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.request_client import RequestClient
 
 fake = Faker("en_US")
 logger = logging.getLogger(__name__)

@@ -8,7 +8,7 @@ from pandas import DataFrame, json_normalize, merge
 from typing import Dict, List
 from faker import Faker
 from tests.data_generation.generation_helper import validate_multi_status
-from schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.request_client import RequestClient
 
 fake = Faker("en_US")
 logger = logging.getLogger(__name__)

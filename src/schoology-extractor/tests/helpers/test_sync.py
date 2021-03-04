@@ -7,7 +7,7 @@ from pandas.core.frame import DataFrame
 import pytest
 from unittest.mock import Mock
 import sqlalchemy
-from schoology_extractor.helpers import sync
+from edfi_schoology_extractor.helpers import sync
 
 
 @pytest.fixture

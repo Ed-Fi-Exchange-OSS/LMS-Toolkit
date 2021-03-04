@@ -113,7 +113,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         help="Input directory for usage CSV files.",
         type=str,
         default=None,
-        env_var="SCHOOLOGY_INPUT_DIRECTORY"
+        env_var="SCHOOLOGY_INPUT_DIRECTORY",
     )
 
     args_parsed = parser.parse_args(args_in)
@@ -142,7 +142,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         output_directory=args_parsed.output_directory,
         log_level=args_parsed.log_level,
         page_size=args_parsed.page_size,
-        input_directory=args_parsed.input_directory
+        input_directory=args_parsed.input_directory,
     )
 
     return arguments

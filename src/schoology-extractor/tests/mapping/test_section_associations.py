@@ -6,7 +6,7 @@
 import pandas as pd
 import pytest
 
-from schoology_extractor.mapping.section_associations import map_to_udm
+from edfi_schoology_extractor.mapping.section_associations import map_to_udm
 
 
 def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
@@ -64,7 +64,9 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         def it_should_map_id_to_user_source_system_identifier(result):
             assert result["LMSUserSourceSystemIdentifier"].iloc[0] == 588525
 
-        def it_should_map_input_section_id_to_lms_section_source_system_identifier(result):
+        def it_should_map_input_section_id_to_lms_section_source_system_identifier(
+            result,
+        ):
             assert result["LMSSectionSourceSystemIdentifier"].iloc[0] == 234234
 
         def it_should_have_preserve_received_create_date(result):
@@ -104,7 +106,7 @@ def describe_when_mapping_Schoology_enrollment_status_to_string_value():
             "status": status_code,
             "admin": 0,
             "CreateDate": "a",
-            "LastModifiedDate": "b"
+            "LastModifiedDate": "b",
         }
 
         # Arrange

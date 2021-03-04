@@ -12,13 +12,13 @@ from unittest.mock import Mock
 
 import sqlalchemy
 
-from schoology_extractor import usage_analytics_facade
-from schoology_extractor.mapping import usage_analytics as usageMap
-from schoology_extractor.helpers import csv_reader
-from schoology_extractor.helpers import sync
+from edfi_schoology_extractor import usage_analytics_facade
+from edfi_schoology_extractor.mapping import usage_analytics as usageMap
+from edfi_schoology_extractor.helpers import csv_reader
+from edfi_schoology_extractor.helpers import sync
 
 
-INPUT_DIRECTORY = './input'
+INPUT_DIRECTORY = "./input"
 
 
 def _setup_empty_filesystem(fs):
@@ -46,7 +46,9 @@ def describe_when_getting_system_activities():
             _setup_empty_filesystem(fs)
             csv_reader.load_data_frame = Mock(return_value=pd.DataFrame(["one"]))
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
-            result = usage_analytics_facade.get_system_activities(INPUT_DIRECTORY, db_engine)
+            result = usage_analytics_facade.get_system_activities(
+                INPUT_DIRECTORY, db_engine
+            )
 
             return result
 
@@ -66,11 +68,15 @@ def describe_when_getting_system_activities():
             sync.usage_file_is_processed = Mock(return_value=False)
             sync.insert_usage_file_name = Mock()
             # Act
-            result = usage_analytics_facade.get_system_activities(INPUT_DIRECTORY, db_engine)
+            result = usage_analytics_facade.get_system_activities(
+                INPUT_DIRECTORY, db_engine
+            )
 
             return result, usageMap.map_to_udm
 
-        def it_should_map_the_usage_data_frame(given_usage_analytics: Tuple[pd.DataFrame, Mock]):
+        def it_should_map_the_usage_data_frame(
+            given_usage_analytics: Tuple[pd.DataFrame, Mock]
+        ):
             _, mapper = given_usage_analytics
 
             assert mapper.called

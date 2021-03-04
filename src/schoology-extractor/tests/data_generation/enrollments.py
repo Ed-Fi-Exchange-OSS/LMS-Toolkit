@@ -8,7 +8,7 @@ from pandas import DataFrame, json_normalize, merge
 from typing import Dict, List
 from faker import Faker
 from tests.data_generation.generation_helper import validate_multi_status
-from schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.request_client import RequestClient
 
 fake = Faker("en_US")
 logger = logging.getLogger(__name__)
@@ -32,9 +32,15 @@ def rollback_loaded_enrollments(
         A Dict of mappings from Schoology section id to a list of JSON-like response objects
         from a successful enrollment load operation
     """
-    logger.info("**** Rolling back enrollments via Schoology API - for testing purposes")
+    logger.info(
+        "**** Rolling back enrollments via Schoology API - for testing purposes"
+    )
     for section_id, creation_response in response_dict.items():
-        logger.info("**** Deleting %s enrollments for section %s", len(creation_response), section_id)
+        logger.info(
+            "**** Deleting %s enrollments for section %s",
+            len(creation_response),
+            section_id,
+        )
         ids: str = ",".join(
             map(lambda enrollment: str(enrollment["id"]), creation_response)
         )
@@ -137,7 +143,9 @@ def generate_and_load_enrollments(
                 )
             )
 
-            enrollment_result = load_enrollments(request_client, section["id"], enrollments)
+            enrollment_result = load_enrollments(
+                request_client, section["id"], enrollments
+            )
             result[section["id"]] = enrollment_result
         except Exception as ex:
             logger.exception(ex)

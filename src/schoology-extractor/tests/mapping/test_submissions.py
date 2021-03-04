@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 import pytest
 
-from schoology_extractor.mapping.submissions import map_to_udm
+from edfi_schoology_extractor.mapping.submissions import map_to_udm
 
 
 def describe_when_mapping_empty_DataFrame():
@@ -46,7 +46,10 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         assert result["SourceSystem"].iloc[0] == "Schoology"
 
     def it_should_map_id_to_SourceSystemIdentifier(result):
-        assert result["SourceSystemIdentifier"].iloc[0] == "2942191527#2942251001#100032890"
+        assert (
+            result["SourceSystemIdentifier"].iloc[0]
+            == "2942191527#2942251001#100032890"
+        )
 
     def it_should_map_uid_to_LMSUserSourceSystemIdentifier(result):
         assert result["LMSUserSourceSystemIdentifier"].iloc[0] == 100032890

@@ -11,19 +11,19 @@ import pytest
 from unittest.mock import Mock
 import sqlalchemy
 
-from schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
-from schoology_extractor.api.request_client import RequestClient
-from schoology_extractor.api.paginated_result import PaginatedResult
-from schoology_extractor.mapping import users as usersMap
-from schoology_extractor.mapping import sections as sectionsMap
-from schoology_extractor.mapping import section_associations as sectionAssocMap
-from schoology_extractor.mapping import assignments as assignmentsMap
-from schoology_extractor.mapping import submissions as submissionsMap
-from schoology_extractor.mapping import attendance as attendanceMap
-from schoology_extractor.mapping import discussion_replies as discussionRepliesMap
-from schoology_extractor.mapping import discussions as discussionsMap
-from schoology_extractor.mapping import section_updates as sectionUpdatesMap
-from schoology_extractor.helpers import sync
+from edfi_schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
+from edfi_schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.paginated_result import PaginatedResult
+from edfi_schoology_extractor.mapping import users as usersMap
+from edfi_schoology_extractor.mapping import sections as sectionsMap
+from edfi_schoology_extractor.mapping import section_associations as sectionAssocMap
+from edfi_schoology_extractor.mapping import assignments as assignmentsMap
+from edfi_schoology_extractor.mapping import submissions as submissionsMap
+from edfi_schoology_extractor.mapping import attendance as attendanceMap
+from edfi_schoology_extractor.mapping import discussion_replies as discussionRepliesMap
+from edfi_schoology_extractor.mapping import discussions as discussionsMap
+from edfi_schoology_extractor.mapping import section_updates as sectionUpdatesMap
+from edfi_schoology_extractor.helpers import sync
 
 
 def describe_when_getting_users():
@@ -499,7 +499,11 @@ def describe_when_getting_user_activities():
             "links": {"self": "ignore"},
         }
         sections_updates = PaginatedResult(
-            request_client, page_size, sections__update_response_mock, "update", "ignore me"
+            request_client,
+            page_size,
+            sections__update_response_mock,
+            "update",
+            "ignore me",
         )
         get_updates_mock.return_value = sections_updates
 

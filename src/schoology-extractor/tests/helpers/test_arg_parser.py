@@ -7,9 +7,9 @@ from typing import List
 
 import pytest
 
-from schoology_extractor.helpers.arg_parser import (
+from edfi_schoology_extractor.helpers.arg_parser import (
     parse_main_arguments,
-    MainArguments
+    MainArguments,
 )
 
 
@@ -61,7 +61,7 @@ def describe_when_parsing_arguments():
                 "-p",
                 "30",
                 "-i",
-                "input_directory"
+                "input_directory",
             ]
 
             # Act

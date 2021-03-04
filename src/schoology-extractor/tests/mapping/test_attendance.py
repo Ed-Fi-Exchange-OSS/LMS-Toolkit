@@ -6,7 +6,7 @@
 import pandas as pd
 import pytest
 
-from schoology_extractor.mapping.attendance import map_to_udm
+from edfi_schoology_extractor.mapping.attendance import map_to_udm
 
 
 def describe_when_mapping_empty_list():
@@ -19,45 +19,47 @@ def describe_when_mapping_empty_list():
 def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
     @pytest.fixture
     def result() -> pd.DataFrame:
-        attendance_events = [{
-            "date": "2020-08-28",
-            "statuses": {
-                "status": [
-                    {
-                        "status_code": 1,
-                        "attendances": {
-                            "attendance": [
-                                {
-                                    "enrollment_id": 12345,
-                                    # This year is deliberately different from the one above, only for testing purposes
-                                    "date": "2021-08-28",
-                                    "status": 1,
-                                    "comment": "",
-                                },
-                                {
-                                    "enrollment_id": 12346,
-                                    "date": "2022-08-28",
-                                    "status": 2,
-                                    "comment": "",
-                                },
-                                {
-                                    "enrollment_id": 12347,
-                                    "date": "2023-08-28",
-                                    "status": 3,
-                                    "comment": "",
-                                },
-                                {
-                                    "enrollment_id": 12348,
-                                    "date": "2024-08-28",
-                                    "status": 4,
-                                    "comment": "",
-                                },
-                            ]
+        attendance_events = [
+            {
+                "date": "2020-08-28",
+                "statuses": {
+                    "status": [
+                        {
+                            "status_code": 1,
+                            "attendances": {
+                                "attendance": [
+                                    {
+                                        "enrollment_id": 12345,
+                                        # This year is deliberately different from the one above, only for testing purposes
+                                        "date": "2021-08-28",
+                                        "status": 1,
+                                        "comment": "",
+                                    },
+                                    {
+                                        "enrollment_id": 12346,
+                                        "date": "2022-08-28",
+                                        "status": 2,
+                                        "comment": "",
+                                    },
+                                    {
+                                        "enrollment_id": 12347,
+                                        "date": "2023-08-28",
+                                        "status": 3,
+                                        "comment": "",
+                                    },
+                                    {
+                                        "enrollment_id": 12348,
+                                        "date": "2024-08-28",
+                                        "status": 4,
+                                        "comment": "",
+                                    },
+                                ]
+                            },
                         }
-                    }
-                ]
-            },
-        }]
+                    ]
+                },
+            }
+        ]
 
         section_associations = [
             {
@@ -69,7 +71,7 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "StartDate": None,
                 "EndDate": None,
                 "CreateDate": None,
-                "LastModifiedDate": None
+                "LastModifiedDate": None,
             },
             {
                 "SourceSystemIdentifier": 12346,
@@ -80,7 +82,7 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame():
                 "StartDate": None,
                 "EndDate": None,
                 "CreateDate": None,
-                "LastModifiedDate": None
+                "LastModifiedDate": None,
             },
             {
                 "SourceSystemIdentifier": 12347,
@@ -152,44 +154,46 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
         def mapper(df: pd.DataFrame) -> pd.DataFrame:
             return pd.DataFrame([{"one": 1}])
 
-        attendance_events = [{
-            "date": "2020-08-28",
-            "statuses": {
-                "status": [
-                    {
-                        "status_code": 1,
-                        "attendances": {
-                            "attendance": [
-                                {
-                                    "enrollment_id": 12345,
-                                    "date": "2021-08-28",
-                                    "status": 1,
-                                    "comment": "",
-                                },
-                                {
-                                    "enrollment_id": 12346,
-                                    "date": "2022-08-28",
-                                    "status": 2,
-                                    "comment": "",
-                                },
-                                {
-                                    "enrollment_id": 12347,
-                                    "date": "2023-08-28",
-                                    "status": 3,
-                                    "comment": "",
-                                },
-                                {
-                                    "enrollment_id": 12348,
-                                    "date": "2024-08-28",
-                                    "status": 4,
-                                    "comment": "",
-                                },
-                            ]
+        attendance_events = [
+            {
+                "date": "2020-08-28",
+                "statuses": {
+                    "status": [
+                        {
+                            "status_code": 1,
+                            "attendances": {
+                                "attendance": [
+                                    {
+                                        "enrollment_id": 12345,
+                                        "date": "2021-08-28",
+                                        "status": 1,
+                                        "comment": "",
+                                    },
+                                    {
+                                        "enrollment_id": 12346,
+                                        "date": "2022-08-28",
+                                        "status": 2,
+                                        "comment": "",
+                                    },
+                                    {
+                                        "enrollment_id": 12347,
+                                        "date": "2023-08-28",
+                                        "status": 3,
+                                        "comment": "",
+                                    },
+                                    {
+                                        "enrollment_id": 12348,
+                                        "date": "2024-08-28",
+                                        "status": 4,
+                                        "comment": "",
+                                    },
+                                ]
+                            },
                         }
-                    }
-                ]
-            },
-        }]
+                    ]
+                },
+            }
+        ]
 
         section_associations = [
             {
@@ -201,7 +205,7 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
                 "StartDate": None,
                 "EndDate": None,
                 "CreateDate": None,
-                "LastModifiedDate": None
+                "LastModifiedDate": None,
             },
             {
                 "SourceSystemIdentifier": 12346,
@@ -212,7 +216,7 @@ def describe_when_mapping_Schoology_list_to_EdFi_DataFrame_With_additional_mappi
                 "StartDate": None,
                 "EndDate": None,
                 "CreateDate": None,
-                "LastModifiedDate": None
+                "LastModifiedDate": None,
             },
             {
                 "SourceSystemIdentifier": 12347,

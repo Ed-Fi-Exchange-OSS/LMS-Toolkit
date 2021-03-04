@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 import pytest
 
-from schoology_extractor.mapping.section_updates import map_to_udm
+from edfi_schoology_extractor.mapping.section_updates import map_to_udm
 
 FAKE_SECTION_ID = 1
 

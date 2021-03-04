@@ -5,8 +5,8 @@
 
 import pytest
 
-from schoology_extractor.api.request_client import RequestClient
-from schoology_extractor.api.paginated_result import PaginatedResult
+from edfi_schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.api.paginated_result import PaginatedResult
 
 FAKE_KEY = "TEST_KEY"
 FAKE_SECRET = "TEST_SECRET"
@@ -62,7 +62,9 @@ class TestRequestClient:
             expected_url = DEFAULT_URL + FAKE_ENDPOINT_URL
 
             # Arrange
-            requests_mock.get(expected_url, reason="BadRequest", status_code=400, text="no good")
+            requests_mock.get(
+                expected_url, reason="BadRequest", status_code=400, text="no good"
+            )
 
             # Act
             try:
@@ -94,7 +96,9 @@ class TestRequestClient:
                     called.add(request.url)
                     return text
 
-                requests_mock.get(expected_url_1, reason="OK", status_code=200, text=callback)
+                requests_mock.get(
+                    expected_url_1, reason="OK", status_code=200, text=callback
+                )
 
                 # Act
                 result = default_request_client.get_assignments(section_id, page_size)
@@ -113,7 +117,11 @@ class TestRequestClient:
                 expected_url_2 = "https://api.schoology.com/v1/sections/3324/assignments?start=1&limit=1"
 
                 # Arrange
-                text_1 = '{"assignment": [{"id":"b"}], "links":{"next":"'+expected_url_2+'"}}'
+                text_1 = (
+                    '{"assignment": [{"id":"b"}], "links":{"next":"'
+                    + expected_url_2
+                    + '"}}'
+                )
                 text_2 = '{"assignment": [{"id":"c"}]}'
 
                 def callback(request, context):
@@ -122,22 +130,43 @@ class TestRequestClient:
                     else:
                         return text_2
 
-                requests_mock.get(expected_url_1, reason="OK", status_code=200, text=callback)
-                requests_mock.get(expected_url_2, reason="OK", status_code=200, text=callback)
+                requests_mock.get(
+                    expected_url_1, reason="OK", status_code=200, text=callback
+                )
+                requests_mock.get(
+                    expected_url_2, reason="OK", status_code=200, text=callback
+                )
 
                 # Act
                 result = default_request_client.get_assignments(section_id, page_size)
 
                 return result
 
-            def test_then_it_should_return_two_assignment(self, result: PaginatedResult, requests_mock):
+            def test_then_it_should_return_two_assignment(
+                self, result: PaginatedResult, requests_mock
+            ):
                 assert result.get_next_page() is not None
 
-            def test_result_should_contain_first_assignment(self, result: PaginatedResult, requests_mock):
-                assert len([r for r in result.current_page_items if r["id"] == "b"]) == 1
+            def test_result_should_contain_first_assignment(
+                self, result: PaginatedResult, requests_mock
+            ):
+                assert (
+                    len([r for r in result.current_page_items if r["id"] == "b"]) == 1
+                )
 
-            def test_result_should_contain_second_assignment(self, result, requests_mock):
-                assert len([r for r in result.get_next_page().current_page_items if r["id"] == "c"]) == 1
+            def test_result_should_contain_second_assignment(
+                self, result, requests_mock
+            ):
+                assert (
+                    len(
+                        [
+                            r
+                            for r in result.get_next_page().current_page_items
+                            if r["id"] == "c"
+                        ]
+                    )
+                    == 1
+                )
 
     class Test_when_get_section_by_course_id_method_is_called:
         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
@@ -155,8 +184,12 @@ class TestRequestClient:
                 called.add(request.url)
                 return text
 
-            requests_mock.get(expected_url_1, reason="OK", status_code=200, text=callback)
-            requests_mock.get(expected_url_2, reason="OK", status_code=200, text=callback)
+            requests_mock.get(
+                expected_url_1, reason="OK", status_code=200, text=callback
+            )
+            requests_mock.get(
+                expected_url_2, reason="OK", status_code=200, text=callback
+            )
 
             # Act
             response = default_request_client.get_section_by_course_id(course_id)
@@ -164,14 +197,18 @@ class TestRequestClient:
             # Assert
             assert expected_url_1 in called, "URL 1 not called"
 
-            assert isinstance(response, PaginatedResult), "expected response to be a PaginatedResult"
+            assert isinstance(
+                response, PaginatedResult
+            ), "expected response to be a PaginatedResult"
             assert len(response.current_page_items) == 1, "expected one result"
 
     class Test_when_get_submissions_by_section_id_and_grade_item_id_method_is_called:
         def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
             self, default_request_client, requests_mock
         ):
-            expected_url_1 = "https://api.schoology.com/v1/sections/1/submissions/1234564"
+            expected_url_1 = (
+                "https://api.schoology.com/v1/sections/1/submissions/1234564"
+            )
 
             # Arrange
             text = '{"revision":[{"revision_id": 1,"uid": 100032890,"created": 1598631506,"num_items": 1,"late": 0,"draft": 0}]}'
@@ -179,7 +216,11 @@ class TestRequestClient:
             requests_mock.get(expected_url_1, reason="OK", status_code=200, text=text)
 
             # Act
-            response = default_request_client.get_submissions_by_section_id_and_grade_item_id("1", "1234564")
+            response = (
+                default_request_client.get_submissions_by_section_id_and_grade_item_id(
+                    "1", "1234564"
+                )
+            )
 
             # Assert
             assert isinstance(response, PaginatedResult)
@@ -275,14 +316,28 @@ def describe_when_getting_enrollments_with_two_pages():
     def result(requests_mock):
         section_id = 3324
         page_size = 1
-        expected_url_1 = "https://api.schoology.com/v1/sections/3324/enrollments?start=0&limit=1"
-        expected_url_2 = "https://api.schoology.com/v1/sections/3324/enrollments?start=1&limit=1"
+        expected_url_1 = (
+            "https://api.schoology.com/v1/sections/3324/enrollments?start=0&limit=1"
+        )
+        expected_url_2 = (
+            "https://api.schoology.com/v1/sections/3324/enrollments?start=1&limit=1"
+        )
 
         enrollments_1 = '[{"id": 12345}]'
-        response_1 = '{"enrollment": '+enrollments_1+',"total": "2","links": {"self": "...","next": "'+expected_url_2+'"}}'
+        response_1 = (
+            '{"enrollment": '
+            + enrollments_1
+            + ',"total": "2","links": {"self": "...","next": "'
+            + expected_url_2
+            + '"}}'
+        )
 
         enrollments_2 = '[{"id": 99999}]'
-        response_2 = '{"enrollment": '+enrollments_2+', "total": "2", "links": {"self": "..."}}'
+        response_2 = (
+            '{"enrollment": '
+            + enrollments_2
+            + ', "total": "2", "links": {"self": "..."}}'
+        )
 
         # Arrange
 
@@ -309,7 +364,16 @@ def describe_when_getting_enrollments_with_two_pages():
         assert len([r for r in result.current_page_items if r["id"] == 12345]) == 1
 
     def it_should_contain_the_second_enrollment(result):
-        assert len([r for r in result.get_next_page().current_page_items if r["id"] == 99999]) == 1
+        assert (
+            len(
+                [
+                    r
+                    for r in result.get_next_page().current_page_items
+                    if r["id"] == 99999
+                ]
+            )
+            == 1
+        )
 
 
 def describe_when_getting_attendance():
@@ -319,7 +383,9 @@ def describe_when_getting_attendance():
         expected_url_1 = "https://api.schoology.com/v1/sections/3324/attendance"
 
         event_1 = '[{"id": 12345}]'
-        response_1 = '{"date": '+event_1+',"totals": { "total": [{"status":1,"count":1 }]}}'
+        response_1 = (
+            '{"date": ' + event_1 + ',"totals": { "total": [{"status":1,"count":1 }]}}'
+        )
 
         # Arrange
         requests_mock.get(expected_url_1, reason="OK", status_code=200, text=response_1)
@@ -342,7 +408,9 @@ def describe_when_getting_section_updates():
         expected_url_1 = "https://api.schoology.com/v1/sections/3324/updates"
 
         update_1 = '[{"id": 12345}]'
-        response_1 = '{"update": '+update_1+',"total": 1, "links": {"self": "ignore"}}'
+        response_1 = (
+            '{"update": ' + update_1 + ',"total": 1, "links": {"self": "ignore"}}'
+        )
 
         # Arrange
         requests_mock.get(expected_url_1, reason="OK", status_code=200, text=response_1)
@@ -363,10 +431,16 @@ def describe_when_getting_section_update_replies():
     def result(requests_mock):
         section_id = 3324
         update_id = 4435
-        expected_url_1 = "https://api.schoology.com/v1/sections/3324/updates/4435/comments"
+        expected_url_1 = (
+            "https://api.schoology.com/v1/sections/3324/updates/4435/comments"
+        )
 
         update_comment_1 = '[{"id": 12345}]'
-        response_1 = '{"comment": '+update_comment_1+',"total": 1, "links": {"self": "ignore"}}'
+        response_1 = (
+            '{"comment": '
+            + update_comment_1
+            + ',"total": 1, "links": {"self": "ignore"}}'
+        )
 
         # Arrange
         requests_mock.get(expected_url_1, reason="OK", status_code=200, text=response_1)
