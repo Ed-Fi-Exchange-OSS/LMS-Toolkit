@@ -10,6 +10,7 @@ import pandas as pd
 import sqlalchemy as sal
 from sqlalchemy.orm import sessionmaker
 
+logger = logging.getLogger(__name__)
 
 @dataclass
 class MssqlLmsOperations:
@@ -134,6 +135,8 @@ class MssqlLmsOperations:
             # The ODBC driver complains and exits with chunksize > 190
             chunksize=190
         )
+        logger.debug(f"All records have been loading into staging table 'stg_{table}'")
+
 
     def insert_new_records_to_production(self, table, columns):
         """
@@ -166,7 +169,8 @@ where not exists (
 )
 """.strip()
 
-        self._exec(statement)
+        rowcount = self._exec(statement)
+        logger.debug(f"Inserted {rowcount} records into table `{table}`.")
 
     def copy_updates_to_production(self, table, columns):
         """
@@ -199,7 +203,8 @@ and t.sourcesystemidentifier = stg.sourcesystemidentifier
 and t.lastmodifieddate <> stg.lastmodifieddate
 """.strip()
 
-        self._exec(statement)
+        rowcount = self._exec(statement)
+        logger.debug(f"Updated {rowcount} records in table `{table}`.")
 
     def soft_delete_from_production(self, table: str, sourceSystem: str):
         """
@@ -226,4 +231,4 @@ and t.sourceSystem = '{sourceSystem}'
 """.strip()
 
         rowcount = self._exec(statement)
-        logging.info(f"Soft-deleted {rowcount} records from table `{table}`")
+        logger.debug(f"Soft-deleted {rowcount} records in table `{table}`")

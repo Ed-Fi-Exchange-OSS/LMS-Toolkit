@@ -4,12 +4,15 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from dataclasses import dataclass
+import logging
 import os
 from typing import Type
 
 import pandas as pd
 
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -48,7 +51,9 @@ class CsvToSql:
         assert isinstance(columns, list), "Argument `columns` must be a list"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
+        logger.info(f"Processing file `{file}``...")
         df = pd.read_csv(file)
+        logger.info(f"... read {df.shape[0]} lines.")
 
         adapter = self.db_operations_adapter
         adapter.disable_staging_natural_key_index(table)

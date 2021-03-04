@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from dataclasses import dataclass
+import logging
 from typing import Type
 
 
@@ -11,6 +12,8 @@ from edfi_lms_ds_loader.csv_to_sql import CsvToSql
 from edfi_lms_ds_loader.helpers.constants import Table, Columns
 from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -28,6 +31,7 @@ class FileProcessor:
     """
 
     file_system: Type[LmsFilesystemProvider]
+
     # TODO: replace `MssqlLmsOperations` once a base class is extracted for
     # support of both MSSQL and PostgreSQL.
     db_operations_adapter: Type[MssqlLmsOperations]
@@ -46,5 +50,8 @@ class FileProcessor:
 
         csv_to_sql = CsvToSql(self.db_operations_adapter)
 
+        logger.info("Begin processing User files...")
         for f in self.file_system.Users:
             csv_to_sql.load_file(f, Table.USER, Columns.USER)
+
+        logger.info("Done processing User files.")

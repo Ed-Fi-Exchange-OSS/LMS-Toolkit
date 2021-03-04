@@ -98,7 +98,6 @@ def _record_migration_in_journal(engine: Engine, migration: str):
 
 
 def migrate(engine: Engine):
-    logger.info("Begin database auto-migration...")
     for migration in MIGRATION_SCRIPTS:
         if _script_has_been_run(engine, migration):
             logger.debug(f"Migration {migration} has already run and will not be re-run.")
@@ -115,5 +114,3 @@ def migrate(engine: Engine):
         _record_migration_in_journal(engine, migration)
 
         logger.debug(f"Done with migration {migration}.")
-
-    logger.info("Done with database auto-migration.")
