@@ -16,12 +16,9 @@ import sys
 
 from dotenv import load_dotenv
 from errorhandler import ErrorHandler  # type: ignore
-from sqlalchemy import create_engine
 
 from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments
-from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
-from edfi_lms_ds_loader.file_processor import FileProcessor
-from edfi_lms_ds_loader.migrator import migrate
+from edfi_lms_ds_loader.loader_facade import run
 
 # Load configuration
 load_dotenv()
@@ -55,23 +52,7 @@ def _configure_logging():
 def main():
 
     _configure_logging()
-
-    db_engine = create_engine(connection_string)
-
-    migrate(db_engine)
-
-    # TODO: refactoring...
-    # - make db_engine a parameter for the file processor
-    # - functional, not class
-    # - move logging completely into the other classes
-    # - ensure this script can easily be called from another program
-
-    logging.info("Starting filesystem processing...")
-    fs = LmsFilesystemProvider(arguments.csv_path)
-    fs.get_all_files()
-
-    processor = FileProcessor(fs, arguments.get_db_operations_adapter())
-    processor.load_lms_files_into_database()
+    run()
 
 
 if __name__ == "__main__":
