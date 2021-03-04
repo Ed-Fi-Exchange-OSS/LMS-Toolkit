@@ -33,9 +33,6 @@ jobs:
         # uses: Gr1N/setup-poetry@v4
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
-      - name: Install Python Dependencies
-        run: python ./eng/build.py install schoology-extractor
-
       - name: Cache Dependencies
         # very carefully use the tag when testing with act-cli on localhost, commit the hash version
         # uses: actions/cache@v2
@@ -45,6 +42,9 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
+
+      - name: Install Python Dependencies
+        run: python ./eng/build.py install schoology-extractor
 
       - name: Run Tests with Coverage
         run: python ./eng/build.py coverage:html schoology-extractor
