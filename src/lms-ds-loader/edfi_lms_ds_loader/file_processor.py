@@ -30,7 +30,7 @@ class FileProcessor:
         Database provider-specific adapter/wrapper for database operations.
     """
 
-    file_system: Type[LmsFilesystemProvider]
+    file_system: LmsFilesystemProvider
 
     # TODO: replace `MssqlLmsOperations` once a base class is extracted for
     # support of both MSSQL and PostgreSQL.

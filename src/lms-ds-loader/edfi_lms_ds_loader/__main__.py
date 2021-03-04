@@ -11,49 +11,59 @@ call `python . -h` for a detailed listing of command arguments.
 """
 
 import logging
-import os
 import sys
 
 from dotenv import load_dotenv
 from errorhandler import ErrorHandler  # type: ignore
 
-from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments
-from edfi_lms_ds_loader.loader_facade import run
-
-# Load configuration
-load_dotenv()
+from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
+from edfi_lms_ds_loader.helpers.argparser import MainArguments, parse_main_arguments
+from edfi_lms_ds_loader.loader_facade import runLoader
 
 
 logger: logging.Logger
 error_tracker: ErrorHandler
 
-arguments = parse_main_arguments(sys.argv[1:])
-engine = arguments.engine
-connection_string = arguments.connection_string
+
+def _parse_args():
+    # catching exceptions is unnecessary here
+    return parse_main_arguments(sys.argv[1:])
 
 
-def _configure_logging():
+@catch_exceptions
+def _configure_logging(arguments: MainArguments):
     global logger
     global error_tracker
 
     logger = logging.getLogger(__name__)
 
-    level = os.environ.get("LOGLEVEL", "INFO")
     logging.basicConfig(
         handlers=[
             logging.StreamHandler(sys.stdout),
         ],
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        level=level,
+        level=arguments.log_level,
     )
     error_tracker = ErrorHandler()
 
 
-def main():
-
-    _configure_logging()
-    run()
+@catch_exceptions
+def main(arguments: MainArguments):
+    logger.info("Begin loading files into the LMS Data Store (DS)...")
+    runLoader(arguments)
+    logger.info("Done loading files into the LMS Data Store.")
 
 
 if __name__ == "__main__":
-    main()
+    load_dotenv()
+    arguments = _parse_args()
+    _configure_logging(arguments)
+    main(arguments)
+
+    if error_tracker.fired:
+        print(
+            "A fatal error occurred, please review the log output for more information.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    sys.exit(0)

@@ -51,9 +51,9 @@ class CsvToSql:
         assert isinstance(columns, list), "Argument `columns` must be a list"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
-        logger.info(f"Processing file `{file}``...")
+        logger.info(f"Processing file `{file}`...")
         df = pd.read_csv(file)
-        logger.info(f"... read {df.shape[0]} lines.")
+        logger.debug(f"... read {df.shape[0]} lines.")
 
         adapter = self.db_operations_adapter
         adapter.disable_staging_natural_key_index(table)

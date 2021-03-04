@@ -4,7 +4,6 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import Type
 
 from sqlalchemy import create_engine
 
@@ -16,7 +15,7 @@ from edfi_lms_ds_loader.migrator import migrate
 logger = logging.getLogger(__name__)
 
 
-def _migrate(arguments: Type[MainArguments]):
+def _migrate(arguments: MainArguments):
     db_engine = create_engine(arguments.connection_string)
 
     logger.info("Begin database auto-migration...")
@@ -24,7 +23,7 @@ def _migrate(arguments: Type[MainArguments]):
     logger.info("Done with database auto-migration.")
 
 
-def _processFiles(arguments: Type[MainArguments]):
+def _processFiles(arguments: MainArguments):
 
     # TODO: refactoring...
     # - make db_engine a parameter for the file processor
@@ -39,6 +38,6 @@ def _processFiles(arguments: Type[MainArguments]):
     logging.info("Done with filesystem processing.")
 
 
-def run(arguments: Type[MainArguments]):
+def runLoader(arguments: MainArguments):
     _migrate(arguments)
     _processFiles(arguments)

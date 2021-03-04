@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class MssqlLmsOperations:
     """
@@ -136,7 +137,6 @@ class MssqlLmsOperations:
             chunksize=190
         )
         logger.debug(f"All records have been loading into staging table 'stg_{table}'")
-
 
     def insert_new_records_to_production(self, table, columns):
         """
