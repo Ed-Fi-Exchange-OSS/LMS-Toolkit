@@ -35,7 +35,7 @@ class FileProcessor:
     # support of both MSSQL and PostgreSQL.
     db_operations_adapter: MssqlLmsOperations
 
-    def load_lms_files_into_database(self):
+    def load_lms_files_into_database(self) -> None:
         """
         Orchestrates the discovery and loading of files.
         """

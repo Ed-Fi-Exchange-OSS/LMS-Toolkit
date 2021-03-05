@@ -21,11 +21,10 @@ MIGRATION_SCRIPTS = [
     "create_user_tables"
 ]
 
+SA_SESSION = Union[sa_session]  # type: ignore
 
-# `Any` is not the appropriate type for this callback - should be `sa_session` -
-# but I cannot find any way to specify that without it being flagged as an
-# error.
-def _execute_transaction(engine: Engine, function: Callable[[Any], Union[Any, None]]) -> Any:
+
+def _execute_transaction(engine: Engine, function: Callable[[SA_SESSION], Union[Any, None]]) -> Any:
     Session = sessionmaker(bind=engine)
 
     session = Session()
@@ -56,8 +55,8 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     return split(raw_sql)
 
 
-def _execute_statements(engine: Engine, statements: List[str]):
-    def __callback(session: sa_session):
+def _execute_statements(engine: Engine, statements: List[str]) -> None:
+    def __callback(session: sa_session) -> None:
         for statement in statements:
             # Ignore MSSQL "GO" statements
             if statement == "GO":
@@ -94,13 +93,13 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
         raise
 
 
-def _record_migration_in_journal(engine: Engine, migration: str):
+def _record_migration_in_journal(engine: Engine, migration: str) -> None:
     statement = f"INSERT INTO lms.migrationjournal (script) values ('{migration}');"
 
     _execute_statements(engine, [statement])
 
 
-def migrate(engine: Engine):
+def migrate(engine: Engine) -> None:
     for migration in MIGRATION_SCRIPTS:
         if _script_has_been_run(engine, migration):
             logger.debug(f"Migration {migration} has already run and will not be re-run.")

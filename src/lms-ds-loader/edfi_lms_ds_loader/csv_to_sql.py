@@ -6,6 +6,7 @@
 from dataclasses import dataclass
 import logging
 import os
+from typing import List
 
 import pandas as pd
 
@@ -27,10 +28,10 @@ class CsvToSql:
 
     db_operations_adapter: MssqlLmsOperations
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.engine = None
 
-    def load_file(self, file, table, columns):
+    def load_file(self, file: str, table: str, columns: List[str]) -> None:
         """
         Executes the file read and database upload process.
 
@@ -41,13 +42,10 @@ class CsvToSql:
         table : str
             Name of the destination table, assumed to be in an "lms" schema.
         """
-        assert isinstance(file, str), "Argument `file` cannot be None"
+
         if not os.path.exists(file):
             raise OSError(f"Path {file} does not exist.")
-
-        assert isinstance(table, str), "Argument `table` must be a string"
         assert table.strip() != "", "Argument `table` cannot be whitespace"
-        assert isinstance(columns, list), "Argument `columns` must be a list"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
         logger.info(f"Processing file `{file}`...")
@@ -62,7 +60,7 @@ class CsvToSql:
         adapter.insert_new_records_to_production(table, columns)
         adapter.copy_updates_to_production(table, columns)
 
-        sourceSystem = df.loc[0, "SourceSystem"]
+        sourceSystem = df.iloc[0]["SourceSystem"]
         adapter.soft_delete_from_production(table, sourceSystem)
 
         adapter.enable_staging_natural_key_index(table)

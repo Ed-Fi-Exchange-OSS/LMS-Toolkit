@@ -45,7 +45,7 @@ class MainArguments:
 
     def set_connection_string_using_integrated_security(
         self, server: str, port: Union[int, None], db_name: str
-    ):
+    ) -> None:
         """
         Creates a PyODBC connection string using integrated security.
 
@@ -67,8 +67,6 @@ class MainArguments:
                 f"Invalid `engine` parameter value for integrated database security: {self.engine}"
             )
 
-        return self
-
     def set_connection_string(
         self,
         server: str,
@@ -76,7 +74,7 @@ class MainArguments:
         db_name: str,
         username: str,
         password: str,
-    ):
+    ) -> None:
         """
         Creates a PyODBC connection string using username and password.
 
@@ -105,9 +103,7 @@ class MainArguments:
         else:
             raise ValueError(f"Invalid `engine` parameter value: {self.engine}")
 
-        return self
-
-    def get_db_operations_adapter(self):
+    def get_db_operations_adapter(self) -> MssqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             return MssqlLmsOperations(self.connection_string)
 
@@ -132,19 +128,19 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     """
 
     parser = ArgParser()
-    parser.add("-c", "--csvpath", help="Base path for input files.", required=True)
-    parser.add(
+    parser.add("-c", "--csvpath", help="Base path for input files.", required=True)  # type: ignore
+    parser.add(  # type: ignore
         "-e",
         "--engine",
         help="Database engine.",
         choices=[DbEngine.MSSQL, DbEngine.POSTGRESQL],
         default=DbEngine.MSSQL,
     )
-    parser.add(
+    parser.add(  # type: ignore
         "-s", "--server", help="Database server name or IP address", required=True
     )
-    parser.add("--port", help="Database server port number", type=int)
-    parser.add(
+    parser.add("--port", help="Database server port number", type=int)  # type: ignore
+    parser.add(  # type: ignore
         "-d",
         "--dbname",
         help="Name of the database with the LMS tables.",
@@ -153,7 +149,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
 
     USE_INTEGRATED = "--useintegratedsecurity"
     USE_INTEGRATED_SHORT = "-i"
-    parser.add(
+    parser.add(  # type: ignore
         USE_INTEGRATED_SHORT,
         USE_INTEGRATED,
         help="Use Integrated Security for the database connection.",
@@ -164,14 +160,14 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     user_name_required = (
         USE_INTEGRATED not in args_in and USE_INTEGRATED_SHORT not in args_in
     )
-    parser.add(
+    parser.add(  # type: ignore
         "-u",
         "--username",
         required=user_name_required,
         env_var="DB_USERNAME",
         help="Database username, when not using integrated security.",
     )
-    parser.add(
+    parser.add(  # type: ignore
         "-p",
         "--password",
         required=user_name_required,
@@ -179,7 +175,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         help="Database user password, when not using integrated security.",
     )
 
-    parser.add(
+    parser.add(  # type: ignore
         "-l",
         "--log-level",
         required=False,

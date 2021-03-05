@@ -42,7 +42,7 @@ class LmsFilesystemProvider:
     base_path: str
     Users: list = field(default_factory=list)
 
-    def get_all_files(self):
+    def get_all_files(self) -> None:
         """
         Traverses the base path to find all relevant CSV files.
 
@@ -67,4 +67,3 @@ class LmsFilesystemProvider:
 
         _get_user_files()
 
-        return self

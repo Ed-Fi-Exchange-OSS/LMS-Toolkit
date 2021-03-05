@@ -15,7 +15,7 @@ from edfi_lms_ds_loader.migrator import migrate
 logger = logging.getLogger(__name__)
 
 
-def _migrate(arguments: MainArguments):
+def _migrate(arguments: MainArguments) -> None:
     db_engine = create_engine(arguments.connection_string)
 
     logger.info("Begin database auto-migration...")
@@ -23,7 +23,7 @@ def _migrate(arguments: MainArguments):
     logger.info("Done with database auto-migration.")
 
 
-def _processFiles(arguments: MainArguments):
+def _processFiles(arguments: MainArguments) -> None:
 
     # TODO: refactoring...
     # - make db_engine a parameter for the file processor
@@ -38,6 +38,6 @@ def _processFiles(arguments: MainArguments):
     logging.info("Done with filesystem processing.")
 
 
-def runLoader(arguments: MainArguments):
+def runLoader(arguments: MainArguments) -> None:
     _migrate(arguments)
     _processFiles(arguments)
