@@ -66,7 +66,7 @@ def _execute_statements(engine: Engine, statements: List[str]):
             # Deliberately throwing away all results. Counting on exception handling
             # if there are any errors, and migration scripts should not be returning
             # any results.
-            session.execute(statement) # type: ignore
+            session.execute(statement)  # type: ignore
 
     _execute_transaction(engine, __callback)
 
@@ -74,7 +74,7 @@ def _execute_statements(engine: Engine, statements: List[str]):
 def _script_has_been_run(engine: Engine, migration: str) -> bool:
     def __callback(session: sa_session):
         statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
-        return session.execute(statement).scalar() # type: ignore
+        return session.execute(statement).scalar()  # type: ignore
 
     try:
         response = _execute_transaction(engine, __callback)
