@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import Callable, Union
+from typing import Callable, Optional, Union
 
 import pandas as pd
 
@@ -144,7 +144,7 @@ def get_section_associations(
 def _get_data_for_section(
     base_directory: str,
     sections: pd.DataFrame,
-    callback: Callable,
+    callback: Callable[[str, int, Optional[int]], pd.DataFrame],
     nrows: Union[int, None] = None,
 ) -> pd.DataFrame:
     df = pd.DataFrame()
