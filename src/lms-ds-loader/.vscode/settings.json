@@ -92,7 +92,8 @@
     "cSpell.words": [
         "MSSQL",
         "SPDX",
-        "dbname"
+        "dbname",
+        "pytest"
     ],
     "files.exclude": {
         ".mypy_cache": true,
