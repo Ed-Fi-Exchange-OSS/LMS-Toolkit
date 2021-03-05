@@ -7,37 +7,32 @@ import logging
 
 from sqlalchemy import create_engine
 
-from edfi_lms_ds_loader.file_processor import FileProcessor
+from edfi_lms_ds_loader.helpers.constants import Table
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
-from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
 from edfi_lms_ds_loader.migrator import migrate
+from edfi_lms_file_utils import file_reader
+from edfi_lms_ds_loader.df_to_db import upload_file
+from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 logger = logging.getLogger(__name__)
 
 
-def _migrate(arguments: MainArguments) -> None:
+def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    users = file_reader.get_all_users(csv_path)
+    upload_file(db_adapter, users, Table.USER)
+
+
+def run_loader(arguments: MainArguments) -> None:
+    logger.info("Begin loading files into the LMS Data Store (DS)...")
+
     db_engine = create_engine(arguments.connection_string)
-
-    logger.info("Begin database auto-migration...")
     migrate(db_engine)
-    logger.info("Done with database auto-migration.")
 
+    csv_path = arguments.csv_path
+    db_adapter = arguments.get_db_operations_adapter()
 
-def _processFiles(arguments: MainArguments) -> None:
+    _load_users(csv_path, db_adapter)
 
-    # TODO: refactoring...
-    # - make db_engine a parameter for the file processor
-    # - functional, not class
+    # TODO: add more upload function calls here
 
-    logging.info("Starting filesystem processing...")
-    fs = LmsFilesystemProvider(arguments.csv_path)
-    fs.get_all_files()
-
-    processor = FileProcessor(fs, arguments.get_db_operations_adapter())
-    processor.load_lms_files_into_database()
-    logging.info("Done with filesystem processing.")
-
-
-def runLoader(arguments: MainArguments) -> None:
-    _migrate(arguments)
-    _processFiles(arguments)
+    logger.info("Done loading files into the LMS Data Store.")
