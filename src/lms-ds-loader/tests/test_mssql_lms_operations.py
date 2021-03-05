@@ -18,20 +18,12 @@ class Test_MssqlLmsOperations:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations("   ")._exec("a")
 
-        def test_given_statement_is_none_then_raise_error(self):
-            with pytest.raises(AssertionError):
-                MssqlLmsOperations("a")._exec(None)
-
         def test_given_statement_is_whitespace_then_raise_error(self):
             with pytest.raises(AssertionError):
                 MssqlLmsOperations("a")._exec("    ")
 
     class Test_when_truncating_staging_table:
         class Test_given_invalid_input:
-            def test_and_table_name_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").truncate_staging_table(None)
-
             def test_and_table_name_is_whitespace_then_raise_error(self):
                 with pytest.raises(AssertionError):
                     MssqlLmsOperations("a").truncate_staging_table("   ")
@@ -55,10 +47,6 @@ class Test_MssqlLmsOperations:
 
     class Test_when_disabling_natural_key_index:
         class Test_given_invalid_input:
-            def test_and_table_name_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").disable_staging_natural_key_index(None)
-
             def test_and_table_name_is_whitespace_then_raise_error(self):
                 with pytest.raises(AssertionError):
                     MssqlLmsOperations("a").disable_staging_natural_key_index("   ")
@@ -83,10 +71,6 @@ class Test_MssqlLmsOperations:
 
     class Test_when_enabling_natural_key_index:
         class Test_given_invalid_input:
-            def test_table_name_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").enable_staging_natural_key_index(None)
-
             def test_table_name_is_whitespace_then_raise_error(self):
                 with pytest.raises(AssertionError):
                     MssqlLmsOperations("a").enable_staging_natural_key_index("   ")
@@ -111,25 +95,9 @@ class Test_MssqlLmsOperations:
 
     class Test_when_inserting_new_records:
         class Test_given_invalid_input:
-            def test_table_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").insert_new_records_to_production(None, "a")
-
             def test_table_is_whitespace_then_raise_error(self):
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").insert_new_records_to_production("   ", "a")
-
-            def test_columns_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").insert_new_records_to_production(
-                        "table", None
-                    )
-
-            def test_columns_is_not_an_array_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").insert_new_records_to_production(
-                        "table", "not an array"
-                    )
+                    MssqlLmsOperations("a").insert_new_records_to_production("   ", ["a"])
 
             def test_columns_is_an_empty_list_then_raise_error(self):
                 with pytest.raises(AssertionError):
@@ -165,16 +133,6 @@ where not exists (
 
     class Test_when_inserting_into_staging:
         class Test_given_invalid_arguments:
-            def test_given_data_frame_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("aaa").insert_into_staging(None, "table")
-
-            def test_given_table_is_none_then_raise_error(self):
-                df = pd.DataFrame()
-
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("aaa").insert_into_staging(df, None)
-
             def test_given_table_is_whitespace_then_raise_error(self):
                 df = pd.DataFrame()
 
@@ -209,17 +167,9 @@ where not exists (
 
     class Test_when_updating_records:
         class Test_given_invalid_arguments:
-            def test_given_table_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").copy_updates_to_production(None, ["a"])
-
             def test_given_table_is_whitespace_then_raise_error(self):
                 with pytest.raises(AssertionError):
                     MssqlLmsOperations("a").copy_updates_to_production("   ", ["a"])
-
-            def test_give_columns_is_none_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    MssqlLmsOperations("a").copy_updates_to_production("t", None)
 
             def test_give_columns_is_empty_list_then_raise_error(self):
                 with pytest.raises(AssertionError):

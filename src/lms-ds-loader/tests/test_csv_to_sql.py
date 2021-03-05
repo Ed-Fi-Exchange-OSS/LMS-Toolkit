@@ -13,27 +13,9 @@ from edfi_lms_ds_loader.csv_to_sql import CsvToSql
 
 class Test_when_reading_csv_and_loading_into_a_database:
     class Test_given_invalid_arguments:
-        def test_given_file_is_none_then_raise_error(self):
-            with pytest.raises(AssertionError):
-                CsvToSql(Mock()).load_file(None, "a", ["a"])
-
         def test_given_file_does_not_exist_then_raise_error(self, fs):
             with pytest.raises(OSError):
                 CsvToSql(Mock()).load_file("does/not/exist", "a", ["a"])
-
-        def test_given_table_is_none_then_raise_error(self, fs):
-            file = "d"
-            fs.create_file(file)
-
-            with pytest.raises(AssertionError):
-                CsvToSql(Mock()).load_file(file, None, ["a"])
-
-        def test_given_columns_is_none_then_raise_error(self, fs):
-            file = "d"
-            fs.create_file(file)
-
-            with pytest.raises(AssertionError):
-                CsvToSql(Mock()).load_file(file, "a", None)
 
         def test_given_columns_is_an_empty_list_then_raise_error(self, fs):
             file = "d"
