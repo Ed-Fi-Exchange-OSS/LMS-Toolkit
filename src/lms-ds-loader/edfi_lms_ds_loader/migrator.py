@@ -52,7 +52,8 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     with open(full_path) as f:
         raw_sql = f.read()
 
-    return split(raw_sql)
+    statements: List[str] = split(raw_sql)
+    return statements
 
 
 def _execute_statements(engine: Engine, statements: List[str]) -> None:
@@ -71,14 +72,14 @@ def _execute_statements(engine: Engine, statements: List[str]) -> None:
 
 
 def _script_has_been_run(engine: Engine, migration: str) -> bool:
-    def __callback(session: sa_session):
+    def __callback(session: sa_session) -> int:
         statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
         return session.execute(statement).scalar()  # type: ignore
 
     try:
         response = _execute_transaction(engine, __callback)
 
-        return response == 1
+        return bool(response == 1)
     except ProgrammingError as error:
         if (
             # PostgreSLQ error

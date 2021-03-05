@@ -25,13 +25,13 @@ logger: logging.Logger
 error_tracker = ErrorHandler()
 
 
-def _parse_args():
+def _parse_args() -> MainArguments:
     # catching exceptions is unnecessary here
     return parse_main_arguments(sys.argv[1:])
 
 
 @catch_exceptions
-def _configure_logging(arguments: MainArguments):
+def _configure_logging(arguments: MainArguments) -> None:
     global logger
     global error_tracker
 
@@ -47,7 +47,7 @@ def _configure_logging(arguments: MainArguments):
 
 
 @catch_exceptions
-def main(arguments: MainArguments):
+def main(arguments: MainArguments) -> None:
     logger.info("Begin loading files into the LMS Data Store (DS)...")
     runLoader(arguments)
     logger.info("Done loading files into the LMS Data Store.")

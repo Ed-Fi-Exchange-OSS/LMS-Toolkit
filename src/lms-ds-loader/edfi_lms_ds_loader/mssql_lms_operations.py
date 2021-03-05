@@ -57,7 +57,7 @@ class MssqlLmsOperations:
         session.commit()
         session.close()
 
-        return result.rowcount
+        return int(result.rowcount)
 
     def truncate_staging_table(self, table: str) -> None:
         """
