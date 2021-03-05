@@ -6,7 +6,6 @@
 from dataclasses import dataclass
 import logging
 import os
-from typing import Type
 
 import pandas as pd
 
@@ -26,7 +25,7 @@ class CsvToSql:
         Database provider-specific adapter/wrapper for database operations.
     """
 
-    db_operations_adapter: Type[MssqlLmsOperations]
+    db_operations_adapter: MssqlLmsOperations
 
     def __post_init__(self):
         self.engine = None

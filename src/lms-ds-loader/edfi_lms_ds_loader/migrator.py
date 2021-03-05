@@ -5,7 +5,7 @@
 
 import logging
 from os import path
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Union
 
 from sqlalchemy.engine.base import Engine
 from sqlalchemy.orm import sessionmaker, session as sa_session
@@ -22,7 +22,10 @@ MIGRATION_SCRIPTS = [
 ]
 
 
-def _execute_transaction(engine: Engine, function: Callable[[object], Any]) -> Any:
+# `Any` is not the appropriate type for this callback - should be `sa_session` -
+# but I cannot find any way to specify that without it being flagged as an
+# error.
+def _execute_transaction(engine: Engine, function: Callable[[Any], Union[Any, None]]) -> Any:
     Session = sessionmaker(bind=engine)
 
     session = Session()
@@ -63,7 +66,7 @@ def _execute_statements(engine: Engine, statements: List[str]):
             # Deliberately throwing away all results. Counting on exception handling
             # if there are any errors, and migration scripts should not be returning
             # any results.
-            session.execute(statement)
+            session.execute(statement) # type: ignore
 
     _execute_transaction(engine, __callback)
 
@@ -71,7 +74,7 @@ def _execute_statements(engine: Engine, statements: List[str]):
 def _script_has_been_run(engine: Engine, migration: str) -> bool:
     def __callback(session: sa_session):
         statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
-        return session.execute(statement).scalar()
+        return session.execute(statement).scalar() # type: ignore
 
     try:
         response = _execute_transaction(engine, __callback)

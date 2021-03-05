@@ -22,7 +22,7 @@ from edfi_lms_ds_loader.loader_facade import runLoader
 
 
 logger: logging.Logger
-error_tracker: ErrorHandler
+error_tracker = ErrorHandler()
 
 
 def _parse_args():
@@ -44,7 +44,6 @@ def _configure_logging(arguments: MainArguments):
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         level=arguments.log_level,
     )
-    error_tracker = ErrorHandler()
 
 
 @catch_exceptions

@@ -5,7 +5,6 @@
 
 from dataclasses import dataclass
 import logging
-from typing import Type
 
 
 from edfi_lms_ds_loader.csv_to_sql import CsvToSql
@@ -34,7 +33,7 @@ class FileProcessor:
 
     # TODO: replace `MssqlLmsOperations` once a base class is extracted for
     # support of both MSSQL and PostgreSQL.
-    db_operations_adapter: Type[MssqlLmsOperations]
+    db_operations_adapter: MssqlLmsOperations
 
     def load_lms_files_into_database(self):
         """

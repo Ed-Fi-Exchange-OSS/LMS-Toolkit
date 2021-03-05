@@ -3,7 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-import pytest
 from unittest.mock import Mock
 
 from edfi_lms_ds_loader.helpers.constants import Table, Columns
@@ -15,14 +14,6 @@ from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 class Test_FileProcessor:
     class Test_when_processing_files:
-        class Test_given_invalid_object_state:
-            def test_given_file_system_is_None_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    FileProcessor(None, "nothing").load_lms_files_into_database()
-
-            def test_given_adapter_is_None_then_raise_error(self):
-                with pytest.raises(AssertionError):
-                    FileProcessor(object(), None).load_lms_files_into_database()
 
         class Test_given_valid_arguments:
             def test_given_there_are_user_files(self, mocker):
