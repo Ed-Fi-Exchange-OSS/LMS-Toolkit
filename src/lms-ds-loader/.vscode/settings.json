@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": ["./edfi_lms_ds_loader","./tests"],
+    "python.analysis.typeCheckingMode": "basic",
     "python.languageServer": "Pylance",
     "python.linting.pylintEnabled": false,
     "python.linting.enabled": true,
