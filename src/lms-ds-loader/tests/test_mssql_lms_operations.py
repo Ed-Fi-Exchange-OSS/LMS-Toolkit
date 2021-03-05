@@ -14,10 +14,6 @@ from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 class Test_MssqlLmsOperations:
     class Test_when_executing_statement:
-        def test_given_connection_string_is_none_then_raise_error(self):
-            with pytest.raises(AssertionError):
-                MssqlLmsOperations(None)._exec("a")
-
         def test_given_connection_string_is_whitespace_then_raise_error(self):
             with pytest.raises(AssertionError):
                 MssqlLmsOperations("   ")._exec("a")

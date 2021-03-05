@@ -11,68 +11,58 @@ call `python . -h` for a detailed listing of command arguments.
 """
 
 import logging
-import os
 import sys
 
 from dotenv import load_dotenv
 from errorhandler import ErrorHandler  # type: ignore
-from sqlalchemy import create_engine
 
-from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments
-from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
-from edfi_lms_ds_loader.file_processor import FileProcessor
-from edfi_lms_ds_loader.migrator import migrate
-
-# Load configuration
-load_dotenv()
+from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
+from edfi_lms_ds_loader.helpers.argparser import MainArguments, parse_main_arguments
+from edfi_lms_ds_loader.loader_facade import runLoader
 
 
 logger: logging.Logger
-error_tracker: ErrorHandler
-
-arguments = parse_main_arguments(sys.argv[1:])
-engine = arguments.engine
-connection_string = arguments.connection_string
+error_tracker = ErrorHandler()
 
 
-def _configure_logging():
+def _parse_args():
+    # catching exceptions is unnecessary here
+    return parse_main_arguments(sys.argv[1:])
+
+
+@catch_exceptions
+def _configure_logging(arguments: MainArguments):
     global logger
     global error_tracker
 
     logger = logging.getLogger(__name__)
 
-    level = os.environ.get("LOGLEVEL", "INFO")
     logging.basicConfig(
         handlers=[
             logging.StreamHandler(sys.stdout),
         ],
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
-        level=level,
+        level=arguments.log_level,
     )
-    error_tracker = ErrorHandler()
 
 
-def main():
-
-    _configure_logging()
-
-    db_engine = create_engine(connection_string)
-
-    migrate(db_engine)
-
-    # TODO: refactoring...
-    # - make db_engine a parameter for the file processor
-    # - functional, not class
-    # - move logging completely into the other classes
-    # - ensure this script can easily be called from another program
-
-    logging.info("Starting filesystem processing...")
-    fs = LmsFilesystemProvider(arguments.csv_path)
-    fs.get_all_files()
-
-    processor = FileProcessor(fs, arguments.get_db_operations_adapter())
-    processor.load_lms_files_into_database()
+@catch_exceptions
+def main(arguments: MainArguments):
+    logger.info("Begin loading files into the LMS Data Store (DS)...")
+    runLoader(arguments)
+    logger.info("Done loading files into the LMS Data Store.")
 
 
 if __name__ == "__main__":
-    main()
+    load_dotenv()
+    arguments = _parse_args()
+    _configure_logging(arguments)
+    main(arguments)
+
+    if error_tracker.fired:
+        print(
+            "A fatal error occurred, please review the log output for more information.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    sys.exit(0)
