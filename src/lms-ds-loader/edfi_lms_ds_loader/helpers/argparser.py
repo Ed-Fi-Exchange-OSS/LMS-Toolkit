@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from typing import List, Union
 
 from configargparse import ArgParser  # type: ignore
+from sqlalchemy import create_engine as sa_create_engine
+from sqlalchemy.engine import Engine as sa_Engine
 
 from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
@@ -104,9 +106,11 @@ class MainArguments:
             raise ValueError(f"Invalid `engine` parameter value: {self.engine}")
 
     def get_db_operations_adapter(self) -> MssqlLmsOperations:
-        if self.engine == DbEngine.MSSQL:
-            return MssqlLmsOperations(self.connection_string)
+        return MssqlLmsOperations(self.get_db_engine())
 
+    def get_db_engine(self) -> sa_Engine:
+        if self.engine == DbEngine.MSSQL:
+            return sa_create_engine(self.connection_string)
         raise NotImplementedError(
             f"Support for '{self.engine}' has not yet been implemented."
         )

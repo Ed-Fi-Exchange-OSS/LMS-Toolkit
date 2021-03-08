@@ -463,7 +463,8 @@ class Test_MainArguments:
                 with pytest.raises(NotImplementedError):
                     a = MainArguments(
                         "some/path", DbEngine.MSSQL, LOG_LEVELS[0]
-                    ).set_connection_string(
+                    )
+                    a.set_connection_string(
                         "server", None, "database", "username", "password"
                     )
 
@@ -471,12 +472,10 @@ class Test_MainArguments:
                     a.get_db_operations_adapter()
 
             def test_given_engine_is_mssql_then_return_proper_object(self):
-                actual = (
-                    MainArguments("some/path", DbEngine.MSSQL, LOG_LEVELS[0])
-                    .set_connection_string(
-                        "server", None, "database", "username", "password"
-                    )
-                    .get_db_operations_adapter()
+                a = MainArguments("some/path", DbEngine.MSSQL, LOG_LEVELS[0])
+                a.set_connection_string(
+                    "server", None, "database", "username", "password"
                 )
+                actual = a.get_db_operations_adapter()
 
                 assert type(actual) is MssqlLmsOperations
