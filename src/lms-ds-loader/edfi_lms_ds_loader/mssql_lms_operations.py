@@ -41,7 +41,11 @@ class MssqlLmsOperations:
             return session.execute(statement)
 
         result = execute_transaction(self.engine, __callback)
-        return int(result.rowcount)
+
+        if result:
+            return int(result.rowcount)
+
+        return 0
 
     def truncate_staging_table(self, table: str) -> None:
         """
