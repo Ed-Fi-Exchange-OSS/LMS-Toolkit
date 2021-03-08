@@ -4,8 +4,9 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Dict, List, Tuple
-
+import logging
 from canvasapi import Canvas
+from canvasapi.authentication_event import AuthenticationEvent
 from canvasapi.enrollment import Enrollment
 import sqlalchemy
 from canvasapi.course import Course
@@ -33,6 +34,8 @@ from edfi_canvas_extractor.mapping import (
     grades as gradesMap,
     authentication_events as authEventsMap,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def extract_courses(
@@ -140,6 +143,9 @@ def extract_assignments(
         A tuple with the list of Canvas Assignment objects and the udm_assignments dataframe.
     """
     assignments: List[Assignment] = assignmentsApi.request_assignments(courses)
+    if len(list(assignments)) < 1:
+        logger.info("Skipping assignments - No data returned by API")
+        return ([], {})
     assignments_df: DataFrame = assignmentsApi.assignments_synced_as_df(
         assignments, sync_db
     )
@@ -183,6 +189,12 @@ def extract_submissions(
             submissions: List[Submission] = submissionsApi.request_submissions(
                 assignment
             )
+            if len(list(submissions)) < 1:
+                logger.info(
+                    "Skipping submissions for assignment id %s - No data returned by API",
+                    assignment.id,
+                )
+                continue
             submissions_df: DataFrame = submissionsApi.submissions_synced_as_df(
                 submissions, sync_db
             )
@@ -215,6 +227,12 @@ def extract_enrollments(
         local_enrollments: List[Enrollment] = list(
             enrollmentsApi.request_enrollments_for_section(section)
         )
+        if len(list(local_enrollments)) < 1:
+            logger.info(
+                "Skipping enrollments for section id %s - No data returned by API",
+                section.id,
+            )
+            continue
         enrollments_df: DataFrame = enrollmentsApi.enrollments_synced_as_df(
             local_enrollments, sync_db
         )
@@ -253,7 +271,13 @@ def extract_grades(
 
     for section in sections:
         current_grades: List[dict] = []
-        udm_enrollments_list: List[dict] = udm_enrollments[str(section.id)].to_dict(
+        section_id: str = str(section.id)
+        if section_id not in udm_enrollments:
+            logger.info(
+                "Skipping enrollments for section id %s - None found", section_id
+            )
+            continue
+        udm_enrollments_list: List[dict] = udm_enrollments[section_id].to_dict(
             "records"
         )
 
@@ -270,13 +294,15 @@ def extract_grades(
                 if first_enrollment["SourceSystemIdentifier"] == str(enrollment.id)
             ][0]
             grade["SourceSystemIdentifier"] = f"g#{enrollment.id}"
-            grade["LMSUserLMSSectionAssociationSourceSystemIdentifier"] = str(enrollment.id)
-            grade["LMSSectionIdentifier"] = str(section.id)
+            grade["LMSUserLMSSectionAssociationSourceSystemIdentifier"] = str(
+                enrollment.id
+            )
+            grade["LMSSectionIdentifier"] = section_id
             grade["CreateDate"] = current_udm_enrollment["CreateDate"]
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
             current_grades.append(grade)
 
-        output[str(section.id)] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
+        output[section_id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
 
     return output
 
@@ -308,7 +334,13 @@ def extract_system_activities(
     """
 
     def _get_authentication_events():
-        auth_events = authEventsApi.request_events(users, start_date, end_date)
+        auth_events: List[AuthenticationEvent] = authEventsApi.request_events(
+            users, start_date, end_date
+        )
+        if len(list(auth_events)) < 1:
+            logger.info("Skipping authentication events - No data returned by API")
+            return DataFrame()
+
         for event in auth_events:
             user_id = event.links["user"]
             event_type = event.event_type
@@ -316,10 +348,11 @@ def extract_system_activities(
             event_type = "in" if event_type == "login" else "out"
 
             event.id = f"{event_type}#{user_id}#{event.created_at}"  # type: ignore
-        auth_events = authEventsApi.authentication_events_synced_as_df(
+
+        auth_events_df: DataFrame = authEventsApi.authentication_events_synced_as_df(
             auth_events, sync_db
         )
 
-        return authEventsMap.map_to_udm_system_activities(auth_events)
+        return authEventsMap.map_to_udm_system_activities(auth_events_df)
 
     return _get_authentication_events()

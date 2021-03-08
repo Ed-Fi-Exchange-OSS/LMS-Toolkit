@@ -31,6 +31,7 @@ pytest-describe = "^1.0.0"
 coverage = "^5.3"
 pook = "^1.0.1"
 twine = "^3.3.0"
+Faker = "^6.5.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
