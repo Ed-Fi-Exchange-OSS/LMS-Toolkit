@@ -13,7 +13,9 @@ from sqlalchemy.orm import sessionmaker, Session as sa_Session
 from sqlalchemy.exc import ProgrammingError
 
 
-def execute_transaction(engine: sa_Engine, function: Callable[[sa_Session], Optional[sa_Result]]) -> Optional[sa_Result]:
+def execute_transaction(
+    engine: sa_Engine, function: Callable[[sa_Session], Optional[sa_Result]]
+) -> Optional[sa_Result]:
     Session = sessionmaker(bind=engine)
 
     session = Session()
@@ -53,8 +55,7 @@ def get_int(engine: sa_Engine, statement: str) -> int:
     result = execute_transaction(engine, __callback)
 
     if result:
+        print("--------------------->", result)
         return int(str(result))
     else:
         return 0
-
-

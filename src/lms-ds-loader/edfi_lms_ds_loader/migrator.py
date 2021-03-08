@@ -7,7 +7,7 @@ import logging
 from os import path
 from typing import List
 
-from sqlalchemy.engine.base import Engine
+from sqlalchemy.engine.base import Engine as sa_Engine
 from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
 
@@ -20,11 +20,11 @@ MIGRATION_SCRIPTS = [
     # CAUTION: these scripts will run in order from "top to bottom", so it is
     # critical to maintain the script order at all times.
     "initialize_lms_database",
-    "create_user_tables"
+    "create_user_tables",
 ]
 
 
-def _get_script_path(engine: Engine, script_name: str) -> str:
+def _get_script_path(engine: sa_Engine, script_name: str) -> str:
     script_dir = path.join(path.dirname(__file__), "scripts", engine.name)
     return path.join(script_dir, script_name)
 
@@ -38,7 +38,7 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     return statements
 
 
-def _script_has_been_run(engine: Engine, migration: str) -> bool:
+def _script_has_been_run(engine: sa_Engine, migration: str) -> bool:
     try:
         statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
         response = get_int(engine, statement)
@@ -47,10 +47,11 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
     except ProgrammingError as error:
         if (
             # PostgreSLQ error
-            "psycopg2.errors.UndefinedTable" in error.args[0] or
+            "psycopg2.errors.UndefinedTable" in error.args[0]
+            or
             # SQL Server error
             "Invalid object name" in error.args[0]
-           ):
+        ):
             # This means it is a fresh database where the migrationjournal table
             # has not been installed yet.
             return False
@@ -58,18 +59,20 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
         raise
 
 
-def _record_migration_in_journal(engine: Engine, migration: str) -> None:
+def _record_migration_in_journal(engine: sa_Engine, migration: str) -> None:
     statement = f"INSERT INTO lms.migrationjournal (script) values ('{migration}');"
 
     execute_statements(engine, [statement])
 
 
-def migrate(engine: Engine) -> None:
+def migrate(engine: sa_Engine) -> None:
     logger.info("Begin database auto-migration...")
 
     for migration in MIGRATION_SCRIPTS:
         if _script_has_been_run(engine, migration):
-            logger.debug(f"Migration {migration} has already run and will not be re-run.")
+            logger.debug(
+                f"Migration {migration} has already run and will not be re-run."
+            )
             return
 
         logger.debug(f"Running migration {migration}...")

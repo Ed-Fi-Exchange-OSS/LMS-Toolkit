@@ -113,7 +113,7 @@ class MssqlLmsOperations:
             index=False,
             method="multi",
             # The ODBC driver complains and exits with chunksize > 190
-            chunksize=190
+            chunksize=190,
         )
         logger.debug(f"All records have been loading into staging table 'stg_{table}'")
 

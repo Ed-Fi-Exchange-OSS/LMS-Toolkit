@@ -27,5 +27,5 @@ class Columns:
         "CreateDate",
         "LastModifiedDate",
         "SourceCreateDate",
-        "SourceLastModifiedDate"
+        "SourceLastModifiedDate",
     ]
