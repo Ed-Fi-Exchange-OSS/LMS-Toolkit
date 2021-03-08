@@ -19,6 +19,7 @@ def _default() -> pd.DataFrame:
 
 
 def _read_csv(file: str, nrows: Union[int, None] = None) -> pd.DataFrame:
+    logger.info(f"Reading file: {file}")
     if file:
         return pd.read_csv(
             file, engine="c", parse_dates=True, infer_datetime_format=True, nrows=nrows
