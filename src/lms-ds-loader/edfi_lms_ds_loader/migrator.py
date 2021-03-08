@@ -8,7 +8,7 @@ from os import path
 from typing import Any, Callable, List, Union
 
 from sqlalchemy.engine.base import Engine
-from sqlalchemy.orm import sessionmaker, session as sa_session
+from sqlalchemy.orm import sessionmaker, Session as sa_Session
 from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
 
@@ -21,10 +21,8 @@ MIGRATION_SCRIPTS = [
     "create_user_tables"
 ]
 
-SA_SESSION = type(sa_session)
 
-
-def _execute_transaction(engine: Engine, function: Callable[[SA_SESSION], Union[Any, None]]) -> Any:
+def _execute_transaction(engine: Engine, function: Callable[[sa_Session], Union[Any, None]]) -> Any:
     Session = sessionmaker(bind=engine)
 
     session = Session()
@@ -57,7 +55,7 @@ def _read_statements_from_file(full_path: str) -> List[str]:
 
 
 def _execute_statements(engine: Engine, statements: List[str]) -> None:
-    def __callback(session: sa_session) -> None:
+    def __callback(session: sa_Session) -> None:
         for statement in statements:
             # Ignore MSSQL "GO" statements
             if statement == "GO":
@@ -72,7 +70,7 @@ def _execute_statements(engine: Engine, statements: List[str]) -> None:
 
 
 def _script_has_been_run(engine: Engine, migration: str) -> bool:
-    def __callback(session: sa_session) -> int:
+    def __callback(session: sa_Session) -> int:
         statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
         return session.execute(statement).scalar()  # type: ignore
 
