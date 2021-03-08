@@ -7,8 +7,11 @@ import logging
 from typing import List
 
 import pandas as pd
+from sqlalchemy.engine.result import ResultProxy as sa_Result
 from sqlalchemy.engine import Engine as sa_Engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session as sa_Session
+
+from edfi_lms_ds_loader.sql_adapter import execute_transaction
 
 logger = logging.getLogger(__name__)
 
@@ -34,12 +37,10 @@ class MssqlLmsOperations:
 
         assert statement.strip() != "", "Argument `statement` cannot be whitespace"
 
-        Session = sessionmaker(bind=self.engine)
-        session = Session()
-        result = session.execute(statement)
-        session.commit()
-        session.close()
+        def __callback(session: sa_Session) -> sa_Result:
+            return session.execute(statement)
 
+        result = execute_transaction(self.engine, __callback)
         return int(result.rowcount)
 
     def truncate_staging_table(self, table: str) -> None:

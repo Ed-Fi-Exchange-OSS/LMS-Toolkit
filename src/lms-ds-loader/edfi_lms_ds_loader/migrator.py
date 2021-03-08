@@ -5,12 +5,14 @@
 
 import logging
 from os import path
-from typing import Any, Callable, List, Union
+from typing import List
 
 from sqlalchemy.engine.base import Engine
-from sqlalchemy.orm import sessionmaker, Session as sa_Session
 from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
+
+from edfi_lms_ds_loader.sql_adapter import get_int, execute_statements
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,24 +22,6 @@ MIGRATION_SCRIPTS = [
     "initialize_lms_database",
     "create_user_tables"
 ]
-
-
-def _execute_transaction(engine: Engine, function: Callable[[sa_Session], Union[Any, None]]) -> Any:
-    Session = sessionmaker(bind=engine)
-
-    session = Session()
-    response: Any
-    try:
-        response = function(session)
-
-        session.commit()
-
-        return response
-    except ProgrammingError:
-        session.rollback()
-        raise
-    finally:
-        session.close()
 
 
 def _get_script_path(engine: Engine, script_name: str) -> str:
@@ -54,28 +38,10 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     return statements
 
 
-def _execute_statements(engine: Engine, statements: List[str]) -> None:
-    def __callback(session: sa_Session) -> None:
-        for statement in statements:
-            # Ignore MSSQL "GO" statements
-            if statement == "GO":
-                continue
-
-            # Deliberately throwing away all results. Counting on exception handling
-            # if there are any errors, and migration scripts should not be returning
-            # any results.
-            session.execute(statement)  # type: ignore
-
-    _execute_transaction(engine, __callback)
-
-
 def _script_has_been_run(engine: Engine, migration: str) -> bool:
-    def __callback(session: sa_Session) -> int:
-        statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
-        return session.execute(statement).scalar()  # type: ignore
-
     try:
-        response = _execute_transaction(engine, __callback)
+        statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
+        response = get_int(engine, statement)
 
         return bool(response == 1)
     except ProgrammingError as error:
@@ -95,7 +61,7 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
 def _record_migration_in_journal(engine: Engine, migration: str) -> None:
     statement = f"INSERT INTO lms.migrationjournal (script) values ('{migration}');"
 
-    _execute_statements(engine, [statement])
+    execute_statements(engine, [statement])
 
 
 def migrate(engine: Engine) -> None:
@@ -112,7 +78,7 @@ def migrate(engine: Engine) -> None:
         migration_script = _get_script_path(engine, script_name)
 
         statements = _read_statements_from_file(migration_script)
-        _execute_statements(engine, statements)
+        execute_statements(engine, statements)
 
         _record_migration_in_journal(engine, migration)
 
