@@ -13,6 +13,8 @@ on:
     paths:
       - 'src/google-classroom-extractor/**'
       - '!src/google-classroom-extractor/**/*.md'
+    branches:
+      - main
 jobs:
   test-google-classroom-extractor:
     name: Run unit, style, and type checks
