@@ -50,3 +50,26 @@ CREATE TABLE lms.stg_LMSUser (
 ) ON [PRIMARY];
 
 CREATE INDEX IX_stg_LMSUser_Natural_Key ON lms.stg_LMSUser (SourceSystemIdentifier, SourceSystem, LastModifiedDate);
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A person using the instructional system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the user data.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceSystem'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The role assigned to the user. E.g., Student, Teacher, Administrator.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'UserRole'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The user identifier defined in the Student Information System (SIS).', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SISUserIdentifier'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The user identifier assigned by a school or district.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'LocalUserIdentifier'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The full name of the user.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'Name'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The primary e-mail address for the user.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'EmailAddress'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
+;
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
+;
