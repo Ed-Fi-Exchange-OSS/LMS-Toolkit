@@ -73,7 +73,7 @@ def migrate(engine: sa_Engine) -> None:
             logger.debug(
                 f"Migration {migration} has already run and will not be re-run."
             )
-            return
+            continue
 
         logger.debug(f"Running migration {migration}...")
 
