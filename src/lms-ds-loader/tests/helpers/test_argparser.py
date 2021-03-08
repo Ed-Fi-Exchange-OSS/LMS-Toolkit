@@ -3,6 +3,8 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from typing import Any, List
+
 import pytest
 
 from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments, MainArguments
@@ -18,46 +20,46 @@ PASSWORD = "my_password"
 PORT = 1234
 
 
-def path_args():
+def _path_args() -> List[str]:
     return ["--csvpath", PATH]
 
 
-def engine_args(engine):
+def _engine_args(engine) -> List[str]:
     return ["--engine", engine]
 
 
-def server_args():
+def _server_args() -> List[str]:
     return ["--server", SERVER]
 
 
-def port_args():
+def port_args() -> List[str]:
     return ["--port", str(PORT)]
 
 
-def db_name_args():
+def _db_name_args() -> List[str]:
     return ["--dbname", DB_NAME]
 
 
-def integrated_security_arg():
+def _integrated_security_arg() -> List[str]:
     return ["--useintegratedsecurity"]
 
 
-def username_args():
+def _username_args() -> List[str]:
     return ["--username", USERNAME]
 
 
-def password_args():
+def _password_args() -> List[str]:
     return ["--password", PASSWORD]
 
 
-def assert_no_messages(capsys):
+def _assert_no_messages(capsys):
     out, err = capsys.readouterr()
 
     assert err == "", "There should be an error message"
     assert out == "", "There should not be an output message"
 
 
-def assert_error_message(capsys):
+def _assert_error_message(capsys):
     out, err = capsys.readouterr()
 
     assert err != "", "There should be an error message"
@@ -79,23 +81,23 @@ def describe_when_parsing_system_arguments():
         def it_should_show_help(capsys):
             with pytest.raises(SystemExit):
                 args = [
-                    *engine_args(DbEngine.MSSQL),
-                    *server_args(),
-                    *db_name_args(),
-                    *integrated_security_arg(),
+                    *_engine_args(DbEngine.MSSQL),
+                    *_server_args(),
+                    *_db_name_args(),
+                    *_integrated_security_arg(),
                 ]
 
                 parse_main_arguments(args)
 
-                assert_error_message(capsys)
+                _assert_error_message(capsys)
 
     def describe_given_arguments_do_not_include_engine():
         def it_should_default_to_mssql(capsys):
             args = [
-                *path_args(),
-                *server_args(),
-                *db_name_args(),
-                *integrated_security_arg(),
+                *_path_args(),
+                *_server_args(),
+                *_db_name_args(),
+                *_integrated_security_arg(),
             ]
 
             parsed = parse_main_arguments(args)
@@ -104,28 +106,28 @@ def describe_when_parsing_system_arguments():
 
             assert parsed.engine == DbEngine.MSSQL
 
-            assert_no_messages(capsys)
+            _assert_no_messages(capsys)
 
     def describe_given_arguments_do_not_include_server():
         def it_should_show_help(capsys):
             with pytest.raises(SystemExit):
                 args = [
-                    *engine_args(DbEngine.MSSQL),
-                    *server_args(),
-                    *integrated_security_arg(),
+                    *_engine_args(DbEngine.MSSQL),
+                    *_server_args(),
+                    *_integrated_security_arg(),
                 ]
 
                 parse_main_arguments(args)
 
-                assert_error_message(capsys)
+                _assert_error_message(capsys)
 
     def describe_given_integrated_security():
         def it_should_not_require_username_and_password(capsys):
             args = [
-                *path_args(),
-                *server_args(),
-                *db_name_args(),
-                *integrated_security_arg(),
+                *_path_args(),
+                *_server_args(),
+                *_db_name_args(),
+                *_integrated_security_arg(),
             ]
 
             parsed = parse_main_arguments(args)
@@ -134,14 +136,14 @@ def describe_when_parsing_system_arguments():
 
             assert parsed.engine == DbEngine.MSSQL
 
-            assert_no_messages(capsys)
+            _assert_no_messages(capsys)
 
     def describe_given_using_integrated_security_short_flag():
         def it_should_not_require_username_and_password(capsys):
             args = [
-                *path_args(),
-                *server_args(),
-                *db_name_args(),
+                *_path_args(),
+                *_server_args(),
+                *_db_name_args(),
                 "-i",
             ]
 
@@ -151,48 +153,48 @@ def describe_when_parsing_system_arguments():
 
             assert parsed.engine == DbEngine.MSSQL
 
-            assert_no_messages(capsys)
+            _assert_no_messages(capsys)
 
     def describe_given_not_using_integrated_security():
         def it_should_require_username(capsys):
             with pytest.raises(SystemExit):
                 args = [
-                    *path_args(),
-                    *server_args(),
-                    *db_name_args(),
-                    *password_args(),
+                    *_path_args(),
+                    *_server_args(),
+                    *_db_name_args(),
+                    *_password_args(),
                 ]
 
                 parse_main_arguments(args)
 
-                assert_error_message(capsys)
+                _assert_error_message(capsys)
 
         def it_should_require_password(capsys):
             with pytest.raises(SystemExit):
                 args = [
-                    *path_args(),
-                    *server_args(),
-                    *db_name_args(),
-                    *username_args(),
+                    *_path_args(),
+                    *_server_args(),
+                    *_db_name_args(),
+                    *_username_args(),
                 ]
 
                 parse_main_arguments(args)
 
-                assert_error_message(capsys)
+                _assert_error_message(capsys)
 
     def describe_given_optional_port_is_provided():
         def it_should_inject_port_into_connection_string(capsys):
             args = [
-                *path_args(),
-                *server_args(),
-                *db_name_args(),
-                *integrated_security_arg(),
+                *_path_args(),
+                *_server_args(),
+                *_db_name_args(),
+                *_integrated_security_arg(),
                 *port_args(),
             ]
 
             parsed = parse_main_arguments(args)
 
-            assert_no_messages(capsys)
+            _assert_no_messages(capsys)
 
             assert parsed is not None, "No arguments detected"
 
@@ -200,10 +202,10 @@ def describe_when_parsing_system_arguments():
 
     def it_should_parse_csv_path(capsys):
         args = [
-            *path_args(),
-            *server_args(),
-            *db_name_args(),
-            *integrated_security_arg(),
+            *_path_args(),
+            *_server_args(),
+            *_db_name_args(),
+            *_integrated_security_arg(),
         ]
 
         parsed = parse_main_arguments(args)
@@ -212,22 +214,22 @@ def describe_when_parsing_system_arguments():
 
         assert parsed.csv_path == PATH
 
-        assert_no_messages(capsys)
+        _assert_no_messages(capsys)
 
     def describe_given_engine_mssql():
         def describe_given_using_integrated_security():
             def it_should_set_trusted_connection_in_the_connection_string(capsys):
                 args = [
-                    *path_args(),
-                    *server_args(),
-                    *db_name_args(),
-                    *integrated_security_arg(),
-                    *engine_args(DbEngine.MSSQL),
+                    *_path_args(),
+                    *_server_args(),
+                    *_db_name_args(),
+                    *_integrated_security_arg(),
+                    *_engine_args(DbEngine.MSSQL),
                 ]
 
                 parsed = parse_main_arguments(args)
 
-                assert_no_messages(capsys)
+                _assert_no_messages(capsys)
 
                 assert parsed is not None, "No arguments detected"
 
@@ -236,55 +238,55 @@ def describe_when_parsing_system_arguments():
                 assert "Trusted_Connection=yes" in parsed.connection_string
 
         @pytest.fixture
-        def fixture(capsys):
+        def fixture(capsys) -> MainArguments:
             # Arrange
             args = [
-                *path_args(),
-                *server_args(),
-                *db_name_args(),
-                *engine_args(DbEngine.MSSQL),
-                *username_args(),
-                *password_args(),
+                *_path_args(),
+                *_server_args(),
+                *_db_name_args(),
+                *_engine_args(DbEngine.MSSQL),
+                *_username_args(),
+                *_password_args(),
                 *port_args(),
             ]
 
             # Act
             parsed = parse_main_arguments(args)
 
-            assert_no_messages(capsys)
+            _assert_no_messages(capsys)
 
             return parsed
 
         def it_should_set_server_name_in_the_connection_string(
-             fixture
+             fixture: MainArguments
         ):
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert SERVER in fixture.connection_string
 
         def it_should_set_port_in_the_connection_string(
-            fixture
+            fixture: MainArguments
         ):
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert str(PORT) in fixture.connection_string
 
         def it_should_set_database_name_in_the_connection_string(
-            fixture
+            fixture: MainArguments
         ):
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert DB_NAME in fixture.connection_string
 
         def it_should_set_username_in_the_connection_string(
-            fixture
+            fixture: MainArguments
         ):
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert USERNAME in fixture.connection_string
 
         def it_should_set_password_in_the_connection_string(
-            fixture
+            fixture: MainArguments
         ):
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
@@ -293,18 +295,18 @@ def describe_when_parsing_system_arguments():
         def given_optional_non_default_log_level():
             def it_should_parse_the_log_level(capsys):
                 args = [
-                    *path_args(),
-                    *server_args(),
-                    *db_name_args(),
-                    *integrated_security_arg(),
-                    *engine_args(DbEngine.MSSQL),
+                    *_path_args(),
+                    *_server_args(),
+                    *_db_name_args(),
+                    *_integrated_security_arg(),
+                    *_engine_args(DbEngine.MSSQL),
                     "--log-level",
                     "DEBUG"
                 ]
 
                 parsed = parse_main_arguments(args)
 
-                assert_no_messages(capsys)
+                _assert_no_messages(capsys)
 
                 assert parsed is not None, "No arguments detected"
                 assert parsed.log_level == "DEBUG"
