@@ -13,6 +13,8 @@ on:
     paths:
       - 'src/schoology-extractor/**'
       - '!src/schoology-extractor/**/*.md'
+    branches:
+      - main
 jobs:
   test-schoology-extractor:
     name: Run unit, style, and type checks

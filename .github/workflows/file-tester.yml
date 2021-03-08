@@ -13,6 +13,8 @@ on:
     paths:
       - 'utils/file-tester/**'
       - '!utils/file-tester/**/*.md'
+    branches:
+      - main
 jobs:
   test-file-tester:
     name: Run unit, style, and type checks
