@@ -12,22 +12,14 @@ import pandas as pd
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
-def describe_when_executing_statement_on_mssql():
-    def describe_given_statement_is_whitespace():
-        def it_should_raise_an_error():
-            with pytest.raises(AssertionError):
-                MssqlLmsOperations("a")._exec("    ")
-
-
 def describe_when_truncating_staging_table():
     def describe_given_invalid_input():
         def it_raises_an_error():
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("a").truncate_staging_table("   ")
+                MssqlLmsOperations(Mock()).truncate_staging_table("   ")
 
     def describe_given_valid_input():
         def it_should_issue_truncate_statement(mocker):
-            connection_string = "a connection string"
             table = "user"
             expected = "truncate table lms.[stg_user];"
 
@@ -38,7 +30,7 @@ def describe_when_truncating_staging_table():
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(connection_string).truncate_staging_table(table)
+            MssqlLmsOperations(Mock()).truncate_staging_table(table)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -48,11 +40,10 @@ def describe_when_disabling_natural_key_index():
     def describe_given_table_name_is_whitespace():
         def it_raises_an_error():
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("a").disable_staging_natural_key_index("   ")
+                MssqlLmsOperations(Mock()).disable_staging_natural_key_index("   ")
 
     def describe_given_valid_input():
         def it_issues_truncate_statement(mocker):
-            connection_string = "a connection string"
             table = "user"
             expected = (
                 "alter index [ix_stg_user_natural_key] on lms.[stg_user] disable;"
@@ -62,7 +53,7 @@ def describe_when_disabling_natural_key_index():
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(connection_string).disable_staging_natural_key_index(
+            MssqlLmsOperations(Mock()).disable_staging_natural_key_index(
                 table
             )
 
@@ -74,11 +65,10 @@ def describe_when_enabling_natural_key_index():
     def describe_given_table_name_is_whitespace():
         def it_raises_an_error():
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("a").enable_staging_natural_key_index("   ")
+                MssqlLmsOperations(Mock()).enable_staging_natural_key_index("   ")
 
     def describe_given_valid_input():
         def it_issues_alter__index_statement(mocker):
-            connection_string = "a connection string"
             table = "user"
             expected = (
                 "alter index [ix_stg_user_natural_key] on lms.[stg_user] rebuild;"
@@ -88,7 +78,7 @@ def describe_when_enabling_natural_key_index():
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(connection_string).enable_staging_natural_key_index(
+            MssqlLmsOperations(Mock()).enable_staging_natural_key_index(
                 table
             )
 
@@ -100,12 +90,12 @@ def describe_when_inserting_new_records():
     def describe_given_table_is_whitespace():
         def it_raises_an_error():
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("a").insert_new_records_to_production("   ", ["a"])
+                MssqlLmsOperations(Mock()).insert_new_records_to_production("   ", ["a"])
 
     def describe_given_columns_is_an_empty_list():
         def it_raises_an_error():
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("a").insert_new_records_to_production(
+                MssqlLmsOperations(Mock()).insert_new_records_to_production(
                     "table", list()
                 )
 
@@ -129,7 +119,7 @@ where not exists (
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations("aaa").insert_new_records_to_production(table, columns)
+            MssqlLmsOperations(Mock()).insert_new_records_to_production(table, columns)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -141,26 +131,23 @@ def describe_when_inserting_into_staging():
             df = pd.DataFrame()
 
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("aaa").insert_into_staging(df, "   ")
+                MssqlLmsOperations(Mock()).insert_into_staging(df, "   ")
 
     def describe_given_valid_arguments():
         def it_then_use_pandas_to_load_into_the_db(mocker):
-            connection_string = "connection string"
             table = "aaa"
             staging_table = "stg_aaa"
             df = Mock(spec=pd.DataFrame)
-
-            # Arrange
-            engine_mock = mocker.patch.object(MssqlLmsOperations, "_get_sql_engine")
+            engine_mock = Mock()
 
             # Act
-            MssqlLmsOperations(connection_string).insert_into_staging(df, table)
+            MssqlLmsOperations(engine_mock).insert_into_staging(df, table)
 
             # Assert
-            engine_mock.assert_called()
+            # engine_mock.assert_called()
             df.to_sql.assert_called_with(
                 staging_table,
-                engine_mock.return_value,
+                engine_mock,
                 schema="lms",
                 if_exists="append",
                 index=False,
@@ -173,12 +160,12 @@ def describe_when_updating_records():
     def describe_given_table_is_whitespace():
         def it_raises_an_error():
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("a").copy_updates_to_production("   ", ["a"])
+                MssqlLmsOperations(Mock()).copy_updates_to_production("   ", ["a"])
 
     def describe_give_columns_is_empty_list():
         def it_raises_an_error():
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("a").copy_updates_to_production("t", list())
+                MssqlLmsOperations(Mock()).copy_updates_to_production("t", list())
 
     def describe_given_valid_input():
         def it_issues_insert_where_not_exists_statement(mocker):
@@ -198,7 +185,7 @@ and t.lastmodifieddate <> stg.lastmodifieddate
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations("aaa").copy_updates_to_production(table, columns)
+            MssqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -208,7 +195,7 @@ def describe_when_soft_deleting_a_record():
     def describe_given_table_is_whitespace():
         def it_raises_an_error():
             with pytest.raises(AssertionError):
-                MssqlLmsOperations("a").soft_delete_from_production("   ", "a")
+                MssqlLmsOperations(Mock()).soft_delete_from_production("   ", "a")
 
     def describe_given_valid_input():
         def it_updates_records_that_are_not_in_the_staging_table(mocker):
@@ -229,7 +216,7 @@ and t.sourceSystem = 'Schoology'"""
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations("aaa").soft_delete_from_production(table, "Schoology")
+            MssqlLmsOperations(Mock()).soft_delete_from_production(table, "Schoology")
 
             # Assert
             exec_mock.assert_called_with(expected)

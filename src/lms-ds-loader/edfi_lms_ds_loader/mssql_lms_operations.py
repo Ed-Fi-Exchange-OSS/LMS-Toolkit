@@ -3,18 +3,16 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from dataclasses import dataclass
 import logging
 from typing import List
 
 import pandas as pd
-import sqlalchemy as sal
+from sqlalchemy.engine import Engine as sa_Engine
 from sqlalchemy.orm import sessionmaker
 
 logger = logging.getLogger(__name__)
 
 
-@dataclass
 class MssqlLmsOperations:
     """
     An adapter providing Microsoft SQL Server operations for management and use
@@ -22,36 +20,21 @@ class MssqlLmsOperations:
 
     Parameters
     ----------
-    connection_string: str
-        Fully-formatted database connection string
+    engine: sqlalchemy.engine.Engine
+        SQL Alchemy engine.
     """
 
-    connection_string: str
+    engine: sa_Engine
 
-    def __post_init__(self) -> None:
-        self.engine = None
-
-    def _get_sql_engine(self) -> sal.engine.Engine:
-        """This is a wrapper function that will not be unit tested."""
-
-        assert (
-            type(self.connection_string) is str
-        ), "Variable `connection_string` must be a string"
-        assert (
-            self.connection_string.strip() != ""
-        ), "Variable `connection_string` cannot be whitespace"
-
-        if not self.engine:
-            self.engine = sal.create_engine(self.connection_string)
-
-        return self.engine
+    def __init__(self, engine: sa_Engine) -> None:
+        self.engine = engine
 
     def _exec(self, statement: str) -> int:
         """This is a wrapper function that will not be unit tested."""
 
         assert statement.strip() != "", "Argument `statement` cannot be whitespace"
 
-        Session = sessionmaker(bind=self._get_sql_engine())
+        Session = sessionmaker(bind=self.engine)
         session = Session()
         result = session.execute(statement)
         session.commit()
@@ -123,7 +106,7 @@ class MssqlLmsOperations:
 
         df.to_sql(
             f"stg_{table}",
-            self._get_sql_engine(),
+            self.engine,
             schema="lms",
             if_exists="append",
             index=False,
