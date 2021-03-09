@@ -3,41 +3,44 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+# Developer note: this module is deliberately not unit tested. As a facade it is
+# by definition complex. In this application, it contains the main application
+# logic and is tested simply by running the application. Any branching or
+# looping logic should go into other modules where they can be tested easily.
+
 import logging
 
-from sqlalchemy import create_engine
-
-from edfi_lms_ds_loader.file_processor import FileProcessor
+from edfi_lms_ds_loader.helpers.constants import Table
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
-from edfi_lms_ds_loader.lms_filesystem_provider import LmsFilesystemProvider
 from edfi_lms_ds_loader.migrator import migrate
+from edfi_lms_file_utils import file_reader
+from edfi_lms_ds_loader.df_to_db import upload_file
+from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 logger = logging.getLogger(__name__)
 
 
-def _migrate(arguments: MainArguments):
-    db_engine = create_engine(arguments.connection_string)
+def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
 
-    logger.info("Begin database auto-migration...")
-    migrate(db_engine)
-    logger.info("Done with database auto-migration.")
-
-
-def _processFiles(arguments: MainArguments):
-
-    # TODO: refactoring...
-    # - make db_engine a parameter for the file processor
-    # - functional, not class
-
-    logging.info("Starting filesystem processing...")
-    fs = LmsFilesystemProvider(arguments.csv_path)
-    fs.get_all_files()
-
-    processor = FileProcessor(fs, arguments.get_db_operations_adapter())
-    processor.load_lms_files_into_database()
-    logging.info("Done with filesystem processing.")
+    # TODO: enhance get_all_users to log name of the file
+    users = file_reader.get_all_users(csv_path)
+    upload_file(db_adapter, users, Table.USER)
 
 
-def runLoader(arguments: MainArguments):
-    _migrate(arguments)
-    _processFiles(arguments)
+# TODO: add more functions like _load_sections(...) here. And delete this
+# comment once that pattern has been followed.
+
+
+def run_loader(arguments: MainArguments) -> None:
+    logger.info("Begin loading files into the LMS Data Store (DS)...")
+
+    migrate(arguments.get_db_engine())
+
+    csv_path = arguments.csv_path
+    db_adapter = arguments.get_db_operations_adapter()
+
+    _load_users(csv_path, db_adapter)
+
+    # TODO: add more upload function calls here
+
+    logger.info("Done loading files into the LMS Data Store.")

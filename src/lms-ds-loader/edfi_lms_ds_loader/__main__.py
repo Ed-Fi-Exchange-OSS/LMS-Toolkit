@@ -18,20 +18,15 @@ from errorhandler import ErrorHandler  # type: ignore
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from edfi_lms_ds_loader.helpers.argparser import MainArguments, parse_main_arguments
-from edfi_lms_ds_loader.loader_facade import runLoader
+from edfi_lms_ds_loader.loader_facade import run_loader
 
 
 logger: logging.Logger
-error_tracker = ErrorHandler()
-
-
-def _parse_args():
-    # catching exceptions is unnecessary here
-    return parse_main_arguments(sys.argv[1:])
+error_tracker: ErrorHandler
 
 
 @catch_exceptions
-def _configure_logging(arguments: MainArguments):
+def _configure_logging(arguments: MainArguments) -> None:
     global logger
     global error_tracker
 
@@ -45,19 +40,23 @@ def _configure_logging(arguments: MainArguments):
         level=arguments.log_level,
     )
 
+    error_tracker = ErrorHandler()
+
 
 @catch_exceptions
-def main(arguments: MainArguments):
-    logger.info("Begin loading files into the LMS Data Store (DS)...")
-    runLoader(arguments)
-    logger.info("Done loading files into the LMS Data Store.")
+def _run_loader(arguments: MainArguments) -> None:
+    run_loader(arguments)
 
 
-if __name__ == "__main__":
+def main() -> None:
+
     load_dotenv()
-    arguments = _parse_args()
+    # WARNING! Do not make the following call in a function decorated with @catch_exceptions
+    arguments = parse_main_arguments(sys.argv[1:])
+
     _configure_logging(arguments)
-    main(arguments)
+
+    _run_loader(arguments)
 
     if error_tracker.fired:
         print(
@@ -66,3 +65,7 @@ if __name__ == "__main__":
         )
         sys.exit(1)
     sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

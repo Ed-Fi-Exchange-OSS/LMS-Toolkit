@@ -5,12 +5,14 @@
 
 import logging
 from os import path
-from typing import Any, Callable, List, Union
+from typing import List
 
-from sqlalchemy.engine.base import Engine
-from sqlalchemy.orm import sessionmaker, session as sa_session
+from sqlalchemy.engine.base import Engine as sa_Engine
 from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
+
+from edfi_lms_ds_loader.sql_adapter import get_int, execute_statements
+
 
 logger = logging.getLogger(__name__)
 
@@ -18,32 +20,11 @@ MIGRATION_SCRIPTS = [
     # CAUTION: these scripts will run in order from "top to bottom", so it is
     # critical to maintain the script order at all times.
     "initialize_lms_database",
-    "create_user_tables"
+    "create_user_tables",
 ]
 
 
-# `Any` is not the appropriate type for this callback - should be `sa_session` -
-# but I cannot find any way to specify that without it being flagged as an
-# error.
-def _execute_transaction(engine: Engine, function: Callable[[Any], Union[Any, None]]) -> Any:
-    Session = sessionmaker(bind=engine)
-
-    session = Session()
-    response: Any
-    try:
-        response = function(session)
-
-        session.commit()
-
-        return response
-    except ProgrammingError:
-        session.rollback()
-        raise
-    finally:
-        session.close()
-
-
-def _get_script_path(engine: Engine, script_name: str) -> str:
+def _get_script_path(engine: sa_Engine, script_name: str) -> str:
     script_dir = path.join(path.dirname(__file__), "scripts", engine.name)
     return path.join(script_dir, script_name)
 
@@ -53,40 +34,24 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     with open(full_path) as f:
         raw_sql = f.read()
 
-    return split(raw_sql)
+    statements: List[str] = split(raw_sql)
+    return statements
 
 
-def _execute_statements(engine: Engine, statements: List[str]):
-    def __callback(session: sa_session):
-        for statement in statements:
-            # Ignore MSSQL "GO" statements
-            if statement == "GO":
-                continue
-
-            # Deliberately throwing away all results. Counting on exception handling
-            # if there are any errors, and migration scripts should not be returning
-            # any results.
-            session.execute(statement)  # type: ignore
-
-    _execute_transaction(engine, __callback)
-
-
-def _script_has_been_run(engine: Engine, migration: str) -> bool:
-    def __callback(session: sa_session):
-        statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
-        return session.execute(statement).scalar()  # type: ignore
-
+def _script_has_been_run(engine: sa_Engine, migration: str) -> bool:
     try:
-        response = _execute_transaction(engine, __callback)
+        statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
+        response = get_int(engine, statement)
 
-        return response == 1
+        return bool(response == 1)
     except ProgrammingError as error:
         if (
             # PostgreSLQ error
-            "psycopg2.errors.UndefinedTable" in error.args[0] or
+            "psycopg2.errors.UndefinedTable" in error.args[0]
+            or
             # SQL Server error
             "Invalid object name" in error.args[0]
-           ):
+        ):
             # This means it is a fresh database where the migrationjournal table
             # has not been installed yet.
             return False
@@ -94,17 +59,21 @@ def _script_has_been_run(engine: Engine, migration: str) -> bool:
         raise
 
 
-def _record_migration_in_journal(engine: Engine, migration: str):
+def _record_migration_in_journal(engine: sa_Engine, migration: str) -> None:
     statement = f"INSERT INTO lms.migrationjournal (script) values ('{migration}');"
 
-    _execute_statements(engine, [statement])
+    execute_statements(engine, [statement])
 
 
-def migrate(engine: Engine):
+def migrate(engine: sa_Engine) -> None:
+    logger.info("Begin database auto-migration...")
+
     for migration in MIGRATION_SCRIPTS:
         if _script_has_been_run(engine, migration):
-            logger.debug(f"Migration {migration} has already run and will not be re-run.")
-            return
+            logger.debug(
+                f"Migration {migration} has already run and will not be re-run."
+            )
+            continue
 
         logger.debug(f"Running migration {migration}...")
 
@@ -112,8 +81,10 @@ def migrate(engine: Engine):
         migration_script = _get_script_path(engine, script_name)
 
         statements = _read_statements_from_file(migration_script)
-        _execute_statements(engine, statements)
+        execute_statements(engine, statements)
 
         _record_migration_in_journal(engine, migration)
 
         logger.debug(f"Done with migration {migration}.")
+
+    logger.info("Done with database auto-migration.")
