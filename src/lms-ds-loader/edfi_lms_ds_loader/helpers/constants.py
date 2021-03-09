@@ -13,19 +13,5 @@ class DbEngine:
 
 class Table:
     USER = "LMSUser"
+    SECTION = "LMSSection"
 
-
-class Columns:
-    USER = [
-        "SourceSystemIdentifier",
-        "SourceSystem",
-        "UserRole",
-        "LocalUserIdentifier",
-        "SISUserIdentifier",
-        "Name",
-        "EmailAddress",
-        "CreateDate",
-        "LastModifiedDate",
-        "SourceCreateDate",
-        "SourceLastModifiedDate",
-    ]
