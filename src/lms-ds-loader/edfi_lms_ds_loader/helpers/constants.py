@@ -14,4 +14,3 @@ class DbEngine:
 class Table:
     USER = "LMSUser"
     SECTION = "LMSSection"
-
