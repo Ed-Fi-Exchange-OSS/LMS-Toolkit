@@ -26,7 +26,7 @@ def upload_file(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) ->
         The destination table.
     """
 
-    logger.info("Uploading LMSUser file ...")
+    logger.info(f"Uploading {table} file ...")
 
     db_adapter.disable_staging_natural_key_index(table)
     db_adapter.truncate_staging_table(table)
