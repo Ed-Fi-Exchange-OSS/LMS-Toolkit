@@ -21,14 +21,13 @@ logger = logging.getLogger(__name__)
 
 
 def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-
-    # TODO: enhance get_all_users to log name of the file
     users = file_reader.get_all_users(csv_path)
     upload_file(db_adapter, users, Table.USER)
 
 
-# TODO: add more functions like _load_sections(...) here. And delete this
-# comment once that pattern has been followed.
+def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    sections = file_reader.get_all_sections(csv_path)
+    upload_file(db_adapter, sections, Table.SECTION)
 
 
 def run_loader(arguments: MainArguments) -> None:
@@ -40,7 +39,6 @@ def run_loader(arguments: MainArguments) -> None:
     db_adapter = arguments.get_db_operations_adapter()
 
     _load_users(csv_path, db_adapter)
-
-    # TODO: add more upload function calls here
+    _load_sections(csv_path, db_adapter)
 
     logger.info("Done loading files into the LMS Data Store.")
