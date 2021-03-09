@@ -42,4 +42,4 @@ def upload_file(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) ->
 
     db_adapter.enable_staging_natural_key_index(table)
 
-    logger.info("Done with LMSUser file.")
+    logger.info(f"Done with {table} file.")
