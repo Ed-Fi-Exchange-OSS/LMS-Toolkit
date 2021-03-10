@@ -36,9 +36,9 @@ def _read_csv(
         ]
 
         dtype = {
-            **data_types,
             "SourceSystemIdentifier": "string",
-            "SourceSystem": "string"
+            "SourceSystem": "string",
+            **data_types,
         }
 
         return pd.read_csv(
