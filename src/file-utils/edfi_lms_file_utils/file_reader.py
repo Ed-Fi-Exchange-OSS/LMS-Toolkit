@@ -22,8 +22,31 @@ def _read_csv(
     file: str,
     nrows: Optional[int] = None,
     data_types: Dict[str, str] = dict(),
-    date_cols: List[str] = list(),
+    extra_date_columns: List[str] = list(),
 ) -> pd.DataFrame:
+    """
+    Loads a CSV file into a DataFrame.
+
+    Parameters
+    ----------
+    file: str
+        Full path to the file to read.
+    nrows: int (optional)
+        Number of rows to read. If not specified, reads all lines.
+    data_types: dictionary (optional)
+        A dictionary for forcing Pandas to use the correct data
+        type. Do not use for DateTime columns - instead add those
+        columns to the list in the `extra_date_columns` parameter.
+    extra_date_columns: list (optional)
+        A list of columns that should be treated as having DateTime
+        data type.
+
+    Returns
+    -------
+    pd.DataFrame
+        The exact columns depend on the file being read.
+    """
+
     logger.info(f"Reading file: {file}")
     if file:
 
@@ -32,7 +55,7 @@ def _read_csv(
             "SourceLastModifiedDate",
             "CreateDate",
             "LastModifiedDate",
-            *date_cols,
+            *extra_date_columns,
         ]
 
         dtype = {
