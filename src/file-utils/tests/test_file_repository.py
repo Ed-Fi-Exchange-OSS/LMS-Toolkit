@@ -7,6 +7,8 @@
 import pytest
 
 from edfi_lms_file_utils.file_repository import (
+    _get_file_paths,
+    get_system_activities_file_paths,
     get_users_file,
     get_sections_file,
     get_section_associations_file,
@@ -18,9 +20,9 @@ from edfi_lms_file_utils.file_repository import (
     get_system_activities_files,
     _get_newest_file,
 )
+from .constants import BASE_DIRECTORY
 
 
-BASE_DIRECTORY = "base_dir"
 SECTION_ID = 1
 ASSIGNMENT_ID = 2
 
@@ -52,9 +54,15 @@ SECTION_ACTIVITIES_FILE_OLD = (
 SECTION_ACTIVITIES_FILE_NEW = (
     "base_dir/section=1/section-activities/2020-11-19-04-05-06.csv"
 )
-SYSTEM_ACTIVITIES_FILE_OLD = "base_dir/system-activities/date=2020-11-17/2020-11-18-04-05-06.csv"
-SYSTEM_ACTIVITIES_FILE_NEW_1 = "base_dir/system-activities/date=2020-11-17/2020-11-19-04-05-06.csv"
-SYSTEM_ACTIVITIES_FILE_NEW_2 = "base_dir/system-activities/date=2020-11-18/2020-11-19-04-05-06.csv"
+SYSTEM_ACTIVITIES_FILE_OLD = (
+    "base_dir/system-activities/date=2020-11-17/2020-11-18-04-05-06.csv"
+)
+SYSTEM_ACTIVITIES_FILE_NEW_1 = (
+    "base_dir/system-activities/date=2020-11-17/2020-11-19-04-05-06.csv"
+)
+SYSTEM_ACTIVITIES_FILE_NEW_2 = (
+    "base_dir/system-activities/date=2020-11-18/2020-11-19-04-05-06.csv"
+)
 
 files = [
     SECTION_FILE_OLD,
@@ -89,7 +97,6 @@ def init_fs(fs):
 
 
 def describe_given_filesystem_does_not_exist():
-
     def describe_when_getting_sections_file_file():
         def it_should_return_None(fs, init_fs):
             file = get_sections_file(BASE_DIRECTORY)
@@ -135,27 +142,45 @@ def describe_given_filesystem_does_not_exist():
             files = get_system_activities_files(BASE_DIRECTORY)
             assert len(files) == 0
 
+    def describe_when_getting_system_activities_file_paths():
+        def it_should_return_an_empty_list(fs, init_fs):
+            files = get_system_activities_file_paths(BASE_DIRECTORY)
+            assert len(files) == 0
+
 
 def describe_given_filesystem_exists_with_no_files():
     @pytest.fixture
     def init_fs(init_fs, fs):
+        # Fake as Linux so that all slashes in these test are forward
+        # fs.path_separator = "/"
+        # fs.is_windows_fs = False
+        # fs.is_macos = False
+
         fs.create_dir(f"{BASE_DIRECTORY}/sections")
         fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/assignments")
-        fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/assignments/ASSIGNMENT={ASSIGNMENT_ID}/submissions")
-        fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/attendance-events")
+        fs.create_dir(
+            f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/assignments/ASSIGNMENT={ASSIGNMENT_ID}/submissions"
+        )
+        fs.create_dir(
+            f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/attendance-events"
+        )
         fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/grades")
-        fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/section-associations")
-        fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/section-activities")
+        fs.create_dir(
+            f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/section-associations"
+        )
+        fs.create_dir(
+            f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/section-activities"
+        )
         fs.create_dir(f"{BASE_DIRECTORY}/system-activities/date=2020-11-17")
         fs.create_dir(f"{BASE_DIRECTORY}/system-activities/date=2020-11-18")
         fs.create_dir(f"{BASE_DIRECTORY}/users")
 
-    def describe_when_getting_sections_file_file():
+    def describe_when_getting_sections_file():
         def it_should_return_None(fs, init_fs):
             file = get_sections_file(BASE_DIRECTORY)
             assert file is None
 
-    def describe_when_getting_users_file_file():
+    def describe_when_getting_users_file():
         def it_should_return_None(fs, init_fs):
             file = get_users_file(BASE_DIRECTORY)
             assert file is None
@@ -195,6 +220,11 @@ def describe_given_filesystem_exists_with_no_files():
             file = get_system_activities_files(BASE_DIRECTORY)
             assert len(file) == 0
 
+    def describe_when_getting_system_activities_file_paths():
+        def it_should_return_an_empty_list(fs, init_fs):
+            files = get_system_activities_file_paths(BASE_DIRECTORY)
+            assert len(files) == 0
+
 
 def describe_given_files_exist():
     @pytest.fixture
@@ -205,14 +235,14 @@ def describe_given_files_exist():
         # fs.is_macos = False
 
         for f in files:
-            fs.create_file(f, contents="content")
+            fs.create_file(f, contents="content\n\n")
 
-    def describe_when_getting_sections_file_file():
+    def describe_when_getting_sections_file():
         def it_should_return_newest_file(fs, init_fs):
             file = get_sections_file(BASE_DIRECTORY)
             assert file == SECTION_FILE_NEW
 
-    def describe_when_getting_users_file_file():
+    def describe_when_getting_users_file():
         def it_should_return_newest_file(fs, init_fs):
             file = get_users_file(BASE_DIRECTORY)
             assert file == USERS_FILE_NEW
@@ -255,6 +285,11 @@ def describe_given_files_exist():
         def it_return_newest_file_from_day_two(fs, init_fs):
             files = get_system_activities_files(BASE_DIRECTORY)
             assert SYSTEM_ACTIVITIES_FILE_NEW_2 in files
+
+    def describe_when_getting_system_activities_file_paths_test():
+        def it_returns_the_paths_list(fs, init_fs):
+            paths = get_system_activities_file_paths(BASE_DIRECTORY)
+            assert len(paths) == 3
 
 
 def describe_when_getting_newest_file_by_name():
@@ -372,3 +407,47 @@ def describe_when_getting_newest_file_by_name():
 
                 # Assert
                 assert result is None
+
+
+def describe_when_getting_file_paths():
+    oldest = f"{BASE_DIRECTORY}/sections/1234-56-78-90-12-34.csv"
+    old = f"{BASE_DIRECTORY}/sections/1234-56-78-90-12-36.csv"
+    middle = f"{BASE_DIRECTORY}/sections/1234-56-78-90-12-35.csv"
+    newest = f"{BASE_DIRECTORY}/sections/1234-56-78-90-13-34.csv"
+
+    def describe_given_there_are_files_with_data():
+        @pytest.fixture
+        def init_fs(init_fs, fs):
+            fs.create_dir(f"{BASE_DIRECTORY}/sections")
+            fs.create_file(oldest, contents="content\n\n")
+            fs.create_file(middle, contents="content\n\n")
+            fs.create_file(newest, contents="content\n\n")
+
+        def it_returns_the_valid_paths(init_fs):
+            result = _get_file_paths(f"{BASE_DIRECTORY}/sections")
+            assert len(result) == 3
+
+    def describe_given_there_are_files_without_data():
+        @pytest.fixture
+        def init_fs(init_fs, fs):
+            fs.create_dir(f"{BASE_DIRECTORY}/sections")
+            fs.create_file(oldest, contents="")
+            fs.create_file(middle, contents="")
+            fs.create_file(newest, contents="")
+
+        def it_returns_the_valid_paths(init_fs):
+            result = _get_file_paths(f"{BASE_DIRECTORY}/sections")
+            assert len(result) == 0
+
+    def describe_given_there_are_files_with_data_and_others_without_data():
+        @pytest.fixture
+        def init_fs(init_fs, fs):
+            fs.create_dir(f"{BASE_DIRECTORY}/sections")
+            fs.create_file(oldest, contents="")
+            fs.create_file(old, contents="content\n\n")
+            fs.create_file(middle, contents="content\n\n")
+            fs.create_file(newest, contents="")
+
+        def it_returns_the_valid_paths(init_fs):
+            result = _get_file_paths(f"{BASE_DIRECTORY}/sections")
+            assert len(result) == 2

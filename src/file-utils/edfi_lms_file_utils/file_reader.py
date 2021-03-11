@@ -9,7 +9,7 @@ from typing import Callable, Dict, List, Optional
 import pandas as pd  # type: ignore
 
 import edfi_lms_file_utils.file_repository as fr
-import edfi_lms_file_utils.constants as c
+from edfi_lms_file_utils.constants import DataTypes, Keys
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ def _read_csv(
     nrows: Optional[int] = None,
     data_types: Dict[str, str] = dict(),
     extra_date_columns: List[str] = list(),
+    log_level: int = logging.INFO,
 ) -> pd.DataFrame:
     """
     Loads a CSV file into a DataFrame.
@@ -40,6 +41,8 @@ def _read_csv(
     extra_date_columns: list (optional)
         A list of columns that should be treated as having DateTime
         data type.
+    log_level: int (optional)
+        The log level, by default it is INFO
 
     Returns
     -------
@@ -47,7 +50,7 @@ def _read_csv(
         The exact columns depend on the file being read.
     """
 
-    logger.info(f"Reading file: {file}")
+    logger.log(log_level, f"Reading file: {file}")
     if file:
 
         dates = [
@@ -94,18 +97,29 @@ def get_all_users(base_directory: str, nrows: Optional[int] = None) -> pd.DataFr
     """
     file = fr.get_users_file(base_directory)
 
-    data_types = {
-        "UserRole": "string",
-        "SISUserIdentifier": "string",
-        "LocalUserIdentifier": "string",
-        "Name": "string",
-        "EmailAddress": "string",
-    }
+    if file is None:
+        return _default()
 
-    if file is not None:
-        return _read_csv(file, nrows, data_types=data_types)
+    return read_users_file(file, nrows)
 
-    return _default()
+
+def read_users_file(full_path: str, nrows: Optional[int] = None) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, DataTypes.USERS, log_level=logging.DEBUG)
 
 
 def get_all_system_activities(
@@ -135,12 +149,33 @@ def get_all_system_activities(
 
     df_list = list()
     for f in files:
-        df_list.append(_read_csv(f, nrows))
+        df_list.append(read_system_activities_file(f, nrows))
 
     df = pd.concat(df_list)
     df.drop_duplicates(inplace=True)
 
     return df  # type: ignore
+
+
+def read_system_activities_file(
+    full_path: str, nrows: Optional[int] = None
+) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
 
 
 def get_all_sections(base_directory: str, nrows: Optional[int] = None) -> pd.DataFrame:
@@ -161,18 +196,29 @@ def get_all_sections(base_directory: str, nrows: Optional[int] = None) -> pd.Dat
     """
     file = fr.get_sections_file(base_directory)
 
-    data_types = {
-        "SISSectionIdentifier": "string",
-        "Title": "string",
-        "SectionDescription": "string",
-        "Term": "string",
-        "Status": "string",
-    }
+    if file is None:
+        return _default()
 
-    if file is not None:
-        return _read_csv(file, nrows=nrows, data_types=data_types)
+    return read_sections_file(file, nrows=nrows)
 
-    return _default()
+
+def read_sections_file(full_path: str, nrows: Optional[int] = None) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, DataTypes.SECTIONS, log_level=logging.DEBUG)
 
 
 def get_section_associations(
@@ -198,10 +244,31 @@ def get_section_associations(
     """
     file = fr.get_section_associations_file(base_directory, section_id)
 
-    if file is not None:
-        return _read_csv(file, nrows)
+    if file is None:
+        return _default()
 
-    return _default()
+    return read_section_associations_file(file, nrows)
+
+
+def read_section_associations_file(
+    full_path: str, nrows: Optional[int] = None
+) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
 
 
 def _get_data_for_section(
@@ -218,7 +285,7 @@ def _get_data_for_section(
         )
         return _default()
 
-    for _, section_id in sections[[c.SOURCE_SYSTEM_IDENTIFIER]].itertuples():
+    for _, section_id in sections[[Keys.SOURCE_SYSTEM_IDENTIFIER]].itertuples():
         sa = callback(base_directory, section_id, nrows)
 
         if not sa.empty:
@@ -276,10 +343,31 @@ def get_section_activities(
     """
     file = fr.get_section_activities_file(base_directory, section_id)
 
-    if file is not None:
-        return _read_csv(file, nrows)
+    if file is None:
+        return _default()
 
-    return _default()
+    return read_section_activities_file(file, nrows)
+
+
+def read_section_activities_file(
+    full_path: str, nrows: Optional[int] = None
+) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
 
 
 def get_all_section_activities(
@@ -331,24 +419,29 @@ def get_assignments(
     """
     file = fr.get_assignments_file(base_directory, section_id)
 
-    data_types = {
-        "LMSSectionSourceSystemIdentifier": "string",
-        "Title": "string",
-        "AssignmentDescription": "string",
-        "MaxPoints": "int",
-        "EmailAddress": "string",
-        "SubmissionType": "string",
-        "AssignmentCategory": "string",
-    }
+    if file is None:
+        return _default()
 
-    extra_date_columns = ["DueDateTime", "StartDateTime", "EndDateTime"]
+    return read_assignments_file(file, nrows)
 
-    if file is not None:
-        return _read_csv(
-            file, nrows, data_types=data_types, extra_date_columns=extra_date_columns
-        )
 
-    return _default()
+def read_assignments_file(full_path: str, nrows: Optional[int] = None) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
 
 
 def get_all_assignments(
@@ -403,10 +496,29 @@ def get_submissions(
     """
     file = fr.get_submissions_file(base_directory, section_id, assignment_id)
 
-    if file is not None:
-        return _read_csv(file, nrows)
+    if file is None:
+        return _default()
 
-    return _default()
+    return read_submissions_file(file, nrows)
+
+
+def read_submissions_file(full_path: str, nrows: Optional[int] = None) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
 
 
 def get_all_submissions(
@@ -438,7 +550,7 @@ def get_all_submissions(
         return _default()
 
     df = pd.DataFrame()
-    columns = [c.SOURCE_SYSTEM_IDENTIFIER, c.LMS_SECTION_SOURCE_SYSTEM_IDENTIFIER]
+    columns = [Keys.SOURCE_SYSTEM_IDENTIFIER, Keys.LMS_SECTION_SOURCE_SYSTEM_IDENTIFIER]
     for _, assignment_id, section_id in assignments[columns].itertuples():
         s = get_submissions(base_directory, section_id, assignment_id, nrows)
 
@@ -471,10 +583,29 @@ def get_grades(
     """
     file = fr.get_grades_file(base_directory, section_id)
 
-    if file is not None:
-        return _read_csv(file, nrows)
+    if file is None:
+        return _default()
 
-    return _default()
+    return read_grades_file(file, nrows)
+
+
+def read_grades_file(full_path: str, nrows: Optional[int] = None) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
 
 
 def get_all_grades(
@@ -524,10 +655,31 @@ def get_attendance_events(
     """
     file = fr.get_attendance_events_file(base_directory, section_id)
 
-    if file is not None:
-        return _read_csv(file, nrows)
+    if file is None:
+        return _default()
 
-    return _default()
+    return read_attendance_events_file(file, nrows)
+
+
+def read_attendance_events_file(
+    full_path: str, nrows: Optional[int] = None
+) -> pd.DataFrame:
+    """
+    Reads the CSV file for the given path into a Pandas DataFrame.
+
+    Parameters
+    ----------
+    full_path: str
+        The full path of the file.
+    nrows: int or None
+        (Optional) number of rows to read from the file - useful for testing
+        without reading the entirety of a large file.
+
+    Returns
+    -------
+    Pandas DataFrame with columns matching the model definition / CSV file.
+    """
+    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
 
 
 def get_all_attendance_events(

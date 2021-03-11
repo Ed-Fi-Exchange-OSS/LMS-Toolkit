@@ -411,3 +411,33 @@ WHERE NOT EXISTS (
 
             # Assert
             exec_mock.assert_called_with(expected)
+
+
+def describe_when_getting_processed_files():
+    def given_parameters_are_correct():
+        def it_should_build_the_correct_sql_query(mocker):
+            resource_name = "fake_resource_name"
+            expected_query = f"""
+SELECT FullPath FROM lms.ProcessedFiles
+WHERE ResourceName = '{resource_name}'""".strip()
+
+            query_mock = mocker.patch.object(MssqlLmsOperations, "_query")
+            MssqlLmsOperations(Mock()).get_processed_files(resource_name)
+
+            query_mock.assert_called_with(expected_query)
+
+
+def describe_when_adding_processed_files():
+    def given_parameters_are_correct():
+        def it_should_build_the_correct_sql_statement(mocker):
+            resource_name = "fake_resource_name"
+            path = "fake_path/"
+            rows = 3
+            expected_statement = f"""
+INSERT INTO lms.ProcessedFiles(FullPath, ResourceName, NumberOfRows)
+VALUES ('{path}','{resource_name}', {rows})""".strip()
+
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            MssqlLmsOperations(Mock()).add_processed_file(resource_name, path, rows)
+
+            exec_mock.assert_called_with(expected_statement)

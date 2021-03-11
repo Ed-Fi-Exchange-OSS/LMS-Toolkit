@@ -25,27 +25,31 @@ def describe_when_uploading_extractor_files() -> None:
 
             args_mock.csv_path = "/some/path"
 
-            db_adapter_mock = MagicMock()
+            db_adapter_mock = Mock()
+            db_adapter_mock.get_processed_files = Mock(
+                return_value=set(["FullPathOne"]))
+
             args_mock.get_db_operations_adapter.return_value = db_adapter_mock
 
             migrator_mock = MagicMock(spec=migrator.migrate)
             mocker.patch("edfi_lms_ds_loader.migrator.migrate", migrator_mock)
 
-            df_users = pd.DataFrame({"users": [1]})
+            fake_df_users = pd.DataFrame({"generic_df": [1, 2, 3]})
             mocker.patch(
-                "edfi_lms_file_utils.file_reader.get_all_users", return_value=df_users
+                "edfi_lms_file_utils.file_reader.read_users_file",
+                return_value=fake_df_users,
             )
 
-            df_sections = pd.DataFrame([{"sections": "a"}])
+            fake_df_sections = pd.DataFrame([{"sections": "a"}])
             mocker.patch(
-                "edfi_lms_file_utils.file_reader.get_all_sections",
-                return_value=df_sections,
+                "edfi_lms_file_utils.file_reader.read_sections_file",
+                return_value=fake_df_sections,
             )
 
-            df_assignments = pd.DataFrame([{"assignments": "b"}])
+            fake_df_assignments = pd.DataFrame([{"assignments": "b"}])
             mocker.patch(
-                "edfi_lms_file_utils.file_reader.get_all_assignments",
-                return_value=df_assignments,
+                "edfi_lms_file_utils.file_reader.read_assignments_file",
+                return_value=fake_df_assignments,
             )
 
             mock_upload_file = mocker.patch("edfi_lms_ds_loader.df_to_db.upload_file")
@@ -62,10 +66,16 @@ def describe_when_uploading_extractor_files() -> None:
             }
 
             dfs = {
-                "users": df_users,
-                "sections": df_sections,
-                "assignments": df_assignments,
+                "users": fake_df_users,
+                "sections": fake_df_sections,
+                "assignments": fake_df_assignments,
             }
+
+            file_repository_users_mock = Mock(return_value=["fileFour", "fileSix"])
+            mocker.patch(
+                "edfi_lms_file_utils.file_repository.get_users_file_paths",
+                file_repository_users_mock,
+            )
 
             # Act
             run_loader(args_mock)
@@ -115,6 +125,8 @@ def describe_when_uploading_extractor_files() -> None:
             args_mock.csv_path = "/some/path"
 
             db_adapter_mock = Mock()
+            db_adapter_mock.get_processed_files = Mock(
+                return_value=set(["fileOne"]))
             args_mock.get_db_operations_adapter.return_value = db_adapter_mock
 
             migrator_mock = MagicMock(spec=migrator.migrate)
@@ -124,7 +136,13 @@ def describe_when_uploading_extractor_files() -> None:
                 raise Exception("bad things")
 
             mocker.patch(
-                "edfi_lms_file_utils.file_reader.get_all_users", side_effect=__raise
+                "edfi_lms_file_utils.file_reader.read_users_file", side_effect=__raise
+            )
+
+            file_repository_mock = Mock(return_value=["fileOne", "fileThree"])
+            mocker.patch(
+                "edfi_lms_file_utils.file_repository.get_users_file_paths",
+                file_repository_mock,
             )
 
             # Act

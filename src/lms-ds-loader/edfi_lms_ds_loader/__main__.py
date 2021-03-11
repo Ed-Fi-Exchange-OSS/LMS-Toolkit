@@ -22,13 +22,11 @@ from edfi_lms_ds_loader.loader_facade import run_loader
 
 
 logger: logging.Logger
-error_tracker: ErrorHandler
 
 
 @catch_exceptions
 def _configure_logging(arguments: MainArguments) -> None:
     global logger
-    global error_tracker
 
     logger = logging.getLogger(__name__)
 
@@ -39,8 +37,6 @@ def _configure_logging(arguments: MainArguments) -> None:
         format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
         level=arguments.log_level,
     )
-
-    error_tracker = ErrorHandler()
 
 
 @catch_exceptions
@@ -53,8 +49,8 @@ def main() -> None:
     load_dotenv()
     # WARNING! Do not make the following call in a function decorated with @catch_exceptions
     arguments = parse_main_arguments(sys.argv[1:])
-
     _configure_logging(arguments)
+    error_tracker: ErrorHandler = ErrorHandler()
 
     _run_loader(arguments)
 
