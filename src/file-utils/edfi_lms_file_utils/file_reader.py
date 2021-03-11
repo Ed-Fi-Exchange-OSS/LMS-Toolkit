@@ -4,9 +4,9 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import Callable, Optional, Union
+from typing import Callable, Dict, List, Optional
 
-import pandas as pd
+import pandas as pd  # type: ignore
 
 import edfi_lms_file_utils.file_repository as fr
 import edfi_lms_file_utils.constants as c
@@ -18,17 +18,65 @@ def _default() -> pd.DataFrame:
     return pd.DataFrame()
 
 
-def _read_csv(file: str, nrows: Union[int, None] = None) -> pd.DataFrame:
+def _read_csv(
+    file: str,
+    nrows: Optional[int] = None,
+    data_types: Dict[str, str] = dict(),
+    extra_date_columns: List[str] = list(),
+) -> pd.DataFrame:
+    """
+    Loads a CSV file into a DataFrame.
+
+    Parameters
+    ----------
+    file: str
+        Full path to the file to read.
+    nrows: int (optional)
+        Number of rows to read. If not specified, reads all lines.
+    data_types: dictionary (optional)
+        A dictionary for forcing Pandas to use the correct data
+        type. Do not use for DateTime columns - instead add those
+        columns to the list in the `extra_date_columns` parameter.
+    extra_date_columns: list (optional)
+        A list of columns that should be treated as having DateTime
+        data type.
+
+    Returns
+    -------
+    pd.DataFrame
+        The exact columns depend on the file being read.
+    """
+
     logger.info(f"Reading file: {file}")
     if file:
+
+        dates = [
+            "SourceCreateDate",
+            "SourceLastModifiedDate",
+            "CreateDate",
+            "LastModifiedDate",
+            *extra_date_columns,
+        ]
+
+        dtype = {
+            "SourceSystemIdentifier": "string",
+            "SourceSystem": "string",
+            **data_types,
+        }
+
         return pd.read_csv(
-            file, engine="c", parse_dates=True, infer_datetime_format=True, nrows=nrows
+            file,
+            engine="c",
+            parse_dates=dates,
+            infer_datetime_format=True,
+            nrows=nrows,
+            dtype=dtype,
         )
 
     return _default()
 
 
-def get_all_users(base_directory: str, nrows: Union[int, None] = None) -> pd.DataFrame:
+def get_all_users(base_directory: str, nrows: Optional[int] = None) -> pd.DataFrame:
     """
     Reads the most recent users file into a Pandas DataFrame.
 
@@ -46,14 +94,22 @@ def get_all_users(base_directory: str, nrows: Union[int, None] = None) -> pd.Dat
     """
     file = fr.get_users_file(base_directory)
 
+    data_types = {
+        "UserRole": "string",
+        "SISUserIdentifier": "string",
+        "LocalUserIdentifier": "string",
+        "Name": "string",
+        "EmailAddress": "string"
+    }
+
     if file is not None:
-        return _read_csv(file, nrows)
+        return _read_csv(file, nrows, data_types=data_types)
 
     return _default()
 
 
 def get_all_system_activities(
-    base_directory: str, nrows: Union[int, None] = None
+    base_directory: str, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent system activities files into a Pandas DataFrame.
@@ -84,12 +140,10 @@ def get_all_system_activities(
     df = pd.concat(df_list)
     df.drop_duplicates(inplace=True)
 
-    return df
+    return pd.DataFrame(df)
 
 
-def get_all_sections(
-    base_directory: str, nrows: Union[int, None] = None
-) -> pd.DataFrame:
+def get_all_sections(base_directory: str, nrows: Optional[int] = None) -> pd.DataFrame:
     """
     Reads the most recent sections file into a Pandas DataFrame.
 
@@ -107,14 +161,22 @@ def get_all_sections(
     """
     file = fr.get_sections_file(base_directory)
 
+    data_types = {
+        "SISSectionIdentifier": "string",
+        "Title": "string",
+        "SectionDescription": "string",
+        "Term": "string",
+        "Status": "string",
+    }
+
     if file is not None:
-        return _read_csv(file, nrows)
+        return _read_csv(file, nrows=nrows, data_types=data_types)
 
     return _default()
 
 
 def get_section_associations(
-    base_directory: str, section_id: int, nrows: Union[int, None] = None
+    base_directory: str, section_id: int, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent section associations file for the given section into
@@ -146,7 +208,7 @@ def _get_data_for_section(
     base_directory: str,
     sections: pd.DataFrame,
     callback: Callable[[str, int, Optional[int]], pd.DataFrame],
-    nrows: Union[int, None] = None,
+    nrows: Optional[int] = None,
 ) -> pd.DataFrame:
     df = pd.DataFrame()
 
@@ -166,7 +228,7 @@ def _get_data_for_section(
 
 
 def get_all_section_associations(
-    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
+    base_directory: str, sections: pd.DataFrame, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent section associations files for all given sections into
@@ -192,7 +254,7 @@ def get_all_section_associations(
 
 
 def get_section_activities(
-    base_directory: str, section_id: int, nrows: Union[int, None] = None
+    base_directory: str, section_id: int, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent section activities file for the given section into
@@ -221,7 +283,7 @@ def get_section_activities(
 
 
 def get_all_section_activities(
-    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
+    base_directory: str, sections: pd.DataFrame, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent section activities files for all given sections into
@@ -247,7 +309,7 @@ def get_all_section_activities(
 
 
 def get_assignments(
-    base_directory: str, section_id: int, nrows: Union[int, None] = None
+    base_directory: str, section_id: int, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent assignments file for the given section into
@@ -276,7 +338,7 @@ def get_assignments(
 
 
 def get_all_assignments(
-    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
+    base_directory: str, sections: pd.DataFrame, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent assignments files for all given sections into
@@ -303,7 +365,7 @@ def get_submissions(
     base_directory: str,
     section_id: int,
     assignment_id: int,
-    nrows: Union[int, None] = None,
+    nrows: Optional[int] = None,
 ) -> pd.DataFrame:
     """
     Reads the most recent submissions file for the given section into
@@ -334,7 +396,7 @@ def get_submissions(
 
 
 def get_all_submissions(
-    base_directory: str, assignments: pd.DataFrame, nrows: Union[int, None] = None
+    base_directory: str, assignments: pd.DataFrame, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent section associations files for all given sections into
@@ -373,7 +435,7 @@ def get_all_submissions(
 
 
 def get_grades(
-    base_directory: str, section_id: int, nrows: Union[int, None] = None
+    base_directory: str, section_id: int, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent grades file for the given section into
@@ -402,7 +464,7 @@ def get_grades(
 
 
 def get_all_grades(
-    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
+    base_directory: str, sections: pd.DataFrame, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent grades files for all given sections into
@@ -426,7 +488,7 @@ def get_all_grades(
 
 
 def get_attendance_events(
-    base_directory: str, section_id: int, nrows: Union[int, None] = None
+    base_directory: str, section_id: int, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent attendance events file for the given section into
@@ -455,7 +517,7 @@ def get_attendance_events(
 
 
 def get_all_attendance_events(
-    base_directory: str, sections: pd.DataFrame, nrows: Union[int, None] = None
+    base_directory: str, sections: pd.DataFrame, nrows: Optional[int] = None
 ) -> pd.DataFrame:
     """
     Reads the most recent attendance events files for all given sections into

@@ -8,6 +8,7 @@ EXEC sys.sp_executesql N'CREATE SCHEMA lms';
 
 
 CREATE TABLE lms.MigrationJournal (
-    Script VARCHAR(250) NOT NULL
+    Script VARCHAR(250) NOT NULL,
+    InstallDate DATETIME2 NOT NULL DEFAULT (getdate()),
     CONSTRAINT PK_MigrationJournal PRIMARY KEY CLUSTERED (Script)
 ) ON [PRIMARY];

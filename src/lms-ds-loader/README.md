@@ -56,7 +56,9 @@ directory:
 poetry run python edfi_lms_ds_loader --server localhost --dbname lms_toolkit --useintegratedsecurity --csvpath ../../docs/sample-out
 ```
 
-## Dev Operations
+## Developer Notes
+
+### Dev Operations
 
 1. Style check: `poetry run flake8`
 1. Static typing check: `poetry run mypy .`
@@ -68,7 +70,7 @@ _Also see
 [build.py](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/blob/main/docs/build.md)_ for
 use of the build script.
 
-## Adding New Migrations
+### Adding New Migrations
 
 1. Create SQL Server and PostgreSQL SQL scripts under
    `edfi_lms_ds_loader/scripts/<engine name>`, using the same file name for
@@ -84,6 +86,14 @@ use of the build script.
    coded to parse it.
 1. Add the new script name to the `MIGRATION_SCRIPTS` constant at the top of
    `edfi_lms_ds_loader/migrator.py`.
+
+### Adding New Files Uploads
+
+1. Create the required table and staging table in a new migration.
+1. Ensure that the `file-utils` shared library correctly maps the data types for
+   the new file.
+1. Update the `edfi_lms_ds_loader/loader_facade.py` to pull in the additional
+   file type and upload it.
 
 ## Legal Information
 
