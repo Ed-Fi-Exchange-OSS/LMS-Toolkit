@@ -10,6 +10,8 @@
 
 import logging
 
+from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
+
 from edfi_lms_ds_loader.helpers.constants import Table
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
 from edfi_lms_ds_loader import migrator
@@ -20,20 +22,16 @@ from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 logger = logging.getLogger(__name__)
 
 
+@catch_exceptions
 def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-    try:
-        users = file_reader.get_all_users(csv_path)
-        df_to_db.upload_file(db_adapter, users, Table.USER)
-    except BaseException as e:
-        logger.exception(e)
+    users = file_reader.get_all_users(csv_path)
+    df_to_db.upload_file(db_adapter, users, Table.USER)
 
 
+@catch_exceptions
 def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-    try:
-        sections = file_reader.get_all_sections(csv_path)
-        df_to_db.upload_file(db_adapter, sections, Table.SECTION)
-    except BaseException as e:
-        logger.exception(e)
+    sections = file_reader.get_all_sections(csv_path)
+    df_to_db.upload_file(db_adapter, sections, Table.SECTION)
 
 
 def run_loader(arguments: MainArguments) -> None:
