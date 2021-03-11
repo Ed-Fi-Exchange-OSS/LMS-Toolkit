@@ -68,6 +68,60 @@ def describe_when_uploading_extractor_files():
             assert sections_call[1] is df_sections
             assert sections_call[2] == "LMSSection"
 
+    def describe_given_users_file_read_fails():
+        @pytest.fixture
+        def fixture(mocker):
+            # Arrange
+            args_mock = MagicMock(spec=MainArguments)
+            db_engine_mock = Mock()
+            args_mock.get_db_engine.return_value = db_engine_mock
+
+            args_mock.csv_path = "/some/path"
+
+            db_adapter_mock = Mock()
+            args_mock.get_db_operations_adapter.return_value = db_adapter_mock
+
+            migrator_mock = MagicMock(spec=migrator.migrate)
+            mocker.patch("edfi_lms_ds_loader.migrator.migrate", migrator_mock)
+
+            def __raise(csv_path):
+                raise Exception("bad things")
+
+            mocker.patch("edfi_lms_file_utils.file_reader.get_all_users", side_effect=__raise)
+
+            df_sections = pd.DataFrame([{"sections": "a"}])
+            mocker.patch("edfi_lms_file_utils.file_reader.get_all_sections", return_value=df_sections)
+
+            upload_mock = MagicMock(spec=df_to_db.upload_file)
+            mocker.patch("edfi_lms_ds_loader.df_to_db.upload_file", upload_mock)
+
+            # Act
+            run_loader(args_mock)
+
+            # Return the mock objects for examination
+            return (db_engine_mock, migrator_mock, upload_mock)
+
+        def it_runs_migrations(mocker, fixture):
+            db_engine_mock, migrator_mock, _ = fixture
+
+            migrator_mock.assert_called_once_with(db_engine_mock)
+
+        def it_does_not_upload_users(mocker, fixture):
+            _, _, upload_mock = fixture
+
+            assert upload_mock.call_count == 1
+
+            call = upload_mock.call_args_list[0][0]
+
+            assert call[2] != "LMSUser"
+
+        def it_does_upload_sections(mocker, fixture):
+            _, _, upload_mock = fixture
+
+            call = upload_mock.call_args_list[0][0]
+
+            assert call[2] == "LMSSection"
+
     def describe_given_section_file_read_fails():
         @pytest.fixture
         def fixture(mocker):
