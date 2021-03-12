@@ -1,5 +1,5 @@
 {
-    "python.analysis.extraPaths": ["./lms_file_tester", "./tests"],
+    "python.analysis.extraPaths": ["./edfi_lms_file_utils", "./tests"],
     "python.analysis.typeCheckingMode": "basic",
     "python.languageServer": "Pylance",
     "python.linting.enabled": true,
@@ -93,6 +93,7 @@
         "MSSQL",
         "SPDX",
         "dbname",
+        "dtype",
         "pytest"
     ],
     "jupyter.jupyterServerType": "local"

@@ -55,7 +55,6 @@ def get_int(engine: sa_Engine, statement: str) -> int:
     result = execute_transaction(engine, __callback)
 
     if result:
-        print("--------------------->", result)
         return int(str(result))
     else:
         return 0

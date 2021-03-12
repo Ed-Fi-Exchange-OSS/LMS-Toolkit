@@ -21,6 +21,7 @@ MIGRATION_SCRIPTS = [
     # critical to maintain the script order at all times.
     "initialize_lms_database",
     "create_user_tables",
+    "create_section_tables"
 ]
 
 
