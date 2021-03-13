@@ -6,7 +6,6 @@
 from typing import Tuple
 from unittest.mock import Mock
 from canvasapi.canvas import Canvas
-
 from pandas import DataFrame
 import pytest
 import sqlalchemy
@@ -23,7 +22,7 @@ from edfi_canvas_extractor.mapping import (
     sections as sectionsMap,
     users as usersMap,
     assignments as assignmentsMap,
-    authentication_events as authEventsMap
+    authentication_events as authEventsMap,
 )
 
 TEST_START_DATE = "2021-01-01"
@@ -43,8 +42,8 @@ def sync_db_mock():
 def describe_when_extract_courses_is_called():
     @pytest.fixture
     def system(canvas_mock, sync_db_mock):
-        coursesApi.courses_synced_as_df = Mock(return_value=[])  # noqa: F811, F841
-        coursesApi.request_courses = Mock(return_value=DataFrame())  # noqa: F811, F841
+        coursesApi.courses_synced_as_df = Mock(return_value=[])
+        coursesApi.request_courses = Mock(return_value=DataFrame())
         extract_facade.extract_courses(
             canvas_mock, TEST_START_DATE, TEST_END_DATE, sync_db_mock
         )
@@ -64,7 +63,9 @@ def describe_when_extract_sections_is_called():
     def system(sync_db_mock):
         sectionsApi.sections_synced_as_df = Mock(return_value=[])
         sectionsApi.request_sections = Mock(return_value=DataFrame())
-        sectionsMap.map_to_udm_sections = Mock(return_value=DataFrame(columns=["SourceSystemIdentifier"]))
+        sectionsMap.map_to_udm_sections = Mock(
+            return_value=DataFrame(columns=["SourceSystemIdentifier"])
+        )
 
         extract_facade.extract_sections([], sync_db_mock)
         return {
@@ -86,10 +87,8 @@ def describe_when_extract_sections_is_called():
 def describe_when_extract_students_is_called():
     @pytest.fixture
     def system(sync_db_mock):
-        studentsApi.students_synced_as_df = Mock(return_value=[])  # noqa: F811, F841
-        studentsApi.request_students = Mock(
-            return_value=DataFrame()
-        )  # noqa: F811, F841
+        studentsApi.students_synced_as_df = Mock(return_value=[])
+        studentsApi.request_students = Mock(return_value=DataFrame())
         usersMap.map_to_udm_users = Mock(return_value=DataFrame())
         extract_facade.extract_students([], sync_db_mock)
         return {
@@ -111,79 +110,143 @@ def describe_when_extract_students_is_called():
 def describe_when_extract_assignments_is_called():
     @pytest.fixture
     def system(sync_db_mock):
-        assignmentsApi.assignments_synced_as_df = Mock(
-            return_value=[]
-        )  # noqa: F811, F841
-        assignmentsApi.request_assignments = Mock(
-            return_value=DataFrame()
-        )  # noqa: F811, F841
+        assignmentsApi.request_assignments = Mock(return_value=["assignment"])
+        assignmentsApi.assignments_synced_as_df = Mock(return_value=DataFrame())
         assignmentsMap.map_to_udm_assignments = Mock(return_value=DataFrame())
         extract_facade.extract_assignments([], DataFrame(), sync_db_mock)
         return {
-            "sync": assignmentsApi.assignments_synced_as_df,
             "request": assignmentsApi.request_assignments,
+            "sync": assignmentsApi.assignments_synced_as_df,
             "map": assignmentsMap.map_to_udm_assignments,
         }
-
-    def it_should_call_sync_method(system: dict):
-        assert system["sync"].called
 
     def it_should_call_request_method(system: dict):
         assert system["request"].called
 
+    def it_should_call_sync_method(system: dict):
+        assert system["sync"].called
+
     def it_should_call_map_method(system: dict):
         assert system["map"].called
+
+
+def describe_when_extract_assignments_is_called_and_no_assignments_exist():
+    @pytest.fixture
+    def system(sync_db_mock):
+        assignmentsApi.request_assignments = Mock(return_value=[])
+        assignmentsApi.assignments_synced_as_df = Mock(return_value=DataFrame())
+        assignmentsMap.map_to_udm_assignments = Mock(return_value=DataFrame())
+        extract_facade.extract_assignments([], DataFrame(), sync_db_mock)
+        return {
+            "request": assignmentsApi.request_assignments,
+            "sync": assignmentsApi.assignments_synced_as_df,
+            "map": assignmentsMap.map_to_udm_assignments,
+        }
+
+    def it_should_call_request_method(system: dict):
+        assert system["request"].called
+
+    def it_should_not_call_sync_method(system: dict):
+        assert not system["sync"].called
+
+    def it_should_not_call_map_method(system: dict):
+        assert not system["map"].called
 
 
 def describe_when_extract_submissions_is_called():
     @pytest.fixture
     def system(sync_db_mock):
-        assignmentsApi.assignments_synced_as_df = Mock(
-            return_value=[]
-        )  # noqa: F811, F841
-        assignmentsApi.request_assignments = Mock(
-            return_value=DataFrame()
-        )  # noqa: F811, F841
+        assignmentsApi.request_assignments = Mock(return_value=["submission"])
+        assignmentsApi.assignments_synced_as_df = Mock(return_value=DataFrame())
         assignmentsMap.map_to_udm_assignments = Mock(return_value=DataFrame())
         extract_facade.extract_assignments([], DataFrame(), sync_db_mock)
         return {
-            "sync": assignmentsApi.assignments_synced_as_df,
             "request": assignmentsApi.request_assignments,
+            "sync": assignmentsApi.assignments_synced_as_df,
             "map": assignmentsMap.map_to_udm_assignments,
         }
-
-    def it_should_call_sync_method(system: dict):
-        assert system["sync"].called
 
     def it_should_call_request_method(system: dict):
         assert system["request"].called
 
+    def it_should_call_sync_method(system: dict):
+        assert system["sync"].called
+
     def it_should_call_map_method(system: dict):
         assert system["map"].called
+
+
+def describe_when_extract_submissions_is_called_and_no_submissions_exist():
+    @pytest.fixture
+    def system(sync_db_mock):
+        assignmentsApi.request_assignments = Mock(return_value=[])
+        assignmentsApi.assignments_synced_as_df = Mock(return_value=DataFrame())
+        assignmentsMap.map_to_udm_assignments = Mock(return_value=DataFrame())
+        extract_facade.extract_assignments([], DataFrame(), sync_db_mock)
+        return {
+            "request": assignmentsApi.request_assignments,
+            "sync": assignmentsApi.assignments_synced_as_df,
+            "map": assignmentsMap.map_to_udm_assignments,
+        }
+
+    def it_should_call_request_method(system: dict):
+        assert system["request"].called
+
+    def it_should_not_call_sync_method(system: dict):
+        assert not system["sync"].called
+
+    def it_should_not_call_map_method(system: dict):
+        assert not system["map"].called
 
 
 def describe_when_extract_system_activities_is_called():
     @pytest.fixture
     def system(sync_db_mock):
-        authEventsApi.authentication_events_synced_as_df = Mock(
-            return_value=[]
-        )  # noqa: F811, F841
+        mockAuthEvent = Mock(links={"user": "1"}, event_type="login", created_at="now", id="1")
         authEventsApi.request_events = Mock(
+            return_value=[mockAuthEvent]
+        )
+        authEventsApi.authentication_events_synced_as_df = Mock(
             return_value=DataFrame()
-        )  # noqa: F811, F841
+        )
         authEventsMap.map_to_udm_system_activities = Mock(return_value=DataFrame())
         extract_facade.extract_system_activities([], "", "", sync_db_mock)
         return {
-            "sync": authEventsApi.authentication_events_synced_as_df,
             "request": authEventsApi.request_events,
+            "sync": authEventsApi.authentication_events_synced_as_df,
             "map": authEventsMap.map_to_udm_system_activities,
         }
-
-    def it_should_call_sync_method(system: dict):
-        assert system["sync"].called
 
     def it_should_call_request_method(system: dict):
         assert system["request"].called
 
+    def it_should_call_sync_method(system: dict):
+        assert system["sync"].called
+
     def it_should_call_map_method(system: dict):
         assert system["map"].called
+
+
+def describe_when_extract_system_activities_is_called_and_no_activities_exist():
+    @pytest.fixture
+    def system(sync_db_mock):
+        authEventsApi.request_events = Mock(return_value=[])
+        authEventsApi.authentication_events_synced_as_df = Mock(
+            return_value=DataFrame()
+        )
+        authEventsMap.map_to_udm_system_activities = Mock(return_value=DataFrame())
+        extract_facade.extract_system_activities([], "", "", sync_db_mock)
+        return {
+            "request": authEventsApi.request_events,
+            "sync": authEventsApi.authentication_events_synced_as_df,
+            "map": authEventsMap.map_to_udm_system_activities,
+        }
+
+    def it_should_call_request_method(system: dict):
+        assert system["request"].called
+
+    def it_should_not_call_sync_method(system: dict):
+        assert not system["sync"].called
+
+    def it_should_not_call_map_method(system: dict):
+        assert not system["map"].called
