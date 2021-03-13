@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from dataclasses import dataclass
+import os
 from typing import List, Union
 
 from configargparse import ArgParser  # type: ignore
@@ -132,38 +133,60 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     """
 
     parser = ArgParser()
-    parser.add("-c", "--csvpath", help="Base path for input files.", required=True)  # type: ignore
+    parser.add(  # type: ignore
+        "-c",
+        "--csvpath",
+        help="Base path for input files.",
+        required=True,
+        env_var="CSV_PATH",
+    )
     parser.add(  # type: ignore
         "-e",
         "--engine",
         help="Database engine.",
         choices=[DbEngine.MSSQL, DbEngine.POSTGRESQL],
         default=DbEngine.MSSQL,
+        env_var="DB_ENGINE",
     )
     parser.add(  # type: ignore
-        "-s", "--server", help="Database server name or IP address", required=True
+        "-s",
+        "--server",
+        help="Database server name or IP address",
+        required=True,
+        env_var="DB_SERVER",
     )
-    parser.add("--port", help="Database server port number", type=int)  # type: ignore
+    parser.add(  # type: ignore
+        "--port",
+        help="Database server port number",
+        type=int,
+        env_var="DB_PORT",
+    )
     parser.add(  # type: ignore
         "-d",
         "--dbname",
         help="Name of the database with the LMS tables.",
+        env_var="DB_NAME",
         required=True,
     )
 
     USE_INTEGRATED = "--useintegratedsecurity"
     USE_INTEGRATED_SHORT = "-i"
+
     parser.add(  # type: ignore
         USE_INTEGRATED_SHORT,
         USE_INTEGRATED,
         help="Use Integrated Security for the database connection.",
         action="store_true",
-        env_var="USE_INTEGRATED_SECURITY",
     )
-
     user_name_required = (
         USE_INTEGRATED not in args_in and USE_INTEGRATED_SHORT not in args_in
     )
+    # This parameter doesn't work right when used from a .env file,
+    # so adding a manual override
+    integrated_env_var = os.getenv("USE_INTEGRATED_SECURITY")
+    if integrated_env_var.lower() in ("true", "yes", "t", "y"):
+        user_name_required = False
+
     parser.add(  # type: ignore
         "-u",
         "--username",
@@ -191,6 +214,9 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     )
 
     args_parsed = parser.parse_args(args_in)
+    args_parsed.useintegratedsecurity = (
+        args_parsed.useintegratedsecurity or not user_name_required
+    )
 
     arguments = MainArguments(
         args_parsed.csvpath, args_parsed.engine, args_parsed.log_level
