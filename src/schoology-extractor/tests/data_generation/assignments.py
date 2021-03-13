@@ -23,7 +23,7 @@ def generate_assignments(
     ----------
     assignments_per_section : int
         The number of assignments per section to generate.
-    sections: List[Dict]
+    enrollments: List[Dict]
         A list of JSON-like section objects from a bulk create response    Returns
     -------
     Dict[str, List[Dict]]
@@ -59,6 +59,46 @@ def generate_assignments(
             )
         assignments[section_id] = assignments_per_section
     return assignments
+
+
+def generate_extra_assignments_without_enrollments(
+    request_client: RequestClient,
+    sections: List[Dict]
+) -> Dict[str, List[Dict]]:
+    """
+    Generate assignments without any enrollments, with random content size. One per section.
+
+    Parameters
+    ----------
+    assignments_per_section : int
+        The number of assignments per section to generate.
+    sections: List[Dict]
+        A list of JSON-like section objects from a bulk create response    Returns
+    -------
+    Dict[str, List[Dict]]
+        A Dict of mappings from Schoology section id to a list of JSON-like assignment objects
+        in a form suitable for submission to the Schoology assignment create endpoint.
+    """
+
+    logging.info("Generating extra assignment per section")
+
+    result: Dict[str, List[Dict]] = {}
+    for s in sections:
+        section_id = str(s["id"])
+        assignment = {
+            "title": fake.catch_phrase(),
+            "description": fake.paragraph(variable_nb_sentences=True, nb_sentences=40),
+            "due": datetime.strftime(
+                fake.future_datetime(), "%Y-%m-%d %H:%M:%S"
+            ),
+            "type": "assignment",
+            "assignees": list(),
+        }
+        result[section_id] = (load_assignments(
+            request_client, section_id, [assignment]
+        ))
+
+    return result
 
 
 def rollback_loaded_assignments(
