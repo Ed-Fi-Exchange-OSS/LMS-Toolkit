@@ -29,6 +29,11 @@ ALTER TABLE lms.Assignment ADD CONSTRAINT Assignment_DF_CreateDate DEFAULT (getd
 ALTER TABLE lms.Assignment ADD CONSTRAINT Assignment_DF_LastModifiedDate DEFAULT (getdate()) FOR LastModifiedDate;
 ALTER TABLE lms.Assignment ADD CONSTRAINT Assignment_UK_SourceSystem UNIQUE (SourceSystemIdentifier, SourceSystem);
 
+ALTER TABLE lms.Assignment WITH CHECK ADD CONSTRAINT FK_Assignment_LMSSection FOREIGN KEY (LMSSectionIdentifier)
+REFERENCES lms.LMSSection (LMSSectionIdentifier)
+ON DELETE CASCADE;
+
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Course work assigned to students enrolled in a section.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the assignment.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier';
@@ -66,3 +71,44 @@ CREATE TABLE lms.stg_Assignment (
 ) ON [PRIMARY];
 
 CREATE INDEX IX_stg_Assignment_Natural_Key ON lms.stg_Assignment (SourceSystemIdentifier, SourceSystem, LastModifiedDate);
+
+
+-- Table lms.AssignmentSubmissionType --
+
+CREATE TABLE lms.AssignmentSubmissionType (
+    AssignmentIdentifier INT NOT NULL,
+    SubmissionType NVARCHAR(60) NOT NULL,
+    CreateDate DATETIME2 NOT NULL,
+    CONSTRAINT AssignmentSubmissionType_PK PRIMARY KEY CLUSTERED (
+        AssignmentIdentifier ASC,
+        SubmissionType ASC
+    ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY];
+
+ALTER TABLE lms.AssignmentSubmissionType ADD CONSTRAINT AssignmentSubmissionType_DF_CreateDate DEFAULT (getdate()) FOR CreateDate;
+
+
+ALTER TABLE lms.AssignmentSubmissionType WITH CHECK ADD CONSTRAINT FK_AssignmentSubmissionType_Assignment FOREIGN KEY (AssignmentIdentifier)
+REFERENCES lms.Assignment (AssignmentIdentifier)
+ON DELETE CASCADE;
+
+CREATE NONCLUSTERED INDEX FK_AssignmentSubmissionType_Assignment
+ON lms.AssignmentSubmissionType (AssignmentIdentifier ASC);
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type(s) of submissions available for the assignment.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType';
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the assignment.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier';
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type(s) of submissions available for the assignment.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType', @level2type=N'COLUMN', @level2name=N'SubmissionType';
+
+
+CREATE TABLE lms.stg_AssignmentSubmissionType (
+    StagingId INT NOT NULL IDENTITY,
+    AssignmentSourceSystemIdentifier NVARCHAR(255) NOT NULL,
+    AssignmentSourceSystem NVARCHAR(255) NOT NULL,
+    SubmissionType NVARCHAR(60) NOT NULL,
+    CreateDate DATETIME2 NOT NULL,
+    CONSTRAINT stg_AssignmentSubmissionType_PK PRIMARY KEY CLUSTERED (
+        StagingId ASC
+    ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY];
+
+CREATE INDEX IX_stg_AssignmentSubmissionType_Natural_Key ON lms.stg_AssignmentSubmissionType (AssignmentSourceSystemIdentifier, AssignmentSourceSystem);
