@@ -17,6 +17,7 @@ from tests.data_generation.discussions import (
 )
 from tests.data_generation.assignments import (
     generate_and_load_assignments,
+    generate_extra_assignments_without_enrollments,
     rollback_loaded_assignments,
 )
 from tests.data_generation.enrollments import (
@@ -88,7 +89,6 @@ try:
 except Exception as ex:
     logger.exception(ex)
 
-
 NUMBER_OF_USERS_PER_SECTION = 3
 enrollments = {}
 try:
@@ -139,7 +139,7 @@ except Exception as ex:
     logger.exception(ex)
 
 
-# **** Rollback section from here to end of file. Comment out to prevent rollbacks.
+**** Rollback section from here to end of file. Comment out to prevent rollbacks.
 
 try:
     rollback_loaded_discussion_comments(request_client, discussion_comments)
@@ -181,3 +181,28 @@ try:
     rollback_loaded_users(request_client, users)
 except Exception as ex:
     logger.exception(ex)
+
+
+"""
+The following block of code was used to generate additional assignments for
+every section.
+"""
+#
+# courses = request_client.get_courses(200)
+#
+# sections = []
+# for c in courses.get_all_pages():
+#     section_page = request_client.get_section_by_course_id(c['id'], 200)
+#     sections += section_page.get_all_pages()
+#
+# assignments = {}
+# try:
+#     assignments = generate_extra_assignments_without_enrollments(
+#         request_client,
+#         sections
+#     )
+# except Exception as ex:
+#     logger.exception(ex)
+"""
+END
+"""
