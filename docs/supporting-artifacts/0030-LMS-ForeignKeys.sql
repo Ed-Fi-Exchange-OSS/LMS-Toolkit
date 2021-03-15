@@ -1,3 +1,8 @@
+-- SPDX-License-Identifier: Apache-2.0
+-- Licensed to the Ed-Fi Alliance under one or more agreements.
+-- The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+-- See the LICENSE and NOTICES files in the project root for more information.
+
 ALTER TABLE [lms].[Assignment] WITH CHECK ADD CONSTRAINT [FK_Assignment_LMSSection] FOREIGN KEY ([LMSSectionIdentifier])
 REFERENCES [lms].[LMSSection] ([LMSSectionIdentifier])
 GO
