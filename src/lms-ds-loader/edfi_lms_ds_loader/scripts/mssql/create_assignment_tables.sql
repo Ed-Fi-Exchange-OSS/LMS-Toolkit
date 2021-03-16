@@ -79,6 +79,7 @@ CREATE TABLE lms.AssignmentSubmissionType (
     AssignmentIdentifier INT NOT NULL,
     SubmissionType NVARCHAR(60) NOT NULL,
     CreateDate DATETIME2 NOT NULL,
+    DeletedAt DATETIME2(7) NULL,
     CONSTRAINT AssignmentSubmissionType_PK PRIMARY KEY CLUSTERED (
         AssignmentIdentifier ASC,
         SubmissionType ASC
