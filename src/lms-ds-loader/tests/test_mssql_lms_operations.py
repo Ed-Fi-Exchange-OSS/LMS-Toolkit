@@ -11,14 +11,14 @@ import pandas as pd
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
-def describe_when_truncating_staging_table():
-    def describe_given_invalid_input():
-        def it_raises_an_error():
+def describe_when_truncating_staging_table() -> None:
+    def describe_given_invalid_input() -> None:
+        def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).truncate_staging_table("   ")
 
-    def describe_given_valid_input():
-        def it_should_issue_truncate_statement(mocker):
+    def describe_given_valid_input() -> None:
+        def it_should_issue_truncate_statement(mocker) -> None:
             table = "user"
             expected = "truncate table lms.[stg_user];"
 
@@ -35,14 +35,14 @@ def describe_when_truncating_staging_table():
             exec_mock.assert_called_with(expected)
 
 
-def describe_when_disabling_natural_key_index():
-    def describe_given_table_name_is_whitespace():
-        def it_raises_an_error():
+def describe_when_disabling_natural_key_index() -> None:
+    def describe_given_table_name_is_whitespace() -> None:
+        def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).disable_staging_natural_key_index("   ")
 
-    def describe_given_valid_input():
-        def it_issues_truncate_statement(mocker):
+    def describe_given_valid_input() -> None:
+        def it_issues_truncate_statement(mocker) -> None:
             table = "user"
             expected = (
                 "alter index [ix_stg_user_natural_key] on lms.[stg_user] disable;"
@@ -60,14 +60,14 @@ def describe_when_disabling_natural_key_index():
             exec_mock.assert_called_with(expected)
 
 
-def describe_when_enabling_natural_key_index():
-    def describe_given_table_name_is_whitespace():
-        def it_raises_an_error():
+def describe_when_enabling_natural_key_index() -> None:
+    def describe_given_table_name_is_whitespace() -> None:
+        def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).enable_staging_natural_key_index("   ")
 
-    def describe_given_valid_input():
-        def it_issues_alter__index_statement(mocker):
+    def describe_given_valid_input() -> None:
+        def it_issues_alter__index_statement(mocker) -> None:
             table = "user"
             expected = (
                 "alter index [ix_stg_user_natural_key] on lms.[stg_user] rebuild;"
@@ -85,21 +85,21 @@ def describe_when_enabling_natural_key_index():
             exec_mock.assert_called_with(expected)
 
 
-def describe_when_inserting_new_records():
-    def describe_given_table_is_whitespace():
-        def it_raises_an_error():
+def describe_when_inserting_new_records() -> None:
+    def describe_given_table_is_whitespace() -> None:
+        def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).insert_new_records_to_production("   ", ["a"])
 
-    def describe_given_columns_is_an_empty_list():
-        def it_raises_an_error():
+    def describe_given_columns_is_an_empty_list() -> None:
+        def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).insert_new_records_to_production(
                     "table", list()
                 )
 
-    def describe_given_valid_input():
-        def it_issues_insert_where_not_exists_statement(mocker):
+    def describe_given_valid_input() -> None:
+        def it_issues_insert_where_not_exists_statement(mocker) -> None:
             columns = ["a", "b"]
             table = "tbl"
             expected = """
@@ -124,16 +124,16 @@ where not exists (
             exec_mock.assert_called_with(expected)
 
 
-def describe_when_inserting_into_staging():
-    def describe_given_table_is_whitespace():
-        def it_raises_an_error():
+def describe_when_inserting_into_staging() -> None:
+    def describe_given_table_is_whitespace() -> None:
+        def it_raises_an_error() -> None:
             df = pd.DataFrame()
 
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).insert_into_staging(df, "   ")
 
-    def describe_given_valid_arguments():
-        def it_then_use_pandas_to_load_into_the_db(mocker):
+    def describe_given_valid_arguments() -> None:
+        def it_then_use_pandas_to_load_into_the_db(mocker) -> None:
             table = "aaa"
             staging_table = "stg_aaa"
             df = Mock(spec=pd.DataFrame)
@@ -155,19 +155,19 @@ def describe_when_inserting_into_staging():
             )
 
 
-def describe_when_updating_records():
-    def describe_given_table_is_whitespace():
-        def it_raises_an_error():
+def describe_when_updating_records() -> None:
+    def describe_given_table_is_whitespace() -> None:
+        def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).copy_updates_to_production("   ", ["a"])
 
-    def describe_give_columns_is_empty_list():
-        def it_raises_an_error():
+    def describe_give_columns_is_empty_list() -> None:
+        def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).copy_updates_to_production("t", list())
 
-    def describe_given_valid_input():
-        def it_issues_insert_where_not_exists_statement(mocker):
+    def describe_given_valid_input() -> None:
+        def it_issues_insert_where_not_exists_statement(mocker) -> None:
             columns = ["a", "b"]
             table = "tbl"
             expected = """
@@ -190,14 +190,14 @@ and t.lastmodifieddate <> stg.lastmodifieddate
             exec_mock.assert_called_with(expected)
 
 
-def describe_when_soft_deleting_a_record():
-    def describe_given_table_is_whitespace():
-        def it_raises_an_error():
+def describe_when_soft_deleting_a_record() -> None:
+    def describe_given_table_is_whitespace() -> None:
+        def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
                 MssqlLmsOperations(Mock()).soft_delete_from_production("   ", "a")
 
-    def describe_given_valid_input():
-        def it_updates_records_that_are_not_in_the_staging_table(mocker):
+    def describe_given_valid_input() -> None:
+        def it_updates_records_that_are_not_in_the_staging_table(mocker) -> None:
 
             table = "tbl"
             expected = """
@@ -221,7 +221,7 @@ and t.sourceSystem = 'Schoology'"""
             exec_mock.assert_called_with(expected)
 
 
-def describe_given_assignment_submission_types():
+def describe_given_assignment_submission_types() -> None:
     def describe_when_inserting_new_records() -> None:
         def it_issues_insert_statement(mocker) -> None:
             # Arrange

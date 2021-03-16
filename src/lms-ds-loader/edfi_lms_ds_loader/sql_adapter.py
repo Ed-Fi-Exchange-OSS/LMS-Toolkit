@@ -25,7 +25,7 @@ def execute_transaction(
 
         session.commit()
 
-        return response
+        return sa_Result(response)
     except ProgrammingError:
         session.rollback()
         raise
@@ -50,7 +50,7 @@ def execute_statements(engine: sa_Engine, statements: List[str]) -> None:
 
 def get_int(engine: sa_Engine, statement: str) -> int:
     def __callback(session: sa_Session) -> sa_Result:
-        return session.execute(statement).scalar()
+        return sa_Result(session.execute(statement).scalar())
 
     result = execute_transaction(engine, __callback)
 

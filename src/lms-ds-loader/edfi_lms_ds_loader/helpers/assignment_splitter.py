@@ -9,7 +9,7 @@ from typing import List, Tuple
 import pandas as pd
 
 
-def _splitter(text) -> List[str]:
+def _splitter(text: str) -> List[str]:
     # This regex looks for things like "a" and "b" in
     # `['a', 'b']`.
     return re.findall("'([^']+)'", text)

@@ -39,12 +39,12 @@ class MssqlLmsOperations:
         assert statement.strip() != "", "Argument `statement` cannot be whitespace"
 
         def __callback(session: sa_Session) -> sa_Result:
-            return session.execute(statement)
+            return sa_Result(session.execute(statement))
 
         result = execute_transaction(self.engine, __callback)
 
         if result:
-            return int(result.row_count)
+            return int(result.rowcount)
 
         return 0
 

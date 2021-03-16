@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from io import StringIO
+from typing import Tuple
 
 import pandas as pd
 import pytest
@@ -11,9 +12,9 @@ import pytest
 from edfi_lms_ds_loader.helpers.assignment_splitter import split
 
 
-def describe_given_two_assignments_with_variable_number_submission_types():
+def describe_given_two_assignments_with_variable_number_submission_types() -> None:
     @pytest.fixture
-    def when_splitting_the_assignments():
+    def when_splitting_the_assignments() -> Tuple[pd.DataFrame, pd.DataFrame]:
         # Arrange
         data = StringIO(
             """LMSSectionIdentifier,SourceSystemIdentifier,SubmissionType,SourceSystem
@@ -30,14 +31,14 @@ def describe_given_two_assignments_with_variable_number_submission_types():
 
     def it_should_remove_SubmissionType_from_the_assignments_DataFrame(
         when_splitting_the_assignments,
-    ):
+    ) -> None:
         df, _ = when_splitting_the_assignments
 
         assert "SubmissionType" not in list(df.columns)
 
     def it_should_preserve_other_columns_and_values_in_assignments_DataFrame(
         when_splitting_the_assignments,
-    ):
+    ) -> None:
         df, _ = when_splitting_the_assignments
 
         # Testing one row seems sufficient
@@ -51,7 +52,7 @@ def describe_given_two_assignments_with_variable_number_submission_types():
 
     def it_should_map_111_online_text_entry_to_submission_types(
         when_splitting_the_assignments,
-    ):
+    ) -> None:
         _, df = when_splitting_the_assignments
 
         mask = (
@@ -64,7 +65,7 @@ def describe_given_two_assignments_with_variable_number_submission_types():
 
     def it_should_map_111_online_upload_to_submission_types(
         when_splitting_the_assignments,
-    ):
+    ) -> None:
         _, df = when_splitting_the_assignments
 
         mask = (
@@ -77,7 +78,7 @@ def describe_given_two_assignments_with_variable_number_submission_types():
 
     def it_should_map_112_online_upload_to_submission_types(
         when_splitting_the_assignments,
-    ):
+    ) -> None:
         _, df = when_splitting_the_assignments
 
         mask = (
@@ -89,9 +90,9 @@ def describe_given_two_assignments_with_variable_number_submission_types():
         assert df[mask].shape[0] == 1
 
 
-def describe_given_one_assignment_with_one_submission_types():
+def describe_given_one_assignment_with_one_submission_types() -> None:
     @pytest.fixture
-    def when_splitting_the_assignments():
+    def when_splitting_the_assignments() -> Tuple[pd.DataFrame, pd.DataFrame]:
         # Arrange
         data = StringIO(
             """LMSSectionIdentifier,SourceSystemIdentifier,SubmissionType,SourceSystem
@@ -107,7 +108,7 @@ def describe_given_one_assignment_with_one_submission_types():
 
     def it_should_map_112_online_upload_to_submission_types(
         when_splitting_the_assignments,
-    ):
+    ) -> None:
         _, df = when_splitting_the_assignments
 
         mask = (
@@ -119,9 +120,9 @@ def describe_given_one_assignment_with_one_submission_types():
         assert df[mask].shape[0] == 1
 
 
-def describe_given_there_are_no_assignments():
+def describe_given_there_are_no_assignments() -> None:
     @pytest.fixture
-    def when_splitting_the_assignments():
+    def when_splitting_the_assignments() -> Tuple[pd.DataFrame, pd.DataFrame]:
         # Arrange
         assignments_df = pd.DataFrame()
 
@@ -130,14 +131,14 @@ def describe_given_there_are_no_assignments():
 
         return assignments_df, submission_types_df
 
-    def it_should_create_empty_assignments_DataFrame(when_splitting_the_assignments):
+    def it_should_create_empty_assignments_DataFrame(when_splitting_the_assignments) -> None:
         df, _ = when_splitting_the_assignments
 
         assert df.empty
 
     def it_should_create_empty_submission_types_DataFrame(
         when_splitting_the_assignments,
-    ):
+    ) -> None:
         _, df = when_splitting_the_assignments
 
         assert df.empty

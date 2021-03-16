@@ -14,8 +14,8 @@ from edfi_lms_ds_loader.helpers.argparser import MainArguments
 from edfi_lms_ds_loader.loader_facade import run_loader
 
 
-def describe_when_uploading_extractor_files():
-    def describe_given_no_errors_occur():
+def describe_when_uploading_extractor_files() -> None:
+    def describe_given_no_errors_occur() -> None:
         @pytest.fixture
         def fixture(mocker) -> Tuple[Dict[str, MagicMock], Dict[str, pd.DataFrame]]:
             # Arrange
@@ -105,8 +105,8 @@ def describe_when_uploading_extractor_files():
                 mocks["get_db_operations_adapter"], dfs["assignments"]
             )
 
-    def describe_given_users_file_read_fails():
-        def it_bubbles_up_the_error(mocker):
+    def describe_given_users_file_read_fails() -> None:
+        def it_bubbles_up_the_error(mocker) -> None:
             # Arrange
             args_mock = MagicMock(spec=MainArguments)
             db_engine_mock = Mock()
@@ -120,7 +120,7 @@ def describe_when_uploading_extractor_files():
             migrator_mock = MagicMock(spec=migrator.migrate)
             mocker.patch("edfi_lms_ds_loader.migrator.migrate", migrator_mock)
 
-            def __raise(csv_path):
+            def __raise(csv_path) -> None:
                 raise Exception("bad things")
 
             mocker.patch(
