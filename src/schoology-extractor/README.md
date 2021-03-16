@@ -8,7 +8,7 @@ output files, please see the main repository
 
 ## Special Notes About Working With Schoology
 
-**Assignments*: the Schoology API appears to have a bug, not returning an assignment's 
+**Assignments**: the Schoology API appears to have a bug, not returning an assignment's 
 full text description. The field is in the data model, but will never be populated by
 the Schoology Extractor unless and until Schoology fixes the bug.
 
