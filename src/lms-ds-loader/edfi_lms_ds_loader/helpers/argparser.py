@@ -184,7 +184,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     # This parameter doesn't work right when used from a .env file,
     # so adding a manual override
     integrated_env_var = os.getenv("USE_INTEGRATED_SECURITY")
-    if integrated_env_var.lower() in ("true", "yes", "t", "y"):
+    if integrated_env_var and integrated_env_var.lower() in ("true", "yes", "t", "y"):
         user_name_required = False
 
     parser.add(  # type: ignore
