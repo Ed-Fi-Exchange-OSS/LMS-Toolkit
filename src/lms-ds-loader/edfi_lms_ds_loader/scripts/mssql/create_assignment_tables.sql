@@ -9,7 +9,7 @@ CREATE TABLE lms.Assignment (
     SourceSystem NVARCHAR(255) NOT NULL,
     LMSSectionIdentifier INT NOT NULL,
     Title NVARCHAR(255) NOT NULL,
-    AssignmentCategory NVARCHAR(60) NOT NULL,
+    AssignmentCategory NVARCHAR(60) NULL,
     AssignmentDescription NVARCHAR(1024) NULL,
     StartDateTime DATETIME2(7) NULL,
     EndDateTime DATETIME2(7) NULL,
@@ -55,7 +55,7 @@ CREATE TABLE lms.stg_Assignment (
     SourceSystem NVARCHAR(255) NOT NULL,
     LMSSectionIdentifier INT NOT NULL,
     Title NVARCHAR(255) NOT NULL,
-    AssignmentCategory NVARCHAR(60) NOT NULL,
+    AssignmentCategory NVARCHAR(60) NULL,
     AssignmentDescription NVARCHAR(1024) NULL,
     StartDateTime DATETIME2(7) NULL,
     EndDateTime DATETIME2(7) NULL,
@@ -102,8 +102,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type(s) of
 
 CREATE TABLE lms.stg_AssignmentSubmissionType (
     StagingId INT NOT NULL IDENTITY,
-    AssignmentSourceSystemIdentifier NVARCHAR(255) NOT NULL,
-    AssignmentSourceSystem NVARCHAR(255) NOT NULL,
+    SourceSystemIdentifier NVARCHAR(255) NOT NULL,
+    SourceSystem NVARCHAR(255) NOT NULL,
     SubmissionType NVARCHAR(60) NOT NULL,
     CreateDate DATETIME2 NOT NULL,
     CONSTRAINT stg_AssignmentSubmissionType_PK PRIMARY KEY CLUSTERED (
@@ -111,4 +111,4 @@ CREATE TABLE lms.stg_AssignmentSubmissionType (
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY];
 
-CREATE INDEX IX_stg_AssignmentSubmissionType_Natural_Key ON lms.stg_AssignmentSubmissionType (AssignmentSourceSystemIdentifier, AssignmentSourceSystem);
+CREATE INDEX IX_stg_AssignmentSubmissionType_Natural_Key ON lms.stg_AssignmentSubmissionType (SourceSystemIdentifier, SourceSystem);
