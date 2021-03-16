@@ -11,6 +11,7 @@ from sqlalchemy.engine.result import ResultProxy as sa_Result
 from sqlalchemy.engine import Engine as sa_Engine
 from sqlalchemy.orm import Session as sa_Session
 
+from edfi_lms_ds_loader.helpers.constants import Table
 from edfi_lms_ds_loader.sql_adapter import execute_transaction
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ class MssqlLmsOperations:
         result = execute_transaction(self.engine, __callback)
 
         if result:
-            return int(result.rowcount)
+            return int(result.row_count)
 
         return 0
 
@@ -149,8 +150,8 @@ where not exists (
 )
 """.strip()
 
-        rowcount = self._exec(statement)
-        logger.debug(f"Inserted {rowcount} records into table `{table}`.")
+        row_count = self._exec(statement)
+        logger.debug(f"Inserted {row_count} records into table `{table}`.")
 
     def copy_updates_to_production(self, table: str, columns: List[str]) -> None:
         """
@@ -179,8 +180,8 @@ and t.sourcesystemidentifier = stg.sourcesystemidentifier
 and t.lastmodifieddate <> stg.lastmodifieddate
 """.strip()
 
-        rowcount = self._exec(statement)
-        logger.debug(f"Updated {rowcount} records in table `{table}`.")
+        row_count = self._exec(statement)
+        logger.debug(f"Updated {row_count} records in table `{table}`.")
 
     def soft_delete_from_production(self, table: str, sourceSystem: str) -> None:
         """
@@ -208,5 +209,78 @@ and t.sourcesystem = stg.sourcesystem
 and t.sourceSystem = '{sourceSystem}'
 """.strip()
 
-        rowcount = self._exec(statement)
-        logger.debug(f"Soft-deleted {rowcount} records in table `{table}`")
+        row_count = self._exec(statement)
+        logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
+
+    INSERT_SUBMISSION_TYPES = """
+INSERT INTO lms.AssignmentSubmissionType (
+    AssignmentIdentifier,
+    SubmissionType
+)
+SELECT
+    Assignment.AssignmentIdentifier,
+    stg_AssignmentSubmissionType.SubmissionType
+FROM
+        lms.stg_AssignmentSubmissionType
+    INNER JOIN
+        lms.Assignment
+    ON
+        stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
+    AND
+        stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            lms.AssignmentSubmissionType
+        WHERE
+            AssignmentIdentifier = Assignment.AssignmentIdentifier
+        AND
+            SubmissionType = stg_AssignmentSubmissionType.SubmissionType
+    )
+"""
+
+    def insert_new_submission_types(self) -> None:
+        """
+        Inserts new Assignment Submission Type records from staging table
+        into the production table.
+        """
+        row_count = self._exec(MssqlLmsOperations.INSERT_SUBMISSION_TYPES)
+        logger.debug(f"Updated {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`.")
+
+    SOFT_DELETE_SUBMISSION_TYPES = """
+UPDATE
+    AssignmentSubmissionType
+SET
+    DeletedAt = GETDATE()
+FROM
+    lms.AssignmentSubmissionType
+INNER JOIN
+    lms.Assignment
+ON
+    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
+WHERE
+    AssignmentSubmissionType.DeletedAt IS NULL
+AND
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            lms.stg_AssignmentSubmissionType
+        WHERE
+            stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
+        AND
+            stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
+        AND
+            stg_AssignmentSubmissionType.SubmissionType = AssignmentSubmissionType.SubmissionType
+    )
+"""
+
+    def soft_delete_removed_submission_types(self) -> None:
+        """
+        Marks existing Assignment Submission Types as "deleted" when they are
+        no longer present in the incoming data.
+        """
+        row_count = self._exec(MssqlLmsOperations.SOFT_DELETE_SUBMISSION_TYPES)
+        logger.debug(f"Soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`.")

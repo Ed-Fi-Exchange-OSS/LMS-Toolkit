@@ -5,7 +5,6 @@
 
 import pytest
 from unittest.mock import Mock
-
 import pandas as pd
 
 
@@ -220,3 +219,27 @@ and t.sourceSystem = 'Schoology'"""
 
             # Assert
             exec_mock.assert_called_with(expected)
+
+
+def describe_given_assignment_submission_types():
+    def describe_when_inserting_new_records() -> None:
+        def it_issues_insert_statement(mocker) -> None:
+            # Arrange
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+
+            # Act
+            MssqlLmsOperations(Mock()).insert_new_submission_types()
+
+            # Assert
+            exec_mock.assert_called_with(MssqlLmsOperations.INSERT_SUBMISSION_TYPES)
+
+    def describe_when_soft_deleting_records() -> None:
+        def it_issues_update_statement(mocker) -> None:
+            # Arrange
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+
+            # Act
+            MssqlLmsOperations(Mock()).soft_delete_removed_submission_types()
+
+            # Assert
+            exec_mock.assert_called_with(MssqlLmsOperations.SOFT_DELETE_SUBMISSION_TYPES)
