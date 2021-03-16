@@ -17,7 +17,7 @@ from tests.data_generation.discussions import (
 )
 from tests.data_generation.assignments import (
     generate_and_load_assignments,
-    generate_extra_assignments_without_enrollments,
+   # generate_extra_assignments_without_enrollments,
     rollback_loaded_assignments,
 )
 from tests.data_generation.enrollments import (
