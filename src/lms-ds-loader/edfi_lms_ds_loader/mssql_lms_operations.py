@@ -62,7 +62,7 @@ class MssqlLmsOperations:
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         # Note: for postgresql we'll want `TRUNCATE TABLE {staging} RESTART IDENTITY`
-        self._exec(f"truncate table lms.[stg_{table}];")
+        self._exec(f"TRUNCATE TABLE lms.stg_{table};")
 
     def disable_staging_natural_key_index(self, table: str) -> None:
         """
@@ -78,7 +78,7 @@ class MssqlLmsOperations:
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         self._exec(
-            f"alter index [ix_stg_{table}_natural_key] on lms.[stg_{table}] disable;"
+            f"ALTER INDEX IX_stg_{table}_Natural_Key on lms.stg_{table} DISABLE;"
         )
 
     def enable_staging_natural_key_index(self, table: str) -> None:
@@ -94,7 +94,7 @@ class MssqlLmsOperations:
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         self._exec(
-            f"alter index [ix_stg_{table}_natural_key] on lms.[stg_{table}] rebuild;"
+            f"ALTER INDEX IX_stg_{table}_Natural_Key on lms.stg_{table} REBUILD;"
         )
 
     def insert_into_staging(self, df: pd.DataFrame, table: str) -> None:
@@ -138,18 +138,88 @@ class MssqlLmsOperations:
         assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
-        column_string = ", ".join([f"[{c}]" for c in columns])
+        column_string = ",".join([f"\n    {c}" for c in columns])
 
         statement = f"""
-insert into lms.[{table}] ( {column_string} )
-select {column_string}
-from lms.stg_{table} as stg
-where not exists (
-  select 1 from lms.[{table}]
-  where sourcesystemidentifier = stg.sourcesystemidentifier
-  and sourcesystem = stg.sourcesystem
+INSERT INTO
+    lms.{table}
+({column_string}
 )
-""".strip()
+SELECT{column_string}
+FROM
+    lms.stg_{table} as stg
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            lms.{table}
+        WHERE
+            SourceSystemIdentifier = stg.SourceSystemIdentifier
+        AND
+            SourceSystem = stg.SourceSystem
+    )
+"""
+
+        row_count = self._exec(statement)
+        logger.debug(f"Inserted {row_count} records into table `{table}`.")
+
+    def insert_new_records_to_production_for_section(
+        self, table: str, columns: List[str]
+    ) -> None:
+        """
+        Copies new records from the staging table to the production table. Specialized
+        for tables that have a foreign key to LMSSection.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to truncate, not including the `stg_` prefix
+        columns: List[str]
+            A list of the column names in the table
+        """
+
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+        assert len(columns) > 0, "Argument `columns` cannot be empty"
+
+        insert_columns = ",".join(
+            [f"\n    {c}" for c in columns if c != "LMSSectionSourceSystemIdentifier"]
+        )
+        select_columns = ",".join(
+            [
+                f"\n    stg.{c}"
+                for c in columns
+                if c != "LMSSectionSourceSystemIdentifier"
+            ]
+        )
+
+        statement = f"""
+INSERT INTO
+    lms.{table}
+(
+    LMSSectionIdentifier,{insert_columns}
+)
+SELECT
+    LMSSection.LMSSectionIdentifier,{select_columns}
+FROM
+    lms.stg_{table} as stg
+INNER JOIN
+    lms.LMSSection
+ON
+    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSSection.SourceSystem
+WHERE NOT EXISTS (
+  SELECT
+    1
+  FROM
+    lms.{table}
+  WHERE
+    SourceSystemIdentifier = stg.SourceSystemIdentifier
+  AND
+    SourceSystem = stg.SourceSystem
+)
+"""
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -170,16 +240,33 @@ where not exists (
         assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
-        column_string = ", ".join([f"t.[{c}] = stg.[{c}]" for c in columns])
+        update_columns = ",".join(
+            [
+                f"\n    {c} = stg.{c}"
+                for c in columns
+                if c
+                not in (
+                    "SourceSystem",
+                    "SourceSystemIdentifier",
+                )
+            ]
+        )
 
         statement = f"""
-update t set {column_string}
-from lms.[{table}] as t
-inner join lms.stg_{table} as stg
-on t.sourcesystem = stg.sourcesystem
-and t.sourcesystemidentifier = stg.sourcesystemidentifier
-and t.lastmodifieddate <> stg.lastmodifieddate
-""".strip()
+UPDATE
+    t
+SET{update_columns}
+FROM
+    lms.{table} as t
+INNER JOIN
+    lms.stg_{table} as stg
+ON
+    t.SourceSystem = stg.SourceSystem
+AND
+    t.SourceSystemIdentifier = stg.SourceSystemIdentifier
+AND
+    t.LastModifiedDate <> stg.LastModifiedDate
+"""
 
         row_count = self._exec(statement)
         logger.debug(f"Updated {row_count} records in table `{table}`.")
@@ -200,20 +287,39 @@ and t.lastmodifieddate <> stg.lastmodifieddate
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
         statement = f"""
-update t set t.deletedat = getdate()
-from lms.[{table}] as t
-where not exists (
-select 1 from lms.stg_{table} as stg
-where t.sourcesystemidentifier = stg.sourcesystemidentifier
-and t.sourcesystem = stg.sourcesystem
-) and deletedat is null
-and t.sourceSystem = '{sourceSystem}'
-""".strip()
+UPDATE
+    t
+SET
+    t.DeletedAt = getdate()
+FROM
+    lms.{table} as t
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            lms.stg_{table} as stg
+        WHERE
+            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
+        AND
+            t.SourceSystem = stg.SourceSystem
+    )
+AND
+    t.DeletedAt IS NULL
+AND
+    t.SourceSystem = '{sourceSystem}'
+"""
 
         row_count = self._exec(statement)
         logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
 
-    INSERT_SUBMISSION_TYPES = """
+    def insert_new_submission_types(self) -> None:
+        """
+        Inserts new Assignment Submission Type records from staging table
+        into the production table.
+        """
+
+        statement = """
 INSERT INTO lms.AssignmentSubmissionType (
     AssignmentIdentifier,
     SubmissionType
@@ -242,17 +348,23 @@ WHERE
     )
 """
 
-    def insert_new_submission_types(self) -> None:
-        """
-        Inserts new Assignment Submission Type records from staging table
-        into the production table.
-        """
-        row_count = self._exec(MssqlLmsOperations.INSERT_SUBMISSION_TYPES)
+        row_count = self._exec(statement)
         logger.debug(
             f"Updated {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
         )
 
-    SOFT_DELETE_SUBMISSION_TYPES = """
+    def soft_delete_removed_submission_types(self, source_system: str) -> None:
+        """
+        Marks existing Assignment Submission Types as "deleted" when they are
+        no longer present in the incoming data.
+
+        Parameters
+        ----------
+        source_system: str
+            The name of the source system for the current import process.
+        """
+
+        statement = f"""
 UPDATE
     AssignmentSubmissionType
 SET
@@ -266,7 +378,7 @@ ON
 WHERE
     AssignmentSubmissionType.DeletedAt IS NULL
 AND
-    AssignmentSubmissionType.SourceSystem = {}
+    AssignmentSubmissionType.SourceSystem = {source_system}
 AND
     NOT EXISTS (
         SELECT
@@ -281,19 +393,6 @@ AND
             stg_AssignmentSubmissionType.SubmissionType = AssignmentSubmissionType.SubmissionType
     )
 """
-
-    def soft_delete_removed_submission_types(self, source_system: str) -> None:
-        """
-        Marks existing Assignment Submission Types as "deleted" when they are
-        no longer present in the incoming data.
-
-        Parameters
-        ----------
-        source_system: str
-            The name of the source system for the current import process.
-        """
-
-        statement = self.SOFT_DELETE_SUBMISSION_TYPES.format(source_system)
         row_count = self._exec(statement)
         logger.debug(
             f"Soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
