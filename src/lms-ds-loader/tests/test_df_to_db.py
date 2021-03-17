@@ -74,7 +74,9 @@ def describe_given_assignment_submission_types() -> None:
         assignments_df = pd.DataFrame(
             [{"SourceSystem": SOURCE_SYSTEM, "AssignmentDescription": description}]
         )
-        submissions_df = pd.DataFrame([{"SubmissionType": "whatever"}])
+        submissions_df = pd.DataFrame(
+            [{"SubmissionType": "whatever", "SourceSystem": SOURCE_SYSTEM}]
+        )
         response = (assignments_df, submissions_df)
         mocker.patch(
             "edfi_lms_ds_loader.helpers.assignment_splitter.split",

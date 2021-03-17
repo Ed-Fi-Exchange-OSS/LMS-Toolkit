@@ -52,9 +52,7 @@ def describe_when_disabling_natural_key_index() -> None:
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).disable_staging_natural_key_index(
-                table
-            )
+            MssqlLmsOperations(Mock()).disable_staging_natural_key_index(table)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -77,9 +75,7 @@ def describe_when_enabling_natural_key_index() -> None:
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).enable_staging_natural_key_index(
-                table
-            )
+            MssqlLmsOperations(Mock()).enable_staging_natural_key_index(table)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -89,7 +85,9 @@ def describe_when_inserting_new_records() -> None:
     def describe_given_table_is_whitespace() -> None:
         def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
-                MssqlLmsOperations(Mock()).insert_new_records_to_production("   ", ["a"])
+                MssqlLmsOperations(Mock()).insert_new_records_to_production(
+                    "   ", ["a"]
+                )
 
     def describe_given_columns_is_an_empty_list() -> None:
         def it_raises_an_error() -> None:
@@ -151,7 +149,7 @@ def describe_when_inserting_into_staging() -> None:
                 if_exists="append",
                 index=False,
                 method="multi",
-                chunksize=190
+                chunksize=190,
             )
 
 
@@ -238,8 +236,15 @@ def describe_given_assignment_submission_types() -> None:
             # Arrange
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
+            source_system = "Canvas"
+            expected = MssqlLmsOperations.SOFT_DELETE_SUBMISSION_TYPES.format(
+                source_system
+            )
+
             # Act
-            MssqlLmsOperations(Mock()).soft_delete_removed_submission_types()
+            MssqlLmsOperations(Mock()).soft_delete_removed_submission_types(
+                source_system
+            )
 
             # Assert
-            exec_mock.assert_called_with(MssqlLmsOperations.SOFT_DELETE_SUBMISSION_TYPES)
+            exec_mock.assert_called_with(expected)

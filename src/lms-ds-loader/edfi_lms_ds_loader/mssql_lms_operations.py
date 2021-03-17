@@ -248,7 +248,9 @@ WHERE
         into the production table.
         """
         row_count = self._exec(MssqlLmsOperations.INSERT_SUBMISSION_TYPES)
-        logger.debug(f"Updated {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`.")
+        logger.debug(
+            f"Updated {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
+        )
 
     SOFT_DELETE_SUBMISSION_TYPES = """
 UPDATE
@@ -264,6 +266,8 @@ ON
 WHERE
     AssignmentSubmissionType.DeletedAt IS NULL
 AND
+    AssignmentSubmissionType.SourceSystem = {}
+AND
     NOT EXISTS (
         SELECT
             1
@@ -278,10 +282,19 @@ AND
     )
 """
 
-    def soft_delete_removed_submission_types(self) -> None:
+    def soft_delete_removed_submission_types(self, source_system: str) -> None:
         """
         Marks existing Assignment Submission Types as "deleted" when they are
         no longer present in the incoming data.
+
+        Parameters
+        ----------
+        source_system: str
+            The name of the source system for the current import process.
         """
-        row_count = self._exec(MssqlLmsOperations.SOFT_DELETE_SUBMISSION_TYPES)
-        logger.debug(f"Soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`.")
+
+        statement = self.SOFT_DELETE_SUBMISSION_TYPES.format(source_system)
+        row_count = self._exec(statement)
+        logger.debug(
+            f"Soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
+        )

@@ -59,7 +59,9 @@ def _upload_assignment_submission_types(
     db_adapter.insert_into_staging(submission_types_df, table)
 
     db_adapter.insert_new_submission_types()
-    db_adapter.soft_delete_removed_submission_types()
+
+    sourceSystem = submission_types_df.iloc[0]["SourceSystem"]
+    db_adapter.soft_delete_removed_submission_types(sourceSystem)
 
     db_adapter.enable_staging_natural_key_index(table)
 
