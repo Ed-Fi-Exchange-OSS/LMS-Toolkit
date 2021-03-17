@@ -14,6 +14,54 @@ from edfi_lms_ds_loader.helpers import assignment_splitter
 logger = logging.getLogger(__name__)
 
 
+def _prepare_staging_table(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) -> None:
+    logger.info(f"Uploading {table} file ...")
+
+    db_adapter.disable_staging_natural_key_index(table)
+    db_adapter.truncate_staging_table(table)
+    db_adapter.insert_into_staging(df, table)
+    db_adapter.enable_staging_natural_key_index(table)
+
+
+def _get_source_system(df: pd.DataFrame) -> str:
+    return df.iloc[0]["SourceSystem"]
+
+
+def _upload_assignments(
+    db_adapter: MssqlLmsOperations, assignments_df: pd.DataFrame
+) -> None:
+
+    TABLE = Table.ASSIGNMENT
+    columns = list(assignments_df.columns)
+
+    # Truncate AssignmentDescription to max 1024 characters, matching the database
+    assignments_df["AssignmentDescription"] = assignments_df["AssignmentDescription"].str[:1024]  # type: ignore
+
+    _prepare_staging_table(db_adapter, assignments_df, TABLE)
+    db_adapter.insert_new_records_to_production_for_section(
+        TABLE,
+        columns
+    )
+    db_adapter.copy_updates_to_production(TABLE, columns)
+    db_adapter.soft_delete_from_production(TABLE, _get_source_system(assignments_df))
+
+    logger.info(f"Done with {TABLE} file.")
+
+
+def _upload_assignment_submission_types(
+    db_adapter: MssqlLmsOperations, submission_types_df: pd.DataFrame
+) -> None:
+    TABLE = Table.ASSIGNMENT_SUBMISSION_TYPES
+
+    _prepare_staging_table(db_adapter, submission_types_df, TABLE)
+
+    db_adapter.insert_new_submission_types()
+
+    db_adapter.soft_delete_removed_submission_types(_get_source_system(submission_types_df))
+
+    logger.info(f"Done with {TABLE} file.")
+
+
 def upload_file(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) -> None:
     """
     Uploads a DataFrame to the designated LMS table.
@@ -28,42 +76,14 @@ def upload_file(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) ->
         The destination table.
     """
 
-    logger.info(f"Uploading {table} file ...")
-
-    db_adapter.disable_staging_natural_key_index(table)
-    db_adapter.truncate_staging_table(table)
-    db_adapter.insert_into_staging(df, table)
+    _prepare_staging_table(db_adapter, df, table)
 
     columns = list(df.columns)
 
     db_adapter.insert_new_records_to_production(table, columns)
     db_adapter.copy_updates_to_production(table, columns)
 
-    sourceSystem = df.iloc[0]["SourceSystem"]
-    db_adapter.soft_delete_from_production(table, sourceSystem)
-
-    db_adapter.enable_staging_natural_key_index(table)
-
-    logger.info(f"Done with {table} file.")
-
-
-def _upload_assignment_submission_types(
-    db_adapter: MssqlLmsOperations, submission_types_df: pd.DataFrame
-) -> None:
-    table = Table.ASSIGNMENT_SUBMISSION_TYPES
-
-    logger.info(f"Uploading {table} file ...")
-
-    db_adapter.disable_staging_natural_key_index(table)
-    db_adapter.truncate_staging_table(table)
-    db_adapter.insert_into_staging(submission_types_df, table)
-
-    db_adapter.insert_new_submission_types()
-
-    sourceSystem = submission_types_df.iloc[0]["SourceSystem"]
-    db_adapter.soft_delete_removed_submission_types(sourceSystem)
-
-    db_adapter.enable_staging_natural_key_index(table)
+    db_adapter.soft_delete_from_production(table, _get_source_system(df))
 
     logger.info(f"Done with {table} file.")
 
@@ -87,12 +107,5 @@ def upload_assignments(
 
     assignments_df, submissions_type_df = assignment_splitter.split(assignments_df)
 
-    # Truncate AssignmentDescription to max 1024 characters, matching the database
-    assignments_df["AssignmentDescription"] = assignments_df["AssignmentDescription"].str[:1024]  # type: ignore
-
-    # Upload the Assignments without SubmissionType
-    upload_file(db_adapter, assignments_df, Table.ASSIGNMENT)
-
-    # Now run a specialized upload for Assignment Submission Types
-    # Table.
+    _upload_assignments(db_adapter, assignments_df)
     _upload_assignment_submission_types(db_adapter, submissions_type_df)
