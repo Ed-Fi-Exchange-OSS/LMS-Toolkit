@@ -12,14 +12,14 @@ import pytest
 from edfi_lms_ds_loader.helpers.assignment_splitter import split
 
 
-def describe_given_two_assignments_with_variable_number_submission_types() -> None:
+def describe_given_two_canvas_assignments_with_variable_number_submission_types() -> None:
     @pytest.fixture
     def when_splitting_the_assignments() -> Tuple[pd.DataFrame, pd.DataFrame]:
         # Arrange
         data = StringIO(
-            """LMSSectionIdentifier,SourceSystemIdentifier,SubmissionType,SourceSystem
-104,111,"['online_text_entry', 'online_upload']",Canvas
-104,112,['online_upload'],Canvas"""
+            """LMSSectionIdentifier,SourceSystemIdentifier,SubmissionType,SourceSystem,CreateDate,LastModifiedDate
+104,111,"['online_text_entry', 'online_upload']",Canvas,2021-03-11,2021-03-12
+104,112,['online_upload'],Canvas,2021-03-13,2021-03-14"""
         )
 
         assignments_df = pd.read_csv(data)
@@ -42,61 +42,59 @@ def describe_given_two_assignments_with_variable_number_submission_types() -> No
         df, _ = when_splitting_the_assignments
 
         # Testing one row seems sufficient
-        mask = (
-            (df["SourceSystemIdentifier"] == 111)
-            & (df["SourceSystem"] == "Canvas")
-            & (df["LMSSectionIdentifier"] == 104)
-        )
+        row = df.iloc[0]
 
-        assert df[mask].shape[0] == 1
+        assert row["SourceSystemIdentifier"] == 111
+        assert row["SourceSystem"] == "Canvas"
+        assert row["LMSSectionIdentifier"] == 104
+        assert row["CreateDate"] == "2021-03-11"
+        assert row["LastModifiedDate"] == "2021-03-12"
 
     def it_should_map_111_online_text_entry_to_submission_types(
         when_splitting_the_assignments,
     ) -> None:
         _, df = when_splitting_the_assignments
 
-        mask = (
-            (df["SourceSystemIdentifier"] == 111)
-            & (df["SourceSystem"] == "Canvas")
-            & (df["SubmissionType"] == "online_text_entry")
-        )
+        row = df.iloc[0]
 
-        assert df[mask].shape[0] == 1
+        assert row["SourceSystemIdentifier"] == 111
+        assert row["SourceSystem"] == "Canvas"
+        assert row["SubmissionType"] == "online_text_entry"
+        assert row["CreateDate"] == "2021-03-11"
 
     def it_should_map_111_online_upload_to_submission_types(
         when_splitting_the_assignments,
     ) -> None:
         _, df = when_splitting_the_assignments
 
-        mask = (
-            (df["SourceSystemIdentifier"] == 111)
-            & (df["SourceSystem"] == "Canvas")
-            & (df["SubmissionType"] == "online_upload")
-        )
-
-        assert df[mask].shape[0] == 1
+        # NOTE: keep an eye on this, not sure that the row numbers are actually
+        # deterministic. If this fails then we'll need to change to lookup the
+        # row with a filter, instead of assuming the row number.
+        row = df.iloc[2]
+        assert row["SourceSystemIdentifier"] == 111
+        assert row["SourceSystem"] == "Canvas"
+        assert row["SubmissionType"] == "online_upload"
+        assert row["CreateDate"] == "2021-03-11"
 
     def it_should_map_112_online_upload_to_submission_types(
         when_splitting_the_assignments,
     ) -> None:
         _, df = when_splitting_the_assignments
 
-        mask = (
-            (df["SourceSystemIdentifier"] == 112)
-            & (df["SourceSystem"] == "Canvas")
-            & (df["SubmissionType"] == "online_upload")
-        )
-
-        assert df[mask].shape[0] == 1
+        row = df.iloc[1]
+        assert row["SourceSystemIdentifier"] == 112
+        assert row["SourceSystem"] == "Canvas"
+        assert row["SubmissionType"] == "online_upload"
+        assert row["CreateDate"] == "2021-03-13"
 
 
-def describe_given_one_assignment_with_one_submission_types() -> None:
+def describe_given_one_canvas_assignment_with_one_submission_types() -> None:
     @pytest.fixture
     def when_splitting_the_assignments() -> Tuple[pd.DataFrame, pd.DataFrame]:
         # Arrange
         data = StringIO(
-            """LMSSectionIdentifier,SourceSystemIdentifier,SubmissionType,SourceSystem
-104,112,['online_upload'],Canvas"""
+            """LMSSectionIdentifier,SourceSystemIdentifier,SubmissionType,SourceSystem,CreateDate,LastModifiedDate
+104,112,['online_upload'],Canvas,2021-03-11,2021-03-12"""
         )
 
         assignments_df = pd.read_csv(data)
@@ -111,13 +109,12 @@ def describe_given_one_assignment_with_one_submission_types() -> None:
     ) -> None:
         _, df = when_splitting_the_assignments
 
-        mask = (
-            (df["SourceSystemIdentifier"] == 112)
-            & (df["SourceSystem"] == "Canvas")
-            & (df["SubmissionType"] == "online_upload")
-        )
+        row = df.iloc[0]
 
-        assert df[mask].shape[0] == 1
+        assert row["SourceSystemIdentifier"] == 112
+        assert row["SourceSystem"] == "Canvas"
+        assert row["SubmissionType"] == "online_upload"
+        assert row["CreateDate"] == "2021-03-11"
 
 
 def describe_given_there_are_no_assignments() -> None:
@@ -142,3 +139,86 @@ def describe_given_there_are_no_assignments() -> None:
         _, df = when_splitting_the_assignments
 
         assert df.empty
+
+
+def describe_given_one_canvas_assignment_with_no_submission_types() -> None:
+    @pytest.fixture
+    def when_splitting_the_assignments() -> Tuple[pd.DataFrame, pd.DataFrame]:
+        # Arrange
+        data = StringIO(
+            """LMSSectionIdentifier,SourceSystemIdentifier,SubmissionType,SourceSystem,CreateDate,LastModifiedDate
+104,112,,Canvas,2021-03-11,2021-03-12"""
+        )
+
+        assignments_df = pd.read_csv(data)
+
+        # Act
+        assignments_df, submission_types_df = split(assignments_df)  # type: ignore
+
+        return assignments_df, submission_types_df
+
+    def it_should_preserve_rows_in_Assignment_DataFrame(
+        when_splitting_the_assignments,
+    ) -> None:
+        df, _ = when_splitting_the_assignments
+
+        row = df.iloc[0]
+
+        assert row["SourceSystemIdentifier"] == 112
+        assert row["SourceSystem"] == "Canvas"
+        assert row["LMSSectionIdentifier"] == 104
+        assert row["CreateDate"] == "2021-03-11"
+        assert row["LastModifiedDate"] == "2021-03-12"
+
+    def it_should_return_an_empty_submission_type_DataFrame(when_splitting_the_assignments) -> None:
+        _, df = when_splitting_the_assignments
+
+        assert df.empty
+
+
+def describe_given_one_google_assignment() -> None:
+    @pytest.fixture
+    def when_splitting_the_assignments() -> Tuple[pd.DataFrame, pd.DataFrame]:
+        # Arrange
+        data = StringIO(
+            """LMSSectionIdentifier,SourceSystemIdentifier,SubmissionType,SourceSystem,CreateDate,LastModifiedDate
+104,112,ASSIGNMENT,Google Classroom,2021-03-11,2021-03-12"""
+        )
+
+        assignments_df = pd.read_csv(data)
+
+        # Act
+        assignments_df, submission_types_df = split(assignments_df)  # type: ignore
+
+        return assignments_df, submission_types_df
+
+    def it_should_remove_SubmissionType_from_the_assignments_DataFrame(
+        when_splitting_the_assignments,
+    ) -> None:
+        df, _ = when_splitting_the_assignments
+
+        assert "SubmissionType" not in list(df.columns)
+
+    def it_should_preserve_other_columns_and_values_in_assignments_DataFrame(
+        when_splitting_the_assignments,
+    ) -> None:
+        df, _ = when_splitting_the_assignments
+
+        row = df.iloc[0]
+
+        assert row["SourceSystemIdentifier"] == 112
+        assert row["SourceSystem"] == "Google Classroom"
+        assert row["LMSSectionIdentifier"] == 104
+        assert row["CreateDate"] == "2021-03-11"
+
+    def it_should_map_Assignment_to_submission_types(
+        when_splitting_the_assignments,
+    ) -> None:
+        _, df = when_splitting_the_assignments
+
+        row = df.iloc[0]
+
+        assert row["SourceSystemIdentifier"] == 112
+        assert row["SourceSystem"] == "Google Classroom"
+        assert row["SubmissionType"] == "ASSIGNMENT"
+        assert row["CreateDate"] == "2021-03-11"
