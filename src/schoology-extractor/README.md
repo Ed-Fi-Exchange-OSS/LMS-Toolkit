@@ -8,12 +8,16 @@ output files, please see the main repository
 
 ## Special Notes About Working With Schoology
 
-Special note about _attendance events_: the Schoology API handles _negative
+**Assignments**: the Schoology API appears to have a bug, not returning an assignment's 
+full text description. The field is in the data model, but will never be populated by
+the Schoology Extractor unless and until Schoology fixes the bug.
+
+**Attendance Events**: the Schoology API handles _negative
 attendance_ events: if a student is marked as present, or is not marked at all,
 then the system will not return a record for that day.
 
-System usage (activities) in Schoology are only available by downloading a file
-through the Schoology website. If you wish to track system student use of the
+**System activities**: System usage data in Schoology are only available by downloading
+a file through the Schoology website. If you wish to track system student use of the
 system, then please read [Schoology's instructions on usage
 analytics](https://support.schoology.com/hc/en-us/articles/360036884914-Usage-Analytics-New-School-Analytics-Enterprise-).
 Each downloaded file needs to be stored in an input directory, and that
@@ -21,7 +25,9 @@ directory must be provided to the extractor configuration.
 
 ## Getting Started
 
-1. Download the latest code from [the project homepage](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit) by clicking on the green "CODE" button and choosing an appropriate option. If choosing the Zip option, extract the file contents using your favorite zip tool.
+1. Download the latest code from [the project homepage](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit)
+   by clicking on the green "CODE" button and choosing an appropriate option. If choosing
+   the Zip option, extract the file contents using your favorite zip tool.
 1. Open a command prompt* and change to this file's directory (* e.g. cmd.exe, PowerShell, bash).
 1. Ensure you have [Python 3.8+ and Poetry](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit#getting-started).
 1. At a command prompt, install all required dependencies:

@@ -3,7 +3,7 @@
 This product includes software developed at the [Ed-Fi
 Alliance](https://www.ed-fi.org).
 
-Copyright (c) 2020 Ed-Fi Alliance, LLC and contributors.
+Copyright (c) 2021 Ed-Fi Alliance, LLC and contributors.
 
 This software distribution includes or contains external references to several
 open source packages that are attributed below in this notice. Where required,
@@ -955,67 +955,6 @@ https://github.com/theskumar/python-dotenv
     PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGES.
 
-                END OF TERMS AND CONDITIONS
-
-            How to Apply These Terms to Your New Programs
-
-    If you develop a new program, and you want it to be of the greatest
-    possible use to the public, the best way to achieve this is to make it
-    free software which everyone can redistribute and change under these terms.
-
-    To do so, attach the following notices to the program.  It is safest
-    to attach them to the start of each source file to most effectively
-    convey the exclusion of warranty; and each file should have at least
-    the "copyright" line and a pointer to where the full notice is found.
-
-        <one line to give the program's name and a brief idea of what it does.>
-        Copyright (C) <year>  <name of author>
-
-        This program is free software; you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation; either version 2 of the License, or
-        (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
-
-        You should have received a copy of the GNU General Public License along
-        with this program; if not, write to the Free Software Foundation, Inc.,
-        51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-    Also add information on how to contact you by electronic and paper mail.
-
-    If the program is interactive, make it output a short notice like this
-    when it starts in an interactive mode:
-
-        Gnomovision version 69, Copyright (C) year name of author
-        Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-        This is free software, and you are welcome to redistribute it
-        under certain conditions; type `show c' for details.
-
-    The hypothetical commands `show w' and `show c' should show the appropriate
-    parts of the General Public License.  Of course, the commands you use may
-    be called something other than `show w' and `show c'; they could even be
-    mouse-clicks or menu items--whatever suits your program.
-
-    You should also get your employer (if you work as a programmer) or your
-    school, if any, to sign a "copyright disclaimer" for the program, if
-    necessary.  Here is a sample; alter the names:
-
-    Yoyodyne, Inc., hereby disclaims all copyright interest in the program
-    `Gnomovision' (which makes passes at compilers) written by James Hacker.
-
-    <signature of Ty Coon>, 1 April 1989
-    Ty Coon, President of Vice
-
-    This General Public License does not permit incorporating your program into
-    proprietary programs.  If your program is a subroutine library, you may
-    consider it more useful to permit linking proprietary applications with the
-    library.  If this is what you want to do, use the GNU Lesser General
-    Public License instead of this License.
-
 ## canvasapi
 
 https://github.com/ucfopen/canvasapi
@@ -1528,52 +1467,6 @@ https://github.com/chardet/chardet
     FAILURE OF THE LIBRARY TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
     SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
     DAMAGES.
-
-                END OF TERMS AND CONDITIONS
-
-            How to Apply These Terms to Your New Libraries
-
-    If you develop a new library, and you want it to be of the greatest
-    possible use to the public, we recommend making it free software that
-    everyone can redistribute and change.  You can do so by permitting
-    redistribution under these terms (or, alternatively, under the terms of the
-    ordinary General Public License).
-
-    To apply these terms, attach the following notices to the library.  It is
-    safest to attach them to the start of each source file to most effectively
-    convey the exclusion of warranty; and each file should have at least the
-    "copyright" line and a pointer to where the full notice is found.
-
-        <one line to give the library's name and a brief idea of what it does.>
-        Copyright (C) <year>  <name of author>
-
-        This library is free software; you can redistribute it and/or
-        modify it under the terms of the GNU Lesser General Public
-        License as published by the Free Software Foundation; either
-        version 2.1 of the License, or (at your option) any later version.
-
-        This library is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-        Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public
-        License along with this library; if not, write to the Free Software
-        Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Also add information on how to contact you by electronic and paper mail.
-
-    You should also get your employer (if you work as a programmer) or your
-    school, if any, to sign a "copyright disclaimer" for the library, if
-    necessary.  Here is a sample; alter the names:
-
-    Yoyodyne, Inc., hereby disclaims all copyright interest in the
-    library `Frob' (a library for tweaking knobs) written by James Random Hacker.
-
-    <signature of Ty Coon>, 1 April 1990
-    Ty Coon, President of Vice
-
-    That's all there is to it!
 
 ## colorama
 
@@ -2483,61 +2376,6 @@ https://github.com/ymcmrs/PyINT
     an absolute waiver of all civil liability in connection with the
     Program, unless a warranty or assumption of liability accompanies a
     copy of the Program in return for a fee.
-
-                        END OF TERMS AND CONDITIONS
-
-                How to Apply These Terms to Your New Programs
-
-    If you develop a new program, and you want it to be of the greatest
-    possible use to the public, the best way to achieve this is to make it
-    free software which everyone can redistribute and change under these terms.
-
-    To do so, attach the following notices to the program.  It is safest
-    to attach them to the start of each source file to most effectively
-    state the exclusion of warranty; and each file should have at least
-    the "copyright" line and a pointer to where the full notice is found.
-
-        <one line to give the program's name and a brief idea of what it does.>
-        Copyright (C) <year>  <name of author>
-
-        This program is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
-
-        You should have received a copy of the GNU General Public License
-        along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-    Also add information on how to contact you by electronic and paper mail.
-
-    If the program does terminal interaction, make it output a short
-    notice like this when it starts in an interactive mode:
-
-        <program>  Copyright (C) <year>  <name of author>
-        This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-        This is free software, and you are welcome to redistribute it
-        under certain conditions; type `show c' for details.
-
-    The hypothetical commands `show w' and `show c' should show the appropriate
-    parts of the General Public License.  Of course, your program's commands
-    might be different; for a GUI interface, you would use an "about box".
-
-    You should also get your employer (if you work as a programmer) or school,
-    if any, to sign a "copyright disclaimer" for the program, if necessary.
-    For more information on this, and how to apply and follow the GNU GPL, see
-    <https://www.gnu.org/licenses/>.
-
-    The GNU General Public License does not permit incorporating your program
-    into proprietary programs.  If your program is a subroutine library, you
-    may consider it more useful to permit linking proprietary applications with
-    the library.  If this is what you want to do, use the GNU Lesser General
-    Public License instead of this License.  But first, please read
-    <https://www.gnu.org/licenses/why-not-lgpl.html>.
 
 ## black
 
@@ -3548,8 +3386,6 @@ https://github.com/jmcgeheeiv/pyfakefs
         incurred by, or claims asserted against, such Contributor by reason
         of your accepting any such warranty or additional liability.
 
-    END OF TERMS AND CONDITIONS
-
 ## pytest-mock
 
 https://github.com/pytest-dev/pytest-mock
@@ -3859,68 +3695,6 @@ https://github.com/PyCQA/pylint
     PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGES.
 
-                END OF TERMS AND CONDITIONS
-
-            How to Apply These Terms to Your New Programs
-
-    If you develop a new program, and you want it to be of the greatest
-    possible use to the public, the best way to achieve this is to make it
-    free software which everyone can redistribute and change under these terms.
-
-    To do so, attach the following notices to the program.  It is safest
-    to attach them to the start of each source file to most effectively
-    convey the exclusion of warranty; and each file should have at least
-    the "copyright" line and a pointer to where the full notice is found.
-
-        <one line to give the program's name and a brief idea of what it does.>
-        Copyright (C) <year>  <name of author>
-
-        This program is free software; you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation; either version 2 of the License, or
-        (at your option) any later version.
-
-        This program is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
-
-        You should have received a copy of the GNU General Public License
-        along with this program; if not, write to the Free Software
-        Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
-
-
-    Also add information on how to contact you by electronic and paper mail.
-
-    If the program is interactive, make it output a short notice like this
-    when it starts in an interactive mode:
-
-        Gnomovision version 69, Copyright (C) year  name of author
-        Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-        This is free software, and you are welcome to redistribute it
-        under certain conditions; type `show c' for details.
-
-    The hypothetical commands `show w' and `show c' should show the appropriate
-    parts of the General Public License.  Of course, the commands you use may
-    be called something other than `show w' and `show c'; they could even be
-    mouse-clicks or menu items--whatever suits your program.
-
-    You should also get your employer (if you work as a programmer) or your
-    school, if any, to sign a "copyright disclaimer" for the program, if
-    necessary.  Here is a sample; alter the names:
-
-    Yoyodyne, Inc., hereby disclaims all copyright interest in the program
-    `Gnomovision' (which makes passes at compilers) written by James Hacker.
-
-    <signature of Ty Coon>, 1 April 1989
-    Ty Coon, President of Vice
-
-    This General Public License does not permit incorporating your program into
-    proprietary programs.  If your program is a subroutine library, you may
-    consider it more useful to permit linking proprietary applications with the
-    library.  If this is what you want to do, use the GNU Library General
-    Public License instead of this License.
-
 ## google-api-python-client
 
 https://github.com/googleapis/google-api-python-client
@@ -4126,33 +3900,6 @@ https://github.com/googleapis/google-auth-library-python-oauthlib
         defend, and hold each Contributor harmless for any liability
         incurred by, or claims asserted against, such Contributor by reason
         of your accepting any such warranty or additional liability.
-
-    END OF TERMS AND CONDITIONS
-
-    APPENDIX: How to apply the Apache License to your work.
-
-        To apply the Apache License to your work, attach the following
-        boilerplate notice, with the fields enclosed by brackets "[]"
-        replaced with your own identifying information. (Don't include
-        the brackets!)  The text should be enclosed in the appropriate
-        comment syntax for the file format. We also recommend that a
-        file or class name and description of purpose be included on the
-        same "printed page" as the copyright notice for easier
-        identification within third-party archives.
-
-    Copyright [yyyy] [name of copyright owner]
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
 
 ## opnieuw
 
@@ -4790,6 +4537,8 @@ https://github.com/jamielennox/requests-mock
 
 https://github.com/spulec/freezegun
 
+Copyright 2012 Steve Pulec
+
                                 Apache License
                             Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -4964,30 +4713,3 @@ https://github.com/spulec/freezegun
     defend, and hold each Contributor harmless for any liability
     incurred by, or claims asserted against, such Contributor by reason
     of your accepting any such warranty or additional liability.
-
-    END OF TERMS AND CONDITIONS
-
-    APPENDIX: How to apply the Apache License to your work.
-
-    To apply the Apache License to your work, attach the following
-    boilerplate notice, with the fields enclosed by brackets "[]"
-    replaced with your own identifying information. (Don't include
-    the brackets!)  The text should be enclosed in the appropriate
-    comment syntax for the file format. We also recommend that a
-    file or class name and description of purpose be included on the
-    same "printed page" as the copyright notice for easier
-    identification within third-party archives.
-
-    Copyright 2012 Steve Pulec
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
