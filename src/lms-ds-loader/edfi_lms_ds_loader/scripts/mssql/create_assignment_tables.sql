@@ -53,7 +53,7 @@ CREATE TABLE lms.stg_Assignment (
     StagingId INT NOT NULL IDENTITY,
     SourceSystemIdentifier NVARCHAR(255) NOT NULL,
     SourceSystem NVARCHAR(255) NOT NULL,
-    LMSSectionIdentifier INT NOT NULL,
+    LMSSectionSourceSystemIdentifier NVARCHAR(255) NOT NULL,
     Title NVARCHAR(255) NOT NULL,
     AssignmentCategory NVARCHAR(60) NULL,
     AssignmentDescription NVARCHAR(1024) NULL,
