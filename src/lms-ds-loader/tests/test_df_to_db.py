@@ -63,7 +63,7 @@ def describe_given_a_resource_that_is_not_a_child_of_section() -> None:
         )
 
 
-def describe_given_uploading_assignments() -> None:
+def describe_given_assignments_DataFrame() -> None:
     # NB: having difficulty with mocks when `upload_assignments()` - I can't
     # detect the first mock call, to the Assignments table. The assertions only
     # pass on the `AssignmentSubmissionType` calls. Therefore only checking on
@@ -138,6 +138,33 @@ def describe_given_uploading_assignments() -> None:
         )
 
     # Assignment Submission Types
+    def describe_when_uploading_assignments_with_no_submission_type() -> None:
+        def it_should_only_upload_the_assignments(mocker) -> None:
+            # Arrange
+            adapter_mock = MagicMock()
+
+            # NB: this set of tests also handles the case where
+            # AssignmentDescription has not been set, ensuring that we don't have an
+            # error when we try to trim that field down to 1024 characters.
+
+            assignments_df = pd.DataFrame(
+                [{"SourceSystem": SOURCE_SYSTEM}], columns=["SourceSystem", "AssignmentDescription"]
+            )
+            submissions_df = pd.DataFrame()
+            response = (assignments_df, submissions_df)
+
+            mocker.patch(
+                "edfi_lms_ds_loader.helpers.assignment_splitter.split",
+                return_value=response,
+            )
+
+            # Act
+            df_to_db.upload_assignments(adapter_mock, assignments_df)
+
+            # Assert
+
+            # Just make sure no error occurs
+
     @pytest.fixture
     def when_uploading_assignments(mocker) -> Tuple[MagicMock, pd.DataFrame]:
         # Arrange
@@ -206,3 +233,17 @@ def describe_given_uploading_assignments() -> None:
         adapter_mock.enable_staging_natural_key_index.assert_called_with(
             Table.ASSIGNMENT_SUBMISSION_TYPES
         )
+
+
+def describe_given_empty_DataFrame() -> None:
+    def describe_when_uploading_assignments() -> None:
+        def it_should_not_do_anything() -> None:
+            df_to_db.upload_assignments(MagicMock(), pd.DataFrame())
+
+            # if no errors occurred then this worked
+
+    def describe_when_uploading_sections_file() -> None:
+        def it_should_not_do_anything() -> None:
+            df_to_db.upload_file(MagicMock(), pd.DataFrame(), "LMSection")
+
+            # if no errors occurred then this worked

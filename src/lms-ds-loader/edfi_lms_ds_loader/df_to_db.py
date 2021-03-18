@@ -75,6 +75,8 @@ def upload_file(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) ->
     table: str
         The destination table.
     """
+    if df.empty:
+        return
 
     _prepare_staging_table(db_adapter, df, table)
 
@@ -104,8 +106,12 @@ def upload_assignments(
     df: pd.DataFrame
         A DataFrame to upload.
     """
+    if assignments_df.empty:
+        return
 
     assignments_df, submissions_type_df = assignment_splitter.split(assignments_df)
 
     _upload_assignments(db_adapter, assignments_df)
-    _upload_assignment_submission_types(db_adapter, submissions_type_df)
+
+    if not submissions_type_df.empty:
+        _upload_assignment_submission_types(db_adapter, submissions_type_df)
