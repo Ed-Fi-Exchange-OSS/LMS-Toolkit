@@ -46,7 +46,7 @@ def split(assignments_df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
     # No point in further processing if there are no rows.
     if submission_type_df.empty:
-        return (assignments_df, submission_type_df)
+        return (assignments_df_2, submission_type_df)
 
     # Split the "SubmissionType" column, generating a variable number of new
     # columns - based on the number of items in the row that has the most items
