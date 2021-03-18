@@ -143,10 +143,12 @@ def describe_given_uploading_assignments() -> None:
         # Arrange
         adapter_mock = MagicMock()
 
-        description = "".join(["1"] * 1025)
+        # NB: this set of tests also handles the case where
+        # AssignmentDescription has not been set, ensuring that we don't have an
+        # error when we try to trim that field down to 1024 characters.
 
         assignments_df = pd.DataFrame(
-            [{"SourceSystem": SOURCE_SYSTEM, "AssignmentDescription": description}]
+            [{"SourceSystem": SOURCE_SYSTEM}], columns=["SourceSystem", "AssignmentDescription"]
         )
         submissions_df = pd.DataFrame(
             [{"SubmissionType": "whatever", "SourceSystem": SOURCE_SYSTEM}]

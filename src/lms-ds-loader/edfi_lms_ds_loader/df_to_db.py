@@ -35,7 +35,7 @@ def _upload_assignments(
     columns = list(assignments_df.columns)
 
     # Truncate AssignmentDescription to max 1024 characters, matching the database
-    assignments_df["AssignmentDescription"] = assignments_df["AssignmentDescription"].str[:1024]  # type: ignore
+    assignments_df["AssignmentDescription"] = assignments_df["AssignmentDescription"].astype("str").str[:1024]  # type: ignore
 
     _prepare_staging_table(db_adapter, assignments_df, TABLE)
     db_adapter.insert_new_records_to_production_for_section(
