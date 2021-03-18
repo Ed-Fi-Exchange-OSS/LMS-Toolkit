@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 # TODO: consider refactoring for transaction management, so that operations can
 # be rolled back. SQL Alchemy transactions can be used with DataFrame, so this
-# should be feasible.
+# should be feasible. https://tracker.ed-fi.org/browse/LMS-244
 
 def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     users = file_reader.get_all_users(csv_path)
