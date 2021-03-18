@@ -53,15 +53,16 @@ def generate_data_frame(resource: str) -> pd.DataFrame:
     return pd.DataFrame([{resource: 1}])
 
 
-def describe_given_files_exist():
+def describe_given_files_exist() -> None:
     @pytest.fixture
-    def fixture(mocker):
+    def fixture(mocker) -> None:
 
         mocker.patch(
             "edfi_lms_file_utils.file_repository.get_users_file", lambda _: USERS_FILE
         )
         mocker.patch(
-            "edfi_lms_file_utils.file_repository.get_sections_file", lambda _: SECTIONS_FILE
+            "edfi_lms_file_utils.file_repository.get_sections_file",
+            lambda _: SECTIONS_FILE,
         )
         mocker.patch(
             "edfi_lms_file_utils.file_repository.get_system_activities_files",
@@ -80,7 +81,8 @@ def describe_given_files_exist():
             lambda _a, _b: ASSIGNMENTS_FILE,
         )
         mocker.patch(
-            "edfi_lms_file_utils.file_repository.get_grades_file", lambda _a, _b: GRADES_FILE
+            "edfi_lms_file_utils.file_repository.get_grades_file",
+            lambda _a, _b: GRADES_FILE,
         )
         mocker.patch(
             "edfi_lms_file_utils.file_repository.get_submissions_file",
@@ -107,113 +109,119 @@ def describe_given_files_exist():
 
         pd.read_csv = Mock(side_effect=_fake_reader)
 
-    def describe_when_getting_users():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+    def describe_when_getting_users() -> None:
+        def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
             df = get_all_users(BASE_DIRECTORY)
 
             assert df.iloc[0][USERS] == 1
 
-    def describe_when_getting_section():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+    def describe_when_getting_section() -> None:
+        def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
             df = get_all_sections(BASE_DIRECTORY)
 
             assert df.iloc[0][SECTIONS] == 1
 
-    def describe_when_getting_system_activities():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+    def describe_when_getting_system_activities() -> None:
+        def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
             df = get_all_system_activities(BASE_DIRECTORY)
 
             assert df.iloc[0][SYSTEM_ACTIVITIES] == 1
 
-    def describe_when_getting_section_associations():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+    def describe_when_getting_section_associations() -> None:
+        def describe_given_there_are_sections() -> None:
+            def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
 
-            df = get_all_section_associations(BASE_DIRECTORY, INPUT_DF)
+                df = get_all_section_associations(BASE_DIRECTORY, INPUT_DF)
 
-            assert df.iloc[0][SECTION_ASSOCIATIONS] == 1
+                assert df.iloc[0][SECTION_ASSOCIATIONS] == 1
 
-        def given_empty_section_list_it_should_return_empty_data_frame(mocker, fixture):
+        def describe_given_empty_section_list() -> None:
+            def it_should_return_empty_data_frame(mocker, fixture) -> None:
+                df = get_all_section_associations(BASE_DIRECTORY, pd.DataFrame())
 
-            df = get_all_section_associations(BASE_DIRECTORY, pd.DataFrame())
+                assert df.empty
 
-            assert df.empty
+    def describe_when_getting_section_activities() -> None:
+        def describe_given_there_are_sections() -> None:
+            def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
 
-    def describe_when_getting_section_activities():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+                df = get_all_section_activities(BASE_DIRECTORY, INPUT_DF)
 
-            df = get_all_section_activities(BASE_DIRECTORY, INPUT_DF)
+                assert df.iloc[0][SECTION_ACTIVITIES] == 1
 
-            assert df.iloc[0][SECTION_ACTIVITIES] == 1
+        def describe_given_empty_section_list() -> None:
+            def it_should_return_empty_data_frame(mocker, fixture) -> None:
+                df = get_all_section_activities(BASE_DIRECTORY, pd.DataFrame())
 
-        def given_empty_section_list_it_should_return_empty_data_frame(mocker, fixture):
+                assert df.empty
 
-            df = get_all_section_activities(BASE_DIRECTORY, pd.DataFrame())
-
-            assert df.empty
-
-    def describe_when_getting_assignments():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+    def describe_when_getting_assignments() -> None:
+        def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
 
             df = get_all_assignments(BASE_DIRECTORY, INPUT_DF)
 
             assert df.iloc[0][ASSIGNMENTS] == 1
 
-        def given_empty_section_list_it_should_return_empty_data_frame(mocker, fixture):
+        def describe_given_empty_section_list() -> None:
+            def it_should_return_empty_data_frame(mocker, fixture) -> None:
+                df = get_all_assignments(BASE_DIRECTORY, pd.DataFrame())
 
-            df = get_all_assignments(BASE_DIRECTORY, pd.DataFrame())
+                assert df.empty
 
-            assert df.empty
-
-    def describe_when_getting_submissions():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+    def describe_when_getting_submissions() -> None:
+        def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
 
             df = get_all_submissions(BASE_DIRECTORY, INPUT_DF)
 
             assert df.iloc[0][SUBMISSIONS] == 1
 
-        def given_empty_assignments_list_it_should_return_empty_data_frame(
-            mocker, fixture
-        ):
+        def describe_given_empty_assignments_list() -> None:
+            def it_should_return_empty_data_frame(mocker, fixture) -> None:
 
-            df = get_all_submissions(BASE_DIRECTORY, pd.DataFrame())
+                df = get_all_submissions(BASE_DIRECTORY, pd.DataFrame())
 
-            assert df.empty
+                assert df.empty
 
-    def describe_when_getting_grades():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+    def describe_when_getting_grades() -> None:
+        def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
 
             df = get_all_grades(BASE_DIRECTORY, INPUT_DF)
 
             assert df.iloc[0][GRADES] == 1
 
-        def given_empty_section_list_it_should_return_empty_data_frame(mocker, fixture):
+        def describe_given_empty_section_list() -> None:
+            def it_should_return_empty_data_frame(mocker, fixture) -> None:
+                df = get_all_grades(BASE_DIRECTORY, pd.DataFrame())
 
-            df = get_all_grades(BASE_DIRECTORY, pd.DataFrame())
+                assert df.empty
 
-            assert df.empty
-
-    def describe_when_getting_attendance_events():
-        def it_should_read_file_into_DataFrame(mocker, fixture):
+    def describe_when_getting_attendance_events() -> None:
+        def it_should_read_file_into_DataFrame(mocker, fixture) -> None:
 
             df = get_all_attendance_events(BASE_DIRECTORY, INPUT_DF)
 
             assert df.iloc[0][ATTENDANCE_EVENTS] == 1
 
-        def given_empty_section_list_it_should_return_empty_data_frame(mocker, fixture):
+        def describe_given_empty_section_list() -> None:
+            def it_should_return_empty_data_frame(mocker, fixture) -> None:
+                df = get_all_attendance_events(BASE_DIRECTORY, pd.DataFrame())
 
-            df = get_all_attendance_events(BASE_DIRECTORY, pd.DataFrame())
-
-            assert df.empty
+                assert df.empty
 
 
-def describe_given_there_are_no_files_to_read():
+def describe_given_there_are_no_files_to_read() -> None:
     @pytest.fixture
-    def fixture(mocker):
+    def fixture(mocker) -> None:
 
-        mocker.patch("edfi_lms_file_utils.file_repository.get_users_file", lambda _: None)
-        mocker.patch("edfi_lms_file_utils.file_repository.get_sections_file", lambda _: None)
         mocker.patch(
-            "edfi_lms_file_utils.file_repository.get_system_activities_files", lambda _: None
+            "edfi_lms_file_utils.file_repository.get_users_file", lambda _: None
+        )
+        mocker.patch(
+            "edfi_lms_file_utils.file_repository.get_sections_file", lambda _: None
+        )
+        mocker.patch(
+            "edfi_lms_file_utils.file_repository.get_system_activities_files",
+            lambda _: None,
         )
         mocker.patch(
             "edfi_lms_file_utils.file_repository.get_section_associations_file",
@@ -224,7 +232,8 @@ def describe_given_there_are_no_files_to_read():
             lambda _a, _b: None,
         )
         mocker.patch(
-            "edfi_lms_file_utils.file_repository.get_assignments_file", lambda _a, _b: None
+            "edfi_lms_file_utils.file_repository.get_assignments_file",
+            lambda _a, _b: None,
         )
         mocker.patch(
             "edfi_lms_file_utils.file_repository.get_grades_file", lambda _a, _b: None
@@ -238,61 +247,61 @@ def describe_given_there_are_no_files_to_read():
             lambda _a, _b: None,
         )
 
-    def describe_when_getting_users():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_users() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
             df = get_all_users(BASE_DIRECTORY)
 
             assert df.empty
 
-    def describe_when_getting_section():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_section() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
             df = get_all_sections(BASE_DIRECTORY)
 
             assert df.empty
 
-    def describe_when_getting_system_activities():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_system_activities() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
             df = get_all_system_activities(BASE_DIRECTORY)
 
             assert df.empty
 
-    def describe_when_getting_section_associations():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_section_associations() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
 
             df = get_all_section_associations(BASE_DIRECTORY, INPUT_DF)
 
             assert df.empty
 
-    def describe_when_getting_section_activities():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_section_activities() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
 
             df = get_all_section_activities(BASE_DIRECTORY, INPUT_DF)
 
             assert df.empty
 
-    def describe_when_getting_assignments():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_assignments() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
 
             df = get_all_assignments(BASE_DIRECTORY, INPUT_DF)
 
             assert df.empty
 
-    def describe_when_getting_submissions():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_submissions() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
 
             df = get_all_submissions(BASE_DIRECTORY, INPUT_DF)
 
             assert df.empty
 
-    def describe_when_getting_grades():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_grades() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
 
             df = get_all_grades(BASE_DIRECTORY, INPUT_DF)
 
             assert df.empty
 
-    def describe_when_getting_attendance_events():
-        def it_should_return_an_empty_DataFrame(mocker, fixture):
+    def describe_when_getting_attendance_events() -> None:
+        def it_should_return_an_empty_DataFrame(mocker, fixture) -> None:
 
             df = get_all_attendance_events(BASE_DIRECTORY, INPUT_DF)
 
