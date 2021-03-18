@@ -154,6 +154,37 @@ AND
             # Assert
             exec_mock.assert_called_with(expected)
 
+    def describe_given_resource_is_child_of_section() -> None:
+        def it_should_build_a_valid_insert_statement(mocker) -> None:
+            columns = ["a", "b", "SourceSystem", "SourceSystemIdentifier", "LMSSectionSourceSystemIdentifier"]
+            table = "Fake"
+            expected = """
+UPDATE
+    t
+SET
+    a = stg.a,
+    b = stg.b
+FROM
+    lms.Fake as t
+INNER JOIN
+    lms.stg_Fake as stg
+ON
+    t.SourceSystem = stg.SourceSystem
+AND
+    t.SourceSystemIdentifier = stg.SourceSystemIdentifier
+AND
+    t.LastModifiedDate <> stg.LastModifiedDate
+"""
+
+            # Arrange
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+
+            # Act
+            MssqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
+
+            # Assert
+            exec_mock.assert_called_with(expected)
+
 
 def describe_when_soft_deleting_a_record() -> None:
     def describe_given_table_is_whitespace() -> None:
@@ -259,10 +290,6 @@ INNER JOIN
 ON
     AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
 WHERE
-    AssignmentSubmissionType.DeletedAt IS NULL
-AND
-    AssignmentSubmissionType.SourceSystem = Canvas
-AND
     NOT EXISTS (
         SELECT
             1

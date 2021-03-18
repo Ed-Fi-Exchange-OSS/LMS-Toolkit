@@ -246,8 +246,11 @@ WHERE NOT EXISTS (
                 for c in columns
                 if c
                 not in (
+                    # These are natural key columns that should never be
+                    # updated.
                     "SourceSystem",
                     "SourceSystemIdentifier",
+                    "LMSSectionSourceSystemIdentifier"
                 )
             ]
         )
@@ -364,7 +367,7 @@ WHERE
             The name of the source system for the current import process.
         """
 
-        statement = f"""
+        statement = """
 UPDATE
     AssignmentSubmissionType
 SET
@@ -376,10 +379,6 @@ INNER JOIN
 ON
     AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
 WHERE
-    AssignmentSubmissionType.DeletedAt IS NULL
-AND
-    AssignmentSubmissionType.SourceSystem = {source_system}
-AND
     NOT EXISTS (
         SELECT
             1
