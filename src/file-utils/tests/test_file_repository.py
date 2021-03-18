@@ -139,11 +139,6 @@ def describe_given_filesystem_does_not_exist():
 def describe_given_filesystem_exists_with_no_files():
     @pytest.fixture
     def init_fs(init_fs, fs):
-        # Fake as Linux so that all slashes in these test are forward
-        # fs.path_separator = "/"
-        # fs.is_windows_fs = False
-        # fs.is_macos = False
-
         fs.create_dir(f"{BASE_DIRECTORY}/sections")
         fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/assignments")
         fs.create_dir(f"{BASE_DIRECTORY}/sections/section={SECTION_ID}/assignments/ASSIGNMENT={ASSIGNMENT_ID}/submissions")
