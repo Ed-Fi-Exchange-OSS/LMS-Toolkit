@@ -118,8 +118,7 @@ class MssqlLmsOperations:
             if_exists="append",
             index=False,
             method="multi",
-            # The ODBC driver complains and exits with chunksize > 190
-            chunksize=190,
+            chunksize=120,
         )
         logger.debug(f"All records have been loading into staging table 'stg_{table}'")
 
