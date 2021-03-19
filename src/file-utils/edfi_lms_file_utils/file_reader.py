@@ -99,7 +99,7 @@ def get_all_users(base_directory: str, nrows: Optional[int] = None) -> pd.DataFr
         "SISUserIdentifier": "string",
         "LocalUserIdentifier": "string",
         "Name": "string",
-        "EmailAddress": "string"
+        "EmailAddress": "string",
     }
 
     if file is not None:
@@ -140,7 +140,7 @@ def get_all_system_activities(
     df = pd.concat(df_list)
     df.drop_duplicates(inplace=True)
 
-    return pd.DataFrame(df)
+    return df  # type: ignore
 
 
 def get_all_sections(base_directory: str, nrows: Optional[int] = None) -> pd.DataFrame:
@@ -331,8 +331,22 @@ def get_assignments(
     """
     file = fr.get_assignments_file(base_directory, section_id)
 
+    data_types = {
+        "LMSSectionSourceSystemIdentifier": "string",
+        "Title": "string",
+        "AssignmentDescription": "string",
+        "MaxPoints": "int",
+        "EmailAddress": "string",
+        "SubmissionType": "string",
+        "AssignmentCategory": "string",
+    }
+
+    extra_date_columns = ["DueDateTime", "StartDateTime", "EndDateTime"]
+
     if file is not None:
-        return _read_csv(file, nrows)
+        return _read_csv(
+            file, nrows, data_types=data_types, extra_date_columns=extra_date_columns
+        )
 
     return _default()
 

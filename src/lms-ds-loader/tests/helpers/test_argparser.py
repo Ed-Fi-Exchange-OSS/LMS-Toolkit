@@ -52,23 +52,23 @@ def _password_args() -> List[str]:
     return ["--password", PASSWORD]
 
 
-def _assert_no_messages(capsys):
+def _assert_no_messages(capsys) -> None:
     out, err = capsys.readouterr()
 
     assert err == "", "There should be an error message"
     assert out == "", "There should not be an output message"
 
 
-def _assert_error_message(capsys):
+def _assert_error_message(capsys) -> None:
     out, err = capsys.readouterr()
 
     assert err != "", "There should be an error message"
     assert out == "", "There should not be an output message"
 
 
-def describe_when_parsing_system_arguments():
-    def describe_given_arguments_is_an_empty_list():
-        def it_should_show_help(capsys):
+def describe_when_parsing_system_arguments() -> None:
+    def describe_given_arguments_is_an_empty_list() -> None:
+        def it_should_show_help(capsys) -> None:
             with pytest.raises(SystemExit):
                 parse_main_arguments(list())
 
@@ -77,8 +77,8 @@ def describe_when_parsing_system_arguments():
                 assert err != "", "There should be an error message"
                 assert out == "", "There should not be an output message"
 
-    def describe_given_arguments_do_not_include_path():
-        def it_should_show_help(capsys):
+    def describe_given_arguments_do_not_include_path() -> None:
+        def it_should_show_help(capsys) -> None:
             with pytest.raises(SystemExit):
                 args = [
                     *_engine_args(DbEngine.MSSQL),
@@ -91,8 +91,8 @@ def describe_when_parsing_system_arguments():
 
                 _assert_error_message(capsys)
 
-    def describe_given_arguments_do_not_include_engine():
-        def it_should_default_to_mssql(capsys):
+    def describe_given_arguments_do_not_include_engine() -> None:
+        def it_should_default_to_mssql(capsys) -> None:
             args = [
                 *_path_args(),
                 *_server_args(),
@@ -108,8 +108,8 @@ def describe_when_parsing_system_arguments():
 
             _assert_no_messages(capsys)
 
-    def describe_given_arguments_do_not_include_server():
-        def it_should_show_help(capsys):
+    def describe_given_arguments_do_not_include_server() -> None:
+        def it_should_show_help(capsys) -> None:
             with pytest.raises(SystemExit):
                 args = [
                     *_engine_args(DbEngine.MSSQL),
@@ -121,8 +121,8 @@ def describe_when_parsing_system_arguments():
 
                 _assert_error_message(capsys)
 
-    def describe_given_integrated_security():
-        def it_should_not_require_username_and_password(capsys):
+    def describe_given_integrated_security() -> None:
+        def it_should_not_require_username_and_password(capsys) -> None:
             args = [
                 *_path_args(),
                 *_server_args(),
@@ -138,8 +138,8 @@ def describe_when_parsing_system_arguments():
 
             _assert_no_messages(capsys)
 
-    def describe_given_using_integrated_security_short_flag():
-        def it_should_not_require_username_and_password(capsys):
+    def describe_given_using_integrated_security_short_flag() -> None:
+        def it_should_not_require_username_and_password(capsys) -> None:
             args = [
                 *_path_args(),
                 *_server_args(),
@@ -155,8 +155,8 @@ def describe_when_parsing_system_arguments():
 
             _assert_no_messages(capsys)
 
-    def describe_given_not_using_integrated_security():
-        def it_should_require_username(capsys):
+    def describe_given_not_using_integrated_security() -> None:
+        def it_should_require_username(capsys) -> None:
             with pytest.raises(SystemExit):
                 args = [
                     *_path_args(),
@@ -169,7 +169,7 @@ def describe_when_parsing_system_arguments():
 
                 _assert_error_message(capsys)
 
-        def it_should_require_password(capsys):
+        def it_should_require_password(capsys) -> None:
             with pytest.raises(SystemExit):
                 args = [
                     *_path_args(),
@@ -182,8 +182,8 @@ def describe_when_parsing_system_arguments():
 
                 _assert_error_message(capsys)
 
-    def describe_given_optional_port_is_provided():
-        def it_should_inject_port_into_connection_string(capsys):
+    def describe_given_optional_port_is_provided() -> None:
+        def it_should_inject_port_into_connection_string(capsys) -> None:
             args = [
                 *_path_args(),
                 *_server_args(),
@@ -200,7 +200,7 @@ def describe_when_parsing_system_arguments():
 
             assert str(PORT) in parsed.connection_string
 
-    def it_should_parse_csv_path(capsys):
+    def it_should_parse_csv_path(capsys) -> None:
         args = [
             *_path_args(),
             *_server_args(),
@@ -216,9 +216,9 @@ def describe_when_parsing_system_arguments():
 
         _assert_no_messages(capsys)
 
-    def describe_given_engine_mssql():
-        def describe_given_using_integrated_security():
-            def it_should_set_trusted_connection_in_the_connection_string(capsys):
+    def describe_given_engine_mssql() -> None:
+        def describe_given_using_integrated_security() -> None:
+            def it_should_set_trusted_connection_in_the_connection_string(capsys) -> None:
                 args = [
                     *_path_args(),
                     *_server_args(),
@@ -259,41 +259,41 @@ def describe_when_parsing_system_arguments():
 
         def it_should_set_server_name_in_the_connection_string(
              fixture: MainArguments
-        ):
+        ) -> None:
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert SERVER in fixture.connection_string
 
         def it_should_set_port_in_the_connection_string(
             fixture: MainArguments
-        ):
+        ) -> None:
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert str(PORT) in fixture.connection_string
 
         def it_should_set_database_name_in_the_connection_string(
             fixture: MainArguments
-        ):
+        ) -> None:
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert DB_NAME in fixture.connection_string
 
         def it_should_set_username_in_the_connection_string(
             fixture: MainArguments
-        ):
+        ) -> None:
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert USERNAME in fixture.connection_string
 
         def it_should_set_password_in_the_connection_string(
             fixture: MainArguments
-        ):
+        ) -> None:
             # Test the details of the connection string in a more appropriate test
             # suite - test only enough here to prove the point
             assert PASSWORD in fixture.connection_string
 
-        def given_optional_non_default_log_level():
-            def it_should_parse_the_log_level(capsys):
+        def given_optional_non_default_log_level() -> None:
+            def it_should_parse_the_log_level(capsys) -> None:
                 args = [
                     *_path_args(),
                     *_server_args(),
@@ -314,8 +314,8 @@ def describe_when_parsing_system_arguments():
     # NOT TESTING POSTGRESQL UNTIL STORY REQUIRES POSTGRESQL
 
 
-def describe_when_initializing_MainArguments():
-    def it_passes_initializer_arguments_into_instance_properties():
+def describe_when_initializing_MainArguments() -> None:
+    def it_passes_initializer_arguments_into_instance_properties() -> None:
         csv_path = "some/path"
         engine = DbEngine.MSSQL
         logging = LOG_LEVELS[0]
@@ -327,8 +327,8 @@ def describe_when_initializing_MainArguments():
         assert a.log_level == logging
 
 
-def describe_when_setting_connection_string():
-    def describe_given_invalid_engine():
+def describe_when_setting_connection_string() -> None:
+    def describe_given_invalid_engine() -> None:
         with pytest.raises(ValueError):
             MainArguments(
                 "bogus", "bogus", LOG_LEVELS[0]
@@ -336,10 +336,10 @@ def describe_when_setting_connection_string():
                 "server", 20, "db_name"
             )
 
-    def describe_given_engine_is_mssql():
-        def describe_given_using_integrated_security():
-            def describe_given_port_is_provided():
-                def it_should_return_a_pyodbc_connection_string_with_trusted_connection():
+    def describe_given_engine_is_mssql() -> None:
+        def describe_given_using_integrated_security() -> None:
+            def describe_given_port_is_provided() -> None:
+                def it_should_return_a_pyodbc_connection_string_with_trusted_connection() -> None:
                     server = "my-server"
                     database = "my-database"
                     port = 1234
@@ -354,8 +354,8 @@ def describe_when_setting_connection_string():
 
                     assert a.connection_string == expect
 
-            def describe_given_port_is_not_provided():
-                def it_should_use_default_value_of_1433():
+            def describe_given_port_is_not_provided() -> None:
+                def it_should_use_default_value_of_1433() -> None:
                     server = "my-server"
                     database = "my-database"
                     port = None
@@ -370,9 +370,9 @@ def describe_when_setting_connection_string():
 
                     assert a.connection_string == expected
 
-        def describe_given_using_username_and_password():
-            def describe_given_port_is_provided():
-                def it_should_return_a_pyodbc_connection_string_with_trusted_connection():
+        def describe_given_using_username_and_password() -> None:
+            def describe_given_port_is_provided() -> None:
+                def it_should_return_a_pyodbc_connection_string_with_trusted_connection() -> None:
                     server = "my-server"
                     database = "my-database"
                     port = 1234
@@ -385,8 +385,8 @@ def describe_when_setting_connection_string():
 
                     assert a.connection_string == expected
 
-            def describe_given_port_is_not_provided():
-                def it_should_use_default_value_of_1433():
+            def describe_given_port_is_not_provided() -> None:
+                def it_should_use_default_value_of_1433() -> None:
                     expected = "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=ODBC+Driver+17+for+SQL+Server"
 
                     server = "my-server"
@@ -401,9 +401,9 @@ def describe_when_setting_connection_string():
                     assert a.connection_string == expected
 
 
-def describe_when_getting_db_operations_adapter():
-    def describe_engine_is_postgresql():
-        def it_should_raise_NotImplementedError():
+def describe_when_getting_db_operations_adapter() -> None:
+    def describe_engine_is_postgresql() -> None:
+        def it_should_raise_NotImplementedError() -> None:
             with pytest.raises(NotImplementedError):
                 a = MainArguments(
                     "some/path", DbEngine.MSSQL, LOG_LEVELS[0]
@@ -415,8 +415,8 @@ def describe_when_getting_db_operations_adapter():
                 a.engine = "PostgreSQL"
                 a.get_db_operations_adapter()
 
-    def describe_engine_is_mssql():
-        def it_should_create_the_requested_adapter():
+    def describe_engine_is_mssql() -> None:
+        def it_should_create_the_requested_adapter() -> None:
             a = MainArguments("some/path", DbEngine.MSSQL, LOG_LEVELS[0])
             a.set_connection_string(
                 "server", None, "database", "username", "password"

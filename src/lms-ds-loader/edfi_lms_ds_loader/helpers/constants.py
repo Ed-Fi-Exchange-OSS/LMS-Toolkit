@@ -14,3 +14,5 @@ class DbEngine:
 class Table:
     USER = "LMSUser"
     SECTION = "LMSSection"
+    ASSIGNMENT = "Assignment"
+    ASSIGNMENT_SUBMISSION_TYPES = "AssignmentSubmissionType"

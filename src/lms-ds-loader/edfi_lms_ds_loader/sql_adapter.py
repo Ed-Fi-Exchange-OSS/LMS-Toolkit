@@ -5,17 +5,18 @@
 
 # Developer note: this adapter module is deliberately not unit tested.
 
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, TypeVar
 
 from sqlalchemy.engine.base import Engine as sa_Engine
-from sqlalchemy.engine.result import ResultProxy as sa_Result
 from sqlalchemy.orm import sessionmaker, Session as sa_Session
 from sqlalchemy.exc import ProgrammingError
 
+T = TypeVar('T')
+
 
 def execute_transaction(
-    engine: sa_Engine, function: Callable[[sa_Session], Optional[sa_Result]]
-) -> Optional[sa_Result]:
+    engine: sa_Engine, function: Callable[[sa_Session], T]
+) -> T:
     Session = sessionmaker(bind=engine)
 
     session = Session()
@@ -49,12 +50,12 @@ def execute_statements(engine: sa_Engine, statements: List[str]) -> None:
 
 
 def get_int(engine: sa_Engine, statement: str) -> int:
-    def __callback(session: sa_Session) -> sa_Result:
+    def __callback(session: sa_Session) -> int:
         return session.execute(statement).scalar()
 
-    result = execute_transaction(engine, __callback)
+    result: int = execute_transaction(engine, __callback)
 
     if result:
-        return int(str(result))
+        return result
     else:
         return 0
