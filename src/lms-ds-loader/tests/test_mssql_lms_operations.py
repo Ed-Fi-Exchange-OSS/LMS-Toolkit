@@ -108,7 +108,7 @@ def describe_when_inserting_into_staging() -> None:
                 if_exists="append",
                 index=False,
                 method="multi",
-                chunksize=190,
+                chunksize=120,
             )
 
 
