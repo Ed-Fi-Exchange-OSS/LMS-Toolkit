@@ -131,7 +131,7 @@ https://www.googleapis.com/auth/admin.reports.audit.readonly`
 ### Generate LMS UDM CSV Files
 
 To pull data from Google Classroom and generate csv files, run
-`poetry run python google_classroom_extractor` from the root
+`poetry run python edfi_google_classroom_extractor` from the root
 directory of this project. CSV files are output into the
 `data/ed-fi-udm-lms` directory.
 
