@@ -5,6 +5,9 @@
 # Generated CSV files
 *.csv
 
+# Generated test db
+test*.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

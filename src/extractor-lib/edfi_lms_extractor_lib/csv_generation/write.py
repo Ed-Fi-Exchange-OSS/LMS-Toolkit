@@ -10,17 +10,23 @@ from datetime import datetime
 from pandas import DataFrame
 
 
-USERS_ROOT_DIRECTORY = "users/"
-SECTIONS_ROOT_DIRECTORY = "sections/"
-SECTION_ASSOCIATIONS_ROOT_DIRECTORY = "section={id}/section-associations/"
-ASSIGNMENT_ROOT_DIRECTORY = "section={id}/assignments/"
-SUBMISSION_ROOT_DIRECTORY = "section={id1}/assignment={id2}/submissions/"
-USER_ACTIVITY_ROOT_DIRECTORY = "section={id}/user-activities/"
-GRADES_ROOT_DIRECTORY = "section={id}/grades/"
-SECTION_ACTIVITY_DIRECTORY = "section={id}/section-activities/"
-SYSTEM_ACTIVITY_ROOT_DIRECTORY = "system-activities/"
+USERS_ROOT_DIRECTORY = ["users"]
+SECTIONS_ROOT_DIRECTORY = ["sections"]
+SECTION_ASSOCIATIONS_ROOT_DIRECTORY = ["section={id}", "section-associations"]
+ASSIGNMENT_ROOT_DIRECTORY = ["section={id}", "assignments"]
+SUBMISSION_ROOT_DIRECTORY = ["section={id1}", "assignment={id2}", "submissions"]
+USER_ACTIVITY_ROOT_DIRECTORY = ["section={id}", "user-activities"]
+GRADES_ROOT_DIRECTORY = ["section={id}", "grades"]
+SECTION_ACTIVITY_DIRECTORY = ["section={id}", "section-activities"]
+SYSTEM_ACTIVITY_ROOT_DIRECTORY = ["system-activities"]
 
 logger = logging.getLogger(__name__)
+
+
+def _normalized_directory_template(
+    output_directory: str, additional_path: List[str]
+) -> str:
+    return os.path.join(os.path.normpath(output_directory), *additional_path)
 
 
 def _write_csv(df_to_write: DataFrame, output_date: datetime, directory: str):
@@ -137,7 +143,9 @@ def write_users(df_to_write: DataFrame, output_date: datetime, output_directory:
         is the root output directory
     """
     _write_csv(
-        df_to_write, output_date, os.path.join(output_directory, USERS_ROOT_DIRECTORY)
+        df_to_write,
+        output_date,
+        _normalized_directory_template(output_directory, USERS_ROOT_DIRECTORY),
     )
 
 
@@ -159,7 +167,7 @@ def write_sections(
     _write_csv(
         df_to_write,
         output_date,
-        os.path.join(output_directory, SECTIONS_ROOT_DIRECTORY),
+        _normalized_directory_template(output_directory, SECTIONS_ROOT_DIRECTORY),
     )
 
 
@@ -186,7 +194,9 @@ def write_section_associations(
     _write_multi_csv(
         _fill_in_missing_section_ids(dfs_to_write, all_section_ids),
         output_date,
-        os.path.join(output_directory, SECTION_ASSOCIATIONS_ROOT_DIRECTORY),
+        _normalized_directory_template(
+            output_directory, SECTION_ASSOCIATIONS_ROOT_DIRECTORY
+        ),
     )
 
 
@@ -214,7 +224,7 @@ def write_assignments(
     _write_multi_csv(
         _fill_in_missing_section_ids(dfs_to_write, all_section_ids),
         output_date,
-        os.path.join(output_directory, ASSIGNMENT_ROOT_DIRECTORY),
+        _normalized_directory_template(output_directory, ASSIGNMENT_ROOT_DIRECTORY),
     )
 
 
@@ -241,7 +251,7 @@ def write_user_activities(
     _write_multi_csv(
         _fill_in_missing_section_ids(dfs_to_write, all_section_ids),
         output_date,
-        os.path.join(output_directory, USER_ACTIVITY_ROOT_DIRECTORY),
+        _normalized_directory_template(output_directory, USER_ACTIVITY_ROOT_DIRECTORY),
     )
 
 
@@ -265,7 +275,7 @@ def write_assignment_submissions(
     _write_multi_tuple_csv(
         dfs_to_write,
         output_date,
-        os.path.join(output_directory, SUBMISSION_ROOT_DIRECTORY),
+        _normalized_directory_template(output_directory, SUBMISSION_ROOT_DIRECTORY),
     )
 
 
@@ -292,7 +302,7 @@ def write_grades(
     _write_multi_csv(
         _fill_in_missing_section_ids(dfs_to_write, all_section_ids),
         output_date,
-        os.path.join(output_directory, GRADES_ROOT_DIRECTORY),
+        _normalized_directory_template(output_directory, GRADES_ROOT_DIRECTORY),
     )
 
 
@@ -319,7 +329,7 @@ def write_section_activities(
     _write_multi_csv(
         _fill_in_missing_section_ids(dfs_to_write, all_section_ids),
         output_date,
-        os.path.join(output_directory, SECTION_ACTIVITY_DIRECTORY),
+        _normalized_directory_template(output_directory, SECTION_ACTIVITY_DIRECTORY),
     )
 
 
@@ -341,9 +351,11 @@ def write_system_activities(
     _write_csv(
         df_to_write,
         output_date,
-        os.path.join(
+        _normalized_directory_template(
             output_directory,
-            SYSTEM_ACTIVITY_ROOT_DIRECTORY,
-            f"date={output_date.strftime('%Y-%m-%d')}/",
+            [
+                *SYSTEM_ACTIVITY_ROOT_DIRECTORY,
+                f"date={output_date.strftime('%Y-%m-%d')}",
+            ],
         ),
     )
