@@ -17,7 +17,7 @@ from edfi_lms_file_utils import directory_repository as dr  # type: ignore # noq
 
 def _check_for_directory(input_directory: str) -> Optional[str]:
     if not os.path.exists(input_directory):
-        return f"Missing directory: {input_directory}"
+        return f"Missing directory: {os.path.normpath(input_directory)}"
 
     return None
 
