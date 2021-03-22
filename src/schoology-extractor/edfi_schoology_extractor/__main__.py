@@ -76,16 +76,17 @@ def _initialize():
 
 
 def _create_file_from_dataframe(df: Optional[DataFrame], file_name) -> bool:
-    logger.info(f"Exporting {file_name}")
+    normalized_file_name = os.path.normpath(file_name)
+    logger.info(f"Exporting {normalized_file_name}")
     try:
         if df is not None:
-            csv_writer.df_to_csv(df, file_name)
+            csv_writer.df_to_csv(df, normalized_file_name)
         else:
-            csv_writer.df_to_csv(DataFrame(), file_name)
+            csv_writer.df_to_csv(DataFrame(), normalized_file_name)
 
         return True
     except BaseException:
-        logger.exception("An exception occurred while generating %s", file_name)
+        logger.exception("An exception occurred while generating %s", normalized_file_name)
         return False
 
 
