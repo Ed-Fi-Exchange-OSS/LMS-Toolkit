@@ -10,9 +10,8 @@
 
 import logging
 import os
-from typing import Callable, Set
+from typing import Callable, Optional, Set
 
-from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 import pandas as pd
 
 from edfi_lms_ds_loader.helpers.constants import Table
@@ -39,6 +38,7 @@ logger = logging.getLogger(__name__)
 # be rolled back. SQL Alchemy transactions can be used with DataFrame, so this
 # should be feasible. https://tracker.ed-fi.org/browse/LMS-244
 
+
 def _get_unprocessed_file_paths(
     db_adapter: MssqlLmsOperations,
     resource_name: str,
@@ -46,8 +46,6 @@ def _get_unprocessed_file_paths(
 ) -> Set[str]:
     processed_files = db_adapter.get_processed_files(resource_name)
     all_paths = set(get_all_paths_callback())
-    print('----------all_paths---------')
-    print(all_paths)
     return all_paths - processed_files
 
 
@@ -57,21 +55,23 @@ def _upload_files_from_paths(
     table_name: str,
     resource_name: str,
     read_file_callback: Callable,
+    custom_upload_function: Optional[Callable] = None,
 ) -> None:
     for path in files:
         data: pd.DataFrame = read_file_callback(path)
         rows = data.shape[0]
         if rows != 0:
-            df_to_db.upload_file(db_adapter, data, table_name)
+            if custom_upload_function is not None:
+                custom_upload_function(db_adapter, data)
+            else:
+                df_to_db.upload_file(db_adapter, data, table_name)
         db_adapter.add_processed_file(path, resource_name, rows)
 
 
-@catch_exceptions
 def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     def __get_all_file_paths_callback():
         formatted_path = os.path.abspath(csv_path)
         paths = file_repository.get_users_file_paths(formatted_path)
-        print(paths)
         return paths
 
     unprocessed_files = _get_unprocessed_file_paths(
@@ -86,7 +86,6 @@ def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     )
 
 
-@catch_exceptions
 def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     def __get_all_file_paths_callback():
         formatted_path = os.path.abspath(csv_path)
@@ -105,11 +104,32 @@ def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     )
 
 
-def _load_assignments(
-    csv_path: str, db_adapter: MssqlLmsOperations, sections: pd.DataFrame
-) -> None:
-    assignments = file_reader.get_all_assignments(csv_path, sections)
-    df_to_db.upload_assignments(db_adapter, assignments)
+def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    sections = set(
+        file_reader.get_all_sections(csv_path)["SourceSystemIdentifier"]
+    )  # we only need to access the last file
+
+    def __get_all_file_paths_callback():
+        formatted_path = os.path.abspath(csv_path)
+        paths = []
+        for section in sections:
+            paths = paths + file_repository.get_assignments_file_paths(
+                formatted_path, section
+            )
+
+        return paths
+
+    unprocessed_files = _get_unprocessed_file_paths(
+        db_adapter, Resources.ASSIGNMENTS, __get_all_file_paths_callback
+    )
+    _upload_files_from_paths(
+        db_adapter,
+        unprocessed_files,
+        Table.ASSIGNMENT,
+        Resources.ASSIGNMENTS,
+        file_reader.read_assignments_file,
+        df_to_db.upload_assignments
+    )
 
 
 def run_loader(arguments: MainArguments) -> None:
@@ -122,7 +142,7 @@ def run_loader(arguments: MainArguments) -> None:
     db_adapter = arguments.get_db_operations_adapter()
 
     _load_users(csv_path, db_adapter)
-    sections = _load_sections(csv_path, db_adapter)
-    _load_assignments(csv_path, db_adapter, sections)
+    _load_sections(csv_path, db_adapter)
+    _load_assignments(csv_path, db_adapter)
 
     logger.info("Done loading files into the LMS Data Store.")
