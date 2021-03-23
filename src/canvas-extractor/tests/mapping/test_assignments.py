@@ -246,7 +246,7 @@ def describe_when_a_single_assignment_with_unique_fields_is_mapped():
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE
         assert row_dict["SubmissionType"] == SUBMISSION_TYPES
-        assert row_dict["SourceSystemIdentifier"] == ID
+        assert row_dict["SourceSystemIdentifier"] == f"{SECTION_ID}-{ID}"
         assert row_dict["StartDateTime"] == UNLOCK_AT
         assert row_dict["SourceCreateDate"] == CREATED_AT
         assert row_dict["SourceLastModifiedDate"] == UPDATED_AT
@@ -411,7 +411,7 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE
         assert row_dict["SubmissionType"] == SUBMISSION_TYPES
-        assert row_dict["SourceSystemIdentifier"] == ID
+        assert row_dict["SourceSystemIdentifier"] == f"{SECTION_ID}-{ID}"
         assert row_dict["StartDateTime"] == UNLOCK_AT
         assert row_dict["SourceCreateDate"] == CREATED_AT
         assert row_dict["SourceLastModifiedDate"] == UPDATED_AT
@@ -430,7 +430,7 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["MaxPoints"] == POINTS_POSSIBLE
         assert row_dict["SubmissionType"] == SUBMISSION_TYPES
-        assert row_dict["SourceSystemIdentifier"] == ID
+        assert row_dict["SourceSystemIdentifier"] == f"{SECOND_SECTION_ID}-{ID}"
         assert row_dict["StartDateTime"] == UNLOCK_AT
         assert row_dict["SourceCreateDate"] == CREATED_AT
         assert row_dict["SourceLastModifiedDate"] == UPDATED_AT
