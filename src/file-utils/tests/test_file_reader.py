@@ -3,11 +3,13 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from typing import Callable, List
 import pandas as pd
 from unittest.mock import Mock
 import pytest
 
 from edfi_lms_file_utils.file_reader import (
+    _read_csv,
     get_all_users,
     get_all_sections,
     get_all_section_associations,
@@ -17,8 +19,18 @@ from edfi_lms_file_utils.file_reader import (
     get_all_submissions,
     get_all_grades,
     get_all_attendance_events,
+    read_assignments_file,
+    read_attendance_events_file,
+    read_grades_file,
+    read_section_activities_file,
+    read_section_associations_file,
+    read_sections_file,
+    read_submissions_file,
+    read_system_activities_file,
+    read_users_file,
 )
-from test_file_repository import BASE_DIRECTORY
+from edfi_lms_file_utils.constants import DataTypes
+from .constants import BASE_DIRECTORY
 
 SECTIONS = "sections"
 USERS = "users"
@@ -306,3 +318,42 @@ def describe_given_there_are_no_files_to_read() -> None:
             df = get_all_attendance_events(BASE_DIRECTORY, INPUT_DF)
 
             assert df.empty
+
+
+def describe_when_reading_files_from_path():
+    @pytest.fixture
+    def mock_read_csv(mocker):
+        read_csv_mock = Mock(spec=_read_csv)
+        mocker.patch("edfi_lms_file_utils.file_reader._read_csv", read_csv_mock)
+        return read_csv_mock
+
+    def describe_when_getting_files_with_specific_types():
+        def describe_given_resource_name_is_user():
+            def it_should_define_correct_data_type_to_read_csv_method(
+                mock_read_csv: Mock,
+            ):
+                read_users_file("")
+                assert mock_read_csv.call_args_list[0][0][2] == DataTypes.USERS
+
+        def describe_given_resource_name_is_sections():
+            def it_should_define_correct_data_type_to_read_csv_method(
+                mock_read_csv: Mock,
+            ):
+                read_sections_file("")
+                assert mock_read_csv.call_args_list[0][0][2] == DataTypes.SECTIONS
+
+    def describe_when_getting_general_files():
+        methods_to_test: List[Callable] = [
+            read_system_activities_file,
+            read_section_associations_file,
+            read_section_activities_file,
+            read_assignments_file,
+            read_submissions_file,
+            read_grades_file,
+            read_attendance_events_file,
+        ]
+
+        def it_should_call_read_csv_method(mock_read_csv: Mock):
+            for count in range(len(methods_to_test)):
+                methods_to_test[count]("")
+            assert mock_read_csv.call_count == len(methods_to_test)

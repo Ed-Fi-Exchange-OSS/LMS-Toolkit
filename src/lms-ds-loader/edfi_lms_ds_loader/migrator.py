@@ -23,6 +23,7 @@ MIGRATION_SCRIPTS = [
     "create_user_tables",
     "create_section_tables",
     "create_assignment_tables",
+    "create_processed_files_table"
 ]
 
 

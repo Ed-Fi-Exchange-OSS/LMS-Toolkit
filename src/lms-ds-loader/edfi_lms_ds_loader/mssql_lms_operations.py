@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import List
+from typing import List, Set
 
 import pandas as pd
 from sqlalchemy.engine.result import ResultProxy as sa_Result
@@ -395,3 +395,16 @@ WHERE
         logger.debug(
             f"Soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
         )
+
+    def get_processed_files(self, resource_name: str) -> Set[str]:
+        query = f"""
+SELECT FullPath FROM lms.ProcessedFiles
+WHERE ResourceName = '{resource_name}'""".strip()
+        result = pd.read_sql_query(query, self.engine)
+        return set(result["FullPath"])
+
+    def add_processed_file(self, path: str, resource_name: str, rows: int):
+        statement = f"""
+INSERT INTO lms.ProcessedFiles(FullPath, ResourceName, NumberOfRows)
+VALUES ('{path}','{resource_name}', {rows})""".strip()
+        return self._exec(statement)
