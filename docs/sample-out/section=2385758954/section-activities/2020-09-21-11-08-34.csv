@@ -1,2 +1,2 @@
-SourceSystemIdentifier,SourceSystem,ActivityType,ActivityDateTime,ActivityStatus,MessagePost,TotalActivityTimeInMinutes,LMSSectionSourceSystemIdentifier,UserSourceSystemIdentifier,EntityStatus,CreateDate,LastModifiedDate,SourceCreateDate,SourceLastModifiedDate
-987654321,Canvas,Discussion,2020-09-19 14:23:52,Published,"First post!, with comma",98,34567,2385758954,Active,2020-09-19 14:23:23,2020-09-19 14:23:52,2020-09-18 01:02:03,2020-09-18 01:02:03
+SourceSystemIdentifier,SourceSystem,ActivityType,ActivityDateTime,ActivityStatus,MessagePost,TotalActivityTimeInMinutes,LMSSectionSourceSystemIdentifier,UserSourceSystemIdentifier,CreateDate,LastModifiedDate,SourceCreateDate,SourceLastModifiedDate
+987654321,Canvas,Discussion,2020-09-19 14:23:52,Published,"First post!, with comma",98,34567,2385758954,2020-09-19 14:23:23,2020-09-19 14:23:52,2020-09-18 01:02:03,2020-09-18 01:02:03
