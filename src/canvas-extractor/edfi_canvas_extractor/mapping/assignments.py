@@ -94,9 +94,14 @@ def map_to_udm_assignments(
         columns=["course_id"]
     )
 
+    assignments_df["SourceSystemIdentifier"] = assignments_df[["LMSSectionSourceSystemIdentifier", "id"]].agg(
+        "-".join, axis=1
+    )
+
+    assignments_df.drop(columns="id", inplace=True)
+
     assignments_df.rename(
         columns={
-            "id": "SourceSystemIdentifier",
             "name": "Title",
             "description": "AssignmentDescription",
             "created_at": "SourceCreateDate",
