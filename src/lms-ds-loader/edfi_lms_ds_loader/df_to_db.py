@@ -24,7 +24,7 @@ def _prepare_staging_table(db_adapter: MssqlLmsOperations, df: pd.DataFrame, tab
 
 
 def _get_source_system(df: pd.DataFrame) -> str:
-    return df.iloc[0]["SourceSystem"]
+    return str(df.iloc[0]["SourceSystem"])
 
 
 def _upload_assignments(
