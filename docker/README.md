@@ -25,11 +25,11 @@ The PowerShell `build.ps1` script runs the first command above.
 Run, with the TCP/IP port mapped for localhost access:
 
 ```bash
-docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 mssql-python:latest -d
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 --name mssql -d mssql-python:latest
 
 # If you already have a local SQL Server instance running, change the left side
 # of the port mapping
-docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1434:1433 mssql-python:latest -d
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1434:1433 --name mssql -d mssql-python:latest
 ```
 
 When specifying an alternate port, connect to the image with server name `localhost,1434`.
@@ -46,7 +46,7 @@ Running in the container this way might not even be a good idea |
 ```bash
 cd test-lms-ds-loader
 docker build -t test-lms-ds-loader:latest .
-docker run --name test-lms-ds-loader -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' test-lms-ds-loader:latest
+docker run --name test-lms-ds-loader -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -d test-lms-ds-loader:latest
 ```
 
 The PowerShell `build.ps1` script runs the `docker build` command above. The run
