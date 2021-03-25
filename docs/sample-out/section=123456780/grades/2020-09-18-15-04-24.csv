@@ -1,5 +1,5 @@
-﻿SourceSystemIdentifier,SourceSystem,Grade,GradeType,LMSUserLMSSectionAssociationSourceSystemIdentifier,EntityStatus,CreateDate,LastModifiedDate,SourceCreateDate,SourceLastModifiedDate
-1357982,Canvas,A,Current,8123456,Active,2020-08-20 12:34:56,2020-08-20 12:34:56
-1357983,Canvas,90,Current,8123457,Active,2020-08-20 12:34:56,2020-08-20 12:34:56
-1357984,Canvas,55,Final,8123458,Archived,2020-08-20 12:34:56,2020-08-20 12:34:56
-1357985,Canvas,B,Final,8123459,Active,2020-08-20 12:34:56,2020-08-20 12:34:56
+﻿SourceSystemIdentifier,SourceSystem,Grade,GradeType,LMSUserLMSSectionAssociationSourceSystemIdentifier,CreateDate,LastModifiedDate,SourceCreateDate,SourceLastModifiedDate
+1357982,Canvas,A,Current,8123456,2020-08-20 12:34:56,2020-08-20 12:34:56,,
+1357983,Canvas,90,Current,8123457,2020-08-20 12:34:56,2020-08-20 12:34:56,,
+1357984,Canvas,55,Final,8123458,2020-08-20 12:34:56,2020-08-20 12:34:56,,
+1357985,Canvas,B,Final,8123459,2020-08-20 12:34:56,2020-08-20 12:34:56,,
