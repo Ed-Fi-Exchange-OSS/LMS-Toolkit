@@ -186,7 +186,7 @@ AND
             exec_mock.assert_called_with(expected)
 
     def describe_given_resource_is_child_of_section_and_user() -> None:
-        def it_should_build_a_valid_insert_statement(mocker) -> None:
+        def it_should_build_a_valid_update_statement(mocker) -> None:
             columns = ["a", "b", "SourceSystem", "SourceSystemIdentifier", "LMSSectionSourceSystemIdentifier", "LMSUserSourceSystemIdentifier"]
             table = "Fake"
             expected = """
