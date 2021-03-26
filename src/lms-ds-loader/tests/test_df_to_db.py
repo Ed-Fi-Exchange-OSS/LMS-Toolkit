@@ -15,9 +15,9 @@ from edfi_lms_ds_loader import df_to_db
 SOURCE_SYSTEM = "google"
 
 
-def describe_given_a_resource_that_is_not_a_child_of_section() -> None:
+def describe_given_a_resource_that_is_not_a_child_of_section_or_user() -> None:
     @pytest.fixture
-    def when_uploading_assignments() -> Tuple[MagicMock, pd.DataFrame]:
+    def when_uploading_users() -> Tuple[MagicMock, pd.DataFrame]:
         # Arrange
         adapter_mock = MagicMock()
 
@@ -28,36 +28,36 @@ def describe_given_a_resource_that_is_not_a_child_of_section() -> None:
 
         return adapter_mock, df
 
-    def it_disables_the_natural_key_index(when_uploading_assignments) -> None:
-        adapter_mock, _ = when_uploading_assignments
+    def it_disables_the_natural_key_index(when_uploading_users) -> None:
+        adapter_mock, _ = when_uploading_users
         adapter_mock.disable_staging_natural_key_index.assert_called_with(Table.USER)
 
-    def it_truncates_the_staging_table(when_uploading_assignments) -> None:
-        adapter_mock, _ = when_uploading_assignments
+    def it_truncates_the_staging_table(when_uploading_users) -> None:
+        adapter_mock, _ = when_uploading_users
         adapter_mock.truncate_staging_table.assert_called_with(Table.USER)
 
-    def it_re_enables_natural_key_index(when_uploading_assignments) -> None:
-        adapter_mock, _ = when_uploading_assignments
+    def it_re_enables_natural_key_index(when_uploading_users) -> None:
+        adapter_mock, _ = when_uploading_users
         adapter_mock.enable_staging_natural_key_index.assert_called_with(Table.USER)
 
-    def it_inserts_into_staging_table(when_uploading_assignments) -> None:
-        adapter_mock, df = when_uploading_assignments
+    def it_inserts_into_staging_table(when_uploading_users) -> None:
+        adapter_mock, df = when_uploading_users
         adapter_mock.insert_into_staging.assert_called_with(df, Table.USER)
 
-    def it_inserts_into_production_table(when_uploading_assignments) -> None:
-        adapter_mock, _ = when_uploading_assignments
+    def it_inserts_into_production_table(when_uploading_users) -> None:
+        adapter_mock, _ = when_uploading_users
         adapter_mock.insert_new_records_to_production.assert_called_with(
             Table.USER, ["SourceSystem"]
         )
 
-    def it_updates_production_table(when_uploading_assignments) -> None:
-        adapter_mock, _ = when_uploading_assignments
+    def it_updates_production_table(when_uploading_users) -> None:
+        adapter_mock, _ = when_uploading_users
         adapter_mock.copy_updates_to_production.assert_called_with(
             Table.USER, ["SourceSystem"]
         )
 
-    def it_soft_deletes_from_production_table(when_uploading_assignments) -> None:
-        adapter_mock, _ = when_uploading_assignments
+    def it_soft_deletes_from_production_table(when_uploading_users) -> None:
+        adapter_mock, _ = when_uploading_users
         adapter_mock.soft_delete_from_production.assert_called_with(
             Table.USER, SOURCE_SYSTEM
         )
@@ -247,3 +247,51 @@ def describe_given_empty_DataFrame() -> None:
             df_to_db.upload_file(MagicMock(), pd.DataFrame(), "LMSection")
 
             # if no errors occurred then this worked
+
+
+def describe_when_uploading_section_associations() -> None:
+    @pytest.fixture
+    def when_uploading_section_associations() -> Tuple[MagicMock, pd.DataFrame]:
+        # Arrange
+        adapter_mock = MagicMock()
+
+        df = pd.DataFrame([{"SourceSystem": SOURCE_SYSTEM}])
+
+        # Act
+        df_to_db.upload_section_associations(adapter_mock, df)
+
+        return adapter_mock, df
+
+    def it_disables_the_natural_key_index(when_uploading_section_associations) -> None:
+        adapter_mock, _ = when_uploading_section_associations
+        adapter_mock.disable_staging_natural_key_index.assert_called_with(Table.SECTION_ASSOCIATION)
+
+    def it_truncates_the_staging_table(when_uploading_section_associations) -> None:
+        adapter_mock, _ = when_uploading_section_associations
+        adapter_mock.truncate_staging_table.assert_called_with(Table.SECTION_ASSOCIATION)
+
+    def it_re_enables_natural_key_index(when_uploading_section_associations) -> None:
+        adapter_mock, _ = when_uploading_section_associations
+        adapter_mock.enable_staging_natural_key_index.assert_called_with(Table.SECTION_ASSOCIATION)
+
+    def it_inserts_into_staging_table(when_uploading_section_associations) -> None:
+        adapter_mock, df = when_uploading_section_associations
+        adapter_mock.insert_into_staging.assert_called_with(df, Table.SECTION_ASSOCIATION)
+
+    def it_inserts_into_production_table(when_uploading_section_associations) -> None:
+        adapter_mock, _ = when_uploading_section_associations
+        adapter_mock.insert_new_records_to_production_for_section_and_user.assert_called_with(
+            Table.SECTION_ASSOCIATION, ["SourceSystem"]
+        )
+
+    def it_updates_production_table(when_uploading_section_associations) -> None:
+        adapter_mock, _ = when_uploading_section_associations
+        adapter_mock.copy_updates_to_production.assert_called_with(
+            Table.SECTION_ASSOCIATION, ["SourceSystem"]
+        )
+
+    def it_soft_deletes_from_production_table(when_uploading_section_associations) -> None:
+        adapter_mock, _ = when_uploading_section_associations
+        adapter_mock.soft_delete_from_production.assert_called_with(
+            Table.SECTION_ASSOCIATION, SOURCE_SYSTEM
+        )

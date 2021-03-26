@@ -223,6 +223,74 @@ WHERE NOT EXISTS (
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
 
+    def insert_new_records_to_production_for_section_and_user(
+        self, table: str, columns: List[str]
+    ) -> None:
+        """
+        Copies new records from the staging table to the production table. Specialized
+        for tables that have a foreign key to both LMSSection and LMSUser.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to truncate, not including the `stg_` prefix
+        columns: List[str]
+            A list of the column names in the table
+        """
+
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+        assert len(columns) > 0, "Argument `columns` cannot be empty"
+
+        insert_columns = ",".join(
+            [f"\n    {c}" for c in columns if not (c == "LMSSectionSourceSystemIdentifier" or c == "LMSUserSourceSystemIdentifier")]
+        )
+        select_columns = ",".join(
+            [
+                f"\n    stg.{c}"
+                for c in columns
+                if not (c == "LMSSectionSourceSystemIdentifier" or c == "LMSUserSourceSystemIdentifier")
+            ]
+        )
+
+        statement = f"""
+INSERT INTO
+    lms.{table}
+(
+    LMSSectionIdentifier,
+    LMSUserIdentifier,{insert_columns}
+)
+SELECT
+    LMSSection.LMSSectionIdentifier,
+    LMSUser.LMSUserIdentifier,{select_columns}
+FROM
+    lms.stg_{table} as stg
+INNER JOIN
+    lms.LMSSection
+ON
+    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSSection.SourceSystem
+INNER JOIN
+    lms.LMSUser
+ON
+    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSUser.SourceSystem
+WHERE NOT EXISTS (
+  SELECT
+    1
+  FROM
+    lms.{table}
+  WHERE
+    SourceSystemIdentifier = stg.SourceSystemIdentifier
+  AND
+    SourceSystem = stg.SourceSystem
+)
+"""
+
+        row_count = self._exec(statement)
+        logger.debug(f"Inserted {row_count} records into table `{table}`.")
+
     def copy_updates_to_production(self, table: str, columns: List[str]) -> None:
         """
         Updates modified records in production based on the staging table, based
@@ -249,7 +317,8 @@ WHERE NOT EXISTS (
                     # updated.
                     "SourceSystem",
                     "SourceSystemIdentifier",
-                    "LMSSectionSourceSystemIdentifier"
+                    "LMSSectionSourceSystemIdentifier",
+                    "LMSUserSourceSystemIdentifier",
                 )
             ]
         )

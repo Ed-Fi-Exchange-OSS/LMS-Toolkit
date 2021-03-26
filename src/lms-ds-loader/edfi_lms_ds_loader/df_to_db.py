@@ -115,3 +115,21 @@ def upload_assignments(
 
     if not submissions_type_df.empty:
         _upload_assignment_submission_types(db_adapter, submissions_type_df)
+
+
+def upload_section_associations(
+    db_adapter: MssqlLmsOperations, section_associations_df: pd.DataFrame
+) -> None:
+
+    TABLE = Table.SECTION_ASSOCIATION
+    columns = list(section_associations_df.columns)
+
+    _prepare_staging_table(db_adapter, section_associations_df, TABLE)
+    db_adapter.insert_new_records_to_production_for_section_and_user(
+        TABLE,
+        columns
+    )
+    db_adapter.copy_updates_to_production(TABLE, columns)
+    db_adapter.soft_delete_from_production(TABLE, _get_source_system(section_associations_df))
+
+    logger.info(f"Done with {TABLE} file.")

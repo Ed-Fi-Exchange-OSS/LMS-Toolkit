@@ -16,3 +16,4 @@ class Table:
     SECTION = "LMSSection"
     ASSIGNMENT = "Assignment"
     ASSIGNMENT_SUBMISSION_TYPES = "AssignmentSubmissionType"
+    SECTION_ASSOCIATION = "LMSUserLMSSectionAssociation"

@@ -268,7 +268,21 @@ def read_section_associations_file(
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
+    data_types = {
+        "EnrollmentStatus": "string",
+        "LMSSectionSourceSystemIdentifier": "string",
+        "LMSUserSourceSystemIdentifier": "string",
+    }
+
+    extra_date_columns = ["StartDate", "EndDate"]
+
+    return _read_csv(
+        full_path,
+        nrows,
+        log_level=logging.DEBUG,
+        data_types=data_types,
+        extra_date_columns=extra_date_columns,
+    )
 
 
 def _get_data_for_section(
