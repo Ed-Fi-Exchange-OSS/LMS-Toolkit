@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
+from typing import Callable, List
 
 import pandas as pd
 
@@ -14,7 +15,9 @@ from edfi_lms_ds_loader.helpers import assignment_splitter
 logger = logging.getLogger(__name__)
 
 
-def _prepare_staging_table(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) -> None:
+def _prepare_staging_table(
+    db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str
+) -> None:
     logger.info(f"Uploading {table} file ...")
 
     db_adapter.disable_staging_natural_key_index(table)
@@ -27,27 +30,6 @@ def _get_source_system(df: pd.DataFrame) -> str:
     return str(df.iloc[0]["SourceSystem"])
 
 
-def _upload_assignments(
-    db_adapter: MssqlLmsOperations, assignments_df: pd.DataFrame
-) -> None:
-
-    TABLE = Table.ASSIGNMENT
-    columns = list(assignments_df.columns)
-
-    # Truncate AssignmentDescription to max 1024 characters, matching the database
-    assignments_df["AssignmentDescription"] = assignments_df["AssignmentDescription"].astype("str").str[:1024]  # type: ignore
-
-    _prepare_staging_table(db_adapter, assignments_df, TABLE)
-    db_adapter.insert_new_records_to_production_for_section(
-        TABLE,
-        columns
-    )
-    db_adapter.copy_updates_to_production(TABLE, columns)
-    db_adapter.soft_delete_from_production(TABLE, _get_source_system(assignments_df))
-
-    logger.info(f"Done with {TABLE} file.")
-
-
 def _upload_assignment_submission_types(
     db_adapter: MssqlLmsOperations, submission_types_df: pd.DataFrame
 ) -> None:
@@ -57,12 +39,19 @@ def _upload_assignment_submission_types(
 
     db_adapter.insert_new_submission_types()
 
-    db_adapter.soft_delete_removed_submission_types(_get_source_system(submission_types_df))
+    db_adapter.soft_delete_removed_submission_types(
+        _get_source_system(submission_types_df)
+    )
 
     logger.info(f"Done with {TABLE} file.")
 
 
-def upload_file(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) -> None:
+def upload_file(
+    db_adapter: MssqlLmsOperations,
+    df: pd.DataFrame,
+    table: str,
+    db_adapter_insert_method: Callable[[MssqlLmsOperations, str, List[str]], None],
+) -> None:
     """
     Uploads a DataFrame to the designated LMS table.
 
@@ -82,7 +71,7 @@ def upload_file(db_adapter: MssqlLmsOperations, df: pd.DataFrame, table: str) ->
 
     columns = list(df.columns)
 
-    db_adapter.insert_new_records_to_production(table, columns)
+    db_adapter_insert_method(db_adapter, table, columns)
     db_adapter.copy_updates_to_production(table, columns)
 
     db_adapter.soft_delete_from_production(table, _get_source_system(df))
@@ -111,7 +100,14 @@ def upload_assignments(
 
     assignments_df, submissions_type_df = assignment_splitter.split(assignments_df)
 
-    _upload_assignments(db_adapter, assignments_df)
+    # Truncate AssignmentDescription to max 1024 characters, matching the database
+    assignments_df["AssignmentDescription"] = assignments_df["AssignmentDescription"].astype("str").str[:1024]  # type: ignore
+    upload_file(
+        db_adapter,
+        assignments_df,
+        Table.ASSIGNMENT,
+        MssqlLmsOperations.insert_new_records_to_production_for_section,
+    )
 
     if not submissions_type_df.empty:
         _upload_assignment_submission_types(db_adapter, submissions_type_df)
@@ -120,16 +116,9 @@ def upload_assignments(
 def upload_section_associations(
     db_adapter: MssqlLmsOperations, section_associations_df: pd.DataFrame
 ) -> None:
-
-    TABLE = Table.SECTION_ASSOCIATION
-    columns = list(section_associations_df.columns)
-
-    _prepare_staging_table(db_adapter, section_associations_df, TABLE)
-    db_adapter.insert_new_records_to_production_for_section_and_user(
-        TABLE,
-        columns
+    upload_file(
+        db_adapter,
+        section_associations_df,
+        Table.SECTION_ASSOCIATION,
+        MssqlLmsOperations.insert_new_records_to_production_for_section_and_user,
     )
-    db_adapter.copy_updates_to_production(TABLE, columns)
-    db_adapter.soft_delete_from_production(TABLE, _get_source_system(section_associations_df))
-
-    logger.info(f"Done with {TABLE} file.")
