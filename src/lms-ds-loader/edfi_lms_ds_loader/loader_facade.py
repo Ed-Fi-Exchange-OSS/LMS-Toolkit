@@ -10,7 +10,7 @@
 
 import logging
 import os
-from typing import Callable, Optional, Set
+from typing import Any, Callable, Dict, List, Optional, Set
 
 import pandas as pd
 
@@ -37,6 +37,23 @@ logger = logging.getLogger(__name__)
 # TODO: consider refactoring for transaction management, so that operations can
 # be rolled back. SQL Alchemy transactions can be used with DataFrame, so this
 # should be feasible. https://tracker.ed-fi.org/browse/LMS-244
+
+shared_data_store: Dict[str, Any] = {}
+
+
+def _load_required_data(csv_path: str):
+    sections = file_reader.get_all_sections(csv_path)
+    shared_data_store["section_ids"] = set(sections["SourceSystemIdentifier"])
+    assignments: List[dict] = []
+    for _, row in file_reader.get_all_assignments(csv_path, sections).iterrows():
+        assignments.append(
+            {
+                "assignment_id": row["SourceSystemIdentifier"],
+                "section_id": row["LMSSectionSourceSystemIdentifier"],
+            }
+        )
+
+    shared_data_store["assignments"] = assignments
 
 
 def _get_unprocessed_file_paths(
@@ -105,9 +122,7 @@ def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
 
 
 def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-    sections = set(
-        file_reader.get_all_sections(csv_path)["SourceSystemIdentifier"]
-    )  # we only need to access the last file
+    sections: set = shared_data_store["section_ids"]
 
     def __get_all_file_paths_callback():
         formatted_path = os.path.abspath(csv_path)
@@ -128,7 +143,34 @@ def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
         Table.ASSIGNMENT,
         Resources.ASSIGNMENTS,
         file_reader.read_assignments_file,
-        df_to_db.upload_assignments
+        df_to_db.upload_assignments,
+    )
+
+
+def _load_assignment_submissions(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    assignments: List = shared_data_store["assignments"]
+
+    def __get_all_file_paths_callback():
+        formatted_path = os.path.abspath(csv_path)
+        paths = []
+        for assignment in assignments:
+            paths = paths + file_repository.get_submissions_file_paths(
+                formatted_path,
+                assignment["section_id"],
+                assignment["assignment_id"],
+            )
+
+        return paths
+
+    unprocessed_files = _get_unprocessed_file_paths(
+        db_adapter, Resources.SUBMISSIONS, __get_all_file_paths_callback
+    )
+    _upload_files_from_paths(
+        db_adapter,
+        unprocessed_files,
+        Table.ASSIGNMENT_SUBMISSIONS,
+        Resources.SUBMISSIONS,
+        file_reader.read_submissions_file,
     )
 
 
@@ -141,8 +183,10 @@ def run_loader(arguments: MainArguments) -> None:
 
     db_adapter = arguments.get_db_operations_adapter()
 
+    _load_required_data(csv_path)
     _load_users(csv_path, db_adapter)
     _load_sections(csv_path, db_adapter)
     _load_assignments(csv_path, db_adapter)
+    _load_assignment_submissions(csv_path, db_adapter)
 
     logger.info("Done loading files into the LMS Data Store.")
