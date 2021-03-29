@@ -25,10 +25,10 @@ Association LMSUserLMSSectionAssociation
         role name Enrollment
     date StartDate
         documentation "Month, day, and year of the user's entry or assignment to the section."
-        is required
+        is optional
     date EndDate
         documentation "Month, day, and year of the user's withdrawal or exit from the section."
-        is required
+        is optional
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional

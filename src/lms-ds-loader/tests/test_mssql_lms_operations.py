@@ -185,6 +185,37 @@ AND
             # Assert
             exec_mock.assert_called_with(expected)
 
+    def describe_given_resource_is_child_of_section_and_user() -> None:
+        def it_should_build_a_valid_update_statement(mocker) -> None:
+            columns = ["a", "b", "SourceSystem", "SourceSystemIdentifier", "LMSSectionSourceSystemIdentifier", "LMSUserSourceSystemIdentifier"]
+            table = "Fake"
+            expected = """
+UPDATE
+    t
+SET
+    a = stg.a,
+    b = stg.b
+FROM
+    lms.Fake as t
+INNER JOIN
+    lms.stg_Fake as stg
+ON
+    t.SourceSystem = stg.SourceSystem
+AND
+    t.SourceSystemIdentifier = stg.SourceSystemIdentifier
+AND
+    t.LastModifiedDate <> stg.LastModifiedDate
+"""
+
+            # Arrange
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+
+            # Act
+            MssqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
+
+            # Assert
+            exec_mock.assert_called_with(expected)
+
 
 def describe_when_soft_deleting_a_record() -> None:
     def describe_given_table_is_whitespace() -> None:
@@ -408,6 +439,59 @@ WHERE NOT EXISTS (
 
             # Act
             MssqlLmsOperations(Mock()).insert_new_records_to_production_for_section(TABLE, COLUMNS)
+
+            # Assert
+            exec_mock.assert_called_with(expected)
+
+    def describe_given_resource_is_child_of_section_and_user() -> None:
+        def it_should_build_a_valid_insert_statement(mocker) -> None:
+            # Arrange
+            expected = """
+INSERT INTO
+    lms.Fake
+(
+    LMSSectionIdentifier,
+    LMSUserIdentifier,
+    SourceSystem,
+    SourceSystemIdentifier
+)
+SELECT
+    LMSSection.LMSSectionIdentifier,
+    LMSUser.LMSUserIdentifier,
+    stg.SourceSystem,
+    stg.SourceSystemIdentifier
+FROM
+    lms.stg_Fake as stg
+INNER JOIN
+    lms.LMSSection
+ON
+    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSSection.SourceSystem
+INNER JOIN
+    lms.LMSUser
+ON
+    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSUser.SourceSystem
+WHERE NOT EXISTS (
+  SELECT
+    1
+  FROM
+    lms.Fake
+  WHERE
+    SourceSystemIdentifier = stg.SourceSystemIdentifier
+  AND
+    SourceSystem = stg.SourceSystem
+)
+"""
+            TABLE = "Fake"
+            COLUMNS = ["LMSSectionSourceSystemIdentifier", "LMSUserSourceSystemIdentifier", "SourceSystem", "SourceSystemIdentifier"]
+
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+
+            # Act
+            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_section_and_user(TABLE, COLUMNS)
 
             # Assert
             exec_mock.assert_called_with(expected)

@@ -11,6 +11,7 @@
 import logging
 import os
 from typing import Callable, Optional, Set
+from functools import lru_cache
 
 import pandas as pd
 
@@ -39,6 +40,11 @@ logger = logging.getLogger(__name__)
 # should be feasible. https://tracker.ed-fi.org/browse/LMS-244
 
 
+@lru_cache()
+def _get_sections_df(csv_path: str) -> pd.DataFrame:
+    return file_reader.get_all_sections(csv_path)
+
+
 def _get_unprocessed_file_paths(
     db_adapter: MssqlLmsOperations,
     resource_name: str,
@@ -64,7 +70,12 @@ def _upload_files_from_paths(
             if custom_upload_function is not None:
                 custom_upload_function(db_adapter, data)
             else:
-                df_to_db.upload_file(db_adapter, data, table_name)
+                df_to_db.upload_file(
+                    db_adapter,
+                    data,
+                    table_name,
+                    MssqlLmsOperations.insert_new_records_to_production,
+                )
         db_adapter.add_processed_file(path, resource_name, rows)
 
 
@@ -105,8 +116,12 @@ def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
 
 
 def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    sections_df = _get_sections_df(csv_path)
+    if sections_df.empty:
+        logger.info("No sections loaded. Skipping assignments.")
+        return
     sections = set(
-        file_reader.get_all_sections(csv_path)["SourceSystemIdentifier"]
+        sections_df["SourceSystemIdentifier"]
     )  # we only need to access the last file
 
     def __get_all_file_paths_callback():
@@ -128,7 +143,37 @@ def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
         Table.ASSIGNMENT,
         Resources.ASSIGNMENTS,
         file_reader.read_assignments_file,
-        df_to_db.upload_assignments
+        df_to_db.upload_assignments,
+    )
+
+
+def _load_section_associations(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    sections_df = _get_sections_df(csv_path)
+    if sections_df.empty:
+        logger.info("No sections loaded. Skipping section associations.")
+        return
+    sections = set(sections_df["SourceSystemIdentifier"])
+
+    def __get_all_file_paths_callback():
+        formatted_path = os.path.abspath(csv_path)
+        paths = []
+        for section in sections:
+            paths = paths + file_repository.get_section_associations_file_paths(
+                formatted_path, section
+            )
+
+        return paths
+
+    unprocessed_files = _get_unprocessed_file_paths(
+        db_adapter, Resources.SECTION_ASSOCIATIONS, __get_all_file_paths_callback
+    )
+    _upload_files_from_paths(
+        db_adapter,
+        unprocessed_files,
+        Table.SECTION_ASSOCIATION,
+        Resources.SECTION_ASSOCIATIONS,
+        file_reader.read_section_associations_file,
+        df_to_db.upload_section_associations,
     )
 
 
@@ -144,5 +189,6 @@ def run_loader(arguments: MainArguments) -> None:
     _load_users(csv_path, db_adapter)
     _load_sections(csv_path, db_adapter)
     _load_assignments(csv_path, db_adapter)
+    _load_section_associations(csv_path, db_adapter)
 
     logger.info("Done loading files into the LMS Data Store.")
