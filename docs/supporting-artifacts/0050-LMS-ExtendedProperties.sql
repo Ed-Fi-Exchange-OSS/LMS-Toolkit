@@ -32,6 +32,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source sys
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+GO
 
 -- Extended Properties [lms].[AssignmentSubmission] --
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A user''s submission of course work for an assignment.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission'
@@ -57,6 +59,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'DeletedAt'
 GO
 
 -- Extended Properties [lms].[AssignmentSubmissionType] --
@@ -90,6 +94,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source sys
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSGrade', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+GO
 
 -- Extended Properties [lms].[LMSSection] --
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'An organized grouping of course content and users over a period of time for the purpose of providing instruction.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection'
@@ -113,6 +119,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'DeletedAt'
 GO
 
 -- Extended Properties [lms].[LMSSectionActivity] --
@@ -142,6 +150,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source sys
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSectionActivity', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+GO
 
 -- Extended Properties [lms].[LMSSystemActivity] --
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'An activity performed by a user within the instructional system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity'
@@ -168,6 +178,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source sys
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSystemActivity', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+GO
 
 -- Extended Properties [lms].[LMSUser] --
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A person using the instructional system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser'
@@ -192,6 +204,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source sys
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
 GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUser', @level2type=N'COLUMN', @level2name=N'DeletedAt'
+GO
 
 -- Extended Properties [lms].[LMSUserAttendanceEvent] --
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Attendance statuses assigned to users for a specific date.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent'
@@ -215,6 +229,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'DeletedAt'
 GO
 
 -- Extended Properties [lms].[LMSUserLMSSectionAssociation] --

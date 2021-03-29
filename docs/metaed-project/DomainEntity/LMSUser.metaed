@@ -36,3 +36,6 @@ Domain Entity LMSUser
     datetime SourceLastModifiedDate
         documentation "The source system datetime the record was last modified."
         is optional
+    datetime DeletedAt
+        documentation "The date and time at which a record was detected as no longer available from the source system, and thus should be treated as 'deleted'."
+        is optional

@@ -38,6 +38,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The enrollment
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The section status from the source system. E.g., Published, Completed.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'LMSSectionStatus';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'SourceCreateDate';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate';
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'DeletedAt';
 
 CREATE TABLE lms.stg_LMSSection (
     StagingId INT NOT NULL IDENTITY,
