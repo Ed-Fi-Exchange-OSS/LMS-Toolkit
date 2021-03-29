@@ -10,10 +10,10 @@
 
 import logging
 import os
-from typing import Any, Callable, Dict, List, Optional, Set
+from typing import Callable, Optional, Set
 from functools import lru_cache
 
-import pandas as pd
+from pandas import DataFrame
 
 from edfi_lms_ds_loader.helpers.constants import Table
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
@@ -41,26 +41,16 @@ logger = logging.getLogger(__name__)
 
 
 @lru_cache()
-def _get_sections_df(csv_path: str) -> pd.DataFrame:
+def _get_sections_df(csv_path: str) -> DataFrame:
     return file_reader.get_all_sections(csv_path)
 
 
-shared_data_store: Dict[str, Any] = {}
-
-
-def _load_required_data(csv_path: str):
-    sections = file_reader.get_all_sections(csv_path)
-    shared_data_store["section_ids"] = set(sections["SourceSystemIdentifier"])
-    assignments: List[dict] = []
-    for _, row in file_reader.get_all_assignments(csv_path, sections).iterrows():
-        assignments.append(
-            {
-                "assignment_id": row["SourceSystemIdentifier"],
-                "section_id": row["LMSSectionSourceSystemIdentifier"],
-            }
-        )
-
-    shared_data_store["assignments"] = assignments
+@lru_cache()
+def _get_assignments_df(csv_path: str) -> DataFrame:
+    sections_df: DataFrame = _get_sections_df(csv_path)
+    if sections_df.empty:
+        return DataFrame()
+    return file_reader.get_all_assignments(csv_path, sections_df)
 
 
 def _get_unprocessed_file_paths(
@@ -82,7 +72,7 @@ def _upload_files_from_paths(
     custom_upload_function: Optional[Callable] = None,
 ) -> None:
     for path in files:
-        data: pd.DataFrame = read_file_callback(path)
+        data: DataFrame = read_file_callback(path)
         rows = data.shape[0]
         if rows != 0:
             if custom_upload_function is not None:
@@ -166,7 +156,7 @@ def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
 
 
 def _load_section_associations(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-    sections_df = _get_sections_df(csv_path)
+    sections_df: DataFrame = _get_sections_df(csv_path)
     if sections_df.empty:
         logger.info("No sections loaded. Skipping section associations.")
         return
@@ -196,16 +186,22 @@ def _load_section_associations(csv_path: str, db_adapter: MssqlLmsOperations) ->
 
 
 def _load_assignment_submissions(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-    assignments: List = shared_data_store["assignments"]
+    assignments_df: DataFrame = _get_assignments_df(csv_path)
+    if assignments_df.empty:
+        logger.info("No assignments loaded. Skipping assignment submissions.")
+        return
 
     def __get_all_file_paths_callback():
         formatted_path = os.path.abspath(csv_path)
         paths = []
-        for assignment in assignments:
+        for section_id, assignment_id in zip(
+            assignments_df.LMSSectionSourceSystemIdentifier,
+            assignments_df.SourceSystemIdentifier,
+        ):
             paths = paths + file_repository.get_submissions_file_paths(
                 formatted_path,
-                assignment["section_id"],
-                assignment["assignment_id"],
+                section_id,
+                assignment_id,
             )
 
         return paths
@@ -216,9 +212,10 @@ def _load_assignment_submissions(csv_path: str, db_adapter: MssqlLmsOperations) 
     _upload_files_from_paths(
         db_adapter,
         unprocessed_files,
-        Table.ASSIGNMENT_SUBMISSIONS,
+        Table.ASSIGNMENT_SUBMISSION,
         Resources.SUBMISSIONS,
         file_reader.read_submissions_file,
+        df_to_db.upload_assignment_submissions,
     )
 
 
@@ -231,7 +228,6 @@ def run_loader(arguments: MainArguments) -> None:
 
     db_adapter = arguments.get_db_operations_adapter()
 
-    _load_required_data(csv_path)
     _load_users(csv_path, db_adapter)
     _load_sections(csv_path, db_adapter)
     _load_assignments(csv_path, db_adapter)

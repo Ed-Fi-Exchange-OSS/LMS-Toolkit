@@ -8,7 +8,7 @@ CREATE TABLE lms.AssignmentSubmission (
     SourceSystemIdentifier NVARCHAR(255) NOT NULL,
     SourceSystem NVARCHAR(255) NOT NULL,
 	AssignmentIdentifier INT NOT NULL,
-	LMSUserSourceSystemIdentifier INT NOT NULL,
+	LMSUserIdentifier INT NOT NULL,
     SubmissionStatus NVARCHAR(255) NULL,
 	SubmissionDateTime DATETIME2 NULL,
 	EarnedPoints decimal NULL,
@@ -30,7 +30,7 @@ ALTER TABLE lms.AssignmentSubmission ADD CONSTRAINT AssignmentSubmission_UK_Sour
 ALTER TABLE lms.AssignmentSubmission WITH CHECK ADD CONSTRAINT FK_AssignmentSubmission_Assignment FOREIGN KEY (AssignmentIdentifier)
 REFERENCES lms.Assignment (AssignmentIdentifier)
 ON DELETE CASCADE;
-ALTER TABLE lms.AssignmentSubmission WITH CHECK ADD CONSTRAINT FK_AssignmentSubmission_User FOREIGN KEY (LMSUserSourceSystemIdentifier)
+ALTER TABLE lms.AssignmentSubmission WITH CHECK ADD CONSTRAINT FK_AssignmentSubmission_User FOREIGN KEY (LMSUserIdentifier)
 REFERENCES lms.LMSUser (LMSUserIdentifier)
 ON DELETE CASCADE;
 
@@ -40,7 +40,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numer
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique number or alphanumeric code assigned to a user by the source system.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceSystemIdentifier';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the assignment data.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceSystem';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the assignment.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier';
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the section.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'LMSUserSourceSystemIdentifier';
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the user.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'LMSUserIdentifier';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the submission.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SubmissionStatus';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date of the submission.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SubmissionDateTime';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The grade if graded.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'Grade';
@@ -52,8 +52,8 @@ CREATE TABLE lms.stg_AssignmentSubmission (
     StagingId INT NOT NULL IDENTITY,
     SourceSystemIdentifier NVARCHAR(255) NOT NULL,
     SourceSystem NVARCHAR(255) NOT NULL,
-	AssignmentIdentifier INT NOT NULL,
-	LMSUserSourceSystemIdentifier INT NOT NULL,
+	AssignmentSourceSystemIdentifier NVARCHAR(255) NOT NULL,
+	LMSUserSourceSystemIdentifier NVARCHAR(255) NOT NULL,
     SubmissionStatus NVARCHAR(255) NULL,
 	SubmissionDateTime DATETIME2 NULL,
 	EarnedPoints decimal NULL,
