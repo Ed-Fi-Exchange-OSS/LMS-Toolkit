@@ -44,6 +44,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Month, day, an
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Month, day, and year of the user''s withdrawal or exit from the section.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'EndDate'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserLMSSectionAssociation', @level2type=N'COLUMN', @level2name=N'DeletedAt';
 
 CREATE TABLE lms.stg_LMSUserLMSSectionAssociation (
     StagingId INT NOT NULL IDENTITY,
