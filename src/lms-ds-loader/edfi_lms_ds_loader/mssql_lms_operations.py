@@ -120,7 +120,7 @@ class MssqlLmsOperations:
             method="multi",
             chunksize=120,
         )
-        logger.debug(f"All records have been loading into staging table 'stg_{table}'")
+        logger.debug(f"All records have been loaded into staging table 'stg_{table}'")
 
     def insert_new_records_to_production(self, table: str, columns: List[str]) -> None:
         """
