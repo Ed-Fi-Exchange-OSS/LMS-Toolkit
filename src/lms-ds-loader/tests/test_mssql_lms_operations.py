@@ -46,9 +46,7 @@ def describe_when_disabling_natural_key_index() -> None:
     def describe_given_valid_input() -> None:
         def it_issues_truncate_statement(mocker) -> None:
             table = "user"
-            expected = (
-                "ALTER INDEX IX_stg_user_Natural_Key on lms.stg_user DISABLE;"
-            )
+            expected = "ALTER INDEX IX_stg_user_Natural_Key on lms.stg_user DISABLE;"
 
             # Arrange
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
@@ -69,9 +67,7 @@ def describe_when_enabling_natural_key_index() -> None:
     def describe_given_valid_input() -> None:
         def it_issues_alter__index_statement(mocker) -> None:
             table = "user"
-            expected = (
-                "ALTER INDEX IX_stg_user_Natural_Key on lms.stg_user REBUILD;"
-            )
+            expected = "ALTER INDEX IX_stg_user_Natural_Key on lms.stg_user REBUILD;"
 
             # Arrange
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
@@ -158,7 +154,13 @@ AND
 
     def describe_given_resource_is_child_of_section() -> None:
         def it_should_build_a_valid_insert_statement(mocker) -> None:
-            columns = ["a", "b", "SourceSystem", "SourceSystemIdentifier", "LMSSectionSourceSystemIdentifier"]
+            columns = [
+                "a",
+                "b",
+                "SourceSystem",
+                "SourceSystemIdentifier",
+                "LMSSectionSourceSystemIdentifier",
+            ]
             table = "Fake"
             expected = """
 UPDATE
@@ -189,7 +191,14 @@ AND
 
     def describe_given_resource_is_child_of_section_and_user() -> None:
         def it_should_build_a_valid_update_statement(mocker) -> None:
-            columns = ["a", "b", "SourceSystem", "SourceSystemIdentifier", "LMSSectionSourceSystemIdentifier", "LMSUserSourceSystemIdentifier"]
+            columns = [
+                "a",
+                "b",
+                "SourceSystem",
+                "SourceSystemIdentifier",
+                "LMSSectionSourceSystemIdentifier",
+                "LMSUserSourceSystemIdentifier",
+            ]
             table = "Fake"
             expected = """
 UPDATE
@@ -395,7 +404,9 @@ WHERE
                 exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
                 # Act
-                MssqlLmsOperations(Mock()).insert_new_records_to_production(table, columns)
+                MssqlLmsOperations(Mock()).insert_new_records_to_production(
+                    table, columns
+                )
 
                 # Assert
                 exec_mock.assert_called_with(expected)
@@ -435,12 +446,18 @@ WHERE NOT EXISTS (
 )
 """
             TABLE = "Fake"
-            COLUMNS = ["LMSSectionSourceSystemIdentifier", "SourceSystem", "SourceSystemIdentifier"]
+            COLUMNS = [
+                "LMSSectionSourceSystemIdentifier",
+                "SourceSystem",
+                "SourceSystemIdentifier",
+            ]
 
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_section(TABLE, COLUMNS)
+            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_section(
+                TABLE, COLUMNS
+            )
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -488,12 +505,19 @@ WHERE NOT EXISTS (
 )
 """
             TABLE = "Fake"
-            COLUMNS = ["LMSSectionSourceSystemIdentifier", "LMSUserSourceSystemIdentifier", "SourceSystem", "SourceSystemIdentifier"]
+            COLUMNS = [
+                "LMSSectionSourceSystemIdentifier",
+                "LMSUserSourceSystemIdentifier",
+                "SourceSystem",
+                "SourceSystemIdentifier",
+            ]
 
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_section_and_user(TABLE, COLUMNS)
+            MssqlLmsOperations(
+                Mock()
+            ).insert_new_records_to_production_for_section_and_user(TABLE, COLUMNS)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -503,24 +527,33 @@ def describe_when_getting_processed_files():
     def describe_given_parameters_are_correct():
         def it_should_build_the_correct_sql_query(mocker):
             resource_name = "fake_resource_name"
-            expected_query = f"""
-SELECT FullPath FROM lms.ProcessedFiles
-WHERE ResourceName = '{resource_name}'""".strip()
+            expected_query = """
+SELECT
+    FullPath
+FROM
+    lms.ProcessedFiles
+WHERE
+    ResourceName = 'fake_resource_name'
+""".strip()
 
-            query_mock = mocker.patch.object(MssqlLmsOperations, "_query")
+            query_mock = mocker.patch.object(
+                pd, "read_sql_query", return_value=pd.DataFrame(columns=["FullPath"])
+            )
+
             MssqlLmsOperations(Mock()).get_processed_files(resource_name)
 
-            query_mock.assert_called_with(expected_query)
+            call_args = query_mock.call_args
+            assert len(call_args) == 2
+            assert call_args[0][0] == expected_query
 
     def describe_given_the_processed_file_table_does_not_exist():
         def it_should_log_an_error_and_re_raise_the_exception(mocker):
-
             def __raise(query, engine) -> None:
                 raise ProgrammingError("statement", [], "none", False)
 
             mocker.patch.object(pd, "read_sql_query", side_effect=__raise)
 
-            logger = logging.getLogger('edfi_lms_ds_loader.mssql_lms_operations')
+            logger = logging.getLogger("edfi_lms_ds_loader.mssql_lms_operations")
             mock_exc_logger = mocker.patch.object(logger, "exception")
 
             with pytest.raises(ProgrammingError):
@@ -535,11 +568,23 @@ def describe_when_adding_processed_files():
             resource_name = "fake_resource_name"
             path = "fake_path/"
             rows = 3
-            expected_statement = f"""
-INSERT INTO lms.ProcessedFiles(FullPath, ResourceName, NumberOfRows)
-VALUES ('{path}','{resource_name}', {rows})""".strip()
+            expected_statement = """
+INSERT INTO
+    lms.ProcessedFiles
+(
+    FullPath,
+    ResourceName,
+    NumberOfRows
+)
+VALUES
+(
+    'fake_path/',
+    'fake_resource_name',
+    3
+)
+""".strip()
 
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
-            MssqlLmsOperations(Mock()).add_processed_file(resource_name, path, rows)
+            MssqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
 
             exec_mock.assert_called_with(expected_statement)
