@@ -5,11 +5,15 @@
 
 # Developer note: this adapter module is deliberately not unit tested.
 
+import logging
 from typing import Any, Callable, List, TypeVar
 
 from sqlalchemy.engine.base import Engine as sa_Engine
 from sqlalchemy.orm import sessionmaker, Session as sa_Session
 from sqlalchemy.exc import ProgrammingError
+
+
+logger = logging.getLogger(__name__)
 
 T = TypeVar('T')
 
@@ -27,8 +31,12 @@ def execute_transaction(
         session.commit()
 
         return response
-    except ProgrammingError:
+    except ProgrammingError as pe:
         session.rollback()
+
+        # Deliberately bubbling this error up to the stack - but need to make
+        # sure it is handled in the standard error log messages as well.
+        logger.exception(pe)
         raise
     finally:
         session.close()
