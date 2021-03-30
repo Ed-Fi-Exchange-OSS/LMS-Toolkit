@@ -7,12 +7,12 @@ CREATE TABLE lms.AssignmentSubmission (
     AssignmentSubmissionIdentifier INT NOT NULL IDENTITY,
     SourceSystemIdentifier NVARCHAR(255) NOT NULL,
     SourceSystem NVARCHAR(255) NOT NULL,
-	AssignmentIdentifier INT NOT NULL,
-	LMSUserIdentifier INT NOT NULL,
+    AssignmentIdentifier INT NOT NULL,
+    LMSUserIdentifier INT NOT NULL,
     SubmissionStatus NVARCHAR(255) NULL,
-	SubmissionDateTime DATETIME2 NULL,
-	EarnedPoints decimal NULL,
-	Grade decimal NULL,
+    SubmissionDateTime DATETIME2 NULL,
+    EarnedPoints INT NULL,
+    Grade NVARCHAR(20) NULL,
     SourceCreateDate DATETIME2 NULL,
     SourceLastModifiedDate DATETIME2 NULL,
     CreateDate DATETIME2 NOT NULL,
@@ -47,17 +47,18 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The grade if g
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The earned points.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'EarnedPoints';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceCreateDate';
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was last modified.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SourceLastModifiedDate';
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date and time at which a record was detected as no longer available from the source system, and thus should be treated as ''deleted''.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'DeletedAt';
 
 CREATE TABLE lms.stg_AssignmentSubmission (
     StagingId INT NOT NULL IDENTITY,
     SourceSystemIdentifier NVARCHAR(255) NOT NULL,
     SourceSystem NVARCHAR(255) NOT NULL,
-	AssignmentSourceSystemIdentifier NVARCHAR(255) NOT NULL,
-	LMSUserSourceSystemIdentifier NVARCHAR(255) NOT NULL,
+    AssignmentSourceSystemIdentifier NVARCHAR(255) NOT NULL,
+    LMSUserSourceSystemIdentifier NVARCHAR(255) NOT NULL,
     SubmissionStatus NVARCHAR(255) NULL,
-	SubmissionDateTime DATETIME2 NULL,
-	EarnedPoints decimal NULL,
-	Grade decimal NULL,
+    SubmissionDateTime DATETIME2 NULL,
+    EarnedPoints INT NULL,
+    Grade NVARCHAR(20) NULL,
     SourceCreateDate DATETIME2 NULL,
     SourceLastModifiedDate DATETIME2 NULL,
     CreateDate DATETIME2 NOT NULL,
@@ -69,4 +70,3 @@ CREATE TABLE lms.stg_AssignmentSubmission (
 ) ON [PRIMARY];
 
 CREATE INDEX IX_stg_AssignmentSubmission_Natural_Key ON lms.stg_AssignmentSubmission (SourceSystemIdentifier, SourceSystem, LastModifiedDate);
-

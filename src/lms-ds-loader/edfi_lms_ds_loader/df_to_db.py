@@ -136,7 +136,7 @@ def upload_section_associations(
 
 
 def upload_assignment_submissions(
-    db_adapter: MssqlLmsOperations, section_associations_df: pd.DataFrame
+    db_adapter: MssqlLmsOperations, submissions_df: pd.DataFrame
 ) -> None:
     """
     Uploads an Assignment Submission DataFrame to the Assignment Submission
@@ -146,12 +146,12 @@ def upload_assignment_submissions(
     ----------
     db_adapter: MssqlLmsOperations
         Database engine-specific adapter/wrapper for database operations.
-    df: pd.DataFrame
+    submissions_df: pd.DataFrame
         A DataFrame to upload.
     """
     upload_file(
         db_adapter,
-        section_associations_df,
+        submissions_df,
         Table.ASSIGNMENT_SUBMISSION,
         MssqlLmsOperations.insert_new_records_to_production_for_assignment_and_user,
     )
