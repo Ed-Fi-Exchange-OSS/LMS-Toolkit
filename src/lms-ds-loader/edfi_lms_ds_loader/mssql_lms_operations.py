@@ -9,6 +9,7 @@ from typing import List, Set
 import pandas as pd
 from sqlalchemy.engine.result import ResultProxy as sa_Result
 from sqlalchemy.engine import Engine as sa_Engine
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import Session as sa_Session
 
 from edfi_lms_ds_loader.helpers.constants import Table
@@ -466,11 +467,15 @@ WHERE
         )
 
     def get_processed_files(self, resource_name: str) -> Set[str]:
-        query = f"""
-SELECT FullPath FROM lms.ProcessedFiles
-WHERE ResourceName = '{resource_name}'""".strip()
-        result = pd.read_sql_query(query, self.engine)
-        return set(result["FullPath"])
+        try:
+            query = f"""
+    SELECT FullPath FROM lms.ProcessedFiles
+    WHERE ResourceName = '{resource_name}'""".strip()
+            result = pd.read_sql_query(query, self.engine)
+            return set(result["FullPath"])
+        except ProgrammingError as pe:
+            logger.exception(pe)
+            raise
 
     def add_processed_file(self, path: str, resource_name: str, rows: int):
         statement = f"""

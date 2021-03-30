@@ -3,10 +3,12 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+import logging
+
 import pytest
 from unittest.mock import Mock
 import pandas as pd
-
+from sqlalchemy.exc import ProgrammingError
 
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
@@ -509,6 +511,22 @@ WHERE ResourceName = '{resource_name}'""".strip()
             MssqlLmsOperations(Mock()).get_processed_files(resource_name)
 
             query_mock.assert_called_with(expected_query)
+
+    def describe_given_the_processed_file_table_does_not_exist():
+        def it_should_log_an_error_and_re_raise_the_exception(mocker):
+
+            def __raise(query, engine) -> None:
+                raise ProgrammingError("statement", [], "none", False)
+
+            mocker.patch.object(pd, "read_sql_query", side_effect=__raise)
+
+            logger = logging.getLogger('edfi_lms_ds_loader.mssql_lms_operations')
+            mock_exc_logger = mocker.patch.object(logger, "exception")
+
+            with pytest.raises(ProgrammingError):
+                MssqlLmsOperations(Mock()).get_processed_files("fake_resource_name")
+
+            mock_exc_logger.assert_called_once()
 
 
 def describe_when_adding_processed_files():
