@@ -500,7 +500,7 @@ WHERE NOT EXISTS (
 
 
 def describe_when_getting_processed_files():
-    def given_parameters_are_correct():
+    def describe_given_parameters_are_correct():
         def it_should_build_the_correct_sql_query(mocker):
             resource_name = "fake_resource_name"
             expected_query = f"""
@@ -530,7 +530,7 @@ WHERE ResourceName = '{resource_name}'""".strip()
 
 
 def describe_when_adding_processed_files():
-    def given_parameters_are_correct():
+    def describe_given_parameters_are_correct():
         def it_should_build_the_correct_sql_statement(mocker):
             resource_name = "fake_resource_name"
             path = "fake_path/"
