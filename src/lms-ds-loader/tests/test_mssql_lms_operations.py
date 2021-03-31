@@ -320,7 +320,7 @@ WHERE
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             source_system = "Canvas"
-            expected = f"""
+            expected = """
 UPDATE
     AssignmentSubmissionType
 SET
