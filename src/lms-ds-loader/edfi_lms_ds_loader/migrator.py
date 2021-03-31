@@ -19,11 +19,13 @@ logger = logging.getLogger(__name__)
 MIGRATION_SCRIPTS = [
     # CAUTION: these scripts will run in order from "top to bottom", so it is
     # critical to maintain the script order at all times.
+    "initialize_lms_database",
+    "create_processed_files_table",
     "create_user_tables",
     "create_section_tables",
     "create_assignment_tables",
     "create_section_association_tables",
-    "create_processed_files_table",
+    "create_assignment_submission_tables",
 ]
 
 

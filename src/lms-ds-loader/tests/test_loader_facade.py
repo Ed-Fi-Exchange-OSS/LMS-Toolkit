@@ -48,11 +48,21 @@ def describe_when_uploading_extractor_files() -> None:
             )
 
             mocker.patch(
-                "edfi_lms_file_utils.file_reader.get_all_sections",
+                "edfi_lms_ds_loader.loader_facade._get_sections_df",
                 return_value=fake_df_sections,
             )
 
-            fake_df_assignments = pd.DataFrame([{"assignments": "b"}])
+            fake_df_assignments = pd.DataFrame(
+                [
+                    {"LMSSectionSourceSystemIdentifier": "a"},
+                    {"SourceSystemIdentifier": "b"},
+                ]
+            )
+            mocker.patch(
+                "edfi_lms_ds_loader.loader_facade._get_assignments_df",
+                return_value=fake_df_assignments,
+            )
+
             mocker.patch(
                 "edfi_lms_file_utils.file_reader.read_assignments_file",
                 return_value=fake_df_assignments,
@@ -64,12 +74,21 @@ def describe_when_uploading_extractor_files() -> None:
                 return_value=fake_df_section_associations,
             )
 
+            fake_df_assignment_submissions = pd.DataFrame([{"submissions": "b"}])
+            mocker.patch(
+                "edfi_lms_file_utils.file_reader.read_submissions_file",
+                return_value=fake_df_assignment_submissions,
+            )
+
             mock_upload_file = mocker.patch("edfi_lms_ds_loader.df_to_db.upload_file")
             mock_upload_assignments_file = mocker.patch(
                 "edfi_lms_ds_loader.df_to_db.upload_assignments"
             )
             mock_upload_section_associations_file = mocker.patch(
                 "edfi_lms_ds_loader.df_to_db.upload_section_associations"
+            )
+            mock_upload_assignment_submissions_file = mocker.patch(
+                "edfi_lms_ds_loader.df_to_db.upload_assignment_submissions"
             )
 
             mocks = {
@@ -79,6 +98,7 @@ def describe_when_uploading_extractor_files() -> None:
                 "upload_file": mock_upload_file,
                 "upload_assignments_file": mock_upload_assignments_file,
                 "upload_section_associations_file": mock_upload_section_associations_file,
+                "upload_assignment_submissions_file": mock_upload_assignment_submissions_file,
             }
 
             dfs = {
@@ -86,6 +106,7 @@ def describe_when_uploading_extractor_files() -> None:
                 "sections": fake_df_sections,
                 "assignments": fake_df_assignments,
                 "section_associations": fake_df_section_associations,
+                "assignment_submissions": fake_df_assignment_submissions,
             }
 
             file_repository_users_mock = Mock(return_value=["fileOne", "fileTwo"])
@@ -114,6 +135,14 @@ def describe_when_uploading_extractor_files() -> None:
             mocker.patch(
                 "edfi_lms_file_utils.file_repository.get_section_associations_file_paths",
                 file_repository_section_associations_mock,
+            )
+
+            file_repository_assignment_submissions_mock = Mock(
+                return_value=["fileEleven", "fileTwelve"]
+            )
+            mocker.patch(
+                "edfi_lms_file_utils.file_repository.get_submissions_file_paths",
+                file_repository_assignment_submissions_mock,
             )
 
             # Act
@@ -157,6 +186,13 @@ def describe_when_uploading_extractor_files() -> None:
 
             mocks["upload_section_associations_file"].assert_called_with(
                 mocks["get_db_operations_adapter"], dfs["section_associations"]
+            )
+
+        def it_uploads_assignment_submissions(mocker, fixture) -> None:
+            mocks, dfs = fixture
+
+            mocks["upload_assignment_submissions_file"].assert_called_with(
+                mocks["get_db_operations_adapter"], dfs["assignment_submissions"]
             )
 
     def describe_given_users_file_read_fails() -> None:

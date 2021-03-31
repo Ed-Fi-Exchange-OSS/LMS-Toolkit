@@ -524,6 +524,59 @@ WHERE NOT EXISTS (
             # Assert
             exec_mock.assert_called_with(expected)
 
+    def describe_given_resource_is_child_of_assignment_and_user() -> None:
+        def it_should_build_a_valid_insert_statement(mocker) -> None:
+            # Arrange
+            expected = """
+INSERT INTO
+    lms.Fake
+(
+    AssignmentIdentifier,
+    LMSUserIdentifier,
+    SourceSystem,
+    SourceSystemIdentifier
+)
+SELECT
+    Assignment.AssignmentIdentifier,
+    LMSUser.LMSUserIdentifier,
+    stg.SourceSystem,
+    stg.SourceSystemIdentifier
+FROM
+    lms.stg_Fake as stg
+INNER JOIN
+    lms.Assignment
+ON
+    stg.AssignmentSourceSystemIdentifier = Assignment.SourceSystemIdentifier
+AND
+    stg.SourceSystem = Assignment.SourceSystem
+INNER JOIN
+    lms.LMSUser
+ON
+    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSUser.SourceSystem
+WHERE NOT EXISTS (
+  SELECT
+    1
+  FROM
+    lms.Fake
+  WHERE
+    SourceSystemIdentifier = stg.SourceSystemIdentifier
+  AND
+    SourceSystem = stg.SourceSystem
+)
+"""
+            TABLE = "Fake"
+            COLUMNS = ["AssignmentSourceSystemIdentifier", "LMSUserSourceSystemIdentifier", "SourceSystem", "SourceSystemIdentifier"]
+
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+
+            # Act
+            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_assignment_and_user(TABLE, COLUMNS)
+
+            # Assert
+            exec_mock.assert_called_with(expected)
+
 
 def describe_when_getting_processed_files():
     def describe_given_parameters_are_correct():
