@@ -116,9 +116,42 @@ def upload_assignments(
 def upload_section_associations(
     db_adapter: MssqlLmsOperations, section_associations_df: pd.DataFrame
 ) -> None:
+    """
+    Uploads a Section Association DataFrame to the User-Section Association
+    table.
+
+    Parameters
+    ----------
+    db_adapter: MssqlLmsOperations
+        Database engine-specific adapter/wrapper for database operations.
+    df: pd.DataFrame
+        A DataFrame to upload.
+    """
     upload_file(
         db_adapter,
         section_associations_df,
         Table.SECTION_ASSOCIATION,
         MssqlLmsOperations.insert_new_records_to_production_for_section_and_user,
+    )
+
+
+def upload_assignment_submissions(
+    db_adapter: MssqlLmsOperations, submissions_df: pd.DataFrame
+) -> None:
+    """
+    Uploads an Assignment Submission DataFrame to the Assignment Submission
+    table.
+
+    Parameters
+    ----------
+    db_adapter: MssqlLmsOperations
+        Database engine-specific adapter/wrapper for database operations.
+    submissions_df: pd.DataFrame
+        A DataFrame to upload.
+    """
+    upload_file(
+        db_adapter,
+        submissions_df,
+        Table.ASSIGNMENT_SUBMISSION,
+        MssqlLmsOperations.insert_new_records_to_production_for_assignment_and_user,
     )

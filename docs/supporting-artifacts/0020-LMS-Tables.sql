@@ -37,7 +37,7 @@ GO
 
 -- Table [lms].[AssignmentSubmission] --
 CREATE TABLE [lms].[AssignmentSubmission] (
-    [LMSGradeIdentifier] [INT] NOT NULL,
+    [AssignmentSubmissionIdentifier] [INT] NOT NULL,
     [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
     [SourceSystem] [NVARCHAR](255) NOT NULL,
     [LMSUserIdentifier] [INT] NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE [lms].[AssignmentSubmission] (
     [LastModifiedDate] [DATETIME2] NOT NULL,
     [Id] [UNIQUEIDENTIFIER] NOT NULL,
     CONSTRAINT [AssignmentSubmission_PK] PRIMARY KEY CLUSTERED (
-        [LMSGradeIdentifier] ASC
+        [AssignmentSubmissionIdentifier] ASC
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO

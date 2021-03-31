@@ -8,18 +8,18 @@ Domain Entity AssignmentSubmission
     shared integer Identifier
         documentation "A unique numeric identifier assigned to the submission."
         is part of identity
-        role name LMSGrade
+        role name AssignmentSubmission
     shared string SourceSystemIdentifier
-        documentation "A unique number or alphanumeric code assigned to a user by the source system."
+        documentation "A unique number or alphanumeric code assigned to a submission by the source system."
         is required
     shared string SourceSystem
-        documentation "The system code or name providing the user data."
+        documentation "The system code or name providing the assignment submission data."
         is required
     domain entity LMSUser
         documentation "A reference to the user providing the assignment submission."
         is required
     domain entity Assignment
-        documentation "A reference to the submission assignment."
+        documentation "A reference to the assignment submission."
         is required
     shared string Status
         documentation "The status of the submission in relation to the late acceptance policy."

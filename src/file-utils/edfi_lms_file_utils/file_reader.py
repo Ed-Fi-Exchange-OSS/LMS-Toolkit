@@ -381,7 +381,24 @@ def read_section_activities_file(
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
+    data_types = {
+        "LMSSectionSourceSystemIdentifier": "string",
+        "LMSUserSourceSystemIdentifier": "string",
+        "ActivityType": "string",
+        "ActivityStatus": "string",
+        "ParentSourceSystemIdentifier": "string",
+        "ActivityTimeInMinutes": "Int64",
+    }
+
+    extra_date_columns = ["ActivityDateTime"]
+
+    return _read_csv(
+        full_path,
+        nrows,
+        log_level=logging.DEBUG,
+        data_types=data_types,
+        extra_date_columns=extra_date_columns,
+    )
 
 
 def get_all_section_activities(
@@ -532,7 +549,23 @@ def read_submissions_file(full_path: str, nrows: Optional[int] = None) -> pd.Dat
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
+    data_types = {
+        "Grade": "string",
+        "AssignmentSourceSystemIdentifier": "string",
+        "LMSUserSourceSystemIdentifier": "string",
+        "SubmissionStatus": "string",
+        "EarnedPoints": "Int64",
+    }
+
+    extra_date_columns = ["SubmissionDateTime"]
+
+    return _read_csv(
+        full_path,
+        nrows,
+        log_level=logging.DEBUG,
+        data_types=data_types,
+        extra_date_columns=extra_date_columns,
+    )
 
 
 def get_all_submissions(
