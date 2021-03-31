@@ -353,7 +353,7 @@ AND
         row_count = self._exec(statement)
         logger.debug(f"Updated {row_count} records in table `{table}`.")
 
-    def soft_delete_from_production(self, table: str, sourceSystem: str) -> None:
+    def soft_delete_from_production(self, table: str, source_system: str) -> None:
         """
         Updates production records that do not have a match in the staging table
         by setting their `deletedat` value to the current timestamp.
@@ -362,7 +362,7 @@ AND
         ----------
         table: str
             Name of the table to truncate, not including the `stg_`.
-        sourceSystem: str
+        source_system: str
             The SourceSystem currently being processed.
         """
 
@@ -389,7 +389,7 @@ WHERE
 AND
     t.DeletedAt IS NULL
 AND
-    t.SourceSystem = '{sourceSystem}'
+    t.SourceSystem = '{source_system}'
 """
 
         row_count = self._exec(statement)
@@ -446,7 +446,7 @@ WHERE
             The name of the source system for the current import process.
         """
 
-        statement = """
+        statement = f"""
 UPDATE
     AssignmentSubmissionType
 SET
@@ -458,6 +458,8 @@ INNER JOIN
 ON
     AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
 WHERE
+    SourceSystem = '{source_system}'
+AND
     NOT EXISTS (
         SELECT
             1
@@ -493,6 +495,20 @@ WHERE
             raise
 
     def add_processed_file(self, path: str, resource_name: str, rows: int):
+        """
+        Records that a file has been processed and thus should not be processed
+        a second time.
+
+        Parameters
+        ----------
+        path: str
+            Filesystem path for the file that was processed.
+        resource_name: str
+            Name of the resource covered by the file.
+        rows: int
+            Number of rows in the file.
+        """
+
         statement = f"""
 INSERT INTO
     lms.ProcessedFiles

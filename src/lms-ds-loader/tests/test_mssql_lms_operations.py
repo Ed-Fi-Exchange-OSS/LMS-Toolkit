@@ -320,7 +320,7 @@ WHERE
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             source_system = "Canvas"
-            expected = """
+            expected = f"""
 UPDATE
     AssignmentSubmissionType
 SET
@@ -332,6 +332,8 @@ INNER JOIN
 ON
     AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
 WHERE
+    SourceSystem = 'Canvas'
+AND
     NOT EXISTS (
         SELECT
             1
@@ -553,6 +555,9 @@ WHERE
 
             mocker.patch.object(pd, "read_sql_query", side_effect=__raise)
 
+            # Typically we do not test the logging. In this case and another
+            # below, logging was a core business requirement for a task, and
+            # thus it makes sense to test that requirement.
             logger = logging.getLogger("edfi_lms_ds_loader.mssql_lms_operations")
             mock_exc_logger = mocker.patch.object(logger, "exception")
 
