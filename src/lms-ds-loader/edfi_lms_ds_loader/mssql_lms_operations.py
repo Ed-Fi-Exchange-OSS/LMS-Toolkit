@@ -9,6 +9,7 @@ from typing import List, Set
 import pandas as pd
 from sqlalchemy.engine.result import ResultProxy as sa_Result
 from sqlalchemy.engine import Engine as sa_Engine
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import Session as sa_Session
 
 from edfi_lms_ds_loader.helpers.constants import Table
@@ -120,7 +121,7 @@ class MssqlLmsOperations:
             method="multi",
             chunksize=120,
         )
-        logger.debug(f"All records have been loading into staging table 'stg_{table}'")
+        logger.debug(f"All records have been loaded into staging table 'stg_{table}'")
 
     def insert_new_records_to_production(self, table: str, columns: List[str]) -> None:
         """
@@ -242,13 +243,23 @@ WHERE NOT EXISTS (
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
         insert_columns = ",".join(
-            [f"\n    {c}" for c in columns if not (c == "LMSSectionSourceSystemIdentifier" or c == "LMSUserSourceSystemIdentifier")]
+            [
+                f"\n    {c}"
+                for c in columns
+                if not (
+                    c == "LMSSectionSourceSystemIdentifier"
+                    or c == "LMSUserSourceSystemIdentifier"
+                )
+            ]
         )
         select_columns = ",".join(
             [
                 f"\n    stg.{c}"
                 for c in columns
-                if not (c == "LMSSectionSourceSystemIdentifier" or c == "LMSUserSourceSystemIdentifier")
+                if not (
+                    c == "LMSSectionSourceSystemIdentifier"
+                    or c == "LMSUserSourceSystemIdentifier"
+                )
             ]
         )
 
@@ -411,7 +422,7 @@ AND
         row_count = self._exec(statement)
         logger.debug(f"Updated {row_count} records in table `{table}`.")
 
-    def soft_delete_from_production(self, table: str, sourceSystem: str) -> None:
+    def soft_delete_from_production(self, table: str, source_system: str) -> None:
         """
         Updates production records that do not have a match in the staging table
         by setting their `deletedat` value to the current timestamp.
@@ -420,7 +431,7 @@ AND
         ----------
         table: str
             Name of the table to truncate, not including the `stg_`.
-        sourceSystem: str
+        source_system: str
             The SourceSystem currently being processed.
         """
 
@@ -447,7 +458,7 @@ WHERE
 AND
     t.DeletedAt IS NULL
 AND
-    t.SourceSystem = '{sourceSystem}'
+    t.SourceSystem = '{source_system}'
 """
 
         row_count = self._exec(statement)
@@ -504,7 +515,7 @@ WHERE
             The name of the source system for the current import process.
         """
 
-        statement = """
+        statement = f"""
 UPDATE
     AssignmentSubmissionType
 SET
@@ -516,6 +527,8 @@ INNER JOIN
 ON
     AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
 WHERE
+    SourceSystem = '{source_system}'
+AND
     NOT EXISTS (
         SELECT
             1
@@ -535,14 +548,54 @@ WHERE
         )
 
     def get_processed_files(self, resource_name: str) -> Set[str]:
-        query = f"""
-SELECT FullPath FROM lms.ProcessedFiles
-WHERE ResourceName = '{resource_name}'""".strip()
-        result = pd.read_sql_query(query, self.engine)
-        return set(result["FullPath"])
+        try:
+            query = f"""
+SELECT
+    FullPath
+FROM
+    lms.ProcessedFiles
+WHERE
+    ResourceName = '{resource_name}'
+""".strip()
+            result = pd.read_sql_query(query, self.engine)
+            return set(result["FullPath"])
+        except ProgrammingError as pe:
+            logger.exception(pe)
+            raise
 
     def add_processed_file(self, path: str, resource_name: str, rows: int):
+        """
+        Records that a file has been processed and thus should not be processed
+        a second time.
+
+        Parameters
+        ----------
+        path: str
+            Filesystem path for the file that was processed.
+        resource_name: str
+            Name of the resource covered by the file.
+        rows: int
+            Number of rows in the file.
+        """
+
         statement = f"""
-INSERT INTO lms.ProcessedFiles(FullPath, ResourceName, NumberOfRows)
-VALUES ('{path}','{resource_name}', {rows})""".strip()
-        return self._exec(statement)
+INSERT INTO
+    lms.ProcessedFiles
+(
+    FullPath,
+    ResourceName,
+    NumberOfRows
+)
+VALUES
+(
+    '{path}',
+    '{resource_name}',
+    {rows}
+)
+""".strip()
+
+        try:
+            _ = self._exec(statement)
+        except ProgrammingError as pe:
+            logger.exception(pe)
+            raise

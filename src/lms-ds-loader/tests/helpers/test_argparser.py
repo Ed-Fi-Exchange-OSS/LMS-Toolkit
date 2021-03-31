@@ -292,7 +292,7 @@ def describe_when_parsing_system_arguments() -> None:
             # suite - test only enough here to prove the point
             assert PASSWORD in fixture.connection_string
 
-        def given_optional_non_default_log_level() -> None:
+        def describe_given_optional_non_default_log_level() -> None:
             def it_should_parse_the_log_level(capsys) -> None:
                 args = [
                     *_path_args(),
