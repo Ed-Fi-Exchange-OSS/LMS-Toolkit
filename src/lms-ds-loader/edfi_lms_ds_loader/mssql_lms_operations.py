@@ -243,13 +243,23 @@ WHERE NOT EXISTS (
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
         insert_columns = ",".join(
-            [f"\n    {c}" for c in columns if not (c == "LMSSectionSourceSystemIdentifier" or c == "LMSUserSourceSystemIdentifier")]
+            [
+                f"\n    {c}"
+                for c in columns
+                if not (
+                    c == "LMSSectionSourceSystemIdentifier"
+                    or c == "LMSUserSourceSystemIdentifier"
+                )
+            ]
         )
         select_columns = ",".join(
             [
                 f"\n    stg.{c}"
                 for c in columns
-                if not (c == "LMSSectionSourceSystemIdentifier" or c == "LMSUserSourceSystemIdentifier")
+                if not (
+                    c == "LMSSectionSourceSystemIdentifier"
+                    or c == "LMSUserSourceSystemIdentifier"
+                )
             ]
         )
 
@@ -469,8 +479,13 @@ WHERE
     def get_processed_files(self, resource_name: str) -> Set[str]:
         try:
             query = f"""
-    SELECT FullPath FROM lms.ProcessedFiles
-    WHERE ResourceName = '{resource_name}'""".strip()
+SELECT
+    FullPath
+FROM
+    lms.ProcessedFiles
+WHERE
+    ResourceName = '{resource_name}'
+""".strip()
             result = pd.read_sql_query(query, self.engine)
             return set(result["FullPath"])
         except ProgrammingError as pe:
@@ -479,6 +494,23 @@ WHERE
 
     def add_processed_file(self, path: str, resource_name: str, rows: int):
         statement = f"""
-INSERT INTO lms.ProcessedFiles(FullPath, ResourceName, NumberOfRows)
-VALUES ('{path}','{resource_name}', {rows})""".strip()
-        return self._exec(statement)
+INSERT INTO
+    lms.ProcessedFiles
+(
+    FullPath,
+    ResourceName,
+    NumberOfRows
+)
+VALUES
+(
+    '{path}',
+    '{resource_name}',
+    {rows}
+)
+""".strip()
+
+        try:
+            _ = self._exec(statement)
+        except ProgrammingError as pe:
+            logger.exception(pe)
+            raise

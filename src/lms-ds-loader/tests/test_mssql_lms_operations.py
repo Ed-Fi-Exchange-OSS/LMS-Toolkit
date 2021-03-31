@@ -588,3 +588,22 @@ VALUES
             MssqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
 
             exec_mock.assert_called_with(expected_statement)
+
+    def describe_given_the_processed_file_table_does_not_exist():
+        def it_should_log_an_error_and_re_raise_the_exception(mocker):
+            def __raise(query) -> None:
+                raise ProgrammingError("statement", [], "none", False)
+
+            resource_name = "fake_resource_name"
+            path = "fake_path/"
+            rows = 3
+
+            mocker.patch.object(MssqlLmsOperations, "_exec", side_effect=__raise)
+
+            logger = logging.getLogger("edfi_lms_ds_loader.mssql_lms_operations")
+            mock_exc_logger = mocker.patch.object(logger, "exception")
+
+            with pytest.raises(ProgrammingError):
+                MssqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
+
+            mock_exc_logger.assert_called_once()
