@@ -18,3 +18,4 @@ class Table:
     ASSIGNMENT_SUBMISSION_TYPES = "AssignmentSubmissionType"
     ASSIGNMENT_SUBMISSION = "AssignmentSubmission"
     SECTION_ASSOCIATION = "LMSUserLMSSectionAssociation"
+    SECTION_ACTIVITY = "LMSSectionActivity"

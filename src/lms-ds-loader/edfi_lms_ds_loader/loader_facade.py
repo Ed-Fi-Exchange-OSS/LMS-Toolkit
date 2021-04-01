@@ -219,6 +219,36 @@ def _load_assignment_submissions(csv_path: str, db_adapter: MssqlLmsOperations) 
     )
 
 
+def _load_section_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    sections_df: DataFrame = _get_sections_df(csv_path)
+    if sections_df.empty:
+        logger.info("No sections loaded. Skipping section associations.")
+        return
+    sections = set(sections_df["SourceSystemIdentifier"])
+
+    def __get_all_file_paths_callback():
+        formatted_path = os.path.abspath(csv_path)
+        paths = []
+        for section in sections:
+            paths = paths + file_repository.get_section_activities_file_paths(
+                formatted_path, section
+            )
+
+        return paths
+
+    unprocessed_files = _get_unprocessed_file_paths(
+        db_adapter, Resources.SECTION_ACTIVITIES, __get_all_file_paths_callback
+    )
+    _upload_files_from_paths(
+        db_adapter,
+        unprocessed_files,
+        Table.SECTION_ACTIVITY,
+        Resources.SECTION_ACTIVITIES,
+        file_reader.read_section_activities_file,
+        df_to_db.upload_section_activities,
+    )
+
+
 def run_loader(arguments: MainArguments) -> None:
     logger.info("Begin loading files into the LMS Data Store (DS)...")
 
@@ -233,5 +263,6 @@ def run_loader(arguments: MainArguments) -> None:
     _load_assignments(csv_path, db_adapter)
     _load_assignment_submissions(csv_path, db_adapter)
     _load_section_associations(csv_path, db_adapter)
+    _load_section_activities(csv_path, db_adapter)
 
     logger.info("Done loading files into the LMS Data Store.")
