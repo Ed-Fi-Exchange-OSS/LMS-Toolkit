@@ -161,7 +161,7 @@ def upload_section_activities(
     db_adapter: MssqlLmsOperations, section_activities_df: pd.DataFrame
 ) -> None:
     """
-    Uploads a Section Association DataFrame to the User-Section Association
+    Uploads a Section Activity DataFrame to the Section Activity
     table.
 
     Parameters
@@ -176,4 +176,26 @@ def upload_section_activities(
         section_activities_df,
         Table.SECTION_ACTIVITY,
         MssqlLmsOperations.insert_new_records_to_production_for_section_and_user,
+    )
+
+
+def upload_system_activities(
+    db_adapter: MssqlLmsOperations, system_activities_df: pd.DataFrame
+) -> None:
+    """
+    Uploads a System Activity DataFrame to the System Activity
+    table.
+
+    Parameters
+    ----------
+    db_adapter: MssqlLmsOperations
+        Database engine-specific adapter/wrapper for database operations.
+    system_activities_df: pd.DataFrame
+        A DataFrame to upload.
+    """
+    upload_file(
+        db_adapter,
+        system_activities_df,
+        Table.SYSTEM_ACTIVITY,
+        MssqlLmsOperations.insert_new_records_to_production_for_user,
     )

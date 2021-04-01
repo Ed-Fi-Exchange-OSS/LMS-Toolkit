@@ -175,7 +175,23 @@ def read_system_activities_file(
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
+    data_types = {
+        "LMSUserSourceSystemIdentifier": "string",
+        "ActivityType": "string",
+        "ActivityStatus": "string",
+        "ParentSourceSystemIdentifier": "string",
+        "ActivityTimeInMinutes": "Int64",
+    }
+
+    extra_date_columns = ["ActivityDateTime"]
+
+    return _read_csv(
+        full_path,
+        nrows,
+        log_level=logging.DEBUG,
+        data_types=data_types,
+        extra_date_columns=extra_date_columns,
+    )
 
 
 def get_all_sections(base_directory: str, nrows: Optional[int] = None) -> pd.DataFrame:
