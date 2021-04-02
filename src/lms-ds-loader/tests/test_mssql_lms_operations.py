@@ -464,6 +464,57 @@ WHERE NOT EXISTS (
             # Assert
             exec_mock.assert_called_with(expected)
 
+    def describe_given_resource_is_child_of_user() -> None:
+        def it_should_build_a_valid_insert_statement(mocker) -> None:
+            # Arrange
+            expected = """
+INSERT INTO
+    lms.Fake
+(
+    LMSUserIdentifier,
+    SourceSystem,
+    SourceSystemIdentifier
+)
+SELECT
+    LMSUser.LMSUserIdentifier,
+    stg.SourceSystem,
+    stg.SourceSystemIdentifier
+FROM
+    lms.stg_Fake as stg
+INNER JOIN
+    lms.LMSUser
+ON
+    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSUser.SourceSystem
+WHERE NOT EXISTS (
+  SELECT
+    1
+  FROM
+    lms.Fake
+  WHERE
+    SourceSystemIdentifier = stg.SourceSystemIdentifier
+  AND
+    SourceSystem = stg.SourceSystem
+)
+"""
+            TABLE = "Fake"
+            COLUMNS = [
+                "LMSUserSourceSystemIdentifier",
+                "SourceSystem",
+                "SourceSystemIdentifier",
+            ]
+
+            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+
+            # Act
+            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_user(
+                TABLE, COLUMNS
+            )
+
+            # Assert
+            exec_mock.assert_called_with(expected)
+
     def describe_given_resource_is_child_of_section_and_user() -> None:
         def it_should_build_a_valid_insert_statement(mocker) -> None:
             # Arrange
