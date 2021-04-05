@@ -249,6 +249,25 @@ def _load_section_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> N
     )
 
 
+def _load_system_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    def __get_all_file_paths_callback():
+        formatted_path = os.path.abspath(csv_path)
+        paths = file_repository.get_system_activities_file_paths(formatted_path)
+        return paths
+
+    unprocessed_files = _get_unprocessed_file_paths(
+        db_adapter, Resources.SYSTEM_ACTIVITIES, __get_all_file_paths_callback
+    )
+    _upload_files_from_paths(
+        db_adapter,
+        unprocessed_files,
+        Table.SYSTEM_ACTIVITY,
+        Resources.SYSTEM_ACTIVITIES,
+        file_reader.read_system_activities_file,
+        df_to_db.upload_system_activities
+    )
+
+
 def run_loader(arguments: MainArguments) -> None:
     logger.info("Begin loading files into the LMS Data Store (DS)...")
 
@@ -264,5 +283,6 @@ def run_loader(arguments: MainArguments) -> None:
     _load_assignment_submissions(csv_path, db_adapter)
     _load_section_associations(csv_path, db_adapter)
     _load_section_activities(csv_path, db_adapter)
+    _load_system_activities(csv_path, db_adapter)
 
     logger.info("Done loading files into the LMS Data Store.")

@@ -19,3 +19,4 @@ class Table:
     ASSIGNMENT_SUBMISSION = "AssignmentSubmission"
     SECTION_ASSOCIATION = "LMSUserLMSSectionAssociation"
     SECTION_ACTIVITY = "LMSSectionActivity"
+    SYSTEM_ACTIVITY = "LMSSystemActivity"

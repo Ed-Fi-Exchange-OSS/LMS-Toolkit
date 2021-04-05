@@ -53,8 +53,8 @@ def describe_mapping_schoology_discussions_to_udm():
                 "ActivityStatus",
                 "ParentSourceSystemIdentifier",
                 "ActivityTimeInMinutes",
-                "LMSUserIdentifier",
-                "LMSSectionIdentifier",
+                "LMSUserSourceSystemIdentifier",
+                "LMSSectionSourceSystemIdentifier",
             ],
         )
         def then_output_has_column(result, input):
@@ -67,10 +67,10 @@ def describe_mapping_schoology_discussions_to_udm():
             assert result.at[0, "SourceSystem"] == "Schoology"
 
         def test_then_user_identifier_is_mapped(result):
-            assert result.at[0, "LMSUserIdentifier"] == "99785803"
+            assert result.at[0, "LMSUserSourceSystemIdentifier"] == "99785803"
 
         def test_then_section_identifier_is_mapped(result):
-            assert result.at[0, "LMSSectionIdentifier"] == FAKE_SECTION_ID
+            assert result.at[0, "LMSSectionSourceSystemIdentifier"] == FAKE_SECTION_ID
 
         def test_then_activity_date_time_is_mapped(result):
             assert result.at[0, "ActivityDateTime"] == "12/8/2020 7:58"

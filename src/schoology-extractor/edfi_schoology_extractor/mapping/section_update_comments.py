@@ -10,13 +10,13 @@ DISCUSSION_REPLIES_TYPE = "discussion-reply"
 
 def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     """
-    Maps a DataFrame containing Schoology section updates
+    Maps a DataFrame containing Schoology section update comments
     into the Ed-Fi LMS Unified Data Model (UDM) format.
 
     Parameters
     ----------
     section_updates_df: DataFrame
-        Pandas DataFrame containing Schoology assignments for a section
+        Pandas DataFrame containing Schoology section update comments for a section
 
     Returns
     -------
@@ -29,9 +29,9 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a the update-comment by
             the source system
         SourceSystem: The system code or name providing the user data
-        LMSUserIdentifier: A unique number or alphanumeric code assigned to a user by the source
+        LMSUserSourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source
             system
-        LMSSectionIdentifier: A unique number or alphanumeric code assigned to a section by the
+        LMSSectionSourceSystemIdentifier: A unique number or alphanumeric code assigned to a section by the
             source system
         ActivityDateTime: The date/time the replied was created.
         ActivityStatus: The status for the reply

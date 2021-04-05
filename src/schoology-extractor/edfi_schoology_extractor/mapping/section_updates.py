@@ -19,7 +19,7 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
     Parameters
     ----------
     section_updates_df: DataFrame
-        Pandas DataFrame containing Schoology assignments for a section
+        Pandas DataFrame containing Schoology section updates for a section
 
     Returns
     -------
@@ -32,9 +32,9 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
         SourceSystemIdentifier: A unique number or alphanumeric code assigned to a the section-update by
             the source system
         SourceSystem: The system code or name providing the user data
-        LMSUserIdentifier: A unique number or alphanumeric code assigned to a user by the source
+        LMSUserSourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source
             system
-        LMSSectionIdentifier: A unique number or alphanumeric code assigned to a section by the
+        LMSSectionSourceSystemIdentifier: A unique number or alphanumeric code assigned to a section by the
             source system
         ActivityDateTime: The date/time the replied was created.
         ActivityStatus: The status for the update
@@ -61,7 +61,7 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
 
     df["id"] = df["id"].apply(lambda x: f"su#{x}")
     df["ActivityType"] = SECTION_UPDATE_TYPE
-    df["LMSSectionIdentifier"] = section_id
+    df["LMSSectionSourceSystemIdentifier"] = section_id
     df["SourceSystem"] = constants.SOURCE_SYSTEM
 
     df["ActivityTimeInMinutes"] = None
@@ -73,7 +73,7 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
         columns={
             "created": "ActivityDateTime",
             "id": "SourceSystemIdentifier",
-            "uid": "LMSUserIdentifier",
+            "uid": "LMSUserSourceSystemIdentifier",
             "status": "ActivityStatus",
         },
         inplace=True,
