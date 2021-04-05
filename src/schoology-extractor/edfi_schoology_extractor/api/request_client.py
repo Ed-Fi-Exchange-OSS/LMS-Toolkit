@@ -184,7 +184,7 @@ class RequestClient:
         self._check_for_success(response, success_status)
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout, RuntimeError),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
@@ -226,7 +226,7 @@ class RequestClient:
         return response.json()
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout, RuntimeError),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
@@ -269,7 +269,7 @@ class RequestClient:
         return response.json()
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout, RuntimeError),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
@@ -315,7 +315,7 @@ class RequestClient:
         return response.json()
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout, RuntimeError),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
@@ -359,7 +359,7 @@ class RequestClient:
         return response.json()
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout, RuntimeError),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
