@@ -115,7 +115,7 @@ def map_to_udm_assignments(
         inplace=True,
     )
 
-    assignments_df["AssignmentCategory"] = ""
+    assignments_df["AssignmentCategory"] = "assignment"
     assignments_df["SourceSystem"] = constants.SOURCE_SYSTEM
 
     assignments_df["LMSSectionSourceSystemIdentifier"] = assignments_df["LMSSectionSourceSystemIdentifier"].astype("string")

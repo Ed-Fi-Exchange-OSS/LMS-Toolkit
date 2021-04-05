@@ -92,7 +92,7 @@ SECTION_END_AT = "104"
 SECTION_CREATED_AT = "105"
 SECTION_CREATED_AT_DATE = "106"
 SECTION_RESTRICT_ENROLLMENTS_TO_SECTION_DATES = "107"
-SECTION_NONXLIST_COURSE_ID = "108"
+SECTION_NONEXIST_COURSE_ID = "108"
 SECTION_SIS_SECTION_ID = "109"
 SECTION_SIS_COURSE_ID = "110"
 SECTION_INTEGRATION_ID = "111"
@@ -107,7 +107,7 @@ SECOND_SECTION_END_AT = "204"
 SECOND_SECTION_CREATED_AT = "205"
 SECOND_SECTION_CREATED_AT_DATE = "206"
 SECOND_SECTION_RESTRICT_ENROLLMENTS_TO_SECTION_DATES = "207"
-SECOND_SECTION_NONXLIST_COURSE_ID = "208"
+SECOND_SECTION_NONEXIST_COURSE_ID = "208"
 SECOND_SECTION_SIS_SECTION_ID = "209"
 SECOND_SECTION_SIS_COURSE_ID = "210"
 SECOND_SECTION_INTEGRATION_ID = "211"
@@ -215,7 +215,7 @@ def describe_when_a_single_assignment_with_unique_fields_is_mapped():
                 "restrict_enrollments_to_section_dates": [
                     SECTION_RESTRICT_ENROLLMENTS_TO_SECTION_DATES
                 ],
-                "nonxlist_course_id": [SECTION_NONXLIST_COURSE_ID],
+                "nonxlist_course_id": [SECTION_NONEXIST_COURSE_ID],
                 "sis_section_id": [SECTION_SIS_SECTION_ID],
                 "sis_course_id": [SECTION_SIS_COURSE_ID],
                 "integration_id": [SECTION_INTEGRATION_ID],
@@ -228,31 +228,72 @@ def describe_when_a_single_assignment_with_unique_fields_is_mapped():
         # act
         return map_to_udm_assignments(assignment_df, section_df)
 
-    def it_should_have_correct_shape(assignment_dfs: Dict[str, DataFrame]):
+    def it_should_have_correct_shape(assignment_dfs: Dict[str, DataFrame]) -> None:
         assert len(assignment_dfs) == 1
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
         row_count, column_count = assignment_df.shape
         assert row_count == 1
         assert column_count == 15
 
-    def it_should_map_fields_correctly(assignment_dfs):
-        assignment_df: DataFrame = assignment_dfs[SECTION_ID]
-        row_dict = assignment_df.to_dict(orient="records")[0]
-        assert row_dict["AssignmentCategory"] == ""
-        assert row_dict["AssignmentDescription"] == DESCRIPTION
-        assert row_dict["DueDateTime"] == DUE_AT
-        assert row_dict["EndDateTime"] == LOCK_AT
-        assert row_dict["LMSSectionSourceSystemIdentifier"] == SECTION_ID
-        assert row_dict["SourceSystem"] == SOURCE_SYSTEM
-        assert row_dict["MaxPoints"] == POINTS_POSSIBLE
-        assert row_dict["SubmissionType"] == SUBMISSION_TYPES
-        assert row_dict["SourceSystemIdentifier"] == f"{SECTION_ID}-{ID}"
-        assert row_dict["StartDateTime"] == UNLOCK_AT
-        assert row_dict["SourceCreateDate"] == CREATED_AT
-        assert row_dict["SourceLastModifiedDate"] == UPDATED_AT
-        assert row_dict["Title"] == NAME
-        assert row_dict["CreateDate"] == CREATE_DATE
-        assert row_dict["LastModifiedDate"] == LAST_MODIFIED_DATE
+    def it_should_map_the_constant_assignment_to_property_AssignmentCategory(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "AssignmentCategory"] == "assignment"
+
+    def it_should_map_the_assignment_description(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "AssignmentDescription"] == DESCRIPTION
+
+    def it_should_map_the_due_date_time(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "DueDateTime"] == DUE_AT
+
+    def it_should_map_the_end_date_time(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "EndDateTime"] == LOCK_AT
+
+    def it_should_map_section_identifier(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "LMSSectionSourceSystemIdentifier"] == SECTION_ID
+
+    def it_should_map_source_system(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "SourceSystem"] == SOURCE_SYSTEM
+
+    def it_should_map_maxpoint(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "MaxPoints"] == POINTS_POSSIBLE
+
+    def it_should_map_submission_type(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "SubmissionType"] == SUBMISSION_TYPES
+
+    def it_should_map_source_system_identifier(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "SourceSystemIdentifier"] == f"{SECTION_ID}-{ID}"
+
+    def it_should_map_start_date_time(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "StartDateTime"] == UNLOCK_AT
+
+    def it_should_map_source_create_date(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "SourceCreateDate"] == CREATED_AT
+
+    def it_should_map_source_last_modified_date(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "SourceLastModifiedDate"] == UPDATED_AT
+
+    def it_should_map_title(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "Title"] == NAME
+
+    def it_should_map_create_date(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "CreateDate"] == CREATE_DATE
+
+    def it_should_map_last_modified_date(assignment_dfs: Dict[str, DataFrame]) -> None:
+        assignment_df = assignment_dfs[SECTION_ID]
+        assert assignment_df.loc[0, "LastModifiedDate"] == LAST_MODIFIED_DATE
 
 
 def describe_when_a_single_assignment_in_two_sections_is_mapped():
@@ -359,8 +400,8 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
                     SECOND_SECTION_RESTRICT_ENROLLMENTS_TO_SECTION_DATES,
                 ],
                 "nonxlist_course_id": [
-                    SECTION_NONXLIST_COURSE_ID,
-                    SECOND_SECTION_NONXLIST_COURSE_ID,
+                    SECTION_NONEXIST_COURSE_ID,
+                    SECOND_SECTION_NONEXIST_COURSE_ID,
                 ],
                 "sis_section_id": [
                     SECTION_SIS_SECTION_ID,
@@ -403,37 +444,11 @@ def describe_when_a_single_assignment_in_two_sections_is_mapped():
     def it_should_map_fields_correctly_for_first_df(assignment_dfs):
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
         row_dict = assignment_df.to_dict(orient="records")[0]
-        assert row_dict["AssignmentCategory"] == ""
-        assert row_dict["AssignmentDescription"] == DESCRIPTION
-        assert row_dict["DueDateTime"] == DUE_AT
-        assert row_dict["EndDateTime"] == LOCK_AT
-        assert row_dict["LMSSectionSourceSystemIdentifier"] == SECTION_ID
-        assert row_dict["SourceSystem"] == SOURCE_SYSTEM
-        assert row_dict["MaxPoints"] == POINTS_POSSIBLE
-        assert row_dict["SubmissionType"] == SUBMISSION_TYPES
+
+        # Just test the identifier - don't need to look at every column
         assert row_dict["SourceSystemIdentifier"] == f"{SECTION_ID}-{ID}"
-        assert row_dict["StartDateTime"] == UNLOCK_AT
-        assert row_dict["SourceCreateDate"] == CREATED_AT
-        assert row_dict["SourceLastModifiedDate"] == UPDATED_AT
-        assert row_dict["Title"] == NAME
-        assert row_dict["CreateDate"] == CREATE_DATE
-        assert row_dict["LastModifiedDate"] == LAST_MODIFIED_DATE
 
     def it_should_map_fields_correctly_for_second_df(assignment_dfs):
         assignment_df: DataFrame = assignment_dfs[SECOND_SECTION_ID]
         row_dict = assignment_df.to_dict(orient="records")[0]
-        assert row_dict["AssignmentCategory"] == ""
-        assert row_dict["AssignmentDescription"] == DESCRIPTION
-        assert row_dict["DueDateTime"] == DUE_AT
-        assert row_dict["EndDateTime"] == LOCK_AT
-        assert row_dict["LMSSectionSourceSystemIdentifier"] == SECOND_SECTION_ID
-        assert row_dict["SourceSystem"] == SOURCE_SYSTEM
-        assert row_dict["MaxPoints"] == POINTS_POSSIBLE
-        assert row_dict["SubmissionType"] == SUBMISSION_TYPES
         assert row_dict["SourceSystemIdentifier"] == f"{SECOND_SECTION_ID}-{ID}"
-        assert row_dict["StartDateTime"] == UNLOCK_AT
-        assert row_dict["SourceCreateDate"] == CREATED_AT
-        assert row_dict["SourceLastModifiedDate"] == UPDATED_AT
-        assert row_dict["Title"] == NAME
-        assert row_dict["CreateDate"] == CREATE_DATE
-        assert row_dict["LastModifiedDate"] == LAST_MODIFIED_DATE
