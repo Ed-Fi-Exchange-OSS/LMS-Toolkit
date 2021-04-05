@@ -10,7 +10,7 @@ CREATE TABLE [lms].[Assignment] (
     [SourceSystem] [NVARCHAR](255) NOT NULL,
     [LMSSectionIdentifier] [INT] NOT NULL,
     [Title] [NVARCHAR](255) NOT NULL,
-    [AssignmentCategory] [NVARCHAR](60) NULL,
+    [AssignmentCategory] [NVARCHAR](60) NOT NULL,
     [AssignmentDescription] [NVARCHAR](1024) NULL,
     [StartDateTime] [DATETIME2](7) NULL,
     [EndDateTime] [DATETIME2](7) NULL,

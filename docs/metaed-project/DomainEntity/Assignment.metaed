@@ -23,7 +23,7 @@ Domain Entity Assignment
         is required
     shared string AssignmentCategory
         documentation "The category or type of assignment."
-        is optional
+        is required
     shared string LMSDescription named AssignmentDescription
         documentation "The assignment description."
         is optional
