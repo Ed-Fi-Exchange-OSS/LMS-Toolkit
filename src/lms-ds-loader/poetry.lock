@@ -170,7 +170,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-lms-file-utils"
-version = "1.0.0b12"
+version = "1.0.0b13"
 description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
 category = "main"
 optional = false
@@ -761,7 +761,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "7fb4dd6bf6c6186bfe33d63bb83e242372eb4a2aa4cf29a9e1461d0160353145"
+content-hash = "87a0babb524bd4d86e2f93bb71e0ffed37d2386120f34c2552b3df728c25075a"
 
 [metadata.files]
 appdirs = [
@@ -837,7 +837,6 @@ click = [
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
-    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 configargparse = [
     {file = "ConfigArgParse-1.4.tar.gz", hash = "sha256:abef9ff44fb0091f0e3bb2ee7e5b26a02b5b62d45408a5272a9bd461f5b59b4b"},
@@ -919,8 +918,8 @@ edfi-lms-extractor-lib = [
     {file = "edfi_lms_extractor_lib-1.0.0a4-py3-none-any.whl", hash = "sha256:910434a08033d7b887dd754a73e1602e0cf657ac5d72ddcc30870b53769af56f"},
 ]
 edfi-lms-file-utils = [
-    {file = "edfi-lms-file-utils-1.0.0b12.tar.gz", hash = "sha256:0f619aa15150439f2a7d99e9f841eb732777c14fa434e88978b8ad89455cb1fa"},
-    {file = "edfi_lms_file_utils-1.0.0b12-py3-none-any.whl", hash = "sha256:23101fbd5ff492063f3a280af186fe0899a279ad0aa7f7272eef4d19b0e10e32"},
+    {file = "edfi-lms-file-utils-1.0.0b13.tar.gz", hash = "sha256:80d61f4770ab1cd6597902b602580de00011c3fd6cf91e5f1da29832568ad935"},
+    {file = "edfi_lms_file_utils-1.0.0b13-py3-none-any.whl", hash = "sha256:3a870abda8d3b06a631e2edd243727b1e5c6938a39f808735810d087e4217731"},
 ]
 errorhandler = [
     {file = "errorhandler-2.0.1-py2.py3-none-any.whl", hash = "sha256:dc6c54f5d9a4599e744b57aac2f925cce873188e9b02cae7c0eb120ee08a893f"},
@@ -1106,8 +1105,6 @@ pyodbc = [
     {file = "pyodbc-4.0.30-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:d4ffeab51dcc03c4c1a9a200f70999ce9b827c91defc4f5740633a6d47d3a206"},
     {file = "pyodbc-4.0.30-cp38-cp38-win32.whl", hash = "sha256:d3ad340e0053b6ec4130957efbcecce6de48d68e7e78792ea7588e27ffa629f1"},
     {file = "pyodbc-4.0.30-cp38-cp38-win_amd64.whl", hash = "sha256:bce7e41c7cfc06ec976245f361221dfdd0f04e804010cf255cbb36985f6c3406"},
-    {file = "pyodbc-4.0.30-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:3bf7fd4d7a42fa4f0a50cf2418d49cd3c8fa05b8a1972534f0ebfadd92c7ce52"},
-    {file = "pyodbc-4.0.30-cp39-cp39-win_amd64.whl", hash = "sha256:b149b0c2d11833bbd5355a8fe5a8b41fba5518dacdc613a0218fd77c2969a4f5"},
     {file = "pyodbc-4.0.30.tar.gz", hash = "sha256:852b5deeeb3366af8b4408efed993501708be45d221881bce60c9aac54be726a"},
 ]
 pyparsing = [

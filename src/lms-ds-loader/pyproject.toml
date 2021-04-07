@@ -19,7 +19,7 @@ psycopg2 = "^2.8.6"
 errorhandler = "^2.0.1"
 python-dotenv = "^0.15.0"
 edfi-lms-extractor-lib = "1.0.0a4"
-edfi-lms-file-utils = "1.0.0b12"
+edfi-lms-file-utils = "1.0.0b13"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

@@ -742,7 +742,18 @@ def read_attendance_events_file(
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
+
+    data_types = {
+        "LMSUserSourceSystemIdentifier": "string",
+        "LMSSectionSourceSystemIdentifier": "string",
+        "AttendanceStatus": "string",
+    }
+
+    extra_date_columns = [
+        "EventDate"
+    ]
+
+    return _read_csv(full_path, nrows, data_types, extra_date_columns)
 
 
 def get_all_attendance_events(
