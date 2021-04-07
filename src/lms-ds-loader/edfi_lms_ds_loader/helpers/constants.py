@@ -20,3 +20,4 @@ class Table:
     SECTION_ASSOCIATION = "LMSUserLMSSectionAssociation"
     SECTION_ACTIVITY = "LMSSectionActivity"
     SYSTEM_ACTIVITY = "LMSSystemActivity"
+    ATTENDANCE = "LMSUserAttendanceEvent"

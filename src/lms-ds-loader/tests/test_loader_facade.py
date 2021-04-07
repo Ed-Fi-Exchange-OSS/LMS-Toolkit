@@ -92,6 +92,12 @@ def describe_when_uploading_extractor_files() -> None:
                 return_value=fake_df_assignment_submissions,
             )
 
+            fake_df_attendance_events = pd.DataFrame([{"date": "c"}])
+            mocker.patch(
+                "edfi_lms_file_utils.file_reader.read_attendance_events_file",
+                return_value=fake_df_attendance_events
+            )
+
             mock_upload_file = mocker.patch("edfi_lms_ds_loader.df_to_db.upload_file")
             mock_upload_assignments_file = mocker.patch(
                 "edfi_lms_ds_loader.df_to_db.upload_assignments"
@@ -109,6 +115,10 @@ def describe_when_uploading_extractor_files() -> None:
                 "edfi_lms_ds_loader.df_to_db.upload_assignment_submissions"
             )
 
+            mock_upload_attendance_events_file = mocker.patch(
+                "edfi_lms_ds_loader.df_to_db.upload_attendance_events"
+            )
+
             mocks = {
                 "migrate": migrator_mock,
                 "get_db_operations_adapter": db_adapter_mock,
@@ -119,6 +129,7 @@ def describe_when_uploading_extractor_files() -> None:
                 "upload_section_activities_file": mock_upload_section_activities_file,
                 "upload_system_activities_file": mock_upload_system_activities_file,
                 "upload_assignment_submissions_file": mock_upload_assignment_submissions_file,
+                "upload_attendance_events_file": mock_upload_attendance_events_file,
             }
 
             dfs = {
@@ -129,6 +140,7 @@ def describe_when_uploading_extractor_files() -> None:
                 "section_activities": fake_df_section_activities,
                 "system_activities": fake_df_system_activities,
                 "assignment_submissions": fake_df_assignment_submissions,
+                "attendance_events": fake_df_attendance_events
             }
 
             file_repository_users_mock = Mock(return_value=["fileOne", "fileTwo"])
@@ -180,6 +192,14 @@ def describe_when_uploading_extractor_files() -> None:
             mocker.patch(
                 "edfi_lms_file_utils.file_repository.get_system_activities_file_paths",
                 file_repository_system_activities_mock,
+            )
+
+            file_repository_attendance_mock = Mock(
+                return_value=["file17", "file18"]
+            )
+            mocker.patch(
+                "edfi_lms_file_utils.file_repository.get_attendance_events_paths",
+                file_repository_attendance_mock
             )
 
             # Act
@@ -244,6 +264,13 @@ def describe_when_uploading_extractor_files() -> None:
 
             mocks["upload_assignment_submissions_file"].assert_called_with(
                 mocks["get_db_operations_adapter"], dfs["assignment_submissions"]
+            )
+
+        def it_uploads_attendance_events(mocker, fixture) -> None:
+            mocks, dfs = fixture
+
+            mocks["upload_attendance_events_file"].assert_called_with(
+                mocks["get_db_operations_adapter"], dfs["attendance_events"]
             )
 
     def describe_given_users_file_read_fails() -> None:

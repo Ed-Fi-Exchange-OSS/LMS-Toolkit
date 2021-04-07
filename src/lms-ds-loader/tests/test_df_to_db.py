@@ -328,7 +328,9 @@ def describe_when_uploading_assignment_submissions() -> None:
 
         return adapter_mock, df, insert_mock
 
-    def it_disables_the_natural_key_index(when_uploading_assignment_submissions) -> None:
+    def it_disables_the_natural_key_index(
+        when_uploading_assignment_submissions,
+    ) -> None:
         adapter_mock, _, _ = when_uploading_assignment_submissions
         assert adapter_mock.disable_staging_natural_key_index.call_args_list == [
             call(Table.ASSIGNMENT_SUBMISSION)
@@ -496,4 +498,74 @@ def describe_when_uploading_system_activities() -> None:
         adapter_mock, _, _ = when_uploading_system_activities
         assert adapter_mock.soft_delete_from_production.call_args_list == [
             call(Table.SYSTEM_ACTIVITY, SOURCE_SYSTEM)
+        ]
+
+
+def describe_when_uploading_attendance_events() -> None:
+    @pytest.fixture
+    @patch(
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_section_and_user"
+    )
+    def when_uploading_attendance_events(
+        insert_mock,
+    ) -> Tuple[MagicMock, MagicMock, pd.DataFrame]:
+        # Arrange
+        adapter_mock = MagicMock()
+
+        attendance_df = pd.DataFrame([{"SourceSystem": SOURCE_SYSTEM}])
+
+        # Act
+        df_to_db.upload_attendance_events(adapter_mock, attendance_df)
+
+        return adapter_mock, insert_mock, attendance_df
+
+    def it_disables_natural_key_index(when_uploading_attendance_events) -> None:
+        adapter_mock, _, _ = when_uploading_attendance_events
+
+        assert adapter_mock.disable_staging_natural_key_index.call_args_list == [
+            call(Table.ATTENDANCE)
+        ]
+
+    def it_truncates_staging_table(when_uploading_attendance_events) -> None:
+        adapter_mock, _, _ = when_uploading_attendance_events
+
+        assert adapter_mock.truncate_staging_table.call_args_list == [
+            call(Table.ATTENDANCE)
+        ]
+
+    def it_inserts_into_staging(when_uploading_attendance_events) -> None:
+        adapter_mock, _, attendance_df = when_uploading_attendance_events
+
+        assert adapter_mock.insert_into_staging.call_args_list == [
+            call(attendance_df, Table.ATTENDANCE),
+        ]
+
+    def it_inserts_into_production_table(when_uploading_attendance_events) -> None:
+        adapter_mock, insert_mock, _ = when_uploading_attendance_events
+
+        assert insert_mock.call_args_list == [
+            call(adapter_mock, Table.ATTENDANCE, ["SourceSystem"])
+        ]
+
+    def it_updates_production_table(when_uploading_attendance_events) -> None:
+        adapter_mock, _, _ = when_uploading_attendance_events
+
+        assert adapter_mock.copy_updates_to_production.call_args_list == [
+            call(Table.ATTENDANCE, ["SourceSystem"])
+        ]
+
+    def it_soft_deletes_from_production_table(when_uploading_attendance_events) -> None:
+        adapter_mock, _, _ = when_uploading_attendance_events
+
+        assert adapter_mock.soft_delete_from_production.call_args_list == [
+            call(Table.ATTENDANCE, SOURCE_SYSTEM)
+        ]
+
+    def it_re_enables_attendance_events_natural_key(
+        when_uploading_attendance_events,
+    ) -> None:
+        adapter_mock, _, _ = when_uploading_attendance_events
+
+        assert adapter_mock.enable_staging_natural_key_index.call_args_list == [
+            call(Table.ATTENDANCE)
         ]

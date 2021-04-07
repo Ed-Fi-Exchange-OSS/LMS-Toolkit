@@ -155,6 +155,37 @@ def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     )
 
 
+def _load_attendance_events(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+    sections_df: DataFrame = _get_sections_df(csv_path)
+    if sections_df.empty:
+        logger.info("No sections loaded. Skipping section associations.")
+        return
+    sections = set(sections_df["SourceSystemIdentifier"])
+
+    def __get_all_file_paths_callback():
+        formatted_path = os.path.abspath(csv_path)
+        paths = []
+        for section in sections:
+            paths = paths + file_repository.get_attendance_events_paths(
+                formatted_path, section
+            )
+
+        return paths
+
+    unprocessed_files = _get_unprocessed_file_paths(
+        db_adapter, Resources.ATTENDANCE_EVENTS, __get_all_file_paths_callback
+    )
+
+    _upload_files_from_paths(
+        db_adapter,
+        unprocessed_files,
+        Table.ATTENDANCE,
+        Resources.ATTENDANCE_EVENTS,
+        file_reader.read_attendance_events_file,
+        df_to_db.upload_attendance_events
+    )
+
+
 def _load_section_associations(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     sections_df: DataFrame = _get_sections_df(csv_path)
     if sections_df.empty:
@@ -281,6 +312,7 @@ def run_loader(arguments: MainArguments) -> None:
     _load_sections(csv_path, db_adapter)
     _load_assignments(csv_path, db_adapter)
     _load_assignment_submissions(csv_path, db_adapter)
+    _load_attendance_events(csv_path, db_adapter)
     _load_section_associations(csv_path, db_adapter)
     _load_section_activities(csv_path, db_adapter)
     _load_system_activities(csv_path, db_adapter)

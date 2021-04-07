@@ -199,3 +199,25 @@ def upload_system_activities(
         Table.SYSTEM_ACTIVITY,
         MssqlLmsOperations.insert_new_records_to_production_for_user,
     )
+
+
+def upload_attendance_events(
+    db_adapter: MssqlLmsOperations, attendance_df: pd.DataFrame
+) -> None:
+    """
+    Uploads a System Activity DataFrame to the System Activity
+    table.
+
+    Parameters
+    ----------
+    db_adapter: MssqlLmsOperations
+        Database engine-specific adapter/wrapper for database operations.
+    attendance_df: pd.DataFrame
+        A DataFrame to upload.
+    """
+    upload_file(
+        db_adapter,
+        attendance_df,
+        Table.ATTENDANCE,
+        MssqlLmsOperations.insert_new_records_to_production_for_section_and_user,
+    )
