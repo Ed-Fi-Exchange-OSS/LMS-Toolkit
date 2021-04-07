@@ -224,7 +224,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numer
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The date of the attendance event.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'EventDate'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A code describing the attendance event. E.g., In Attendance, Excused Absence, Unexcused Absence.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'Status'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A code describing the attendance event. E.g., In Attendance, Excused Absence, Unexcused Absence.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'AttendanceStatus'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The source system datetime the record was created.', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSUserAttendanceEvent', @level2type=N'COLUMN', @level2name=N'SourceCreateDate'
 GO

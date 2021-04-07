@@ -28,6 +28,7 @@ Domain Entity LMSUserAttendanceEvent
     shared string Status
         documentation "A code describing the attendance event. E.g., In Attendance, Excused Absence, Unexcused Absence."
         is required
+        role name Attendance
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional

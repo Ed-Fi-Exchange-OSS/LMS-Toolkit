@@ -236,7 +236,7 @@ CREATE TABLE [lms].[LMSUserAttendanceEvent] (
     [LMSSectionIdentifier] [INT] NULL,
     [LMSUserLMSSectionAssociationIdentifier] [INT] NULL,
     [EventDate] [DATE] NOT NULL,
-    [Status] [NVARCHAR](60) NOT NULL,
+    [AttendanceStatus] [NVARCHAR](60) NOT NULL,
     [SourceCreateDate] [DATETIME2](7) NULL,
     [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [DeletedAt] [DATETIME2](7) NULL,
