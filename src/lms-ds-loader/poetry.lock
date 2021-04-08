@@ -645,14 +645,6 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
-name = "teamcity-messages"
-version = "1.28"
-description = "Send test results to TeamCity continuous integration server from unittest, nose, py.test, twisted trial, behave (Python 2.6+)"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -761,7 +753,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "84ef73fa9bb4d982ff76d1abdce3ab89c03515e5038801dda0ac0be385074376"
+content-hash = "241ed64ad762c0b78506f13217c1b905cce22af1bed0322279f95d20886d939d"
 
 [metadata.files]
 appdirs = [
@@ -1254,10 +1246,6 @@ sqlalchemy-stubs = [
 sqlparse = [
     {file = "sqlparse-0.4.1-py3-none-any.whl", hash = "sha256:017cde379adbd6a1f15a61873f43e8274179378e95ef3fede90b5aa64d304ed0"},
     {file = "sqlparse-0.4.1.tar.gz", hash = "sha256:0f91fd2e829c44362cbcfab3e9ae12e22badaa8a29ad5ff599f9ec109f0454e8"},
-]
-teamcity-messages = [
-    {file = "teamcity-messages-1.28.tar.gz", hash = "sha256:188feab063a52b846cfeab6b4f7ca9b64f47f22a27e5cef3ea7b93be0df1d0ca"},
-    {file = "teamcity_messages-1.28-py3-none-any.whl", hash = "sha256:58396d79b7c0d5d8c33890f1a34910ce921668ce9d9d7c4c96f0f94baaf12959"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},

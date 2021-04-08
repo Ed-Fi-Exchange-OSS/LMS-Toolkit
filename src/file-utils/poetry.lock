@@ -575,14 +575,6 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
-name = "teamcity-messages"
-version = "1.28"
-description = "Send test results to TeamCity continuous integration server from unittest, nose, py.test, twisted trial, behave (Python 2.6+)"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -668,7 +660,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "46a006ff7768a8b9999b86b3df77e72cbddded6c2ef60fcb4ef36e970fd24971"
+content-hash = "bc983f9eb0a01cf61bd99fd9ebf16ba8fd9d2f4816783276c969c9706f79d363"
 
 [metadata.files]
 appdirs = [
@@ -1081,10 +1073,6 @@ secretstorage = [
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
-]
-teamcity-messages = [
-    {file = "teamcity-messages-1.28.tar.gz", hash = "sha256:188feab063a52b846cfeab6b4f7ca9b64f47f22a27e5cef3ea7b93be0df1d0ca"},
-    {file = "teamcity_messages-1.28-py3-none-any.whl", hash = "sha256:58396d79b7c0d5d8c33890f1a34910ce921668ce9d9d7c4c96f0f94baaf12959"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
