@@ -24,6 +24,7 @@ numpy = "1.19.3"
 errorhandler = "^2.0.1"
 ConfigArgParse = "^1.2.3"
 edfi-lms-extractor-lib = {version = "1.0.0a5", allow-prereleases = true}
+edfi-lms-file-utils = "1.0.0b16"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"

@@ -20,7 +20,7 @@ opnieuw = "^1.1.0"
 SQLAlchemy = "^1.3.20"
 errorhandler = "^2.0.1"
 edfi-lms-extractor-lib = {version = "1.0.0a5", allow-prereleases = true}
-edfi-lms-file-utils = "1.0.0b15"
+edfi-lms-file-utils = "1.0.0b16"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

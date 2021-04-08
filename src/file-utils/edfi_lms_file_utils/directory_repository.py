@@ -3,8 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+from datetime import datetime
 import os
-from typing import Optional, Union
+from typing import Union
 
 from edfi_lms_file_utils.constants import Resources
 
@@ -64,6 +65,26 @@ def get_system_activities_directory(base_directory: str) -> str:
         Full directory path for the resource.
     """
     return os.path.join(base_directory, Resources.SYSTEM_ACTIVITIES)
+
+
+def get_system_activities_directory_for_today(base_directory: str) -> str:
+    """
+    Gets the canonical directory for system activities scoped to "today's" date.
+
+    Parameters
+    ----------
+    base_directory: str
+        The base / parent directory for LMS extractor files.
+
+    Returns
+    -------
+    str
+        Full directory path for the resource.
+    """
+    return os.path.join(
+        get_system_activities_directory(base_directory),
+        f"date={datetime.now().strftime('%Y-%m-%d')}",
+    )
 
 
 def get_section_associations_directory(base_directory: str, section_id: int) -> str:
@@ -169,9 +190,6 @@ def get_submissions_directory(
     assignments = _get_directory_for_section(
         base_directory, section_id, f"{Resources.ASSIGNMENT}={assignment_id}"
     )
-
-    if assignments is None:
-        return None
 
     return os.path.join(assignments, Resources.SUBMISSIONS)
 

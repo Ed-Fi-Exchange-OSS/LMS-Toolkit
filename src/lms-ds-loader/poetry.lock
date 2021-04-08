@@ -170,7 +170,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-lms-file-utils"
-version = "1.0.0b15"
+version = "1.0.0b16"
 description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
 category = "main"
 optional = false
@@ -761,7 +761,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a38653954fbae19dbb2ab4e26ccf7618d3f4b050fe1280df37006617bec30a42"
+content-hash = "84ef73fa9bb4d982ff76d1abdce3ab89c03515e5038801dda0ac0be385074376"
 
 [metadata.files]
 appdirs = [
@@ -918,8 +918,8 @@ edfi-lms-extractor-lib = [
     {file = "edfi_lms_extractor_lib-1.0.0a4-py3-none-any.whl", hash = "sha256:910434a08033d7b887dd754a73e1602e0cf657ac5d72ddcc30870b53769af56f"},
 ]
 edfi-lms-file-utils = [
-    {file = "edfi-lms-file-utils-1.0.0b15.tar.gz", hash = "sha256:894d772075dcfe273a8060d4c297568ad8495f32cd35d54c066a57cf37c5d602"},
-    {file = "edfi_lms_file_utils-1.0.0b15-py3-none-any.whl", hash = "sha256:62c5cc4ceafa169d58c40f9d15822777e9538c944c69882bfa7270e9cbd29ce9"},
+    {file = "edfi-lms-file-utils-1.0.0b16.tar.gz", hash = "sha256:7aa541c617a86dd5bbb0ae4446fda34ae25e8cea491cfe0397799b7e13f3155e"},
+    {file = "edfi_lms_file_utils-1.0.0b16-py3-none-any.whl", hash = "sha256:047517f99ca2b4098fa32b595011bab0a5110e4aee68e2ae90af6254f31c845c"},
 ]
 errorhandler = [
     {file = "errorhandler-2.0.1-py2.py3-none-any.whl", hash = "sha256:dc6c54f5d9a4599e744b57aac2f925cce873188e9b02cae7c0eb120ee08a893f"},
