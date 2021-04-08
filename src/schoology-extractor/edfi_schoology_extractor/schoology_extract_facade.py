@@ -256,28 +256,28 @@ class SchoologyExtractFacade:
 
         def _get_discussions_and_discussion_replies():
             discussions = self._client.get_discussions(section_id)
-            replies: list = []
-            mapped_replies = DataFrame()
-            for discussion in discussions:
-                discussion_id = discussion["id"]
-                replies = replies + self._client.get_discussion_replies(
-                    section_id, discussion_id
-                )
-                sync_replies: DataFrame = sync.sync_resource(
-                    RESOURCE_NAMES.DISCUSSION_REPLIES, self._db_engine, replies
-                )
-                current_replies: DataFrame = discussionRepliesMap.map_to_udm(
-                    sync_replies, section_id, discussion_id
-                )
-                mapped_replies: DataFrame = concat([mapped_replies, current_replies])
-
             sync_discussions: DataFrame = sync.sync_resource(
                 RESOURCE_NAMES.DISCUSSIONS, self._db_engine, discussions
             )
             mapped_discussions: DataFrame = discussionsMap.map_to_udm(
                 sync_discussions, section_id
             )
-            return mapped_discussions.append(mapped_replies)
+
+            all_mapped_replies: DataFrame = DataFrame()
+            for discussion in discussions:
+                discussion_id = discussion["id"]
+                replies: list = self._client.get_discussion_replies(
+                    section_id, discussion_id
+                )
+                sync_replies: DataFrame = sync.sync_resource(
+                    RESOURCE_NAMES.DISCUSSION_REPLIES, self._db_engine, replies
+                )
+                mapped_replies: DataFrame = discussionRepliesMap.map_to_udm(
+                    sync_replies, section_id, discussion_id
+                )
+                all_mapped_replies = concat([all_mapped_replies, mapped_replies])
+
+            return concat([mapped_discussions, all_mapped_replies])
 
         def _get_section_updates():
             section_updates = self.request_client.get_section_updates(

@@ -37,7 +37,7 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
         LMSSectionSourceSystemIdentifier: A unique number or alphanumeric code assigned to a section by the
             source system
         ActivityDateTime: The date/time the replied was created.
-        ActivityStatus: The status for the update
+        ActivityStatus: will always be "active"
         ActivityType: The type of activity: `section-update`
         Content: The comment text.
         AssignmentIdentifier: A unique numeric identifier assigned to the assignment.
@@ -57,7 +57,7 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
     df["created"] = df["created"].apply(
         lambda x: datetime.strftime(datetime.fromtimestamp(int(x)), "%Y-%m-%d %H:%M:%S")
     )
-    df["status"] = None
+    df["ActivityStatus"] = "active"
 
     df["id"] = df["id"].apply(lambda x: f"su#{x}")
     df["ActivityType"] = SECTION_UPDATE_TYPE
@@ -74,7 +74,6 @@ def map_to_udm(section_updates_df: pd.DataFrame, section_id: int) -> pd.DataFram
             "created": "ActivityDateTime",
             "id": "SourceSystemIdentifier",
             "uid": "LMSUserSourceSystemIdentifier",
-            "status": "ActivityStatus",
         },
         inplace=True,
     )

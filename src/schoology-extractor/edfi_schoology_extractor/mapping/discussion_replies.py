@@ -73,9 +73,13 @@ def map_to_udm(
     df["ActivityType"] = DISCUSSION_REPLIES_TYPE
     df["LMSSectionSourceSystemIdentifier"] = section_id
     df["SourceSystem"] = constants.SOURCE_SYSTEM
-    df["parent_id"] = df["parent_id"].apply(
+    df["ParentSourceSystemIdentifier"] = df["parent_id"].apply(
         lambda x: f"sdr#{x}" if (x != 0) else f"sd{discussion_id}"
     )
+    df["SourceSystemIdentifier"] = df[["ParentSourceSystemIdentifier", "id"]].agg(
+        "-".join, axis=1
+    )
+    df.drop(columns=["id", "parent_id"], inplace=True)
 
     df["ActivityTimeInMinutes"] = None
     df["SourceCreateDate"] = ""
@@ -85,9 +89,7 @@ def map_to_udm(
         columns={
             "created": "ActivityDateTime",
             "status": "ActivityStatus",
-            "id": "SourceSystemIdentifier",
             "uid": "LMSUserSourceSystemIdentifier",
-            "parent_id": "ParentSourceSystemIdentifier",
         },
         inplace=True,
     )

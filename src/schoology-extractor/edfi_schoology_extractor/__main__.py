@@ -86,7 +86,9 @@ def _create_file_from_dataframe(df: Optional[DataFrame], file_name) -> bool:
 
         return True
     except BaseException:
-        logger.exception("An exception occurred while generating %s", normalized_file_name)
+        logger.exception(
+            "An exception occurred while generating %s", normalized_file_name
+        )
         return False
 
 

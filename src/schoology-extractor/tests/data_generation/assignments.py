@@ -62,8 +62,7 @@ def generate_assignments(
 
 
 def generate_extra_assignments_without_enrollments(
-    request_client: RequestClient,
-    sections: List[Dict]
+    request_client: RequestClient, sections: List[Dict]
 ) -> Dict[str, List[Dict]]:
     """
     Generate assignments without any enrollments, with random content size.
@@ -91,16 +90,16 @@ def generate_extra_assignments_without_enrollments(
         for i in range(1):
             assignment = {
                 "title": fake.catch_phrase(),
-                "description": fake.paragraph(variable_nb_sentences=True, nb_sentences=40),
-                "due": datetime.strftime(
-                    fake.future_datetime(), "%Y-%m-%d %H:%M:%S"
+                "description": fake.paragraph(
+                    variable_nb_sentences=True, nb_sentences=40
                 ),
+                "due": datetime.strftime(fake.future_datetime(), "%Y-%m-%d %H:%M:%S"),
                 "type": "assignment",
                 "assignees": list(),
             }
-            result[section_id] += (load_assignments(
+            result[section_id] += load_assignments(
                 request_client, section_id, [assignment]
-            ))
+            )
 
     return result
 

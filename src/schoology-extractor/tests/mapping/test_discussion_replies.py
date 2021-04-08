@@ -64,7 +64,7 @@ def describe_mapping_schoology_users_to_udm():
             assert input in result.columns
 
         def test_then_source_system_identifier_is_mapped(result):
-            assert result.at[0, "SourceSystemIdentifier"] == "sdr#824849694"
+            assert result.at[0, "SourceSystemIdentifier"] == "sdr#0-sdr#824849694"
 
         def test_then_source_system_is_mapped(result):
             assert result.at[0, "SourceSystem"] == "Schoology"

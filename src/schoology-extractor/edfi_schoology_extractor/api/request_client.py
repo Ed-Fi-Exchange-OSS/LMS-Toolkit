@@ -100,9 +100,6 @@ class RequestClient:
         }
 
     def _build_query_params_for_first_page(self, page_size: int):
-        assert isinstance(
-            page_size, int
-        ), "Argument `page_size` should be of type `int`."
         return f"start=0&limit={page_size}"
 
     def _check_for_rate_limiting(self, response: Response, http_method: str, url: str):
@@ -184,7 +181,13 @@ class RequestClient:
         self._check_for_success(response, success_status)
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(
+            ConnectionError,
+            HTTPError,
+            ProtocolError,
+            Timeout,
+            RuntimeError,
+        ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
@@ -207,8 +210,6 @@ class RequestClient:
         RuntimeError
             If the GET operation is unsuccessful
         """
-
-        assert isinstance(resource, str), "Argument `resource` should be of type `str`."
         assert isinstance(
             self.base_url, str
         ), "Property `base_url` should be of type `str`."
@@ -226,7 +227,13 @@ class RequestClient:
         return response.json()
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(
+            ConnectionError,
+            HTTPError,
+            ProtocolError,
+            Timeout,
+            RuntimeError,
+        ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
@@ -269,7 +276,13 @@ class RequestClient:
         return response.json()
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(
+            ConnectionError,
+            HTTPError,
+            ProtocolError,
+            Timeout,
+            RuntimeError,
+        ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
@@ -315,7 +328,13 @@ class RequestClient:
         return response.json()
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(
+            ConnectionError,
+            HTTPError,
+            ProtocolError,
+            Timeout,
+            RuntimeError,
+        ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
@@ -359,7 +378,13 @@ class RequestClient:
         return response.json()
 
     @retry(
-        retry_on_exceptions=(ConnectionError, HTTPError, ProtocolError, Timeout),
+        retry_on_exceptions=(
+            ConnectionError,
+            HTTPError,
+            ProtocolError,
+            Timeout,
+            RuntimeError,
+        ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )

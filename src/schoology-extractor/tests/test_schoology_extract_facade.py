@@ -4,11 +4,10 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Tuple
-
-import pandas as pd
-from pandas.core.frame import DataFrame
+from datetime import datetime
+from pandas import DataFrame
 import pytest
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 import sqlalchemy
 
 from edfi_schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
@@ -20,16 +19,13 @@ from edfi_schoology_extractor.mapping import section_associations as sectionAsso
 from edfi_schoology_extractor.mapping import assignments as assignmentsMap
 from edfi_schoology_extractor.mapping import submissions as submissionsMap
 from edfi_schoology_extractor.mapping import attendance as attendanceMap
-from edfi_schoology_extractor.mapping import discussion_replies as discussionRepliesMap
-from edfi_schoology_extractor.mapping import discussions as discussionsMap
-from edfi_schoology_extractor.mapping import section_updates as sectionUpdatesMap
 from edfi_schoology_extractor.helpers import sync
 
 
 def describe_when_getting_users():
     def describe_given_one_user():
         @pytest.fixture
-        def result() -> pd.DataFrame:
+        def result() -> DataFrame:
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
@@ -54,7 +50,7 @@ def describe_when_getting_users():
 
             # Also want to mock the UDM mapper function, since it is well-tested elsewhere
             usersMap.map_to_udm = Mock()
-            usersMap.map_to_udm.return_value = pd.DataFrame()
+            usersMap.map_to_udm.return_value = DataFrame()
 
             # This method will be tested in a different test
             sync.sync_resource = Mock(
@@ -69,11 +65,11 @@ def describe_when_getting_users():
             return result
 
         def it_should_return_a_data_frame(result):
-            assert isinstance(result, pd.DataFrame)
+            assert isinstance(result, DataFrame)
 
     def describe_given_two_pages_of_users():
         @pytest.fixture
-        def system() -> Tuple[pd.DataFrame, Mock]:
+        def system() -> Tuple[DataFrame, Mock]:
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 1
@@ -106,7 +102,7 @@ def describe_when_getting_users():
             # Also want to mock the UDM mapper function, since it is well-tested
             # elsewhere
             usersMap.map_to_udm = Mock()
-            usersMap.map_to_udm.return_value = pd.DataFrame()
+            usersMap.map_to_udm.return_value = DataFrame()
 
             # Arrange
             service = SchoologyExtractFacade(request_client, page_size, db_engine)
@@ -119,7 +115,7 @@ def describe_when_getting_users():
         def it_should_return_the_user_in_a_data_frame(system):
             result, _ = system
 
-            assert isinstance(result, pd.DataFrame)
+            assert isinstance(result, DataFrame)
 
         def it_should_use_first_users_page_when_mapping_to_udm(system):
             _, mock_map_to_udm = system
@@ -143,7 +139,7 @@ def describe_when_getting_users():
 def describe_when_getting_sections():
     def describe_given_one_course_with_one_section():
         @pytest.fixture
-        def system() -> Tuple[pd.DataFrame, Mock]:
+        def system() -> Tuple[DataFrame, Mock]:
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
@@ -161,7 +157,7 @@ def describe_when_getting_sections():
             # Also want to mock the UDM mapper function, since it is well-tested
             # elsewhere
             sectionsMap.map_to_udm = Mock()
-            sectionsMap.map_to_udm.return_value = pd.DataFrame()
+            sectionsMap.map_to_udm.return_value = DataFrame()
 
             sections = {
                 "section": [{"id": 1234}],
@@ -186,7 +182,7 @@ def describe_when_getting_sections():
         def it_should_return_a_data_frame(system):
             result, _ = system
 
-            assert isinstance(result, pd.DataFrame)
+            assert isinstance(result, DataFrame)
 
         def it_should_map_to_the_udm(system):
             _, map_to_udm = system
@@ -195,7 +191,7 @@ def describe_when_getting_sections():
 
     def describe_given_two_pages_of_courses():
         @pytest.fixture
-        def system() -> Tuple[pd.DataFrame, Mock]:
+        def system() -> Tuple[DataFrame, Mock]:
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 1
@@ -213,7 +209,7 @@ def describe_when_getting_sections():
             # Also want to mock the UDM mapper function, since it is well-tested
             # elsewhere
             sectionsMap.map_to_udm = Mock()
-            sectionsMap.map_to_udm.return_value = pd.DataFrame()
+            sectionsMap.map_to_udm.return_value = DataFrame()
 
             sections = {
                 "section": [{"id": 1234}],
@@ -245,7 +241,7 @@ def describe_when_getting_sections():
 def describe_when_getting_assignments():
     def describe_given_a_section_has_one_assignment():
         @pytest.fixture
-        def system() -> Tuple[pd.DataFrame, Mock, Mock]:
+        def system() -> Tuple[DataFrame, Mock, Mock]:
             request_client = Mock(spec=RequestClient)
             db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
             page_size = 22
@@ -281,7 +277,7 @@ def describe_when_getting_assignments():
 
             # Mock the UDM mapper
             assignmentsMap.map_to_udm = Mock()
-            assignmentsMap.map_to_udm.return_value = pd.DataFrame()
+            assignmentsMap.map_to_udm.return_value = DataFrame()
 
             service = SchoologyExtractFacade(request_client, page_size, db_engine)
 
@@ -292,7 +288,7 @@ def describe_when_getting_assignments():
 
         def it_should_return_a_DataFrame(system):
             result, _, _ = system
-            assert isinstance(result, pd.DataFrame)
+            assert isinstance(result, DataFrame)
 
         def it_should_query_for_the_given_section(system):
             _, get_assignments_mock, _ = system
@@ -361,14 +357,14 @@ def describe_when_getting_submissions():
 
 def describe_when_getting_section_associations():
     @pytest.fixture
-    def system() -> Tuple[pd.DataFrame, Mock, Mock]:
+    def system() -> Tuple[DataFrame, Mock, Mock]:
         request_client = Mock(spec=RequestClient)
         page_size = 1
 
         # Also want to mock the UDM mapper function, since it is well-tested
         # elsewhere
         sectionAssocMap.map_to_udm = Mock()
-        sectionAssocMap.map_to_udm.return_value = pd.DataFrame()
+        sectionAssocMap.map_to_udm.return_value = DataFrame()
 
         # Mock the API calls
         section_id = 1234
@@ -399,7 +395,7 @@ def describe_when_getting_section_associations():
     def it_should_return_a_data_frame(system):
         result, _, _ = system
 
-        assert isinstance(result, pd.DataFrame)
+        assert isinstance(result, DataFrame)
 
     def it_should_map_to_the_udm(system):
         _, mapper, _ = system
@@ -425,14 +421,14 @@ def describe_when_getting_section_associations():
 
 def describe_when_getting_attendance_events():
     @pytest.fixture
-    def system() -> Tuple[pd.DataFrame, Mock]:
+    def system() -> Tuple[DataFrame, Mock]:
         request_client = Mock(spec=RequestClient)
         page_size = 1
 
         # Also want to mock the UDM mapper function, since it is well-tested
         # elsewhere
         attendanceMap.map_to_udm = Mock()
-        attendanceMap.map_to_udm.return_value = pd.DataFrame()
+        attendanceMap.map_to_udm.return_value = DataFrame()
 
         section_id = 1234
         get_attendance_mock = request_client.get_attendance
@@ -442,7 +438,7 @@ def describe_when_getting_attendance_events():
 
         # Actual section associations are irrelevant for these tests - just need
         # to ensure that the object is passed around correctly.
-        section_associations = pd.DataFrame([{"id": 123}])
+        section_associations = DataFrame([{"id": 123}])
 
         # Arrange
         service = SchoologyExtractFacade(request_client, page_size, db_engine)
@@ -455,7 +451,7 @@ def describe_when_getting_attendance_events():
     def it_should_return_a_data_frame(system):
         result, _ = system
 
-        assert isinstance(result, pd.DataFrame)
+        assert isinstance(result, DataFrame)
 
     def it_should_map_to_the_udm(system):
         _, mapper = system
@@ -475,65 +471,115 @@ def describe_when_getting_attendance_events():
         assert df["id"].iloc[0] == 123
 
 
-def describe_when_getting_user_activities():
+def describe_when_getting_section_activities():
     @pytest.fixture
-    def system() -> dict:
+    def result_df() -> DataFrame:
+        # Arrange
+
+        # Mock sync.sync_resource to return a DataFrame from the data - there's a behavior assumption here
+        sync.sync_resource = MagicMock(
+            side_effect=lambda resource_name, db_engine, data: DataFrame(data)
+        )
+
         request_client = Mock(spec=RequestClient)
         page_size = 1
 
-        discussionRepliesMap.map_to_udm = Mock()
-        discussionRepliesMap.map_to_udm.return_value = pd.DataFrame()
-        discussionsMap.map_to_udm = Mock()
-        discussionsMap.map_to_udm.return_value = pd.DataFrame()
-        sectionUpdatesMap.map_to_udm = Mock()
-        sectionUpdatesMap.map_to_udm.return_value = pd.DataFrame()
+        request_client.get_discussions.return_value = [
+            {
+                "id": "discussion-0",
+                "uid": "1",
+                "available": "2",
+                "CreateDate": datetime.now(),
+                "graded": "3",
+                "LastModifiedDate": datetime.now(),
+                "published": "5",
+                "completed": datetime.now(),
+            },
+        ]
 
-        section_id = 1234
-        get_discussions_mock = request_client.get_discussions
-        get_discussions_mock.return_value = [{"id": 1}, {"id": 2}]
+        request_client.get_discussion_replies.return_value = [
+            {
+                "id": "reply-0",
+                "uid": "11",
+                "status": "111",
+                "CreateDate": datetime.now(),
+                "parent_id": "1111",
+                "LastModifiedDate": datetime.now(),
+                "created": 11111,
+            },
+            {
+                "id": "reply-1",
+                "uid": "22",
+                "status": "222",
+                "CreateDate": datetime.now(),
+                "parent_id": "2222",
+                "LastModifiedDate": datetime.now(),
+                "created": 22222,
+            },
+            {
+                "id": "reply-2",
+                "uid": "33",
+                "status": "333",
+                "CreateDate": datetime.now(),
+                "parent_id": "3333",
+                "LastModifiedDate": datetime.now(),
+                "created": 33333,
+            },
+        ]
 
-        get_updates_mock = request_client.get_section_updates
-        sections__update_response_mock = {
-            "update": [{"id": 1}, {"id": 2}],
-            "total": 1,
-            "links": {"self": "ignore"},
-        }
-        sections_updates = PaginatedResult(
+        request_client.get_section_updates.return_value = PaginatedResult(
             request_client,
             page_size,
-            sections__update_response_mock,
+            {
+                "update": [
+                    {
+                        "id": "section-update-0",
+                        "uid": "111111",
+                        "created": 111111,
+                        "CreateDate": datetime.now(),
+                        "LastModifiedDate": datetime.now(),
+                    },
+                    {
+                        "id": "section-update-1",
+                        "uid": "222222",
+                        "created": 222222,
+                        "CreateDate": datetime.now(),
+                        "LastModifiedDate": datetime.now(),
+                    },
+                ],
+                "total": 2,
+                "links": {"self": "ignore"},
+            },
             "update",
             "ignore me",
         )
-        get_updates_mock.return_value = sections_updates
 
-        get_discussion_replies_mock = request_client.get_discussion_replies
-        get_discussion_replies_mock.return_value = [
-            {"fake_dict_attrib": 1},
-            {"fake_dict_attrib": 2},
-        ]
-
-        db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
-
-        # Arrange
-        service = SchoologyExtractFacade(request_client, page_size, db_engine)
+        service = SchoologyExtractFacade(
+            request_client, page_size, Mock(spec=sqlalchemy.engine.base.Engine)
+        )
+        section_id = 1234
 
         # Act
-        result = service.get_section_activities(section_id)
+        return service.get_section_activities(section_id)
 
-        return {
-            "result": result,
-            "replies_mock": discussionRepliesMap.map_to_udm,
-            "discussions_mock": discussionsMap.map_to_udm,
-            "updates_mock": sectionUpdatesMap.map_to_udm,
-        }
+    def it_should_return_a_data_frame(result_df):
+        assert isinstance(result_df, DataFrame)
 
-    def it_should_return_a_data_frame(system):
+    def it_should_have_the_correct_number_of_rows(result_df):
+        row_count = result_df.shape[0]
+        assert row_count == 6
 
-        assert isinstance(system["result"], pd.DataFrame)
+    def it_should_have_discussion_first(result_df):
+        id_column = result_df["SourceSystemIdentifier"].tolist()
+        assert id_column[0] == "sd#discussion-0"
 
-    def it_should_map_replies_to_the_udm(system):
-        assert system["replies_mock"].called
+    def it_should_have_three_replies_next(result_df):
+        id_column = result_df["SourceSystemIdentifier"].tolist()
+        assert id_column[1] == "sdr#1111-sdr#reply-0"
+        assert id_column[2] == "sdr#2222-sdr#reply-1"
+        assert id_column[3] == "sdr#3333-sdr#reply-2"
 
-    def it_should_map_discussions_to_the_udm(system):
-        assert system["discussions_mock"].called
+    def it_should_have_two_section_updates_at_end(result_df):
+        id_column = result_df["SourceSystemIdentifier"].tolist()
+        assert id_column[4] == "su#section-update-0"
+        assert id_column[5] == "su#section-update-1"
