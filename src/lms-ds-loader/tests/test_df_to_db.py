@@ -504,7 +504,7 @@ def describe_when_uploading_system_activities() -> None:
 def describe_when_uploading_attendance_events() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_section_and_user"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_attendance_events"
     )
     def when_uploading_attendance_events(
         insert_mock,

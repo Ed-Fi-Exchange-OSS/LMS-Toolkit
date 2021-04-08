@@ -219,5 +219,5 @@ def upload_attendance_events(
         db_adapter,
         attendance_df,
         Table.ATTENDANCE,
-        MssqlLmsOperations.insert_new_records_to_production_for_section_and_user,
+        MssqlLmsOperations.insert_new_records_to_production_for_attendance_events,
     )
