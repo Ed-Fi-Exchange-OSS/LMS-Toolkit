@@ -40,8 +40,6 @@ def _read_csv(
     extra_date_columns: list (optional)
         A list of columns that should be treated as having DateTime
         data type.
-    log_level: int (optional)
-        The log level, by default it is INFO
 
     Returns
     -------
@@ -293,7 +291,6 @@ def read_section_associations_file(
     return _read_csv(
         full_path,
         nrows,
-        log_level=logging.DEBUG,
         data_types=data_types,
         extra_date_columns=extra_date_columns,
     )
@@ -409,7 +406,6 @@ def read_section_activities_file(
     return _read_csv(
         full_path,
         nrows,
-        log_level=logging.DEBUG,
         data_types=data_types,
         extra_date_columns=extra_date_columns,
     )
@@ -576,7 +572,6 @@ def read_submissions_file(full_path: str, nrows: Optional[int] = None) -> pd.Dat
     return _read_csv(
         full_path,
         nrows,
-        log_level=logging.DEBUG,
         data_types=data_types,
         extra_date_columns=extra_date_columns,
     )
