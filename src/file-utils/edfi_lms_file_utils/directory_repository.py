@@ -11,11 +11,11 @@ from edfi_lms_file_utils.constants import Resources
 
 def _get_directory_for_section(
     base_directory: str, section_id: Union[str, int], file_type: str
-) -> Optional[str]:
+) -> str:
     return os.path.join(base_directory, f"{Resources.SECTION}={section_id}", file_type)
 
 
-def get_users_directory(base_directory: str) -> Optional[str]:
+def get_users_directory(base_directory: str) -> str:
     """
     Gets the canonical directory for users files.
 
@@ -26,13 +26,13 @@ def get_users_directory(base_directory: str) -> Optional[str]:
 
     Returns
     -------
-    str or None
-        Directory as string or None if the users directory does not exist.
+    str
+        Full directory path for the resource.
     """
     return os.path.join(base_directory, Resources.USERS)
 
 
-def get_sections_directory(base_directory: str) -> Optional[str]:
+def get_sections_directory(base_directory: str) -> str:
     """
     Gets the canonical directory for sections files.
 
@@ -43,13 +43,13 @@ def get_sections_directory(base_directory: str) -> Optional[str]:
 
     Returns
     -------
-    str or None
-        Directory as string or None if the sections directory does not exist.
+    str
+        Full directory path for the resource..
     """
     return os.path.join(base_directory, Resources.SECTIONS)
 
 
-def get_system_activities_directory(base_directory: str) -> Optional[str]:
+def get_system_activities_directory(base_directory: str) -> str:
     """
     Gets the canonical directory for system activities files.
 
@@ -60,15 +60,13 @@ def get_system_activities_directory(base_directory: str) -> Optional[str]:
 
     Returns
     -------
-    str or None
-        Directory as string or None if the system activities directory does not exist.
+    str
+        Full directory path for the resource.
     """
     return os.path.join(base_directory, Resources.SYSTEM_ACTIVITIES)
 
 
-def get_section_associations_directory(
-    base_directory: str, section_id: int
-) -> Optional[str]:
+def get_section_associations_directory(base_directory: str, section_id: int) -> str:
     """
     Gets the canonical directory for section associations files.
 
@@ -81,17 +79,15 @@ def get_section_associations_directory(
 
     Returns
     -------
-    str or None
-        Directory as string or None if the section associations directory does not exist.
+    str
+        Full directory path for the resource.
     """
     return _get_directory_for_section(
         base_directory, section_id, Resources.SECTION_ASSOCIATIONS
     )
 
 
-def get_section_activities_directory(
-    base_directory: str, section_id: int
-) -> Optional[str]:
+def get_section_activities_directory(base_directory: str, section_id: int) -> str:
     """
     Gets the canonical directory for section activities files.
 
@@ -104,13 +100,15 @@ def get_section_activities_directory(
 
     Returns
     -------
-    str or None
-        Directory as string or None if the section activities directory does not exist.
+    str
+        Full directory path for the resource.
     """
-    return _get_directory_for_section(base_directory, section_id, Resources.SECTION_ACTIVITIES)
+    return _get_directory_for_section(
+        base_directory, section_id, Resources.SECTION_ACTIVITIES
+    )
 
 
-def get_assignments_directory(base_directory: str, section_id: int) -> Optional[str]:
+def get_assignments_directory(base_directory: str, section_id: int) -> str:
     """
     Gets the canonical directory for assignments files.
 
@@ -123,13 +121,13 @@ def get_assignments_directory(base_directory: str, section_id: int) -> Optional[
 
     Returns
     -------
-    str or None
-        Directory as string or None if the assignments directory does not exist.
+    str
+        Full directory path for the resource.
     """
     return _get_directory_for_section(base_directory, section_id, Resources.ASSIGNMENTS)
 
 
-def get_grades_directory(base_directory: str, section_id: int) -> Optional[str]:
+def get_grades_directory(base_directory: str, section_id: int) -> str:
     """
     Gets the canonical directory for grades files.
 
@@ -142,15 +140,15 @@ def get_grades_directory(base_directory: str, section_id: int) -> Optional[str]:
 
     Returns
     -------
-    str or None
-        Directory as string or None if the grades directory does not exist.
+    str
+        Full directory path for the resource.
     """
     return _get_directory_for_section(base_directory, section_id, Resources.GRADES)
 
 
 def get_submissions_directory(
     base_directory: str, section_id: int, assignment_id: int
-) -> Optional[str]:
+) -> str:
     """
     Gets the canonical directory for submissions files.
 
@@ -165,8 +163,8 @@ def get_submissions_directory(
 
     Returns
     -------
-    str or None
-        Directory as string or None if the submissions directory does not exist.
+    str
+        Full directory path for the resource.
     """
     assignments = _get_directory_for_section(
         base_directory, section_id, f"{Resources.ASSIGNMENT}={assignment_id}"
@@ -178,9 +176,7 @@ def get_submissions_directory(
     return os.path.join(assignments, Resources.SUBMISSIONS)
 
 
-def get_attendance_events_directory(
-    base_directory: str, section_id: int
-) -> Optional[str]:
+def get_attendance_events_directory(base_directory: str, section_id: int) -> str:
     """
     Gets the canonical directory for attendance events files.
 
@@ -193,7 +189,9 @@ def get_attendance_events_directory(
 
     Returns
     -------
-    str or None
-        Directory as string or None if the attendance events directory does not exist.
+    str
+        Full directory path for the resource.
     """
-    return _get_directory_for_section(base_directory, section_id, Resources.ATTENDANCE_EVENTS)
+    return _get_directory_for_section(
+        base_directory, section_id, Resources.ATTENDANCE_EVENTS
+    )
