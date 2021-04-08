@@ -74,12 +74,6 @@ class TestRequestClient:
             except RuntimeError as ex:
                 assert str(ex) == "BadRequest (400): no good"
 
-        def test_given_no_parameters_passed_then_throw_assert_exception(
-            self, default_request_client
-        ):
-            with pytest.raises(AssertionError):
-                default_request_client.get(None)
-
     class Test_when_getting_assignments:
         class Test_given_there_is_one_assignments:
             @pytest.fixture
@@ -264,12 +258,6 @@ class TestRequestClient:
             assert response.current_page_items[0]["uid"] == 100032890
 
     class Test_when_build_pagination_params_method_is_called:
-        def test_given_wrong_type_in_params_then_thrown_assertion_error(
-            self, default_request_client
-        ):
-            with pytest.raises(AssertionError):
-                default_request_client._build_query_params_for_first_page([])
-
         def test_given_correct_parameter_then_url_is_built_correctly(
             self, default_request_client
         ):
@@ -286,12 +274,6 @@ class TestRequestClient:
             assert result == expected_result
 
     class Test_when_getting_all_courses:
-        def test_given_wrong_type_in_params_then_thrown_assertion_error(
-            self, default_request_client
-        ):
-            with pytest.raises(AssertionError):
-                default_request_client.get_courses([])
-
         def test_given_correct_parameter_then_returns_expected_data(
             self, default_request_client, requests_mock
         ):

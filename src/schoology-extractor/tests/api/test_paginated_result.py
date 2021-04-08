@@ -37,38 +37,6 @@ def default_paginated_result(default_request_client, mocker):
 
 class TestPaginatedResult:
     class Test_when_constructing:
-        def test_given_wrong_type_as_request_client_then_throw_assertException(self):
-
-            # Assert
-            with pytest.raises(AssertionError):
-                PaginatedResult(request_client=0, page_size=1, api_response="None", resource_name=[], requested_url="test")  # type: ignore
-
-        def test_given_wrong_type_as_page_size_then_throw_assertException(
-            self, default_request_client
-        ):
-
-            # Assert
-            with pytest.raises(AssertionError):
-                PaginatedResult(request_client=default_request_client, page_size=[], api_response="None", resource_name=[], requested_url="test")  # type: ignore
-
-        def test_given_wrong_type_as_api_response_then_throw_assertException(self):
-
-            # Assert
-            with pytest.raises(AssertionError):
-                PaginatedResult(request_client=default_request_client, page_size=20, api_response="None", resource_name=[], requested_url="test")  # type: ignore
-
-        def test_given_wrong_type_as_resource_name_then_throw_assertException(self):
-
-            # Assert
-            with pytest.raises(AssertionError):
-                PaginatedResult(request_client=0, page_size=1, api_response=[], resource_name=[], requested_url="test")  # type: ignore
-
-        def test_given_wrong_type_as_requested_url_then_throw_assertException(self):
-
-            # Assert
-            with pytest.raises(AssertionError):
-                PaginatedResult(request_client=0, page_size=1, api_response=[], resource_name="test", requested_url=20)  # type: ignore
-
         def test_given_correct_params_then_set_correct_properties(
             self, default_paginated_result
         ):

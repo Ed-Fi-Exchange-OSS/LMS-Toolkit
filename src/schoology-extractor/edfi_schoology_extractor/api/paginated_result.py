@@ -52,25 +52,6 @@ class PaginatedResult:
         requested_url: str,
         current_page: int = 1,
     ):
-        assert hasattr(
-            request_client, "get"
-        ), "Argument `request_client` should be of type `RequestClient`."
-        assert isinstance(
-            page_size, int
-        ), "Argument `page_size` should be of type `int`."
-        assert isinstance(
-            api_response, dict
-        ), "Argument `api_response` should be of type `dict`."
-        assert isinstance(
-            resource_name, str
-        ), "Argument `resource_name` should be of type `str`."
-        assert isinstance(
-            requested_url, str
-        ), "Argument `requested_url` should be of type `str`."
-        assert isinstance(
-            current_page, int
-        ), "Argument `current_page` should be of type `int`."
-
         self.request_client = request_client
         self.page_size = page_size
         self.requested_url = requested_url
