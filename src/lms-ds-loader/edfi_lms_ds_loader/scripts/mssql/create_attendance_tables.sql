@@ -60,12 +60,10 @@ CREATE TABLE lms.stg_LMSUserAttendanceEvent (
     SourceSystem NVARCHAR(255) NOT NULL,
     LMSUserSourceSystemIdentifier NVARCHAR(255) NOT NULL,
     LMSSectionSourceSystemIdentifier NVARCHAR(255) NULL,
-    LMSUserLMSSectionAssociationSourceSystemIdentifier NVARCHAR(255) NULL,
     EventDate DATE NOT NULL,
     AttendanceStatus NVARCHAR(60) NOT NULL,
     SourceCreateDate DATETIME2(7) NULL,
     SourceLastModifiedDate DATETIME2(7) NULL,
-    DeletedAt DATETIME2(7) NULL,
     CreateDate DATETIME2 NOT NULL,
     LastModifiedDate DATETIME2 NOT NULL,
     CONSTRAINT stg_LMSUserAttendanceEvent_PK PRIMARY KEY CLUSTERED (
