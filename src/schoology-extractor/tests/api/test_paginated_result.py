@@ -15,6 +15,7 @@ FAKE_ENDPOINT_URL = "FAKE_URL"
 DEFAULT_URL = "https://api.schoology.com/v1/"
 FAKE_RESOURCE_NAME = "resource_name"
 FAKE_API_RESPONSE = {"total": 2, "links": {"next": "url"}}
+PAGE_SIZE = 21
 
 
 @pytest.fixture
@@ -28,96 +29,88 @@ def default_request_client(mocker):
 def default_paginated_result(default_request_client, mocker):
     return PaginatedResult(
         request_client=default_request_client,
-        page_size=20,
+        page_size=PAGE_SIZE,
         api_response=FAKE_API_RESPONSE,
         resource_name=FAKE_RESOURCE_NAME,
         requested_url=FAKE_ENDPOINT_URL,
     )
 
 
-class TestPaginatedResult:
-    class Test_when_constructing:
-        def test_given_correct_params_then_set_correct_properties(
-            self, default_paginated_result
-        ):
+def describe_testing_PaginatedResult_class():
+    def describe_when_constructing():
+        def it_sets_correct_properties(default_paginated_result):
 
             # Assert
-            assert default_paginated_result.page_size == 20
+            assert default_paginated_result.page_size == PAGE_SIZE
             assert default_paginated_result._resource_name == FAKE_RESOURCE_NAME
             assert default_paginated_result.current_page == 1
             assert len(default_paginated_result.current_page_items) == 0
             assert default_paginated_result.requested_url == FAKE_ENDPOINT_URL
 
-    class Test_when_calling_total_pages_property:
-        def test_given_total_key_present_in_api_response_then_return_total(
-            self, default_paginated_result
-        ):
+    def describe_when_calling_total_pages_property():
+        def describe_given_total_key_present_in_api_response():
+            def it_returns_total(default_paginated_result):
 
-            # Assert
-            assert default_paginated_result.total_pages == 2
+                # Assert
+                assert default_paginated_result.total_pages == 2
 
-        def test_given_total_key_not_present_in_api_response_then_return_zero(
-            self, default_paginated_result
-        ):
+        def describe_given_total_key_not_present_in_api_response():
+            def it_returns_zero(default_paginated_result):
 
-            # Act
-            default_paginated_result._api_response = dict()
+                # Act
+                default_paginated_result._api_response = dict()
 
-            # Assert
-            assert default_paginated_result.total_pages == 0
+                # Assert
+                assert default_paginated_result.total_pages == 0
 
-    class Test_when_calling_get_next_page:
-        def test_given_links_and_next_keys_present_in_api_response_then_return_paginated_result(
-            self, default_paginated_result
-        ):
+    def describe_when_calling_get_next_page():
+        def describe_given_links_and_next_keys_present_in_api_response():
+            def it_returns_paginated_result(default_paginated_result):
 
-            # Act
-            result = default_paginated_result.get_next_page()
+                # Act
+                result = default_paginated_result.get_next_page()
 
-            # Assert
-            assert isinstance(result, PaginatedResult)
+                # Assert
+                assert isinstance(result, PaginatedResult)
 
-        def test_given_links_key_present_next_key_not_present_in_api_response_then_return_None(
-            self, default_paginated_result
-        ):
+        def describe_given_links_key_present_next_key_not_present_in_api_response():
+            def it_returns_None(default_paginated_result):
 
-            # Arrange
-            default_paginated_result._api_response = {"links": {}}
+                # Arrange
+                default_paginated_result._api_response = {"links": {}}
 
-            # Act
-            result = default_paginated_result.get_next_page()
+                # Act
+                result = default_paginated_result.get_next_page()
 
-            # Assert
-            assert result is None
+                # Assert
+                assert result is None
 
-        def test_given_resource_name_key_present_in_api_response_then_bind_current_page_items(
-            self, mocker, default_paginated_result
-        ):
+        def describe_given_resource_name_key_present_in_api_response():
+            def it_binds_current_page_items(mocker, default_paginated_result):
 
-            # Arrange
-            FAKE_API_RESPONSE = {FAKE_RESOURCE_NAME: [{"test": "test"}]}
-            default_paginated_result.request_client.get = mocker.MagicMock(
-                return_value=FAKE_API_RESPONSE
-            )
+                # Arrange
+                FAKE_API_RESPONSE = {FAKE_RESOURCE_NAME: [{"test": "test"}]}
+                default_paginated_result.request_client.get = mocker.MagicMock(
+                    return_value=FAKE_API_RESPONSE
+                )
 
-            # Act
-            default_paginated_result.get_next_page()
+                # Act
+                default_paginated_result.get_next_page()
 
-            # Assert
-            assert len(default_paginated_result.current_page_items) == 1
+                # Assert
+                assert len(default_paginated_result.current_page_items) == 1
 
-        def test_given_links_and_next_key_not_present_in_api_response_then_return_None(
-            self, default_paginated_result
-        ):
+        def describe_given_links_and_next_key_not_present_in_api_response():
+            def it_returns_None(default_paginated_result):
 
-            # Arrange
-            default_paginated_result._api_response = dict()
+                # Arrange
+                default_paginated_result._api_response = dict()
 
-            # Act
-            result = default_paginated_result.get_next_page()
+                # Act
+                result = default_paginated_result.get_next_page()
 
-            # Assert
-            assert result is None
+                # Assert
+                assert result is None
 
 
 def describe_when_getting_all_pages():

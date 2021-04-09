@@ -38,20 +38,20 @@ def db_engine_mock_returns_value():
     return mock_db_engine
 
 
-class Test_when_get_sync_db_engine_is_called:
-    def test_then_engine_type_object_is_returned(self):
+class describe_when_get_sync_db_engine_is_called:
+    def it_returns_engine_type(self):
         engine = sync.get_sync_db_engine()
         assert isinstance(engine, sqlalchemy.engine.base.Engine)
 
 
-class Test_when__table_exist_is_called:
-    class Test_given_table_does_not_exist:
-        def test_then_returns_false(self, db_engine_mock_returns_none):
+class describe_when__table_exist_is_called:
+    class describe_given_table_does_not_exist:
+        def it_returns_false(self, db_engine_mock_returns_none):
             result = sync._table_exist("fake_table_name", db_engine_mock_returns_none)
             assert result is False
 
-    class Test_given_table_exists:
-        def test_then_returns_true(self, db_engine_mock_returns_value):
+    class describe_given_table_exists:
+        def it_returns_true(self, db_engine_mock_returns_value):
             result = sync._table_exist("fake_table_name", db_engine_mock_returns_value)
             assert result is True
 
@@ -84,8 +84,8 @@ def mock_sync_internal_functions(sync):
     sync._table_exist = Mock(return_value=True)
 
 
-class Test_given_sync_resource_is_called:
-    def test_then_returns_dataframe(self, db_engine_mock_returns_none):
+class describe_given_sync_resource_is_called:
+    def it_returns_dataframe(self, db_engine_mock_returns_none):
         mock_sync_internal_functions(sync)
         result = sync.sync_resource(
             "fake_resource_name",
@@ -112,16 +112,16 @@ def db_engine_mock_returns_existing_file():
     return mock_db_engine
 
 
-class Test_given_usage_file_is_processed_is_called:
-    def test_then_returns_boolean(self, db_engine_mock_returns_existing_file):
+class describe_given_usage_file_is_processed_is_called:
+    def it_returns_boolean(self, db_engine_mock_returns_existing_file):
         mock_sync_internal_functions(sync)
         result = sync.usage_file_is_processed(
             "fake_resource_name", db_engine_mock_returns_existing_file
         )
         assert isinstance(result, bool)
 
-    class Test_given_db_returns_false:
-        def test_then_returns_false(self, db_engine_mock_returns_existing_file):
+    class describe_given_db_returns_false:
+        def it_returns_false(self, db_engine_mock_returns_existing_file):
             mock_sync_internal_functions(sync)
             result = sync.usage_file_is_processed(
                 "fake_resource_name", db_engine_mock_returns_existing_file

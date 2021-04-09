@@ -14,70 +14,69 @@ FAKE_ENDPOINT_URL = "FAKE_URL"
 DEFAULT_URL = "https://api.schoology.com/v1/"
 
 
-@pytest.fixture
-def default_request_client():
-    return RequestClient(FAKE_KEY, FAKE_SECRET)
+def describe_testing_RequestClient_class():
+    @pytest.fixture
+    def default_request_client():
+        return RequestClient(FAKE_KEY, FAKE_SECRET)
 
+    def describe_when_constructing_instance():
+        def describe_given_not_passing_in_a_url():
+            def it_uses_the_DEFAULT_URL():
+                request_client = RequestClient(FAKE_KEY, FAKE_SECRET)
+                assert request_client.base_url == DEFAULT_URL
 
-class TestRequestClient:
-    class Test_when_constructing:
-        def test_given_not_passing_in_a_url_then_use_the_DEFAULT_URL(self):
-            request_client = RequestClient(FAKE_KEY, FAKE_SECRET)
-            assert request_client.base_url == DEFAULT_URL
+        def describe_given_custom_url():
+            def it_uses_it_for_the_base_url():
 
-        def test_given_custom_url_then_use_it_for_the_base_url(self):
+                # Arrange
+                custom_url = "a_custom_url"
 
-            # Arrange
-            custom_url = "a_custom_url"
+                # Act
+                request_client = RequestClient(FAKE_KEY, FAKE_SECRET, custom_url)
 
-            # Act
-            request_client = RequestClient(FAKE_KEY, FAKE_SECRET, custom_url)
+                # Assert
+                assert request_client.base_url == custom_url
 
-            # Assert
-            assert request_client.base_url == custom_url
+    def describe_when_building_request_header():
+        def _present_in_header(request_header, header_key, contained_value):
+            header_section = request_header[header_key]
+            return header_section.find(contained_value) != -1
 
-    class Test_when_building_request_header:
-        def test_then_consumer_key_is_present(self, default_request_client):
-            assert self._present_in_header(
+        def it_includes_then_consumer_key(default_request_client):
+            assert _present_in_header(
                 default_request_client._request_header,
                 header_key="Authorization",
                 contained_value=FAKE_KEY,
             )
 
-        def test_then_oauth_word_is_present(self, default_request_client):
-            assert self._present_in_header(
+        def test_then_oauth_word_is_present(default_request_client):
+            assert _present_in_header(
                 default_request_client._request_header,
                 header_key="Authorization",
                 contained_value="OAuth",
             )
 
-        def _present_in_header(self, request_header, header_key, contained_value):
-            header_section = request_header[header_key]
-            return header_section.find(contained_value) != -1
+    def describe_when_get_method_is_called():
+        def describe_given_error_occurs():
+            def it_raises_an_HTTPError(requests_mock, default_request_client):
+                expected_url = DEFAULT_URL + FAKE_ENDPOINT_URL
 
-    class Test_when_get_method_is_called:
-        def test_and_error_occurs_then_raise_an_HTTPError(
-            self, requests_mock, default_request_client
-        ):
-            expected_url = DEFAULT_URL + FAKE_ENDPOINT_URL
+                # Arrange
+                requests_mock.get(
+                    expected_url, reason="BadRequest", status_code=400, text="no good"
+                )
 
-            # Arrange
-            requests_mock.get(
-                expected_url, reason="BadRequest", status_code=400, text="no good"
-            )
+                # Act
+                try:
+                    default_request_client.get(FAKE_ENDPOINT_URL)
 
-            # Act
-            try:
-                default_request_client.get(FAKE_ENDPOINT_URL)
+                    raise RuntimeError("expected an error to occur")
+                except RuntimeError as ex:
+                    assert str(ex) == "BadRequest (400): no good"
 
-                raise RuntimeError("expected an error to occur")
-            except RuntimeError as ex:
-                assert str(ex) == "BadRequest (400): no good"
-
-    class Test_when_getting_assignments:
-        class Test_given_there_is_one_assignments:
-            @pytest.fixture
-            def result(self, default_request_client, requests_mock):
+    def describe_when_getting_assignments():
+        def describe_given_there_is_one_assignments():
+            def it_returns_the_assignment(default_request_client, requests_mock):
                 section_id = 3324
                 page_size = 435
                 expected_url_1 = "https://api.schoology.com/v1/sections/3324/assignments?start=0&limit=435"
@@ -97,14 +96,13 @@ class TestRequestClient:
                 # Act
                 result = default_request_client.get_assignments(section_id, page_size)
 
-                return result
+                print("-------> ", result, " <---------------")
 
-            # def test_then_it_should_return_the_assignment(self, result, requests_mock):
-            #     assert result["id"] == "b"
+                assert result["id"] == "b"
 
-        class Test_given_two_pages_of_assignments:
+        def describe_given_two_pages_of_assignments():
             @pytest.fixture
-            def result(self, default_request_client, requests_mock):
+            def result(default_request_client, requests_mock):
                 section_id = 3324
                 page_size = 1
                 expected_url_1 = "https://api.schoology.com/v1/sections/3324/assignments?start=0&limit=1"
@@ -136,21 +134,17 @@ class TestRequestClient:
 
                 return result
 
-            def test_then_it_should_return_two_assignment(
-                self, result: PaginatedResult, requests_mock
-            ):
+            def it_should_return_two_assignment(result: PaginatedResult, requests_mock):
                 assert result.get_next_page() is not None
 
-            def test_result_should_contain_first_assignment(
-                self, result: PaginatedResult, requests_mock
+            def it_should_contain_first_assignment(
+                result: PaginatedResult, requests_mock
             ):
                 assert (
                     len([r for r in result.current_page_items if r["id"] == "b"]) == 1
                 )
 
-            def test_result_should_contain_second_assignment(
-                self, result, requests_mock
-            ):
+            def it_should_contain_second_assignment(result, requests_mock):
                 assert (
                     len(
                         [
@@ -162,135 +156,137 @@ class TestRequestClient:
                     == 1
                 )
 
-    class Test_when_get_section_by_course_id_method_is_called:
-        def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
-            self, default_request_client: RequestClient, requests_mock
-        ):
-            course_id = 1
-            expected_url_1 = "https://api.schoology.com/v1/courses/1/sections"
-            expected_url_2 = "https://api.schoology.com/v1/courses/2/sections"
+    def describe_when_get_section_by_course_id_method_is_called():
+        def describe_given_a_parameter_is_passed():
+            def it_should_make_the_get_call(
+                default_request_client: RequestClient, requests_mock
+            ):
+                course_id = 1
+                expected_url_1 = "https://api.schoology.com/v1/courses/1/sections"
+                expected_url_2 = "https://api.schoology.com/v1/courses/2/sections"
 
-            # Arrange
-            text = '{"section": [{"a":"b"}]}'
-            called = set()
+                # Arrange
+                text = '{"section": [{"a":"b"}]}'
+                called = set()
 
-            def callback(request, context):
-                called.add(request.url)
-                return text
+                def callback(request, context):
+                    called.add(request.url)
+                    return text
 
-            requests_mock.get(
-                expected_url_1, reason="OK", status_code=200, text=callback
-            )
-            requests_mock.get(
-                expected_url_2, reason="OK", status_code=200, text=callback
-            )
+                requests_mock.get(
+                    expected_url_1, reason="OK", status_code=200, text=callback
+                )
+                requests_mock.get(
+                    expected_url_2, reason="OK", status_code=200, text=callback
+                )
 
-            # Act
-            response = default_request_client.get_section_by_course_id(course_id)
+                # Act
+                response = default_request_client.get_section_by_course_id(course_id)
 
-            # Assert
-            assert expected_url_1 in called, "URL 1 not called"
+                # Assert
+                assert expected_url_1 in called, "URL 1 not called"
 
-            assert isinstance(
-                response, PaginatedResult
-            ), "expected response to be a PaginatedResult"
-            assert len(response.current_page_items) == 1, "expected one result"
+                assert isinstance(
+                    response, PaginatedResult
+                ), "expected response to be a PaginatedResult"
+                assert len(response.current_page_items) == 1, "expected one result"
 
-    class Test_when_get_submissions_by_section_id_and_grade_item_id_method_is_called:
-        def test_given_a_parameter_is_passed_then_shoud_make_the_get_call(
-            self, default_request_client, requests_mock
-        ):
-            expected_url_1 = (
-                "https://api.schoology.com/v1/sections/1/submissions/1234564"
-            )
+    def describe_when_get_submissions_by_section_id_and_grade_item_id_method_is_called():
+        def describe_given_a_parameter_is_passed():
+            def it_should_make_the_get_call(default_request_client, requests_mock):
+                expected_url_1 = (
+                    "https://api.schoology.com/v1/sections/1/submissions/1234564"
+                )
 
-            # Arrange
-            text = '{"revision":[{"revision_id": 1,"uid": 100032890,"created": 1598631506,"num_items": 1,"late": 0,"draft": 0}]}'
+                # Arrange
+                text = '{"revision":[{"revision_id": 1,"uid": 100032890,"created": 1598631506,"num_items": 1,"late": 0,"draft": 0}]}'
 
-            requests_mock.get(expected_url_1, reason="OK", status_code=200, text=text)
+                requests_mock.get(
+                    expected_url_1, reason="OK", status_code=200, text=text
+                )
 
-            # Act
-            response = (
-                default_request_client.get_submissions_by_section_id_and_grade_item_id(
+                # Act
+                response = default_request_client.get_submissions_by_section_id_and_grade_item_id(
                     "1", "1234564"
                 )
-            )
 
-            # Assert
-            assert isinstance(response, PaginatedResult)
-            assert len(response.current_page_items) == 1
-            assert response.current_page_items[0]["uid"] == 100032890
+                # Assert
+                assert isinstance(response, PaginatedResult)
+                assert len(response.current_page_items) == 1
+                assert response.current_page_items[0]["uid"] == 100032890
 
-    class Test_when_get_users_method_is_called:
-        def test_given_the_get_call_returns_empty_response_then_return_empty_PaginatedResult(
-            self, default_request_client, requests_mock
-        ):
-            expected_url_1 = "https://api.schoology.com/v1/users"
+    def describe_when_get_users_method_is_called():
+        def describe_given_the_get_call_returns_empty_response():
+            def it_returns_empty_PaginatedResult(default_request_client, requests_mock):
+                expected_url_1 = "https://api.schoology.com/v1/users"
 
-            # Arrange
-            text = '{"user":[]}'
+                # Arrange
+                text = '{"user":[]}'
 
-            requests_mock.get(expected_url_1, reason="OK", status_code=200, text=text)
+                requests_mock.get(
+                    expected_url_1, reason="OK", status_code=200, text=text
+                )
 
-            # Act
-            response = default_request_client.get_users()
+                # Act
+                response = default_request_client.get_users()
 
-            # Assert
-            assert isinstance(response, PaginatedResult)
-            assert len(response.current_page_items) == 0
+                # Assert
+                assert isinstance(response, PaginatedResult)
+                assert len(response.current_page_items) == 0
 
-        def test_given_the_get_call_returns_users_then_return_list_of_users(
-            self, default_request_client, requests_mock
-        ):
-            expected_url_1 = "https://api.schoology.com/v1/users"
+        def describe_given_the_get_call_returns_users():
+            def it_returns_list_of_users(default_request_client, requests_mock):
+                expected_url_1 = "https://api.schoology.com/v1/users"
 
-            # Arrange
-            text = '{"user":[{"uid": 100032890}]}'
+                # Arrange
+                text = '{"user":[{"uid": 100032890}]}'
 
-            requests_mock.get(expected_url_1, reason="OK", status_code=200, text=text)
+                requests_mock.get(
+                    expected_url_1, reason="OK", status_code=200, text=text
+                )
 
-            # Act
-            response = default_request_client.get_users()
+                # Act
+                response = default_request_client.get_users()
 
-            # Assert
-            assert isinstance(response, PaginatedResult)
-            assert len(response.current_page_items) == 1
-            assert response.current_page_items[0]["uid"] == 100032890
+                # Assert
+                assert isinstance(response, PaginatedResult)
+                assert len(response.current_page_items) == 1
+                assert response.current_page_items[0]["uid"] == 100032890
 
-    class Test_when_build_pagination_params_method_is_called:
-        def test_given_correct_parameter_then_url_is_built_correctly(
-            self, default_request_client
-        ):
-            # Arrange
-            items_per_page = 17
-            expected_result = "start=0&limit=17"
+    def describe_when_build_pagination_params_method_is_called():
+        def describe_given_correct_parameter():
+            def it_builds_url_correctly(default_request_client):
+                # Arrange
+                items_per_page = 17
+                expected_result = "start=0&limit=17"
 
-            # Act
-            result = default_request_client._build_query_params_for_first_page(
-                items_per_page
-            )
+                # Act
+                result = default_request_client._build_query_params_for_first_page(
+                    items_per_page
+                )
 
-            # Assert
-            assert result == expected_result
+                # Assert
+                assert result == expected_result
 
-    class Test_when_getting_all_courses:
-        def test_given_correct_parameter_then_returns_expected_data(
-            self, default_request_client, requests_mock
-        ):
-            expected_url_1 = "https://api.schoology.com/v1/courses"
+    def describe_when_getting_all_courses():
+        def describe_given_correct_parameter():
+            def it_returns_expected_data(default_request_client, requests_mock):
+                expected_url_1 = "https://api.schoology.com/v1/courses"
 
-            # Arrange
-            text = '{"course":[{"id": 100032890, "title": "English I"}]}'
+                # Arrange
+                text = '{"course":[{"id": 100032890, "title": "English I"}]}'
 
-            requests_mock.get(expected_url_1, reason="OK", status_code=200, text=text)
+                requests_mock.get(
+                    expected_url_1, reason="OK", status_code=200, text=text
+                )
 
-            # Act
-            response = default_request_client.get_courses()
+                # Act
+                response = default_request_client.get_courses()
 
-            # Assert
-            assert isinstance(response, PaginatedResult)
-            assert len(response.current_page_items) == 1
-            assert response.current_page_items[0]["id"] == 100032890
+                # Assert
+                assert isinstance(response, PaginatedResult)
+                assert len(response.current_page_items) == 1
+                assert response.current_page_items[0]["id"] == 100032890
 
 
 def describe_when_getting_enrollments_with_two_pages():
