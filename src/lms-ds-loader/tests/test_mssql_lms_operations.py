@@ -628,6 +628,83 @@ WHERE NOT EXISTS (
             # Assert
             exec_mock.assert_called_with(expected)
 
+    def describe_given_attendance_events():
+        def describe_and_no_table_name_provided():
+            def it_raises_an_error():
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations(Mock()).insert_new_records_to_production_for_attendance_events("", ["a"])
+
+        def describe_and_no_columns_provided():
+            def it_raises_an_error():
+                with pytest.raises(AssertionError):
+                    MssqlLmsOperations(Mock()).insert_new_records_to_production_for_attendance_events("something", [])
+
+        def describe_given_columns_including_both_foreign_keys():
+            def it_should_build_the_correct_insert_statement(mocker):
+                # Arrange
+                row_count = 2
+                table = "fake"
+                columns = [
+                    "LMSSectionSourceSystemIdentifier",
+                    "LMSUserSourceSystemIdentifier",
+                    "Another"
+                ]
+
+                expected = """
+INSERT INTO
+    lms.LMSUserAttendanceEvent
+(
+    LMSSectionIdentifier,
+    LMSUserIdentifier,
+    LMSUserLMSSectionAssociationIdentifier,
+    Another
+)
+SELECT
+    LMSSection.LMSSectionIdentifier,
+    LMSUser.LMSUserIdentifier,
+    LMSUserLMSSectionAssociation.LMSUserLMSSectionAssociationIdentifier,
+    stg.Another
+FROM
+    lms.stg_LMSUserAttendanceEvent as stg
+INNER JOIN
+    lms.LMSSection
+ON
+    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSSection.SourceSystem
+INNER JOIN
+    lms.LMSUser
+ON
+    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSUser.SourceSystem
+INNER JOIN
+    lms.LMSUserLMSSectionAssociation
+ON
+    LMSUser.LMSUserIdentifier = LMSUserLMSSectionAssociation.LMSUserIdentifier
+AND
+    LMSSection.LMSSectionIdentifier = LMSUserLMSSectionAssociation.LMSSectionIdentifier
+WHERE NOT EXISTS (
+  SELECT
+    1
+  FROM
+    lms.LMSUserAttendanceEvent
+  WHERE
+    SourceSystemIdentifier = stg.SourceSystemIdentifier
+  AND
+    SourceSystem = stg.SourceSystem
+)
+"""
+                system = MssqlLmsOperations(Mock())
+                mock = mocker.patch.object(system, "_exec", return_value=row_count)
+
+                # Act
+                system.insert_new_records_to_production_for_attendance_events(table, columns)
+
+                # Arrange
+                mock.assert_called_with(expected)
+
+
 
 def describe_when_getting_processed_files():
     def describe_given_parameters_are_correct():
@@ -700,7 +777,7 @@ VALUES
 
     def describe_given_the_processed_file_table_does_not_exist():
         def it_should_log_an_error_and_re_raise_the_exception(mocker):
-            def __raise(query) -> None:
+            def __raise(_) -> None:
                 raise ProgrammingError("statement", [], "none", False)
 
             resource_name = "fake_resource_name"
@@ -716,3 +793,5 @@ VALUES
                 MssqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
 
             mock_exc_logger.assert_called_once()
+
+# insert_new_records_to_production_for_attendance_events

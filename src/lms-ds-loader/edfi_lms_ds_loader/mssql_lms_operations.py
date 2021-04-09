@@ -451,6 +451,7 @@ WHERE NOT EXISTS (
             A list of the column names in the table
         """
 
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
         def __not_a_foreign_key(column: str) -> bool:
