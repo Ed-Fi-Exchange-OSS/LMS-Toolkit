@@ -618,12 +618,19 @@ WHERE NOT EXISTS (
 )
 """
             TABLE = "Fake"
-            COLUMNS = ["AssignmentSourceSystemIdentifier", "LMSUserSourceSystemIdentifier", "SourceSystem", "SourceSystemIdentifier"]
+            COLUMNS = [
+                "AssignmentSourceSystemIdentifier",
+                "LMSUserSourceSystemIdentifier",
+                "SourceSystem",
+                "SourceSystemIdentifier",
+            ]
 
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_assignment_and_user(TABLE, COLUMNS)
+            MssqlLmsOperations(
+                Mock()
+            ).insert_new_records_to_production_for_assignment_and_user(TABLE, COLUMNS)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -632,12 +639,18 @@ WHERE NOT EXISTS (
         def describe_and_no_table_name_provided():
             def it_raises_an_error():
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations(Mock()).insert_new_records_to_production_for_attendance_events("", ["a"])
+                    MssqlLmsOperations(
+                        Mock()
+                    ).insert_new_records_to_production_for_attendance_events("", ["a"])
 
         def describe_and_no_columns_provided():
             def it_raises_an_error():
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations(Mock()).insert_new_records_to_production_for_attendance_events("something", [])
+                    MssqlLmsOperations(
+                        Mock()
+                    ).insert_new_records_to_production_for_attendance_events(
+                        "something", []
+                    )
 
         def describe_given_columns_including_both_foreign_keys():
             def it_should_build_the_correct_insert_statement(mocker):
@@ -647,7 +660,7 @@ WHERE NOT EXISTS (
                 columns = [
                     "LMSSectionSourceSystemIdentifier",
                     "LMSUserSourceSystemIdentifier",
-                    "Another"
+                    "Another",
                 ]
 
                 expected = """
@@ -699,11 +712,12 @@ WHERE NOT EXISTS (
                 mock = mocker.patch.object(system, "_exec", return_value=row_count)
 
                 # Act
-                system.insert_new_records_to_production_for_attendance_events(table, columns)
+                system.insert_new_records_to_production_for_attendance_events(
+                    table, columns
+                )
 
                 # Arrange
                 mock.assert_called_with(expected)
-
 
 
 def describe_when_getting_processed_files():
@@ -793,5 +807,6 @@ VALUES
                 MssqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
 
             mock_exc_logger.assert_called_once()
+
 
 # insert_new_records_to_production_for_attendance_events
