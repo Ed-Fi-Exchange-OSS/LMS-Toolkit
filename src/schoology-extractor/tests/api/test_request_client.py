@@ -96,9 +96,7 @@ def describe_testing_RequestClient_class():
                 # Act
                 result = default_request_client.get_assignments(section_id, page_size)
 
-                print("-------> ", result, " <---------------")
-
-                assert result["id"] == "b"
+                result.get_all_pages()[0]["id"] == "b"
 
         def describe_given_two_pages_of_assignments():
             @pytest.fixture
