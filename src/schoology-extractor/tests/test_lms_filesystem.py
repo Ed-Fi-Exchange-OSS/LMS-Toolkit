@@ -131,7 +131,7 @@ def describe_when_getting_the_attendance_events_file_name():
         assert result.endswith(FILE_NAME)
 
     def it_should_create_the_section_directory(result, fs):
-        assert os.path.exists("./output/section=123/attendance")
+        assert os.path.exists("./output/section=123/attendance-events")
 
 
 def describe_when_getting_system_activities_file_path():
