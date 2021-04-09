@@ -27,7 +27,7 @@ edfi-lms-extractor-lib = {version = "1.0.0a5", allow-prereleases = true}
 edfi-lms-file-utils = "1.0.0b16"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.0"
+pytest = "6.2.3"
 pylint = "^2.6.0"
 black = "^20.8b1"
 flake8 = "^3.8.3"
