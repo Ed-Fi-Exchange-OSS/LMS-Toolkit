@@ -11,13 +11,13 @@ Docs](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit).
 ## Getting Started
 
 All of the tools in this repository require [Python
-3.8 or higher](https://www.python.org/downloads/) and
+3.9 or higher](https://www.python.org/downloads/) and
 
 [Poetry](https://python-poetry.org/docs/). Please install both and insure the
 `python` and `poetry` commands are available in your command path before trying
 to run any of the tools.
 
-To do so, try running `python --version` in the command line which should output a version >= 3.8 for python and try `poetry --version` for poetry.
+To do so, try running `python --version` in the command line which should output a version >= 3.9 for python and try `poetry --version` for poetry.
 
 ## Tools
 
