@@ -22,8 +22,7 @@ def _read_csv(
     file: str,
     nrows: Optional[int] = None,
     data_types: Dict[str, str] = dict(),
-    extra_date_columns: List[str] = list(),
-    log_level: int = logging.INFO,
+    extra_date_columns: List[str] = list()
 ) -> pd.DataFrame:
     """
     Loads a CSV file into a DataFrame.
@@ -41,8 +40,6 @@ def _read_csv(
     extra_date_columns: list (optional)
         A list of columns that should be treated as having DateTime
         data type.
-    log_level: int (optional)
-        The log level, by default it is INFO
 
     Returns
     -------
@@ -50,7 +47,7 @@ def _read_csv(
         The exact columns depend on the file being read.
     """
 
-    logger.log(log_level, f"Reading file: {file}")
+    logger.debug(f"Reading file: {file}")
     if file:
 
         dates = [
@@ -119,7 +116,7 @@ def read_users_file(full_path: str, nrows: Optional[int] = None) -> pd.DataFrame
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, DataTypes.USERS, log_level=logging.DEBUG)
+    return _read_csv(full_path, nrows, DataTypes.USERS)
 
 
 def get_all_system_activities(
@@ -188,7 +185,6 @@ def read_system_activities_file(
     return _read_csv(
         full_path,
         nrows,
-        log_level=logging.DEBUG,
         data_types=data_types,
         extra_date_columns=extra_date_columns,
     )
@@ -234,7 +230,7 @@ def read_sections_file(full_path: str, nrows: Optional[int] = None) -> pd.DataFr
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, DataTypes.SECTIONS, log_level=logging.DEBUG)
+    return _read_csv(full_path, nrows, DataTypes.SECTIONS)
 
 
 def get_section_associations(
@@ -295,7 +291,6 @@ def read_section_associations_file(
     return _read_csv(
         full_path,
         nrows,
-        log_level=logging.DEBUG,
         data_types=data_types,
         extra_date_columns=extra_date_columns,
     )
@@ -411,7 +406,6 @@ def read_section_activities_file(
     return _read_csv(
         full_path,
         nrows,
-        log_level=logging.DEBUG,
         data_types=data_types,
         extra_date_columns=extra_date_columns,
     )
@@ -488,7 +482,7 @@ def read_assignments_file(full_path: str, nrows: Optional[int] = None) -> pd.Dat
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
+    return _read_csv(full_path, nrows)
 
 
 def get_all_assignments(
@@ -578,7 +572,6 @@ def read_submissions_file(full_path: str, nrows: Optional[int] = None) -> pd.Dat
     return _read_csv(
         full_path,
         nrows,
-        log_level=logging.DEBUG,
         data_types=data_types,
         extra_date_columns=extra_date_columns,
     )
@@ -668,7 +661,7 @@ def read_grades_file(full_path: str, nrows: Optional[int] = None) -> pd.DataFram
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
+    return _read_csv(full_path, nrows)
 
 
 def get_all_grades(
@@ -742,7 +735,18 @@ def read_attendance_events_file(
     -------
     Pandas DataFrame with columns matching the model definition / CSV file.
     """
-    return _read_csv(full_path, nrows, log_level=logging.DEBUG)
+
+    data_types = {
+        "LMSUserSourceSystemIdentifier": "string",
+        "LMSSectionSourceSystemIdentifier": "string",
+        "AttendanceStatus": "string",
+    }
+
+    extra_date_columns = [
+        "EventDate"
+    ]
+
+    return _read_csv(full_path, nrows, data_types, extra_date_columns)
 
 
 def get_all_attendance_events(

@@ -40,10 +40,10 @@ def describe_mapping_schoology_users_to_udm():
             return map_to_udm(responses_df, FAKE_SECTION_ID, FAKE_DISCUSSION_ID)
 
         # Each assertion is a separate method
-        def test_then_output_has_two_rows(result):
+        def it_has_two_rows(result):
             assert result.shape[0] == 2
 
-        def test_then_it_should_have_correct_number_of_columns(result):
+        def it_should_have_correct_number_of_columns(result):
             assert result.shape[1] == 13
 
         @pytest.mark.parametrize(
@@ -60,35 +60,35 @@ def describe_mapping_schoology_users_to_udm():
                 "LMSSectionSourceSystemIdentifier",
             ],
         )
-        def test_then_output_has_column(result, input):
+        def it_has_column(result, input):
             assert input in result.columns
 
-        def test_then_source_system_identifier_is_mapped(result):
+        def it_maps_the_source_system_identifier(result):
             assert result.at[0, "SourceSystemIdentifier"] == "sdr#0-sdr#824849694"
 
-        def test_then_source_system_is_mapped(result):
+        def it_maps_the_source_system(result):
             assert result.at[0, "SourceSystem"] == "Schoology"
 
-        def test_then_user_identifier_is_mapped(result):
+        def it_maps_user_identifier(result):
             assert result.at[0, "LMSUserSourceSystemIdentifier"] == "100032890"
 
-        def test_then_section_identifier_is_mapped(result):
+        def it_maps_section_identifier(result):
             assert result.at[0, "LMSSectionSourceSystemIdentifier"] == FAKE_SECTION_ID
 
-        def test_then_activity_date_time_is_mapped(result):
+        def it_maps_activity_date_time(result):
             # This is a timezone-safe test
             expected = datetime.fromtimestamp(1604351930)
             actual = datetime.fromisoformat(result.at[0, "ActivityDateTime"])
             assert actual == expected
 
-        def test_then_activity_status_is_mapped(result):
+        def it_maps_activity_status(result):
             assert result.at[0, "ActivityStatus"] == "active"
 
-        def test_then_activity_type_is_mapped(result):
+        def it_maps_activity_type(result):
             assert result.at[0, "ActivityType"] == "discussion-reply"
 
-        def test_then_it_should_have_empty_SourceCreateDate(result):
+        def it_should_have_empty_SourceCreateDate(result):
             assert result.at[0, "SourceCreateDate"] == ""
 
-        def test_then_it_should_have_empty_SourceLastModifiedDate(result):
+        def it_should_have_empty_SourceLastModifiedDate(result):
             assert result.at[0, "SourceLastModifiedDate"] == ""

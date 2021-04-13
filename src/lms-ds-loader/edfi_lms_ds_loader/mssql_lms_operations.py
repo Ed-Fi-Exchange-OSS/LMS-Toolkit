@@ -186,11 +186,7 @@ WHERE
             [f"\n    {c}" for c in columns if c != "LMSUserSourceSystemIdentifier"]
         )
         select_columns = ",".join(
-            [
-                f"\n    stg.{c}"
-                for c in columns
-                if c != "LMSUserSourceSystemIdentifier"
-            ]
+            [f"\n    stg.{c}" for c in columns if c != "LMSUserSourceSystemIdentifier"]
         )
 
         statement = f"""
@@ -381,13 +377,23 @@ WHERE NOT EXISTS (
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
         insert_columns = ",".join(
-            [f"\n    {c}" for c in columns if not (c == "AssignmentSourceSystemIdentifier" or c == "LMSUserSourceSystemIdentifier")]
+            [
+                f"\n    {c}"
+                for c in columns
+                if not (
+                    c == "AssignmentSourceSystemIdentifier"
+                    or c == "LMSUserSourceSystemIdentifier"
+                )
+            ]
         )
         select_columns = ",".join(
             [
                 f"\n    stg.{c}"
                 for c in columns
-                if not (c == "AssignmentSourceSystemIdentifier" or c == "LMSUserSourceSystemIdentifier")
+                if not (
+                    c == "AssignmentSourceSystemIdentifier"
+                    or c == "LMSUserSourceSystemIdentifier"
+                )
             ]
         )
 
@@ -420,6 +426,84 @@ WHERE NOT EXISTS (
     1
   FROM
     lms.{table}
+  WHERE
+    SourceSystemIdentifier = stg.SourceSystemIdentifier
+  AND
+    SourceSystem = stg.SourceSystem
+)
+"""
+
+        row_count = self._exec(statement)
+        logger.debug(f"Inserted {row_count} records into table `{table}`.")
+
+    def insert_new_records_to_production_for_attendance_events(
+        self, table: str, columns: List[str]
+    ) -> None:
+        """
+        Copies new records from the staging table to the production table. Specialized
+        for the Attendance Events table.
+
+        Parameters
+        ----------
+        table: str
+            Not strictly necessary, but must be part of the signature
+        columns: List[str]
+            A list of the column names in the table
+        """
+
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+        assert len(columns) > 0, "Argument `columns` cannot be empty"
+
+        def __not_a_foreign_key(column: str) -> bool:
+            return column not in [
+                "LMSSectionSourceSystemIdentifier",
+                "LMSUserSourceSystemIdentifier",
+            ]
+
+        insert_columns = ",".join(
+            [f"\n    {c}" for c in columns if __not_a_foreign_key(c)]
+        )
+        select_columns = ",".join(
+            [f"\n    stg.{c}" for c in columns if __not_a_foreign_key(c)]
+        )
+
+        statement = f"""
+INSERT INTO
+    lms.LMSUserAttendanceEvent
+(
+    LMSSectionIdentifier,
+    LMSUserIdentifier,
+    LMSUserLMSSectionAssociationIdentifier,{insert_columns}
+)
+SELECT
+    LMSSection.LMSSectionIdentifier,
+    LMSUser.LMSUserIdentifier,
+    LMSUserLMSSectionAssociation.LMSUserLMSSectionAssociationIdentifier,{select_columns}
+FROM
+    lms.stg_LMSUserAttendanceEvent as stg
+INNER JOIN
+    lms.LMSSection
+ON
+    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSSection.SourceSystem
+INNER JOIN
+    lms.LMSUser
+ON
+    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSUser.SourceSystem
+INNER JOIN
+    lms.LMSUserLMSSectionAssociation
+ON
+    LMSUser.LMSUserIdentifier = LMSUserLMSSectionAssociation.LMSUserIdentifier
+AND
+    LMSSection.LMSSectionIdentifier = LMSUserLMSSectionAssociation.LMSSectionIdentifier
+WHERE NOT EXISTS (
+  SELECT
+    1
+  FROM
+    lms.LMSUserAttendanceEvent
   WHERE
     SourceSystemIdentifier = stg.SourceSystemIdentifier
   AND

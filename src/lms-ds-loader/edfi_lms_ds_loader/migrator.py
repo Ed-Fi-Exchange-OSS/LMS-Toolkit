@@ -28,6 +28,7 @@ MIGRATION_SCRIPTS = [
     "create_assignment_submission_tables",
     "create_section_activity_tables",
     "create_system_activity_tables",
+    "create_attendance_tables",
 ]
 
 

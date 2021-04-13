@@ -21,9 +21,10 @@ opnieuw = "^1.1.0"
 errorhandler = "^2.0.1"
 ConfigArgParse = "^1.2.3"
 edfi-lms-extractor-lib = "1.0.0a5"
+edfi-lms-file-utils = "1.0.0b16"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "6.2.3"
 black = "^20.8b1"
 flake8 = "^3.8.4"
 mypy = "^0.790"

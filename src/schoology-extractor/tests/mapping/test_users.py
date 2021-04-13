@@ -44,10 +44,10 @@ def describe_when_mapping_schoology_users_to_udm():
             return map_to_udm(users_df, roles_df)
 
         # Each assertion is a separate method
-        def test_then_output_has_two_rows(result):
+        def it_has_two_rows(result):
             assert result.shape[0] == 2
 
-        def test_then_it_should_have_correct_number_of_columns(result):
+        def it_should_have_correct_number_of_columns(result):
             assert result.shape[1] == 11
 
         @pytest.mark.parametrize(
@@ -64,35 +64,35 @@ def describe_when_mapping_schoology_users_to_udm():
                 "LastModifiedDate",
             ],
         )
-        def test_then_output_has_column(result, input):
+        def it_has_column(result, input):
             assert input in result.columns
 
-        def test_then_source_system_identifier_is_mapped(result):
+        def it_maps_source_system_identifier(result):
             assert result.at[0, "SourceSystemIdentifier"] == "100032890"
 
-        def test_then_source_system_is_mapped(result):
+        def it_maps_source_system(result):
             assert result.at[0, "SourceSystem"] == "Schoology"
 
-        def test_then_user_role_is_mapped(result):
+        def it_maps_user_role(result):
             assert result.at[0, "UserRole"] == "student"
 
-        def test_then_local_user_identifier_is_mapped(result):
+        def it_maps_local_user_identifier(result):
             assert result.at[0, "LocalUserIdentifier"] == "mary.archer"
 
-        def test_then_sis_user_identifier_is_not_set(result):
+        def it_maps_sis_user_identifier(result):
             assert result.at[0, "SISUserIdentifier"] == "604863"
 
-        def test_then_name_is_mapped(result):
+        def it_maps_name(result):
             assert result.at[0, "Name"] == "Mary Catherine Archer"
 
-        def test_name_does_not_have_two_spaces_when_middle_name_is_missing(result):
+        def it_name_does_not_have_two_spaces_when_middle_name_is_missing(result):
             assert result.at[1, "Name"] == "Brad Banister"
 
-        def test_then_email_address_is_mapped(result):
+        def it_maps_email_address(result):
             assert result.at[0, "EmailAddress"] == "mary.archer@studentgps.org"
 
-        def test_then_it_should_have_empty_SourceCreateDate(result):
+        def it_should_have_empty_SourceCreateDate(result):
             assert result.at[0, "SourceCreateDate"] == ""
 
-        def test_then_it_should_have_empty_SourceLastModifiedDate(result):
+        def it_should_have_empty_SourceLastModifiedDate(result):
             assert result.at[0, "SourceLastModifiedDate"] == ""

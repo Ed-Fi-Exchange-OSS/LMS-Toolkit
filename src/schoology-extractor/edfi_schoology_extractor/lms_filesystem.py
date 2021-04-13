@@ -6,6 +6,8 @@
 from datetime import datetime
 import os
 
+from edfi_lms_file_utils import directory_repository as dr
+
 USERS = "users"
 SECTION = "section"
 ASSIGNMENT = "assignment"
@@ -24,14 +26,7 @@ def _get_file_name() -> str:
 
 def _create_directory_if_it_does_not_exist(dir: str):
     if not os.path.exists(dir):
-        os.mkdir(dir)
-
-
-def _get_section_directory(output_directory: str, section_id: int) -> str:
-    base_dir = os.path.join(output_directory, f"{SECTION}={section_id}")
-    _create_directory_if_it_does_not_exist(base_dir)
-
-    return base_dir
+        os.makedirs(dir)
 
 
 def get_assignment_file_path(output_directory: str, section_id: int) -> str:
@@ -50,11 +45,10 @@ def get_assignment_file_path(output_directory: str, section_id: int) -> str:
     -------
     full path with file name
     """
-    base_dir = _get_section_directory(output_directory, section_id)
-    base_dir = os.path.join(base_dir, ASSIGNMENTS)
-    _create_directory_if_it_does_not_exist(base_dir)
+    assignment_dir = dr.get_assignments_directory(output_directory, section_id)
+    _create_directory_if_it_does_not_exist(assignment_dir)
 
-    return os.path.join(base_dir, _get_file_name())
+    return os.path.join(assignment_dir, _get_file_name())
 
 
 def get_section_activities_file_path(output_directory: str, section_id: int) -> str:
@@ -73,11 +67,10 @@ def get_section_activities_file_path(output_directory: str, section_id: int) -> 
     -------
     full path with file name
     """
-    base_dir = _get_section_directory(output_directory, section_id)
-    base_dir = os.path.join(base_dir, SECTION_ACTIVITY)
-    _create_directory_if_it_does_not_exist(base_dir)
+    section_activities_dir = dr.get_section_activities_directory(output_directory, section_id)
+    _create_directory_if_it_does_not_exist(section_activities_dir)
 
-    return os.path.join(base_dir, _get_file_name())
+    return os.path.join(section_activities_dir, _get_file_name())
 
 
 def get_user_file_path(output_directory: str) -> str:
@@ -94,10 +87,10 @@ def get_user_file_path(output_directory: str) -> str:
     -------
     full path with file name
     """
-    base_dir = os.path.join(output_directory, USERS)
-    _create_directory_if_it_does_not_exist(base_dir)
+    users_dir = dr.get_users_directory(output_directory)
+    _create_directory_if_it_does_not_exist(users_dir)
 
-    return os.path.join(base_dir, _get_file_name())
+    return os.path.join(users_dir, _get_file_name())
 
 
 def get_section_file_path(output_directory: str) -> str:
@@ -114,10 +107,10 @@ def get_section_file_path(output_directory: str) -> str:
     -------
     full path with file name
     """
-    base_dir = os.path.join(output_directory, SECTIONS)
-    _create_directory_if_it_does_not_exist(base_dir)
+    sections_dir = dr.get_sections_directory(output_directory)
+    _create_directory_if_it_does_not_exist(sections_dir)
 
-    return os.path.join(base_dir, _get_file_name())
+    return os.path.join(sections_dir, _get_file_name())
 
 
 def get_section_association_file_path(output_directory: str, section_id: int) -> str:
@@ -136,11 +129,10 @@ def get_section_association_file_path(output_directory: str, section_id: int) ->
     -------
     full path with file name
     """
-    base_dir = _get_section_directory(output_directory, section_id)
-    base_dir = os.path.join(base_dir, SECTION_ASSOCIATIONS)
-    _create_directory_if_it_does_not_exist(base_dir)
+    associations_dir = dr.get_section_associations_directory(output_directory, section_id)
+    _create_directory_if_it_does_not_exist(associations_dir)
 
-    return os.path.join(base_dir, _get_file_name())
+    return os.path.join(associations_dir, _get_file_name())
 
 
 def get_attendance_events_file_path(output_directory: str, section_id: int) -> str:
@@ -159,11 +151,10 @@ def get_attendance_events_file_path(output_directory: str, section_id: int) -> s
     -------
     full path with file name
     """
-    base_dir = _get_section_directory(output_directory, section_id)
-    base_dir = os.path.join(base_dir, ATTENDANCE)
-    _create_directory_if_it_does_not_exist(base_dir)
+    attendance_dir = dr.get_attendance_events_directory(output_directory, section_id)
+    _create_directory_if_it_does_not_exist(attendance_dir)
 
-    return os.path.join(base_dir, _get_file_name())
+    return os.path.join(attendance_dir, _get_file_name())
 
 
 def get_submissions_file_path(
@@ -184,14 +175,10 @@ def get_submissions_file_path(
     -------
     full path with file name
     """
-    # /ed-fi-udm-lms/section=<id>/assignment=<id>/submissions/<YYYY-mm-dd-HH-MM-SS>.csv
-    base_dir = _get_section_directory(output_directory, section_id)
-    base_dir = os.path.join(base_dir, f"{ASSIGNMENT}={str(assignment_id)}")
-    _create_directory_if_it_does_not_exist(base_dir)
-    base_dir = os.path.join(base_dir, SUBMISSIONS)
-    _create_directory_if_it_does_not_exist(base_dir)
+    submissions_dir = dr.get_submissions_directory(output_directory, section_id, assignment_id)
+    _create_directory_if_it_does_not_exist(submissions_dir)
 
-    return os.path.join(base_dir, _get_file_name())
+    return os.path.join(submissions_dir, _get_file_name())
 
 
 def get_system_activities_file_path(output_directory: str) -> str:
@@ -208,11 +195,7 @@ def get_system_activities_file_path(output_directory: str) -> str:
     -------
     full path with file name
     """
+    system_activities_dir = dr.get_system_activities_directory_for_today(output_directory)
+    _create_directory_if_it_does_not_exist(system_activities_dir)
 
-    base_dir = os.path.join(output_directory, SYSTEM_ACTIVITIES)
-    _create_directory_if_it_does_not_exist(base_dir)
-
-    base_dir = os.path.join(base_dir, "date=" + datetime.now().strftime("%Y-%m-%d"))
-    _create_directory_if_it_does_not_exist(base_dir)
-
-    return os.path.join(base_dir, _get_file_name())
+    return os.path.join(system_activities_dir, _get_file_name())

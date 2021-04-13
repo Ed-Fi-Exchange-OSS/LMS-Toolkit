@@ -6,7 +6,7 @@
 import logging
 import os
 import sys
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from dotenv import load_dotenv
 from errorhandler import ErrorHandler
@@ -35,8 +35,6 @@ log_level = arguments.log_level
 page_size = arguments.page_size
 input_directory = arguments.input_directory
 
-db_engine: sqlalchemy.engine.base.Engine
-extractorFacade: SchoologyExtractFacade
 
 logger: logging.Logger
 error_tracker: ErrorHandler
@@ -59,13 +57,16 @@ def _configure_logging():
     error_tracker = ErrorHandler()
 
 
-def _initialize():
-    global extractorFacade, db_engine
+def _initialize() -> Tuple[SchoologyExtractFacade, sqlalchemy.engine.base.Engine]:
+    global logger
 
     try:
         request_client: RequestClient = RequestClient(schoology_key, schoology_secret)
         db_engine = get_sync_db_engine()
-        extractorFacade = SchoologyExtractFacade(request_client, page_size, db_engine)
+
+        facade = SchoologyExtractFacade(request_client, page_size, db_engine)
+
+        return facade, db_engine
     except BaseException as e:
         logger.critical(e)
         print(
@@ -76,6 +77,8 @@ def _initialize():
 
 
 def _create_file_from_dataframe(df: Optional[DataFrame], file_name) -> bool:
+    global logger
+
     normalized_file_name = os.path.normpath(file_name)
     logger.info(f"Exporting {normalized_file_name}")
     try:
@@ -92,7 +95,7 @@ def _create_file_from_dataframe(df: Optional[DataFrame], file_name) -> bool:
         return False
 
 
-def _get_users() -> DataFrame:
+def _get_users(extractorFacade: SchoologyExtractFacade) -> DataFrame:
     return extractorFacade.get_users()
 
 
@@ -101,19 +104,19 @@ def _get_users() -> DataFrame:
 result_bucket: Dict[str, DataFrame] = {}
 
 
-def _get_sections() -> DataFrame:
+def _get_sections(extractorFacade: SchoologyExtractFacade) -> DataFrame:
     sections_df: DataFrame = extractorFacade.get_sections()
     result_bucket["sections"] = sections_df
     return sections_df
 
 
-def _get_assignments(section_id: int) -> Optional[DataFrame]:
+def _get_assignments(extractorFacade: SchoologyExtractFacade, section_id: int) -> Optional[DataFrame]:
     assignments_df: DataFrame = extractorFacade.get_assignments(section_id)
     result_bucket["assignments"] = assignments_df
     return assignments_df
 
 
-def _get_section_activities(section_id: int) -> Optional[DataFrame]:
+def _get_section_activities(extractorFacade: SchoologyExtractFacade, section_id: int) -> Optional[DataFrame]:
     section_activities_df: DataFrame = extractorFacade.get_section_activities(
         section_id
     )
@@ -122,11 +125,11 @@ def _get_section_activities(section_id: int) -> Optional[DataFrame]:
     return section_activities_df
 
 
-def _get_submissions(assignment_id: int, section_id: int) -> Optional[DataFrame]:
+def _get_submissions(extractorFacade: SchoologyExtractFacade, assignment_id: int, section_id: int) -> Optional[DataFrame]:
     return extractorFacade.get_submissions(assignment_id, section_id)
 
 
-def _get_section_associations(section_id: int) -> DataFrame:
+def _get_section_associations(extractorFacade: SchoologyExtractFacade, section_id: int) -> DataFrame:
     section_associations_df: DataFrame = extractorFacade.get_section_associations(
         section_id
     )
@@ -135,7 +138,7 @@ def _get_section_associations(section_id: int) -> DataFrame:
     return section_associations_df
 
 
-def _get_attendance_events(section_id: int) -> DataFrame:
+def _get_attendance_events(extractorFacade: SchoologyExtractFacade, section_id: int) -> DataFrame:
     section_associations_df: DataFrame = result_bucket["section_associations"]
     attendance_events_df: DataFrame = extractorFacade.get_attendance_events(
         section_id, section_associations_df
@@ -144,21 +147,23 @@ def _get_attendance_events(section_id: int) -> DataFrame:
     return attendance_events_df
 
 
-def _get_system_activities() -> DataFrame:
+def _get_system_activities(db_engine: sqlalchemy.engine.base.Engine) -> DataFrame:
     return usage_analytics_facade.get_system_activities(input_directory, db_engine)
 
 
 def main():
+    global logger, error_tracker
+
     _configure_logging()
 
     logger.info("Starting Ed-Fi LMS Schoology Extractor")
-    _initialize()
+    facade, db_engine = _initialize()
 
     _create_file_from_dataframe(
-        _get_users(), lms.get_user_file_path(schoology_output_path)
+        _get_users(facade), lms.get_user_file_path(schoology_output_path)
     )
     succeeded = _create_file_from_dataframe(
-        _get_sections(), lms.get_section_file_path(schoology_output_path)
+        _get_sections(facade), lms.get_section_file_path(schoology_output_path)
     )
 
     # Cannot proceed with section-related files if the sections extract did not
@@ -175,7 +180,7 @@ def main():
             schoology_output_path, section_id
         )
         succeeded: bool = _create_file_from_dataframe(
-            _get_assignments(section_id), assignment_file_path
+            _get_assignments(facade, section_id), assignment_file_path
         )
 
         if succeeded:
@@ -189,7 +194,7 @@ def main():
                         schoology_output_path, section_id, assignment_id
                     )
                     _create_file_from_dataframe(
-                        _get_submissions(assignment_id, section_id),
+                        _get_submissions(facade, assignment_id, section_id),
                         submission_file_name,
                     )
 
@@ -197,20 +202,20 @@ def main():
             schoology_output_path, section_id
         )
         _create_file_from_dataframe(
-            _get_section_activities(section_id), section_activities_file_path
+            _get_section_activities(facade, section_id), section_activities_file_path
         )
 
         file_path: str = lms.get_section_association_file_path(
             schoology_output_path, section_id
         )
         succeeded: bool = _create_file_from_dataframe(
-            _get_section_associations(section_id), file_path
+            _get_section_associations(facade, section_id), file_path
         )
 
         file_path: str = lms.get_attendance_events_file_path(
             schoology_output_path, section_id
         )
-        _create_file_from_dataframe(_get_attendance_events(section_id), file_path)
+        _create_file_from_dataframe(_get_attendance_events(facade, section_id), file_path)
 
     need_to_process_input_files: bool = input_directory is not None
     if need_to_process_input_files:
@@ -218,7 +223,7 @@ def main():
             schoology_output_path
         )
         _create_file_from_dataframe(
-            _get_system_activities(), system_activities_output_dir
+            _get_system_activities(db_engine), system_activities_output_dir
         )
 
     logger.info("Finishing Ed-Fi LMS Schoology Extractor")
