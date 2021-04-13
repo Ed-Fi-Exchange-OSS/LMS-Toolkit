@@ -13,7 +13,7 @@ the this tool and its output files, please see the main repository
    Zip option, extract the file contents using your favorite zip tool.
 1. Open a command prompt\* and change to this file's directory (* e.g. cmd.exe,
    PowerShell, bash).
-1. Ensure you have [Python 3.8+ and Poetry](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit#getting-started).
+1. Ensure you have [Python 3.9+ and Poetry](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit#getting-started).
 1. At a command prompt, install all required dependencies:
 
    ```bash

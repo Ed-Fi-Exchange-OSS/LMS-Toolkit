@@ -28,7 +28,7 @@ Limitations as of March 2021:
    * [Linux
      instructions](https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver15)
      (has not been tested yet)
-1. Requires Python 3.8+ and Poetry.
+1. Requires Python 3.9+ and Poetry.
 1. Install required Python packages:
 
    ```bash

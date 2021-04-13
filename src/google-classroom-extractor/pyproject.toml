@@ -9,7 +9,7 @@ license = "Apache-2.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 google-api-python-client = "^1.11.0"
 google-auth-oauthlib = "^0.4.1"
 pandas = "^1.1.1"

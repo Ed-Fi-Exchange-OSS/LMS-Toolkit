@@ -6,7 +6,7 @@ authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 pandas = "^1.1.4"
 numpy = "1.19.3"
 edfi-lms-file-utils = "1.0.0a0"
