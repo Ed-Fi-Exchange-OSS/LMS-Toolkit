@@ -8,23 +8,23 @@ FROM mcr.microsoft.com/mssql/server:2019-latest
 # Use root for running apt-get install
 USER root
 
-# Install Python 3.8 and make it the default "python" command. Install the
+# Install Python 3.9 and make it the default "python" command. Install the
 # Poetry package manager. Install ODBC and PostgreSQL development libraries in
 # order to support later use of SQL Alchemy.
 RUN apt-get update -y && \
     apt-get install software-properties-common -y && \
     add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install python3.8-distutils \
-        python3.8 \
+    apt-get install python3.9-distutils \
+        python3.9 \
         python3-pip \
         python3-venv \
         python3-dev \
-        libpython3.8-dev \
+        libpython3.9-dev \
         unixodbc-dev \
         libpq-dev -y && \
     apt-get clean && \
     rm /usr/bin/python && \
-    ln -s /usr/bin/python3.8 /usr/bin/python && \
+    ln -s /usr/bin/python3.9 /usr/bin/python && \
     python -m pip install --upgrade pip setuptools wheel && \
     mkdir /home/mssql && \
     chown mssql /home/mssql
