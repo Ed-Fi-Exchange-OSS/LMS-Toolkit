@@ -39,9 +39,9 @@ def _upload_assignment_submission_types(
 
     db_adapter.insert_new_submission_types()
 
-    db_adapter.soft_delete_removed_submission_types(
-        _get_source_system(submission_types_df)
-    )
+    source_system: str = _get_source_system(submission_types_df)
+    db_adapter.unsoft_delete_returned_submission_types(source_system)
+    db_adapter.soft_delete_removed_submission_types(source_system)
 
     logger.info(f"Done with {TABLE} file.")
 

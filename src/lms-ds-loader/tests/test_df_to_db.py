@@ -217,6 +217,15 @@ def describe_when_uploading_assignments() -> None:
             call(SOURCE_SYSTEM)
         ]
 
+    def it_unsoft_deletes_submission_types_in_production_table(
+        mocker, when_uploading_assignments
+    ) -> None:
+        adapter_mock, _, _ = when_uploading_assignments
+
+        assert adapter_mock.unsoft_delete_returned_submission_types.call_args_list == [
+            call(SOURCE_SYSTEM)
+        ]
+
     def it_re_enables_submission_type_natural_key(
         mocker, when_uploading_assignments
     ) -> None:

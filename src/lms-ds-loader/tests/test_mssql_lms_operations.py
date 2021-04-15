@@ -130,7 +130,8 @@ UPDATE
     t
 SET
     a = stg.a,
-    b = stg.b
+    b = stg.b,
+    DeletedAt = NULL
 FROM
     lms.Fake as t
 INNER JOIN
@@ -167,7 +168,8 @@ UPDATE
     t
 SET
     a = stg.a,
-    b = stg.b
+    b = stg.b,
+    DeletedAt = NULL
 FROM
     lms.Fake as t
 INNER JOIN
@@ -205,7 +207,8 @@ UPDATE
     t
 SET
     a = stg.a,
-    b = stg.b
+    b = stg.b,
+    DeletedAt = NULL
 FROM
     lms.Fake as t
 INNER JOIN

@@ -530,21 +530,24 @@ WHERE NOT EXISTS (
         assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
-        update_columns = ",".join(
-            [
-                f"\n    {c} = stg.{c}"
-                for c in columns
-                if c
-                not in (
-                    # These are natural key columns that should never be
-                    # updated.
-                    "SourceSystem",
-                    "SourceSystemIdentifier",
-                    "LMSSectionSourceSystemIdentifier",
-                    "LMSUserSourceSystemIdentifier",
-                    "AssignmentSourceSystemIdentifier",
-                )
-            ]
+        update_columns = (
+            ",".join(
+                [
+                    f"\n    {c} = stg.{c}"
+                    for c in columns
+                    if c
+                    not in (
+                        # These are natural key columns that should never be
+                        # updated.
+                        "SourceSystem",
+                        "SourceSystemIdentifier",
+                        "LMSSectionSourceSystemIdentifier",
+                        "LMSUserSourceSystemIdentifier",
+                        "AssignmentSourceSystemIdentifier",
+                    )
+                ]
+            )
+            + ",\n    DeletedAt = NULL"
         )
 
         statement = f"""
@@ -689,6 +692,49 @@ AND
         row_count = self._exec(statement)
         logger.debug(
             f"Soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
+        )
+
+    def unsoft_delete_returned_submission_types(self, source_system: str) -> None:
+        """
+        Unmarks previously "deleted" Assignment Submission Types when they are
+        present in the incoming data.
+
+        Parameters
+        ----------
+        source_system: str
+            The name of the source system for the current import process.
+        """
+
+        statement = f"""
+UPDATE
+    AssignmentSubmissionType
+SET
+    DeletedAt = NULL
+FROM
+    lms.AssignmentSubmissionType
+INNER JOIN
+    lms.Assignment
+ON
+    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
+WHERE
+    SourceSystem = '{source_system}'
+AND
+    EXISTS (
+        SELECT
+            1
+        FROM
+            lms.stg_AssignmentSubmissionType
+        WHERE
+            stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
+        AND
+            stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
+        AND
+            stg_AssignmentSubmissionType.SubmissionType = AssignmentSubmissionType.SubmissionType
+    )
+"""
+        row_count = self._exec(statement)
+        logger.debug(
+            f"Un-soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
         )
 
     def get_processed_files(self, resource_name: str) -> Set[str]:
