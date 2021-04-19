@@ -23,3 +23,6 @@ jobs:
       - name: Run integration tests
         id: integration-test
         uses: ./docker/test-lms-ds-loader
+        env:
+            ACCEPT_EULA: 'Y'
+            SA_PASSWORD: 'yourStrong(!)Password'
