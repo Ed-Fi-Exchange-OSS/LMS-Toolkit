@@ -37,77 +37,29 @@ When specifying an alternate port, connect to the image with server name `localh
 ## test-lms-ds-loader directory
 
 This dockerfile builds on the mssql-python container to run the LMS-DS Loader
-using the sample output files from the repository.
+using the sample output files from the repository. On a Windows localhost, use
+`build.ps1` to build the image and `run.ps1` to run it. The Entrypoint in theory
+should set "success=true" as an output in GitHub Actions.
 
-| More work is needed to capture test results, this is really just a POC.
-Running in the container this way might not even be a good idea |
-| -- |
+## Current Status 2021-04-19
 
-```bash
-cd test-lms-ds-loader
-docker build -t test-lms-ds-loader:latest .
-docker run --name test-lms-ds-loader -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -d test-lms-ds-loader:latest
+The container action runs. Right now `poetry` is not being installed correctly.
+Getting the following errors in the [latest
+run])(https://github.com/Ed-Fi-Alliance-OSS/LMS-Toolkit/runs/2382302900):
+
+```none
+/app/entrypoint.sh: line 16: poetry: command not found
+/app/entrypoint.sh: line 24: 127: command not found
 ```
 
-The PowerShell `build.ps1` script runs the `docker build` command above. The run
-command above lets sql server keep running, which is annoying and will need to
-be changed for the real (non spike) work. Control-c to exit from the log output
-once you see "The tempdb database has 8 data file(s) and no more messages are
-appearing.
+While we do not have a complete integration test at this point, the pieces are
+coming together and the original timebox has been exhausted. Outcomes:
 
-For some reason the entrypoint file is not running. Probably a simple mistake in
-the dockerfile - perhaps along the lines of the "parent" `mssql-python`
-dockerfile having an `ENTRYPOINT` and maybe that is causing the `CMD` in
-`test-lms-ds-loader` from running?
+* Built an MSSQL / Python 3.9 container
+* Learned how to prep and start a container in GitHub Actions
 
-The `poetry install` command in the dockerfile is not working correctly either.
-Although there is no error, I'm having to run `poetry install` again manually.
-The point in putting into the Dockerfile was to get all the dependencies before
-building the image. That might be a strange thing to do. Will need to carefully
-think through this architecture in more detail.
+Next steps
 
-```bash
-# Connect to the container shell in order to run commands directly within the container
-docker exec -it test-lms-ds-loader /bin/bash
-
-# Now you are in the container...
-source ~/.profile
-
-# This command actually gives me a warning:
-# "The virtual environment found in /app/lms-ds-loader/.venv seems to be broken."
-#poetry install
-
-# Do not know what is going on. However, I was able to temporarily work with this...
-poetry shell
-poetry install
-
-# Now run the test script
-cd ../
-# want to run this script, but with the above problems, more useful to run manually
-# for the moment.
-#./entrypoint.sh
-
-python edfi_lms_ds_loader \
-    -s localhost \
-    -d LMS \
-    -u sa \
-    -p "$SA_PASSWORD" \
-    -c /app/data \
-    > /app/out/output.txt
-
-# ERROR: "Cannot open database "LMS" requested by the login."
-# Oops, we need a command to create the database. Going to save that for the real work -
-# need to close out this spike.
-
-# exit from poetry shell
-exit
-
-# exit from docker container
-exit
-
-# back to local command prompt - copy output (if there's something worth copying)
-#docker cp test-lms-ds-loader:/app/out/output.txt .
-
-# Stop and remove that container
-docker rm test-lms-ds-loader -f
-```
+* When built locally, poetry worked. It should be in the container that was pushed to Docker Hub.
+* Work output formatting / error detection.
+* Build out the sample files to test more scenarios.
