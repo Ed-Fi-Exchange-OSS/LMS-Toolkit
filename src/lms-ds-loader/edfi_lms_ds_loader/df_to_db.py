@@ -51,6 +51,7 @@ def upload_file(
     df: pd.DataFrame,
     table: str,
     db_adapter_insert_method: Callable[[MssqlLmsOperations, str, List[str]], None],
+    db_adapter_delete_method: Callable[[MssqlLmsOperations, str, str], None],
 ) -> None:
     """
     Uploads a DataFrame to the designated LMS table.
@@ -73,10 +74,49 @@ def upload_file(
 
     db_adapter_insert_method(db_adapter, table, columns)
     db_adapter.copy_updates_to_production(table, columns)
-
-    db_adapter.soft_delete_from_production(table, _get_source_system(df))
+    db_adapter_delete_method(db_adapter, table, _get_source_system(df))
 
     logger.info(f"Done with {table} file.")
+
+
+def upload_users(db_adapter: MssqlLmsOperations, users_df: pd.DataFrame) -> None:
+    """
+    Uploads a User DataFrame to the User table.
+
+    Parameters
+    ----------
+    db_adapter: MssqlLmsOperations
+        Database engine-specific adapter/wrapper for database operations.
+    users_df: pd.DataFrame
+        A DataFrame to upload.
+    """
+    upload_file(
+        db_adapter,
+        users_df,
+        Table.USER,
+        MssqlLmsOperations.insert_new_records_to_production,
+        MssqlLmsOperations.soft_delete_from_production,
+    )
+
+
+def upload_sections(db_adapter: MssqlLmsOperations, sections_df: pd.DataFrame) -> None:
+    """
+    Uploads a Section DataFrame to the Section table.
+
+    Parameters
+    ----------
+    db_adapter: MssqlLmsOperations
+        Database engine-specific adapter/wrapper for database operations.
+    sections_df: pd.DataFrame
+        A DataFrame to upload.
+    """
+    upload_file(
+        db_adapter,
+        sections_df,
+        Table.SECTION,
+        MssqlLmsOperations.insert_new_records_to_production,
+        MssqlLmsOperations.soft_delete_from_production,
+    )
 
 
 def upload_assignments(
@@ -106,7 +146,8 @@ def upload_assignments(
         db_adapter,
         assignments_df,
         Table.ASSIGNMENT,
-        MssqlLmsOperations.insert_new_records_to_production_for_section,
+        MssqlLmsOperations.insert_new_records_to_production_for_section_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_section_relation,
     )
 
     if not submissions_type_df.empty:
@@ -131,7 +172,8 @@ def upload_section_associations(
         db_adapter,
         section_associations_df,
         Table.SECTION_ASSOCIATION,
-        MssqlLmsOperations.insert_new_records_to_production_for_section_and_user,
+        MssqlLmsOperations.insert_new_records_to_production_for_section_and_user_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation,
     )
 
 
@@ -153,7 +195,8 @@ def upload_assignment_submissions(
         db_adapter,
         submissions_df,
         Table.ASSIGNMENT_SUBMISSION,
-        MssqlLmsOperations.insert_new_records_to_production_for_assignment_and_user,
+        MssqlLmsOperations.insert_new_records_to_production_for_assignment_and_user_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_assignment_and_user_relation,
     )
 
 
@@ -175,7 +218,8 @@ def upload_section_activities(
         db_adapter,
         section_activities_df,
         Table.SECTION_ACTIVITY,
-        MssqlLmsOperations.insert_new_records_to_production_for_section_and_user,
+        MssqlLmsOperations.insert_new_records_to_production_for_section_and_user_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation,
     )
 
 
@@ -197,7 +241,8 @@ def upload_system_activities(
         db_adapter,
         system_activities_df,
         Table.SYSTEM_ACTIVITY,
-        MssqlLmsOperations.insert_new_records_to_production_for_user,
+        MssqlLmsOperations.insert_new_records_to_production_for_user_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_user_relation,
     )
 
 
@@ -220,4 +265,5 @@ def upload_attendance_events(
         attendance_df,
         Table.ATTENDANCE,
         MssqlLmsOperations.insert_new_records_to_production_for_attendance_events,
+        MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation,
     )

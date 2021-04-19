@@ -164,7 +164,7 @@ WHERE
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
 
-    def insert_new_records_to_production_for_user(
+    def insert_new_records_to_production_for_user_relation(
         self, table: str, columns: List[str]
     ) -> None:
         """
@@ -220,7 +220,7 @@ WHERE NOT EXISTS (
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
 
-    def insert_new_records_to_production_for_section(
+    def insert_new_records_to_production_for_section_relation(
         self, table: str, columns: List[str]
     ) -> None:
         """
@@ -280,7 +280,7 @@ WHERE NOT EXISTS (
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
 
-    def insert_new_records_to_production_for_section_and_user(
+    def insert_new_records_to_production_for_section_and_user_relation(
         self, table: str, columns: List[str]
     ) -> None:
         """
@@ -358,7 +358,7 @@ WHERE NOT EXISTS (
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
 
-    def insert_new_records_to_production_for_assignment_and_user(
+    def insert_new_records_to_production_for_assignment_and_user_relation(
         self, table: str, columns: List[str]
     ) -> None:
         """
@@ -450,7 +450,6 @@ WHERE NOT EXISTS (
         columns: List[str]
             A list of the column names in the table
         """
-
         assert table.strip() != "", "Argument `table` cannot be whitespace"
         assert len(columns) > 0, "Argument `columns` cannot be empty"
 
@@ -577,7 +576,7 @@ AND
         Parameters
         ----------
         table: str
-            Name of the table to truncate, not including the `stg_`.
+            Name of the table to soft delete on, not including the `stg_`.
         source_system: str
             The SourceSystem currently being processed.
         """
@@ -592,6 +591,264 @@ SET
 FROM
     lms.{table} as t
 WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            lms.stg_{table} as stg
+        WHERE
+            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
+        AND
+            t.SourceSystem = stg.SourceSystem
+    )
+AND
+    t.DeletedAt IS NULL
+AND
+    t.SourceSystem = '{source_system}'
+"""
+
+        row_count = self._exec(statement)
+        logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
+
+    def soft_delete_from_production_for_section_relation(
+        self, table: str, source_system: str
+    ) -> None:
+        """
+        Updates production records that do not have a match in the staging table
+        by setting their `deletedat` value to the current timestamp, but
+        only for the related sections in the staging table.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to soft delete on, not including the `stg_`.
+        source_system: str
+            The SourceSystem currently being processed.
+        """
+
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+
+        statement = f"""
+UPDATE
+    t
+SET
+    t.DeletedAt = getdate()
+FROM
+    lms.{table} as t
+WHERE
+    t.LMSSectionIdentifier IN (
+        SELECT
+            s.LMSSectionIdentifier
+        FROM
+           lms.LMSSection as s
+        INNER JOIN
+            lms.stg_{table} as stg
+        ON
+            stg.LMSSectionSourceSystemIdentifier = s.SourceSystemIdentifier
+        AND
+            stg.SourceSystem = s.SourceSystem
+    )
+AND
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            lms.stg_{table} as stg
+        WHERE
+            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
+        AND
+            t.SourceSystem = stg.SourceSystem
+    )
+AND
+    t.DeletedAt IS NULL
+AND
+    t.SourceSystem = '{source_system}'
+"""
+
+        row_count = self._exec(statement)
+        logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
+
+    def soft_delete_from_production_for_user_relation(
+        self, table: str, source_system: str
+    ) -> None:
+        """
+        Updates production records that do not have a match in the staging table
+        by setting their `deletedat` value to the current timestamp, but
+        only for the related users in the staging table.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to soft delete on, not including the `stg_`.
+        source_system: str
+            The SourceSystem currently being processed.
+        """
+
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+
+        statement = f"""
+UPDATE
+    t
+SET
+    t.DeletedAt = getdate()
+FROM
+    lms.{table} as t
+WHERE
+    t.LMSUserIdentifier IN (
+        SELECT
+            u.LMSUserIdentifier
+        FROM
+           lms.LMSUser as u
+        INNER JOIN
+            lms.stg_{table} as stg
+        ON
+            stg.LMSUserSourceSystemIdentifier = u.SourceSystemIdentifier
+        AND
+            stg.SourceSystem = u.SourceSystem
+    )
+AND
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            lms.stg_{table} as stg
+        WHERE
+            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
+        AND
+            t.SourceSystem = stg.SourceSystem
+    )
+AND
+    t.DeletedAt IS NULL
+AND
+    t.SourceSystem = '{source_system}'
+"""
+
+        row_count = self._exec(statement)
+        logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
+
+    def soft_delete_from_production_for_section_and_user_relation(
+        self, table: str, source_system: str
+    ) -> None:
+        """
+        Updates production records that do not have a match in the staging table
+        by setting their `deletedat` value to the current timestamp, but
+        only for the related sections and users in the staging table.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to soft delete on, not including the `stg_`.
+        source_system: str
+            The SourceSystem currently being processed.
+        """
+
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+
+        statement = f"""
+UPDATE
+    t
+SET
+    t.DeletedAt = getdate()
+FROM
+    lms.{table} as t
+WHERE
+    t.LMSSectionIdentifier IN (
+        SELECT
+            s.LMSSectionIdentifier
+        FROM
+           lms.LMSSection as s
+        INNER JOIN
+            lms.stg_{table} as stg
+        ON
+            stg.LMSSectionSourceSystemIdentifier = s.SourceSystemIdentifier
+        AND
+            stg.SourceSystem = s.SourceSystem
+    )
+AND
+    t.LMSUserIdentifier IN (
+        SELECT
+            u.LMSUserIdentifier
+        FROM
+           lms.LMSUser as u
+        INNER JOIN
+            lms.stg_{table} as stg
+        ON
+            stg.LMSUserSourceSystemIdentifier = u.SourceSystemIdentifier
+        AND
+            stg.SourceSystem = u.SourceSystem
+    )
+AND
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            lms.stg_{table} as stg
+        WHERE
+            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
+        AND
+            t.SourceSystem = stg.SourceSystem
+    )
+AND
+    t.DeletedAt IS NULL
+AND
+    t.SourceSystem = '{source_system}'
+"""
+
+        row_count = self._exec(statement)
+        logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
+
+    def soft_delete_from_production_for_assignment_and_user_relation(
+        self, table: str, source_system: str
+    ) -> None:
+        """
+        Updates production records that do not have a match in the staging table
+        by setting their `deletedat` value to the current timestamp, but
+        only for the related assignments and users in the staging table.
+
+        Parameters
+        ----------
+        table: str
+            Name of the table to soft delete on, not including the `stg_`.
+        source_system: str
+            The SourceSystem currently being processed.
+        """
+
+        assert table.strip() != "", "Argument `table` cannot be whitespace"
+
+        statement = f"""
+UPDATE
+    t
+SET
+    t.DeletedAt = getdate()
+FROM
+    lms.{table} as t
+WHERE
+    t.AssignmentIdentifier IN (
+        SELECT
+            a.AssignmentIdentifier
+        FROM
+           lms.Assignment as a
+        INNER JOIN
+            lms.stg_{table} as stg
+        ON
+            stg.AssignmentSourceSystemIdentifier = a.SourceSystemIdentifier
+        AND
+            stg.SourceSystem = a.SourceSystem
+    )
+AND
+    t.LMSUserIdentifier IN (
+        SELECT
+            u.LMSUserIdentifier
+        FROM
+           lms.LMSUser as u
+        INNER JOIN
+            lms.stg_{table} as stg
+        ON
+            stg.LMSUserSourceSystemIdentifier = u.SourceSystemIdentifier
+        AND
+            stg.SourceSystem = u.SourceSystem
+    )
+AND
     NOT EXISTS (
         SELECT
             1

@@ -460,7 +460,7 @@ WHERE NOT EXISTS (
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_section(
+            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_section_relation(
                 TABLE, COLUMNS
             )
 
@@ -511,7 +511,7 @@ WHERE NOT EXISTS (
             exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_user(
+            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_user_relation(
                 TABLE, COLUMNS
             )
 
@@ -573,7 +573,7 @@ WHERE NOT EXISTS (
             # Act
             MssqlLmsOperations(
                 Mock()
-            ).insert_new_records_to_production_for_section_and_user(TABLE, COLUMNS)
+            ).insert_new_records_to_production_for_section_and_user_relation(TABLE, COLUMNS)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -633,7 +633,7 @@ WHERE NOT EXISTS (
             # Act
             MssqlLmsOperations(
                 Mock()
-            ).insert_new_records_to_production_for_assignment_and_user(TABLE, COLUMNS)
+            ).insert_new_records_to_production_for_assignment_and_user_relation(TABLE, COLUMNS)
 
             # Assert
             exec_mock.assert_called_with(expected)
