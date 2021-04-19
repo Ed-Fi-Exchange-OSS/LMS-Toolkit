@@ -8,8 +8,8 @@
 
 mkdir -p tmp
 
-cp -rf ../../src/lms-ds-loader/edfi_lms_ds_loader tmp/
-cp -rf ../../src/lms-ds-loader/pyproject.toml tmp/
-cp -rf ../../src/lms-ds-loader/poetry.lock tmp/
-cp -rf ../../src/lms-ds-loader/README.md tmp/
-cp -rf ../../docs/sample-out tmp/
+cp -rf ./src/lms-ds-loader/edfi_lms_ds_loader docker/test-lms-ds-loader/tmp/
+cp -rf ./src/lms-ds-loader/pyproject.toml docker/test-lms-ds-loader/tmp/
+cp -rf ./src/lms-ds-loader/poetry.lock docker/test-lms-ds-loader/tmp/
+cp -rf ./src/lms-ds-loader/README.md docker/test-lms-ds-loader/tmp/
+cp -rf ./docs/sample-out docker/test-lms-ds-loader/tmp/
