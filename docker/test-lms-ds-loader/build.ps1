@@ -9,7 +9,7 @@ $ErrorActionPreference = "Stop"
 # that they can be copied into the Docker image.
 $tmp = New-Item -Type Directory -Path tmp -Force
 
-Copy-Item -Recurse -Path "../../src/lms-ds-loader/edfi_lms_ds_loader" -Destination $tmp -Force -Exclude ".env"
+Copy-Item -Recurse -Path "../../src/lms-ds-loader/edfi_lms_ds_loader" -Destination $tmp -Force
 Copy-Item -Recurse -Path "../../src/lms-ds-loader/pyproject.toml" -Destination $tmp -Force
 Copy-Item -Recurse -Path "../../src/lms-ds-loader/poetry.lock" -Destination $tmp -Force
 Copy-Item -Recurse -Path "../../src/lms-ds-loader/README.md" -Destination $tmp -Force
