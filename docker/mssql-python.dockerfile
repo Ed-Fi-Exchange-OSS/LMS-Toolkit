@@ -23,7 +23,7 @@ RUN apt-get update -y && \
         unixodbc-dev \
         libpq-dev -y && \
     apt-get clean && \
-    rm /usr/bin/python && \
+    rm -f /usr/bin/python && \
     ln -s /usr/bin/python3.9 /usr/bin/python && \
     python -m pip install --upgrade pip setuptools wheel && \
     mkdir /home/mssql && \
@@ -40,4 +40,4 @@ RUN touch ~/.profile && \
     wget -qO- https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 
 # Run SQL Server
-ENTRYPOINT /opt/mssql/bin/sqlservr
+CMD /opt/mssql/bin/sqlservr

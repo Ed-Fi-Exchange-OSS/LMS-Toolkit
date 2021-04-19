@@ -3,16 +3,14 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-FROM mssql-python:latest
+FROM edfialliance/mssql-python:latest
 
-# Copy the LMS-DS Loader in the container
-COPY tmp/lms-ds-loader/ /app/lms-ds-loader
-
-# TODO: The above should be ignoring the .env file due to a .dockerignore file,
-# but that's not working properly. I had to manually remove the .env file.
-
-# Copy the sample files
-COPY tmp/sample-out/ /app/data
+# Copy the source files into the container
+COPY tmp/edfi_lms_ds_loader /app/edfi_lms_ds_loader
+COPY tmp/poetry.lock /app/poetry.lock
+COPY tmp/pyproject.toml /app/pyproject.toml
+COPY tmp/README.md /app/README.md
+COPY tmp/sample-out /app/sample-out
 
 # Prep filesystem
 COPY entrypoint.sh /app
@@ -25,9 +23,10 @@ RUN chmod a+x /app/*.sh && \
 USER mssql
 
 # Install the loader
-WORKDIR /app/lms-ds-loader
+WORKDIR /app
 RUN PATH="$HOME/.poetry/bin:$PATH" && \
+    poetry env use 3.9 && \
     poetry install
 
 # Run the tests
-CMD /app/entrypoint.sh
+CMD /app/entrypoint.sh & /opt/mssql/bin/sqlservr
