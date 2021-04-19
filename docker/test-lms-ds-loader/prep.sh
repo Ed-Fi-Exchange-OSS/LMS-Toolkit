@@ -14,4 +14,4 @@ cp -r ./src/lms-ds-loader/edfi_lms_ds_loader docker/test-lms-ds-loader/tmp/edfi_
 cp ./src/lms-ds-loader/pyproject.toml docker/test-lms-ds-loader/tmp/
 cp ./src/lms-ds-loader/poetry.lock docker/test-lms-ds-loader/tmp/
 cp ./src/lms-ds-loader/README.md docker/test-lms-ds-loader/tmp/
-cp ./docs/sample-out docker/test-lms-ds-loader/tmp/
+cp -r ./docs/sample-out docker/test-lms-ds-loader/tmp/sample-out
