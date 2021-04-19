@@ -18,6 +18,8 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
       - name: Prep files for docker build
         run: chmod +x ./docker/test-lms-ds-loader/prep.sh && ./docker/test-lms-ds-loader/prep.sh
+      - name: Review the loaded files
+        run: ls ./docker/test-lms-ds-loader/tmp
       - name: Run integration tests
         id: integration-test
         uses: ./docker/test-lms-ds-loader
