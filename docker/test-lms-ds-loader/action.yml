@@ -1,0 +1,9 @@
+name: 'MSSQL Test LMS-DS Loader'
+description: 'Integration test for Learning Management System Data Store Loader loading into Microsoft SQL Server'
+# inputs:
+outputs:
+    success:
+        description: 'true if exited with code 0'
+runs:
+    using: 'docker'
+    image: 'Dockerfile'

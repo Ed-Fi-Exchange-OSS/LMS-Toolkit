@@ -3,3 +3,19 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+name: LMS Data Store Loader - Integration Test
+on:
+  pull_request:
+    paths:
+      - 'src/lms-ds-loader/**'
+      - '!src/lms-ds-loader/**/*.md'
+jobs:
+  integration-lms-ds-loader:
+    name: Run integration tests on SQL Server 2019
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+      - name: Run integration tests
+        id: integration-test
+        uses: ./docker/test-lms-ds-loader/action.yml
