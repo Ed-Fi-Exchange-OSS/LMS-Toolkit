@@ -8,6 +8,10 @@ license = "Apache-2.0"
 [tool.poetry.dependencies]
 python = "^3.9"
 jupyter = "^1.0.0"
+edfi-google-classroom-extractor = "1.0.0a5"
+edfi-lms-ds-loader = "1.0.0a1"
+SQLAlchemy = "1.3.23"
+ipywidgets = "^7.6.3"
 
 [tool.poetry.dev-dependencies]
 
