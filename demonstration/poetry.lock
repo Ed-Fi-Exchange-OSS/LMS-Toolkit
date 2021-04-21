@@ -214,6 +214,27 @@ numpy = "1.19.3"
 pandas = ">=1.1.4,<2.0.0"
 
 [[package]]
+name = "edfi-schoology-extractor"
+version = "1.0.0a2"
+description = "Extract tool for retrieving student data from Canvas"
+category = "main"
+optional = false
+python-versions = ">=3.9,<4.0"
+
+[package.dependencies]
+configargparse = ">=1.2.3,<2.0.0"
+edfi-lms-extractor-lib = "1.0.0a5"
+edfi-lms-file-utils = "1.0.0b16"
+errorhandler = ">=2.0.1,<3.0.0"
+oauthlib = ">=3.1.0,<4.0.0"
+opnieuw = ">=1.1.0,<2.0.0"
+pandas = ">=1.1.2,<2.0.0"
+python-dotenv = "0.15.0"
+requests = ">=2.24.0,<3.0.0"
+requests_oauthlib = ">=1.3.0,<2.0.0"
+SQLAlchemy = ">=1.3.20,<2.0.0"
+
+[[package]]
 name = "entrypoints"
 version = "0.3"
 description = "Discover and load entry points from installed packages."
@@ -1244,7 +1265,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "dc0f4601b9428b87f1d28ced34abbc425a24e95f474d76a763358e69d91072c3"
+content-hash = "9b450344ecf6cd128e077933096fe9eb4836e59c2d3db75fb0539d53ab408013"
 
 [metadata.files]
 appnope = [
@@ -1369,6 +1390,10 @@ edfi-lms-extractor-lib = [
 edfi-lms-file-utils = [
     {file = "edfi-lms-file-utils-1.0.0b16.tar.gz", hash = "sha256:7aa541c617a86dd5bbb0ae4446fda34ae25e8cea491cfe0397799b7e13f3155e"},
     {file = "edfi_lms_file_utils-1.0.0b16-py3-none-any.whl", hash = "sha256:047517f99ca2b4098fa32b595011bab0a5110e4aee68e2ae90af6254f31c845c"},
+]
+edfi-schoology-extractor = [
+    {file = "edfi-schoology-extractor-1.0.0a2.tar.gz", hash = "sha256:5f8c017f341bedcf9e02095bff9d2cec551722bdd962b84f0e8cd686bfeb1c08"},
+    {file = "edfi_schoology_extractor-1.0.0a2-py3-none-any.whl", hash = "sha256:9aa59d9b37a4ba11c9bfaebe057b1c9e660e17b8659f1aef985d320916fe264d"},
 ]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
