@@ -10,7 +10,7 @@
 
 import logging
 from os.path import abspath
-from typing import Callable, List, Set
+from typing import Callable, List
 from functools import lru_cache
 
 from pandas import DataFrame
@@ -56,10 +56,10 @@ def _get_unprocessed_file_paths(
     db_adapter: MssqlLmsOperations,
     resource_name: str,
     file_paths: List[str],
-) -> Set[str]:
+) -> List[str]:
     processed_files = db_adapter.get_processed_files(resource_name)
     all_paths = set(file_paths)
-    return all_paths - processed_files
+    return sorted(all_paths - processed_files)
 
 
 def _upload_files_from_paths(
@@ -69,7 +69,7 @@ def _upload_files_from_paths(
     read_file_callback: Callable[[str], DataFrame],
     upload_function: Callable[[MssqlLmsOperations, DataFrame], None],
 ) -> None:
-    unprocessed_files: Set[str] = _get_unprocessed_file_paths(
+    unprocessed_files: List[str] = _get_unprocessed_file_paths(
         db_adapter, resource_name, file_paths
     )
 
