@@ -10,7 +10,7 @@ import pytest
 from unittest.mock import Mock, MagicMock
 import sqlalchemy
 
-from edfi_schoology_extractor.schoology_extract_facade import SchoologyExtractFacade
+from edfi_schoology_extractor.client_facade import SchoologyExtractFacade
 from edfi_schoology_extractor.api.request_client import RequestClient
 from edfi_schoology_extractor.api.paginated_result import PaginatedResult
 from edfi_schoology_extractor.mapping import users as usersMap

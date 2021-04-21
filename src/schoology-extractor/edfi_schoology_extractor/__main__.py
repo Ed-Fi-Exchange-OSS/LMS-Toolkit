@@ -11,7 +11,7 @@ from errorhandler import ErrorHandler
 
 
 from edfi_schoology_extractor.helpers import arg_parser
-from edfi_schoology_extractor.schoology_extract_facade import run
+from edfi_schoology_extractor.extract_facade import run
 
 
 def _load_configuration() -> arg_parser.MainArguments:
