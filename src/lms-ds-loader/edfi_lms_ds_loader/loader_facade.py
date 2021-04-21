@@ -70,7 +70,7 @@ def _upload_files_from_paths(
     upload_function: Callable[[MssqlLmsOperations, DataFrame], None],
 ) -> None:
     unprocessed_files: Set[str] = _get_unprocessed_file_paths(
-        db_adapter, Resources.SECTIONS, file_paths
+        db_adapter, resource_name, file_paths
     )
 
     for path in unprocessed_files:
