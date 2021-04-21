@@ -64,6 +64,10 @@ def upload_file(
         A DataFrame to upload.
     table: str
         The destination table.
+    db_adapter_insert_method: Callable[[MssqlLmsOperations, str, List[str]], None]
+        The MssqlLmsOperations insert method to use for the upload
+    db_adapter_delete_method: Callable[[MssqlLmsOperations, str, str], None],
+        The MssqlLmsOperations delete method to use for the upload
     """
     if df.empty:
         return
