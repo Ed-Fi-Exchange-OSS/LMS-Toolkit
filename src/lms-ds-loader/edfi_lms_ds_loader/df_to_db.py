@@ -177,7 +177,7 @@ def upload_section_associations(
         section_associations_df,
         Table.SECTION_ASSOCIATION,
         MssqlLmsOperations.insert_new_records_to_production_for_section_and_user_relation,
-        MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_section_relation,
     )
 
 
@@ -200,7 +200,7 @@ def upload_assignment_submissions(
         submissions_df,
         Table.ASSIGNMENT_SUBMISSION,
         MssqlLmsOperations.insert_new_records_to_production_for_assignment_and_user_relation,
-        MssqlLmsOperations.soft_delete_from_production_for_assignment_and_user_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_assignment_relation,
     )
 
 
@@ -223,7 +223,7 @@ def upload_section_activities(
         section_activities_df,
         Table.SECTION_ACTIVITY,
         MssqlLmsOperations.insert_new_records_to_production_for_section_and_user_relation,
-        MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_section_relation,
     )
 
 
@@ -246,7 +246,7 @@ def upload_system_activities(
         system_activities_df,
         Table.SYSTEM_ACTIVITY,
         MssqlLmsOperations.insert_new_records_to_production_for_user_relation,
-        MssqlLmsOperations.soft_delete_from_production_for_user_relation,
+        MssqlLmsOperations.soft_delete_from_production,
     )
 
 
@@ -269,5 +269,5 @@ def upload_attendance_events(
         attendance_df,
         Table.ATTENDANCE,
         MssqlLmsOperations.insert_new_records_to_production_for_attendance_events,
-        MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation,
+        MssqlLmsOperations.soft_delete_from_production_for_section_relation,
     )

@@ -270,7 +270,7 @@ def describe_given_empty_DataFrame() -> None:
 def describe_when_uploading_section_associations() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_relation"
     )
     @patch(
         "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_section_and_user_relation"
@@ -337,7 +337,7 @@ def describe_when_uploading_section_associations() -> None:
 def describe_when_uploading_assignment_submissions() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_assignment_and_user_relation"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_assignment_relation"
     )
     @patch(
         "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_assignment_and_user_relation"
@@ -406,7 +406,7 @@ def describe_when_uploading_assignment_submissions() -> None:
 def describe_when_uploading_section_activities() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_relation"
     )
     @patch(
         "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_section_and_user_relation"
@@ -473,7 +473,7 @@ def describe_when_uploading_section_activities() -> None:
 def describe_when_uploading_system_activities() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_user_relation"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production"
     )
     @patch(
         "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_user_relation"
@@ -540,7 +540,7 @@ def describe_when_uploading_system_activities() -> None:
 def describe_when_uploading_attendance_events() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_and_user_relation"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_relation"
     )
     @patch(
         "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_attendance_events"
