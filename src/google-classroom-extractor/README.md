@@ -99,12 +99,12 @@ access.  This can be done
 
 1. Give the new service account a name like "Ed-Fi Extractor"
    and click Create.
-1. Grant the service account the Project Viewer role and click
-   Continue then Done.
+1. Grant the service account the "Viewer" role and click `Continue` then
+   Done, skipping step 3: "Grant users access to this service account".
 1. The new service account will be displayed in a table.
-   Click on the three dots for the account and select Create
-   Key.
-1. Choose JSON and click Create.
+   Click on the three dots for the account and select Manage Keys.
+1. On the next page, click the `Add Key` button, then choose JSON and click
+   `Create` in the dialog box.
 1. A JSON file will be downloaded from your browser, which is the API key.
    Rename it to `service-account.json`. Save this into the project directory.
 1. Finally, click on the service account to view details and
@@ -115,9 +115,9 @@ access for the service account.  This can be done
 [here](https://admin.google.com/ac/owl/domainwidedelegation).
 
 1. Add a new API client and provide the service account Unique
-   ID in the Client ID field.
+   ID (`client_id` in the json file) in the `Client ID` field.
 1. Paste the following scopes into the OAuth scopes field and
-   click Authorize:
+   click `Authorize`:
 
 `https://www.googleapis.com/auth/admin.directory.orgunit,
 https://www.googleapis.com/auth/admin.reports.usage.readonly,

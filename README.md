@@ -17,7 +17,8 @@ All of the tools in this repository require [Python
 `python` and `poetry` commands are available in your command path before trying
 to run any of the tools.
 
-To do so, try running `python --version` in the command line which should output a version >= 3.9 for python and try `poetry --version` for poetry.
+To do so, try running `python --version` in the command line which should output
+a version >= 3.9 for python and try `poetry --version` for poetry.
 
 ## Tools
 
@@ -30,14 +31,15 @@ The Toolkit consists of extractors and loaders:
   * [Canvas](src/canvas-extractor)
   * [Google Classroom](src/google-classroom-extractor)
   * [Schoology](src/schoology-extractor)
-* **LMS Loader**: pushes CSV files into a relational database. :warning:
-    [LMS Data Store Loader](src/lms-ds-loader) is currently in proof-of-concept stage,
-    only capable of uploading User files.
+* **LMS DS Loader**: pushes CSV files into a relational database (SQL Server
+  only, at this time).
 
 We also anticipate utilities and features that help reconcile this instructional
 data with data from SIS and assessment systems.
 
-## Data Analysis Documentation
+## Sample Notebooks
+
+### Data Analysis
 
 Several [Jupyter Notebooks](src/notebooks/readme.md) have been developed to
 document the output files and provide sample analyses:
@@ -47,12 +49,19 @@ document the output files and provide sample analyses:
 * [User Login Activity](src/notebooks/student_logins.ipynb)
 * [Student Assignment Submissions](src/notebooks/student_submissions.ipynb)
 
+### End-to-End Demonstrations
+
+The [docs/demonstration](docs/demonstration) directory contains notebooks
+demonstrating how to execute the extractors and the data store loader from a
+Jupyter notebook.
+
 ## Developer Information
 
 * [Build script](docs/build.md): a Python script to automate common developer
   operations.
-* [Continuous Integration](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/actions/): automated unit testing and more, using
-  GitHub Actions.
+* [Continuous
+  Integration](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/actions/):
+  automated unit testing and more, using GitHub Actions.
 * [File Tester](utils/file-tester): a script for validating the directory
   structure, columns, and some formatting details for files created by the
   extractor utilities.

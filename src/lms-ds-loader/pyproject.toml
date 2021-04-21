@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-lms-ds-loader"
-version = "1.0.0-alpha0"
+version = "1.0.0-alpha.1"
 description = "Ed-Fi LMS Toolkit Data Store Loader"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
@@ -18,7 +18,7 @@ sqlparse = "^0.4.1"
 psycopg2 = "^2.8.6"
 errorhandler = "^2.0.1"
 python-dotenv = "^0.15.0"
-edfi-lms-extractor-lib = "1.0.0a4"
+edfi-lms-extractor-lib = "1.0.0a5"
 edfi-lms-file-utils = "1.0.0b16"
 
 [tool.poetry.dev-dependencies]

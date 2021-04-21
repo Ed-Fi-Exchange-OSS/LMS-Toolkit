@@ -6,22 +6,22 @@
 from dataclasses import dataclass
 import logging
 from typing import Union
+
 from pandas import DataFrame, concat
 import sqlalchemy
 
-from .helpers import sync
-from .helpers.constants import RESOURCE_NAMES
-from .api.request_client import RequestClient
-from .mapping import users as usersMap
-from .mapping import assignments as assignmentsMap
-from .mapping import sections as sectionsMap
-from .mapping import section_associations as sectionAssocMap
-from .mapping import attendance as attendanceMap
-from .mapping import discussion_replies as discussionRepliesMap
-from .mapping import discussions as discussionsMap
-from .mapping import submissions as submissionsMap
-from .mapping import section_updates as sectionUpdatesMap
-
+from edfi_schoology_extractor.helpers import sync
+from edfi_schoology_extractor.helpers.constants import RESOURCE_NAMES
+from edfi_schoology_extractor.api.request_client import RequestClient
+from edfi_schoology_extractor.mapping import users as usersMap
+from edfi_schoology_extractor.mapping import assignments as assignmentsMap
+from edfi_schoology_extractor.mapping import sections as sectionsMap
+from edfi_schoology_extractor.mapping import section_associations as sectionAssocMap
+from edfi_schoology_extractor.mapping import attendance as attendanceMap
+from edfi_schoology_extractor.mapping import discussion_replies as discussionRepliesMap
+from edfi_schoology_extractor.mapping import discussions as discussionsMap
+from edfi_schoology_extractor.mapping import submissions as submissionsMap
+from edfi_schoology_extractor.mapping import section_updates as sectionUpdatesMap
 
 logger = logging.getLogger(__name__)
 
