@@ -18,55 +18,65 @@ SOURCE_SYSTEM = "google"
 
 def describe_given_a_resource_that_is_not_a_child_of_section_or_user() -> None:
     @pytest.fixture
-    def when_uploading_users() -> Tuple[MagicMock, pd.DataFrame, MagicMock]:
+    def when_uploading_users() -> Tuple[MagicMock, pd.DataFrame, MagicMock, MagicMock]:
         # Arrange
         adapter_mock = MagicMock()
         db_adapter_insert_method_mock = MagicMock()
+        db_adapter_delete_method_mock = MagicMock()
         df = pd.DataFrame([{"SourceSystem": SOURCE_SYSTEM}])
 
         # Act
         df_to_db.upload_file(
-            adapter_mock, df, Table.USER, db_adapter_insert_method_mock
+            adapter_mock,
+            df,
+            Table.USER,
+            db_adapter_insert_method_mock,
+            db_adapter_delete_method_mock,
         )
 
-        return adapter_mock, df, db_adapter_insert_method_mock
+        return (
+            adapter_mock,
+            df,
+            db_adapter_insert_method_mock,
+            db_adapter_delete_method_mock,
+        )
 
     def it_disables_the_natural_key_index(when_uploading_users) -> None:
-        adapter_mock, _, _ = when_uploading_users
+        adapter_mock, _, _, _ = when_uploading_users
         assert adapter_mock.disable_staging_natural_key_index.call_args_list == [
             call(Table.USER)
         ]
 
     def it_truncates_the_staging_table(when_uploading_users) -> None:
-        adapter_mock, _, _ = when_uploading_users
+        adapter_mock, _, _, _ = when_uploading_users
         assert adapter_mock.truncate_staging_table.call_args_list == [call(Table.USER)]
 
     def it_re_enables_natural_key_index(when_uploading_users) -> None:
-        adapter_mock, _, _ = when_uploading_users
+        adapter_mock, _, _, _ = when_uploading_users
         assert adapter_mock.enable_staging_natural_key_index.call_args_list == [
             call(Table.USER)
         ]
 
     def it_inserts_into_staging_table(when_uploading_users) -> None:
-        adapter_mock, df, _ = when_uploading_users
+        adapter_mock, df, _, _ = when_uploading_users
         assert adapter_mock.insert_into_staging.call_args_list == [call(df, Table.USER)]
 
     def it_inserts_into_production_table(when_uploading_users) -> None:
-        adapter_mock, _, db_adapter_insert_method_mock = when_uploading_users
+        adapter_mock, _, db_adapter_insert_method_mock, _ = when_uploading_users
         assert db_adapter_insert_method_mock.call_args_list == [
             call(adapter_mock, Table.USER, ["SourceSystem"])
         ]
 
     def it_updates_production_table(when_uploading_users) -> None:
-        adapter_mock, _, _ = when_uploading_users
+        adapter_mock, _, _, _ = when_uploading_users
         assert adapter_mock.copy_updates_to_production.call_args_list == [
             call(Table.USER, ["SourceSystem"])
         ]
 
     def it_soft_deletes_from_production_table(when_uploading_users) -> None:
-        adapter_mock, _, _ = when_uploading_users
-        assert adapter_mock.soft_delete_from_production.call_args_list == [
-            call(Table.USER, SOURCE_SYSTEM)
+        adapter_mock, _, _, db_adapter_delete_method_mock = when_uploading_users
+        assert db_adapter_delete_method_mock.call_args_list == [
+            call(adapter_mock, Table.USER, SOURCE_SYSTEM)
         ]
 
 
@@ -251,6 +261,7 @@ def describe_given_empty_DataFrame() -> None:
                 pd.DataFrame(),
                 "LMSection",
                 MssqlLmsOperations.insert_new_records_to_production,
+                MssqlLmsOperations.soft_delete_from_production,
             )
 
             # if no errors occurred then this worked
@@ -259,11 +270,15 @@ def describe_given_empty_DataFrame() -> None:
 def describe_when_uploading_section_associations() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_section_and_user"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_relation"
+    )
+    @patch(
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_section_and_user_relation"
     )
     def when_uploading_section_associations(
         insert_mock,
-    ) -> Tuple[MagicMock, pd.DataFrame, MagicMock]:
+        delete_mock,
+    ) -> Tuple[MagicMock, pd.DataFrame, MagicMock, MagicMock]:
         # Arrange
         adapter_mock = MagicMock()
 
@@ -272,40 +287,40 @@ def describe_when_uploading_section_associations() -> None:
         # Act
         df_to_db.upload_section_associations(adapter_mock, df)
 
-        return adapter_mock, df, insert_mock
+        return adapter_mock, df, insert_mock, delete_mock
 
     def it_disables_the_natural_key_index(when_uploading_section_associations) -> None:
-        adapter_mock, _, _ = when_uploading_section_associations
+        adapter_mock, _, _, _ = when_uploading_section_associations
         assert adapter_mock.disable_staging_natural_key_index.call_args_list == [
             call(Table.SECTION_ASSOCIATION)
         ]
 
     def it_truncates_the_staging_table(when_uploading_section_associations) -> None:
-        adapter_mock, _, _ = when_uploading_section_associations
+        adapter_mock, _, _, _ = when_uploading_section_associations
         assert adapter_mock.truncate_staging_table.call_args_list == [
             call(Table.SECTION_ASSOCIATION)
         ]
 
     def it_re_enables_natural_key_index(when_uploading_section_associations) -> None:
-        adapter_mock, _, _ = when_uploading_section_associations
+        adapter_mock, _, _, _ = when_uploading_section_associations
         assert adapter_mock.enable_staging_natural_key_index.call_args_list == [
             call(Table.SECTION_ASSOCIATION)
         ]
 
     def it_inserts_into_staging_table(when_uploading_section_associations) -> None:
-        adapter_mock, df, _ = when_uploading_section_associations
+        adapter_mock, df, _, _ = when_uploading_section_associations
         assert adapter_mock.insert_into_staging.call_args_list == [
             call(df, Table.SECTION_ASSOCIATION)
         ]
 
     def it_inserts_into_production_table(when_uploading_section_associations) -> None:
-        adapter_mock, _, insert_mock = when_uploading_section_associations
+        adapter_mock, _, insert_mock, _ = when_uploading_section_associations
         assert insert_mock.call_args_list == [
             call(adapter_mock, Table.SECTION_ASSOCIATION, ["SourceSystem"])
         ]
 
     def it_updates_production_table(when_uploading_section_associations) -> None:
-        adapter_mock, _, _ = when_uploading_section_associations
+        adapter_mock, _, _, _ = when_uploading_section_associations
         assert adapter_mock.copy_updates_to_production.call_args_list == [
             call(Table.SECTION_ASSOCIATION, ["SourceSystem"])
         ]
@@ -313,20 +328,24 @@ def describe_when_uploading_section_associations() -> None:
     def it_soft_deletes_from_production_table(
         when_uploading_section_associations,
     ) -> None:
-        adapter_mock, _, _ = when_uploading_section_associations
-        assert adapter_mock.soft_delete_from_production.call_args_list == [
-            call(Table.SECTION_ASSOCIATION, SOURCE_SYSTEM)
+        adapter_mock, _, _, delete_mock = when_uploading_section_associations
+        assert delete_mock.call_args_list == [
+            call(adapter_mock, Table.SECTION_ASSOCIATION, SOURCE_SYSTEM)
         ]
 
 
 def describe_when_uploading_assignment_submissions() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_assignment_and_user"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_assignment_relation"
+    )
+    @patch(
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_assignment_and_user_relation"
     )
     def when_uploading_assignment_submissions(
         insert_mock,
-    ) -> Tuple[MagicMock, pd.DataFrame, MagicMock]:
+        delete_mock,
+    ) -> Tuple[MagicMock, pd.DataFrame, MagicMock, MagicMock]:
         # Arrange
         adapter_mock = MagicMock()
 
@@ -335,42 +354,42 @@ def describe_when_uploading_assignment_submissions() -> None:
         # Act
         df_to_db.upload_assignment_submissions(adapter_mock, df)
 
-        return adapter_mock, df, insert_mock
+        return adapter_mock, df, insert_mock, delete_mock
 
     def it_disables_the_natural_key_index(
         when_uploading_assignment_submissions,
     ) -> None:
-        adapter_mock, _, _ = when_uploading_assignment_submissions
+        adapter_mock, _, _, _ = when_uploading_assignment_submissions
         assert adapter_mock.disable_staging_natural_key_index.call_args_list == [
             call(Table.ASSIGNMENT_SUBMISSION)
         ]
 
     def it_truncates_the_staging_table(when_uploading_assignment_submissions) -> None:
-        adapter_mock, _, _ = when_uploading_assignment_submissions
+        adapter_mock, _, _, _ = when_uploading_assignment_submissions
         assert adapter_mock.truncate_staging_table.call_args_list == [
             call(Table.ASSIGNMENT_SUBMISSION)
         ]
 
     def it_re_enables_natural_key_index(when_uploading_assignment_submissions) -> None:
-        adapter_mock, _, _ = when_uploading_assignment_submissions
+        adapter_mock, _, _, _ = when_uploading_assignment_submissions
         assert adapter_mock.enable_staging_natural_key_index.call_args_list == [
             call(Table.ASSIGNMENT_SUBMISSION)
         ]
 
     def it_inserts_into_staging_table(when_uploading_assignment_submissions) -> None:
-        adapter_mock, df, _ = when_uploading_assignment_submissions
+        adapter_mock, df, _, _ = when_uploading_assignment_submissions
         assert adapter_mock.insert_into_staging.call_args_list == [
             call(df, Table.ASSIGNMENT_SUBMISSION)
         ]
 
     def it_inserts_into_production_table(when_uploading_assignment_submissions) -> None:
-        adapter_mock, _, insert_mock = when_uploading_assignment_submissions
+        adapter_mock, _, insert_mock, _ = when_uploading_assignment_submissions
         assert insert_mock.call_args_list == [
             call(adapter_mock, Table.ASSIGNMENT_SUBMISSION, ["SourceSystem"])
         ]
 
     def it_updates_production_table(when_uploading_assignment_submissions) -> None:
-        adapter_mock, _, _ = when_uploading_assignment_submissions
+        adapter_mock, _, _, _ = when_uploading_assignment_submissions
         assert adapter_mock.copy_updates_to_production.call_args_list == [
             call(Table.ASSIGNMENT_SUBMISSION, ["SourceSystem"])
         ]
@@ -378,20 +397,24 @@ def describe_when_uploading_assignment_submissions() -> None:
     def it_soft_deletes_from_production_table(
         when_uploading_assignment_submissions,
     ) -> None:
-        adapter_mock, _, _ = when_uploading_assignment_submissions
-        assert adapter_mock.soft_delete_from_production.call_args_list == [
-            call(Table.ASSIGNMENT_SUBMISSION, SOURCE_SYSTEM)
+        adapter_mock, _, _, delete_mock = when_uploading_assignment_submissions
+        assert delete_mock.call_args_list == [
+            call(adapter_mock, Table.ASSIGNMENT_SUBMISSION, SOURCE_SYSTEM)
         ]
 
 
 def describe_when_uploading_section_activities() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_section_and_user"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_relation"
+    )
+    @patch(
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_section_and_user_relation"
     )
     def when_uploading_section_activities(
         insert_mock,
-    ) -> Tuple[MagicMock, pd.DataFrame, MagicMock]:
+        delete_mock,
+    ) -> Tuple[MagicMock, pd.DataFrame, MagicMock, MagicMock]:
         # Arrange
         adapter_mock = MagicMock()
 
@@ -400,40 +423,40 @@ def describe_when_uploading_section_activities() -> None:
         # Act
         df_to_db.upload_section_activities(adapter_mock, df)
 
-        return adapter_mock, df, insert_mock
+        return adapter_mock, df, insert_mock, delete_mock
 
     def it_disables_the_natural_key_index(when_uploading_section_activities) -> None:
-        adapter_mock, _, _ = when_uploading_section_activities
+        adapter_mock, _, _, _ = when_uploading_section_activities
         assert adapter_mock.disable_staging_natural_key_index.call_args_list == [
             call(Table.SECTION_ACTIVITY)
         ]
 
     def it_truncates_the_staging_table(when_uploading_section_activities) -> None:
-        adapter_mock, _, _ = when_uploading_section_activities
+        adapter_mock, _, _, _ = when_uploading_section_activities
         assert adapter_mock.truncate_staging_table.call_args_list == [
             call(Table.SECTION_ACTIVITY)
         ]
 
     def it_re_enables_natural_key_index(when_uploading_section_activities) -> None:
-        adapter_mock, _, _ = when_uploading_section_activities
+        adapter_mock, _, _, _ = when_uploading_section_activities
         assert adapter_mock.enable_staging_natural_key_index.call_args_list == [
             call(Table.SECTION_ACTIVITY)
         ]
 
     def it_inserts_into_staging_table(when_uploading_section_activities) -> None:
-        adapter_mock, df, _ = when_uploading_section_activities
+        adapter_mock, df, _, _ = when_uploading_section_activities
         assert adapter_mock.insert_into_staging.call_args_list == [
             call(df, Table.SECTION_ACTIVITY)
         ]
 
     def it_inserts_into_production_table(when_uploading_section_activities) -> None:
-        adapter_mock, _, insert_mock = when_uploading_section_activities
+        adapter_mock, _, insert_mock, _ = when_uploading_section_activities
         assert insert_mock.call_args_list == [
             call(adapter_mock, Table.SECTION_ACTIVITY, ["SourceSystem"])
         ]
 
     def it_updates_production_table(when_uploading_section_activities) -> None:
-        adapter_mock, _, _ = when_uploading_section_activities
+        adapter_mock, _, _, _ = when_uploading_section_activities
         assert adapter_mock.copy_updates_to_production.call_args_list == [
             call(Table.SECTION_ACTIVITY, ["SourceSystem"])
         ]
@@ -441,20 +464,24 @@ def describe_when_uploading_section_activities() -> None:
     def it_soft_deletes_from_production_table(
         when_uploading_section_activities,
     ) -> None:
-        adapter_mock, _, _ = when_uploading_section_activities
-        assert adapter_mock.soft_delete_from_production.call_args_list == [
-            call(Table.SECTION_ACTIVITY, SOURCE_SYSTEM)
+        adapter_mock, _, _, delete_mock = when_uploading_section_activities
+        assert delete_mock.call_args_list == [
+            call(adapter_mock, Table.SECTION_ACTIVITY, SOURCE_SYSTEM)
         ]
 
 
 def describe_when_uploading_system_activities() -> None:
     @pytest.fixture
     @patch(
-        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_user"
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production"
+    )
+    @patch(
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_user_relation"
     )
     def when_uploading_system_activities(
         insert_mock,
-    ) -> Tuple[MagicMock, pd.DataFrame, MagicMock]:
+        delete_mock,
+    ) -> Tuple[MagicMock, pd.DataFrame, MagicMock, MagicMock]:
         # Arrange
         adapter_mock = MagicMock()
 
@@ -463,40 +490,40 @@ def describe_when_uploading_system_activities() -> None:
         # Act
         df_to_db.upload_system_activities(adapter_mock, df)
 
-        return adapter_mock, df, insert_mock
+        return adapter_mock, df, insert_mock, delete_mock
 
     def it_disables_the_natural_key_index(when_uploading_system_activities) -> None:
-        adapter_mock, _, _ = when_uploading_system_activities
+        adapter_mock, _, _, _ = when_uploading_system_activities
         assert adapter_mock.disable_staging_natural_key_index.call_args_list == [
             call(Table.SYSTEM_ACTIVITY)
         ]
 
     def it_truncates_the_staging_table(when_uploading_system_activities) -> None:
-        adapter_mock, _, _ = when_uploading_system_activities
+        adapter_mock, _, _, _ = when_uploading_system_activities
         assert adapter_mock.truncate_staging_table.call_args_list == [
             call(Table.SYSTEM_ACTIVITY)
         ]
 
     def it_re_enables_natural_key_index(when_uploading_system_activities) -> None:
-        adapter_mock, _, _ = when_uploading_system_activities
+        adapter_mock, _, _, _ = when_uploading_system_activities
         assert adapter_mock.enable_staging_natural_key_index.call_args_list == [
             call(Table.SYSTEM_ACTIVITY)
         ]
 
     def it_inserts_into_staging_table(when_uploading_system_activities) -> None:
-        adapter_mock, df, _ = when_uploading_system_activities
+        adapter_mock, df, _, _ = when_uploading_system_activities
         assert adapter_mock.insert_into_staging.call_args_list == [
             call(df, Table.SYSTEM_ACTIVITY)
         ]
 
     def it_inserts_into_production_table(when_uploading_system_activities) -> None:
-        adapter_mock, _, insert_mock = when_uploading_system_activities
+        adapter_mock, _, insert_mock, _ = when_uploading_system_activities
         assert insert_mock.call_args_list == [
             call(adapter_mock, Table.SYSTEM_ACTIVITY, ["SourceSystem"])
         ]
 
     def it_updates_production_table(when_uploading_system_activities) -> None:
-        adapter_mock, _, _ = when_uploading_system_activities
+        adapter_mock, _, _, _ = when_uploading_system_activities
         assert adapter_mock.copy_updates_to_production.call_args_list == [
             call(Table.SYSTEM_ACTIVITY, ["SourceSystem"])
         ]
@@ -504,20 +531,24 @@ def describe_when_uploading_system_activities() -> None:
     def it_soft_deletes_from_production_table(
         when_uploading_system_activities,
     ) -> None:
-        adapter_mock, _, _ = when_uploading_system_activities
-        assert adapter_mock.soft_delete_from_production.call_args_list == [
-            call(Table.SYSTEM_ACTIVITY, SOURCE_SYSTEM)
+        adapter_mock, _, _, delete_mock = when_uploading_system_activities
+        assert delete_mock.call_args_list == [
+            call(adapter_mock, Table.SYSTEM_ACTIVITY, SOURCE_SYSTEM)
         ]
 
 
 def describe_when_uploading_attendance_events() -> None:
     @pytest.fixture
     @patch(
+        "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.soft_delete_from_production_for_section_relation"
+    )
+    @patch(
         "edfi_lms_ds_loader.df_to_db.MssqlLmsOperations.insert_new_records_to_production_for_attendance_events"
     )
     def when_uploading_attendance_events(
         insert_mock,
-    ) -> Tuple[MagicMock, MagicMock, pd.DataFrame]:
+        delete_mock,
+    ) -> Tuple[MagicMock, MagicMock, pd.DataFrame, MagicMock]:
         # Arrange
         adapter_mock = MagicMock()
 
@@ -526,54 +557,54 @@ def describe_when_uploading_attendance_events() -> None:
         # Act
         df_to_db.upload_attendance_events(adapter_mock, attendance_df)
 
-        return adapter_mock, insert_mock, attendance_df
+        return adapter_mock, insert_mock, attendance_df, delete_mock
 
     def it_disables_natural_key_index(when_uploading_attendance_events) -> None:
-        adapter_mock, _, _ = when_uploading_attendance_events
+        adapter_mock, _, _, _ = when_uploading_attendance_events
 
         assert adapter_mock.disable_staging_natural_key_index.call_args_list == [
             call(Table.ATTENDANCE)
         ]
 
     def it_truncates_staging_table(when_uploading_attendance_events) -> None:
-        adapter_mock, _, _ = when_uploading_attendance_events
+        adapter_mock, _, _, _ = when_uploading_attendance_events
 
         assert adapter_mock.truncate_staging_table.call_args_list == [
             call(Table.ATTENDANCE)
         ]
 
     def it_inserts_into_staging(when_uploading_attendance_events) -> None:
-        adapter_mock, _, attendance_df = when_uploading_attendance_events
+        adapter_mock, _, attendance_df, _ = when_uploading_attendance_events
 
         assert adapter_mock.insert_into_staging.call_args_list == [
             call(attendance_df, Table.ATTENDANCE),
         ]
 
     def it_inserts_into_production_table(when_uploading_attendance_events) -> None:
-        adapter_mock, insert_mock, _ = when_uploading_attendance_events
+        adapter_mock, insert_mock, _, _ = when_uploading_attendance_events
 
         assert insert_mock.call_args_list == [
             call(adapter_mock, Table.ATTENDANCE, ["SourceSystem"])
         ]
 
     def it_updates_production_table(when_uploading_attendance_events) -> None:
-        adapter_mock, _, _ = when_uploading_attendance_events
+        adapter_mock, _, _, _ = when_uploading_attendance_events
 
         assert adapter_mock.copy_updates_to_production.call_args_list == [
             call(Table.ATTENDANCE, ["SourceSystem"])
         ]
 
     def it_soft_deletes_from_production_table(when_uploading_attendance_events) -> None:
-        adapter_mock, _, _ = when_uploading_attendance_events
+        adapter_mock, _, _, delete_mock = when_uploading_attendance_events
 
-        assert adapter_mock.soft_delete_from_production.call_args_list == [
-            call(Table.ATTENDANCE, SOURCE_SYSTEM)
+        assert delete_mock.call_args_list == [
+            call(adapter_mock, Table.ATTENDANCE, SOURCE_SYSTEM)
         ]
 
     def it_re_enables_attendance_events_natural_key(
         when_uploading_attendance_events,
     ) -> None:
-        adapter_mock, _, _ = when_uploading_attendance_events
+        adapter_mock, _, _, _ = when_uploading_attendance_events
 
         assert adapter_mock.enable_staging_natural_key_index.call_args_list == [
             call(Table.ATTENDANCE)

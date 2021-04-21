@@ -9,13 +9,12 @@
 # looping logic should go into other modules where they can be tested easily.
 
 import logging
-import os
-from typing import Callable, Optional, Set
+from os.path import abspath
+from typing import Callable, List
 from functools import lru_cache
 
 from pandas import DataFrame
 
-from edfi_lms_ds_loader.helpers.constants import Table
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
 from edfi_lms_ds_loader import migrator
 from edfi_lms_file_utils import file_reader, file_repository
@@ -56,70 +55,53 @@ def _get_assignments_df(csv_path: str) -> DataFrame:
 def _get_unprocessed_file_paths(
     db_adapter: MssqlLmsOperations,
     resource_name: str,
-    get_all_paths_callback: Callable,
-) -> Set[str]:
+    file_paths: List[str],
+) -> List[str]:
     processed_files = db_adapter.get_processed_files(resource_name)
-    all_paths = set(get_all_paths_callback())
-    return all_paths - processed_files
+    all_paths = set(file_paths)
+    return sorted(all_paths - processed_files)
 
 
 def _upload_files_from_paths(
     db_adapter: MssqlLmsOperations,
-    files: Set[str],
-    table_name: str,
+    file_paths: List[str],
     resource_name: str,
-    read_file_callback: Callable,
-    custom_upload_function: Optional[Callable] = None,
+    read_file_callback: Callable[[str], DataFrame],
+    upload_function: Callable[[MssqlLmsOperations, DataFrame], None],
 ) -> None:
-    for path in files:
+    unprocessed_files: List[str] = _get_unprocessed_file_paths(
+        db_adapter, resource_name, file_paths
+    )
+
+    for path in unprocessed_files:
         data: DataFrame = read_file_callback(path)
         rows = data.shape[0]
         if rows != 0:
-            if custom_upload_function is not None:
-                custom_upload_function(db_adapter, data)
-            else:
-                df_to_db.upload_file(
-                    db_adapter,
-                    data,
-                    table_name,
-                    MssqlLmsOperations.insert_new_records_to_production,
-                )
+            upload_function(db_adapter, data)
         db_adapter.add_processed_file(path, resource_name, rows)
 
 
 def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-    def __get_all_file_paths_callback():
-        formatted_path = os.path.abspath(csv_path)
-        paths = file_repository.get_users_file_paths(formatted_path)
-        return paths
+    file_paths = file_repository.get_users_file_paths(abspath(csv_path))
 
-    unprocessed_files = _get_unprocessed_file_paths(
-        db_adapter, Resources.USERS, __get_all_file_paths_callback
-    )
     _upload_files_from_paths(
         db_adapter,
-        unprocessed_files,
-        Table.USER,
+        file_paths,
         Resources.USERS,
         file_reader.read_users_file,
+        df_to_db.upload_users,
     )
 
 
 def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-    def __get_all_file_paths_callback():
-        formatted_path = os.path.abspath(csv_path)
-        paths = file_repository.get_sections_file_paths(formatted_path)
-        return paths
+    file_paths = file_repository.get_sections_file_paths(abspath(csv_path))
 
-    unprocessed_files = _get_unprocessed_file_paths(
-        db_adapter, Resources.SECTIONS, __get_all_file_paths_callback
-    )
     _upload_files_from_paths(
         db_adapter,
-        unprocessed_files,
-        Table.SECTION,
+        file_paths,
         Resources.SECTIONS,
         file_reader.read_sections_file,
+        df_to_db.upload_sections,
     )
 
 
@@ -132,23 +114,16 @@ def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
         sections_df["SourceSystemIdentifier"]
     )  # we only need to access the last file
 
-    def __get_all_file_paths_callback():
-        formatted_path = os.path.abspath(csv_path)
-        paths = []
-        for section in sections:
-            paths = paths + file_repository.get_assignments_file_paths(
-                formatted_path, section
-            )
+    formatted_path = abspath(csv_path)
+    file_paths: List[str] = []
+    for section in sections:
+        file_paths = file_paths + file_repository.get_assignments_file_paths(
+            formatted_path, section
+        )
 
-        return paths
-
-    unprocessed_files = _get_unprocessed_file_paths(
-        db_adapter, Resources.ASSIGNMENTS, __get_all_file_paths_callback
-    )
     _upload_files_from_paths(
         db_adapter,
-        unprocessed_files,
-        Table.ASSIGNMENT,
+        file_paths,
         Resources.ASSIGNMENTS,
         file_reader.read_assignments_file,
         df_to_db.upload_assignments,
@@ -162,27 +137,19 @@ def _load_attendance_events(csv_path: str, db_adapter: MssqlLmsOperations) -> No
         return
     sections = set(sections_df["SourceSystemIdentifier"])
 
-    def __get_all_file_paths_callback():
-        formatted_path = os.path.abspath(csv_path)
-        paths = []
-        for section in sections:
-            paths = paths + file_repository.get_attendance_events_paths(
-                formatted_path, section
-            )
-
-        return paths
-
-    unprocessed_files = _get_unprocessed_file_paths(
-        db_adapter, Resources.ATTENDANCE_EVENTS, __get_all_file_paths_callback
-    )
+    formatted_path = abspath(csv_path)
+    file_paths: List[str] = []
+    for section in sections:
+        file_paths = file_paths + file_repository.get_attendance_events_paths(
+            formatted_path, section
+        )
 
     _upload_files_from_paths(
         db_adapter,
-        unprocessed_files,
-        Table.ATTENDANCE,
+        file_paths,
         Resources.ATTENDANCE_EVENTS,
         file_reader.read_attendance_events_file,
-        df_to_db.upload_attendance_events
+        df_to_db.upload_attendance_events,
     )
 
 
@@ -193,23 +160,16 @@ def _load_section_associations(csv_path: str, db_adapter: MssqlLmsOperations) ->
         return
     sections = set(sections_df["SourceSystemIdentifier"])
 
-    def __get_all_file_paths_callback():
-        formatted_path = os.path.abspath(csv_path)
-        paths = []
-        for section in sections:
-            paths = paths + file_repository.get_section_associations_file_paths(
-                formatted_path, section
-            )
+    formatted_path = abspath(csv_path)
+    file_paths: List[str] = []
+    for section in sections:
+        file_paths = file_paths + file_repository.get_section_associations_file_paths(
+            formatted_path, section
+        )
 
-        return paths
-
-    unprocessed_files = _get_unprocessed_file_paths(
-        db_adapter, Resources.SECTION_ASSOCIATIONS, __get_all_file_paths_callback
-    )
     _upload_files_from_paths(
         db_adapter,
-        unprocessed_files,
-        Table.SECTION_ASSOCIATION,
+        file_paths,
         Resources.SECTION_ASSOCIATIONS,
         file_reader.read_section_associations_file,
         df_to_db.upload_section_associations,
@@ -222,28 +182,21 @@ def _load_assignment_submissions(csv_path: str, db_adapter: MssqlLmsOperations) 
         logger.info("No assignments loaded. Skipping assignment submissions.")
         return
 
-    def __get_all_file_paths_callback():
-        formatted_path = os.path.abspath(csv_path)
-        paths = []
-        for section_id, assignment_id in zip(
-            assignments_df.LMSSectionSourceSystemIdentifier,
-            assignments_df.SourceSystemIdentifier,
-        ):
-            paths = paths + file_repository.get_submissions_file_paths(
-                formatted_path,
-                section_id,
-                assignment_id,
-            )
+    formatted_path = abspath(csv_path)
+    file_paths: List[str] = []
+    for section_id, assignment_id in zip(
+        assignments_df.LMSSectionSourceSystemIdentifier,
+        assignments_df.SourceSystemIdentifier,
+    ):
+        file_paths = file_paths + file_repository.get_submissions_file_paths(
+            formatted_path,
+            section_id,
+            assignment_id,
+        )
 
-        return paths
-
-    unprocessed_files = _get_unprocessed_file_paths(
-        db_adapter, Resources.SUBMISSIONS, __get_all_file_paths_callback
-    )
     _upload_files_from_paths(
         db_adapter,
-        unprocessed_files,
-        Table.ASSIGNMENT_SUBMISSION,
+        file_paths,
         Resources.SUBMISSIONS,
         file_reader.read_submissions_file,
         df_to_db.upload_assignment_submissions,
@@ -257,23 +210,16 @@ def _load_section_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> N
         return
     sections = set(sections_df["SourceSystemIdentifier"])
 
-    def __get_all_file_paths_callback():
-        formatted_path = os.path.abspath(csv_path)
-        paths = []
-        for section in sections:
-            paths = paths + file_repository.get_section_activities_file_paths(
-                formatted_path, section
-            )
+    formatted_path = abspath(csv_path)
+    file_paths: List[str] = []
+    for section in sections:
+        file_paths = file_paths + file_repository.get_section_activities_file_paths(
+            formatted_path, section
+        )
 
-        return paths
-
-    unprocessed_files = _get_unprocessed_file_paths(
-        db_adapter, Resources.SECTION_ACTIVITIES, __get_all_file_paths_callback
-    )
     _upload_files_from_paths(
         db_adapter,
-        unprocessed_files,
-        Table.SECTION_ACTIVITY,
+        file_paths,
         Resources.SECTION_ACTIVITIES,
         file_reader.read_section_activities_file,
         df_to_db.upload_section_activities,
@@ -281,21 +227,14 @@ def _load_section_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> N
 
 
 def _load_system_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
-    def __get_all_file_paths_callback():
-        formatted_path = os.path.abspath(csv_path)
-        paths = file_repository.get_system_activities_file_paths(formatted_path)
-        return paths
+    file_paths = file_repository.get_system_activities_file_paths(abspath(csv_path))
 
-    unprocessed_files = _get_unprocessed_file_paths(
-        db_adapter, Resources.SYSTEM_ACTIVITIES, __get_all_file_paths_callback
-    )
     _upload_files_from_paths(
         db_adapter,
-        unprocessed_files,
-        Table.SYSTEM_ACTIVITY,
+        file_paths,
         Resources.SYSTEM_ACTIVITIES,
         file_reader.read_system_activities_file,
-        df_to_db.upload_system_activities
+        df_to_db.upload_system_activities,
     )
 
 
