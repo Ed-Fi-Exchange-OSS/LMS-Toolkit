@@ -17,7 +17,7 @@ and the LMS DS Loader must be run once for each extractor's output directory.
 
 Limitations as of April 2021:
 
-* Data loads only supports SQL Server (tested on MSSQL 2019).
+* This tool only supports SQL Server (tested on MSSQL 2019). PostgreSQL support will be added at a future data.
 
 ## Getting Started
 
