@@ -64,7 +64,6 @@ CREATE TABLE lms.stg_LMSSectionActivity (
     ActivityTimeInMinutes INT NULL,
     SourceCreateDate DATETIME2(7) NULL,
     SourceLastModifiedDate DATETIME2(7) NULL,
-    DeletedAt DATETIME2(7) NULL,
     CreateDate DATETIME2 NOT NULL,
     LastModifiedDate DATETIME2 NOT NULL,
     CONSTRAINT stg_LMSSectionActivity_PK PRIMARY KEY CLUSTERED (

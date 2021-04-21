@@ -63,7 +63,6 @@ CREATE TABLE lms.stg_AssignmentSubmission (
     SourceLastModifiedDate DATETIME2 NULL,
     CreateDate DATETIME2 NOT NULL,
     LastModifiedDate DATETIME2 NOT NULL,
-    DeletedAt DATETIME2(7) NULL,
     CONSTRAINT stg_AssignmentSubmission_PK PRIMARY KEY CLUSTERED (
         StagingId ASC
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
