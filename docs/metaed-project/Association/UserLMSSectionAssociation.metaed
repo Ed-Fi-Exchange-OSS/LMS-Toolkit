@@ -23,12 +23,6 @@ Association LMSUserLMSSectionAssociation
         documentation "The status of the user section association. E.g., Active, Inactive, Withdrawn."
         is required
         role name Enrollment
-    date StartDate
-        documentation "Month, day, and year of the user's entry or assignment to the section."
-        is optional
-    date EndDate
-        documentation "Month, day, and year of the user's withdrawal or exit from the section."
-        is optional
     datetime SourceCreateDate
         documentation "The source system datetime the record was created."
         is optional
