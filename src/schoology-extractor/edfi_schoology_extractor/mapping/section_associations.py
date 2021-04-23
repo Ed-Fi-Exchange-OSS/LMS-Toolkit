@@ -41,8 +41,6 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
             the source system
         SourceSystem: The system code or name providing the user data
         EnrollmentStatus: Possible values are Active, Expired, Invite pending, Request Pending, Archived
-        StartDate: Date when the section-association becomes Active
-        EndDate: Date when the section-association changes from Active to another status
         LMSUserSourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source
             system
         LMSSectionSourceSystemIdentifier: A unique number or alphanumeric code assigned to a section by the
@@ -79,13 +77,5 @@ def map_to_udm(enrollments_df: pd.DataFrame, section_id: int) -> pd.DataFrame:
     df["EnrollmentStatus"] = df["EnrollmentStatus"].apply(
         lambda x: _map_status_code_to_string(int(x))
     )
-
-    # Schoology does not provide starting and ending dates for their
-    # enrollments. We may try to interpolate them using the sync process to
-    # compare "today's status" to "yesterday's status", but that has not been
-    # decided. Therefore create these columns so that they show up in the final
-    # CSV output, but they will not be populated.
-    df["StartDate"] = None
-    df["EndDate"] = None
 
     return df

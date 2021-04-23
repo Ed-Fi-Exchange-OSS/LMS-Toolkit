@@ -50,7 +50,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             return map_to_udm(schoology_df, 234234)
 
         def it_should_have_correct_number_of_columns(result):
-            assert result.shape[1] == 11
+            assert result.shape[1] == 9
 
         def it_should_ignore_admin_users(result):
             assert result.shape[0] == 1
@@ -74,12 +74,6 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
 
         def it_should_preserve_received_last_modified_date(result):
             assert result["LastModifiedDate"].iloc[0] == "d"
-
-        def it_should_have_empty_start_date(result):
-            assert result["StartDate"].iloc[0] is None
-
-        def it_should_have_empty_end_date(result):
-            assert result["EndDate"].iloc[0] is None
 
         def it_should_have_empty_SourceCreateDate(result):
             assert result["SourceCreateDate"].iloc[0] == ""
