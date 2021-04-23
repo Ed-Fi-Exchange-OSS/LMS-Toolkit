@@ -22,7 +22,7 @@ def _read_csv(
     file: str,
     nrows: Optional[int] = None,
     data_types: Dict[str, str] = dict(),
-    extra_date_columns: List[str] = list()
+    extra_date_columns: List[str] = list(),
 ) -> pd.DataFrame:
     """
     Loads a CSV file into a DataFrame.
@@ -286,14 +286,7 @@ def read_section_associations_file(
         "LMSUserSourceSystemIdentifier": "string",
     }
 
-    extra_date_columns = ["StartDate", "EndDate"]
-
-    return _read_csv(
-        full_path,
-        nrows,
-        data_types=data_types,
-        extra_date_columns=extra_date_columns,
-    )
+    return _read_csv(full_path, nrows, data_types=data_types)
 
 
 def _get_data_for_section(
@@ -742,9 +735,7 @@ def read_attendance_events_file(
         "AttendanceStatus": "string",
     }
 
-    extra_date_columns = [
-        "EventDate"
-    ]
+    extra_date_columns = ["EventDate"]
 
     return _read_csv(full_path, nrows, data_types, extra_date_columns)
 
