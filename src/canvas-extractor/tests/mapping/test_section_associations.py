@@ -40,7 +40,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
             return map_to_udm_section_associations(df)
 
         def it_should_have_correct_number_of_columns(result):
-            assert result.shape[1] == 11
+            assert result.shape[1] == 9
 
         def it_should_have_canvas_as_source_system(result):
             assert result["SourceSystem"].iloc[0] == "Canvas"
@@ -53,9 +53,3 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
 
         def it_should_map_input_section_id_to_lms_section_source_system_identifier(result):
             assert result["LMSSectionSourceSystemIdentifier"].iloc[0] == "2"
-
-        def it_should_have_empty_start_date(result):
-            assert result["StartDate"].iloc[0] == ""
-
-        def it_should_have_empty_end_date(result):
-            assert result["EndDate"].iloc[0] == ""
