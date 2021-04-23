@@ -57,7 +57,7 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         row_count, column_count = association_df.shape
 
         assert row_count == 2
-        assert column_count == 11
+        assert column_count == 9
 
     def it_should_map_student_fields_correctly(associations_dicts):
         association_df: DataFrame = associations_dicts[COURSE_ID]
@@ -68,8 +68,6 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{STUDENT_USER_ID}-{COURSE_ID}"
         assert row_dict["EnrollmentStatus"] == ENROLLMENT_STATUS_ACTIVE
-        assert row_dict["StartDate"] == ""
-        assert row_dict["EndDate"] == ""
         assert row_dict["SourceCreateDate"] == ""
         assert row_dict["SourceLastModifiedDate"] == ""
         assert row_dict["CreateDate"] == STUDENT_CREATE_DATE
@@ -84,8 +82,6 @@ def describe_when_a_single_student_and_single_teacher_with_unique_fields_is_mapp
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{TEACHER_USER_ID}-{COURSE_ID}"
         assert row_dict["EnrollmentStatus"] == ENROLLMENT_STATUS_ACTIVE
-        assert row_dict["StartDate"] == ""
-        assert row_dict["EndDate"] == ""
         assert row_dict["SourceCreateDate"] == ""
         assert row_dict["SourceLastModifiedDate"] == ""
         assert row_dict["CreateDate"] == TEACHER_CREATE_DATE

@@ -264,8 +264,6 @@ CREATE TABLE [lms].[LMSUserLMSSectionAssociation] (
     [SourceSystemIdentifier] [NVARCHAR](255) NOT NULL,
     [SourceSystem] [NVARCHAR](255) NOT NULL,
     [EnrollmentStatus] [NVARCHAR](60) NOT NULL,
-    [StartDate] [DATE] NULL,
-    [EndDate] [DATE] NULL,
     [SourceCreateDate] [DATETIME2](7) NULL,
     [SourceLastModifiedDate] [DATETIME2](7) NULL,
     [Discriminator] [NVARCHAR](128) NULL,

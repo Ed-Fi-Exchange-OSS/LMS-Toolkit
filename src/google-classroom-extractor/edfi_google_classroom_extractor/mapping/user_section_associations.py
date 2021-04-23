@@ -29,14 +29,12 @@ def _students_or_teachers_to_user_section_associations_df(
     Notes
     -----
     UserSectionAssociation DataFrame columns are:
-        EndDate: Month, day, and year of the user's withdrawal or exit from the section
         EnrollmentStatus: The status of the user section association. E.g., Active,
             Inactive, Withdrawn
         LMSSectionSourceSystemIdentifier: A unique numeric identifier assigned to the section
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code
             assigned to a user by the source system
-        StartDate: Month, day, and year of the user's entry or assignment to the section
         LMSUserSourceSystemIdentifier: A unique numeric identifier assigned to the user
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS
@@ -70,12 +68,6 @@ def _students_or_teachers_to_user_section_associations_df(
 
     user_section_associations_df["SourceSystem"] = SOURCE_SYSTEM
     user_section_associations_df["EnrollmentStatus"] = ENROLLMENT_STATUS_ACTIVE
-    user_section_associations_df[
-        "StartDate"
-    ] = ""  # No enrollment start date available from API
-    user_section_associations_df[
-        "EndDate"
-    ] = ""  # No enrollment end date available from API
     user_section_associations_df["SourceCreateDate"] = ""  # No create date available from API
     user_section_associations_df[
         "SourceLastModifiedDate"
@@ -107,14 +99,12 @@ def students_and_teachers_to_user_section_associations_dfs(
     Notes
     -----
     UserSectionAssociation DataFrame columns are:
-        EndDate: Month, day, and year of the user's withdrawal or exit from the section
         EnrollmentStatus: The status of the user section association. E.g., Active,
             Inactive, Withdrawn
         LMSSectionSourceSystemIdentifier: A unique numeric identifier assigned to the section
         SourceSystem: The system code or name providing the user data
         SourceSystemIdentifier: A unique number or alphanumeric code
             assigned to a user by the source system
-        StartDate: Month, day, and year of the user's entry or assignment to the section
         LMSUserSourceSystemIdentifier: A unique numeric identifier assigned to the user
         SourceCreateDate: Date this record was created in the LMS
         SourceLastModifiedDate: Date this record was last updated in the LMS

@@ -47,8 +47,6 @@ def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
             the source system
         SourceSystem: The system code or name providing the user data
         EnrollmentStatus: Possible values are Active, Expired, Invite pending, Request Pending, Archived
-        StartDate: Date when the section-association becomes Active
-        EndDate: Date when the section-association changes from Active to another status
         LMSUserSourceSystemIdentifier: A unique number or alphanumeric code assigned to a user by the source
             system
         LMSSectionSourceSystemIdentifier: A unique number or alphanumeric code assigned to a section by the
@@ -64,8 +62,6 @@ def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
 
     assert "id" in enrollments_df.columns
     assert "enrollment_state" in enrollments_df.columns
-    assert "start_at" in enrollments_df.columns
-    assert "end_at" in enrollments_df.columns
     assert "user_id" in enrollments_df.columns
     assert "course_section_id" in enrollments_df.columns
     assert "created_at" in enrollments_df.columns
@@ -75,8 +71,6 @@ def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
         [
             "id",
             "enrollment_state",
-            "start_at",
-            "end_at",
             "user_id",
             "course_section_id",
             "created_at",
@@ -90,8 +84,6 @@ def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
         columns={
             "id": "SourceSystemIdentifier",
             "enrollment_state": "EnrollmentStatus",
-            "start_at": "StartDate",
-            "end_at": "EndDate",
             "user_id": "LMSUserSourceSystemIdentifier",
             "course_section_id": "LMSSectionSourceSystemIdentifier",
             "created_at": "SourceCreateDate",
@@ -99,10 +91,6 @@ def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
         },
         inplace=True,
     )
-
-    enrollments_df["StartDate"] = enrollments_df["StartDate"].apply(_get_date_formated)
-
-    enrollments_df["EndDate"] = enrollments_df["EndDate"].apply(_get_date_formated)
 
     enrollments_df["SourceCreateDate"] = enrollments_df["SourceCreateDate"].apply(
         _get_date_formated
