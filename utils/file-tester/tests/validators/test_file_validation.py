@@ -742,8 +742,6 @@ def describe_when_validating_section_associations_file():
                 "SourceSystemIdentifier",
                 "SourceSystem",
                 "EnrollmentStatus",
-                "StartDate",
-                "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
                 "CreateDate",
@@ -756,8 +754,6 @@ def describe_when_validating_section_associations_file():
                     "SourceSystemIdentifier",
                     "SourceSystem",
                     "EnrollmentStatus",
-                    "9876-12-16 15:16:17",
-                    "9876-12-16 15:16:17",
                     "LMSUserSourceSystemIdentifier",
                     "LMSSectionSourceSystemIdentifier",
                     "9876-12-16 15:16:17",
@@ -798,8 +794,6 @@ def describe_when_validating_section_associations_file():
                 "SourceSystemIdentifier",
                 "SourceSystem",
                 "EnrollmentStatus",
-                "StartDate",
-                "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
                 "CreateDate",
@@ -812,8 +806,6 @@ def describe_when_validating_section_associations_file():
                     "SourceSystemIdentifier",
                     "SourceSystem",
                     "EnrollmentStatus",
-                    "9876-12-16 15:16:17",
-                    "9876-12-16 15:16:17",
                     "LMSUserSourceSystemIdentifier",
                     "LMSSectionSourceSystemIdentifier",
                     "9876-12-16 15:16:17",
@@ -849,8 +841,6 @@ def describe_when_validating_section_associations_file():
                 "SourceSystemIdentifier",
                 "SourceSystem",
                 "EnrollmentStatus",
-                "StartDate",
-                "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
                 "CreateDate",
@@ -864,8 +854,6 @@ def describe_when_validating_section_associations_file():
                     "SourceSystemIdentifier",
                     "SourceSystem",
                     "EnrollmentStatus",
-                    "9876-12-16 15:16:17",
-                    "9876-12-16 15:16:17",
                     "LMSUserSourceSystemIdentifier",
                     "LMSSectionSourceSystemIdentifier",
                     "9876-12-16 15:16:17",
@@ -897,8 +885,6 @@ def describe_when_validating_section_associations_file():
                 "SourceSystemIdentifier",
                 "SourceSystem",
                 "EnrollmentStatus",
-                "StartDate",
-                "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
                 "CreateDate",
@@ -913,8 +899,6 @@ def describe_when_validating_section_associations_file():
                 "SourceSystemIdentifier",
                 "SourceSystem",
                 "EnrollmentStatus",
-                "StartDate",
-                "EndDate",
                 "LMSUserSourceSystemIdentifier",
                 "LMSSectionSourceSystemIdentifier",
                 "CreateDate",
@@ -929,10 +913,6 @@ def describe_when_validating_section_associations_file():
                 data[0].append("SourceSystem")
             if "EnrollmentStatus" != missing:
                 data[0].append("EnrollmentStatus")
-            if "StartDate" != missing:
-                data[0].append("StartDate")
-            if "EndDate" != missing:
-                data[0].append("EndDate")
             if "LMSUserSourceSystemIdentifier" != missing:
                 data[0].append("LMSUserSourceSystemIdentifier")
             if "LMSSectionSourceSystemIdentifier" != missing:

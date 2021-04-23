@@ -216,8 +216,6 @@ def validate_section_associations_file(
             "SourceSystemIdentifier",
             "SourceSystem",
             "EnrollmentStatus",
-            "StartDate",
-            "EndDate",
             "LMSUserSourceSystemIdentifier",
             "LMSSectionSourceSystemIdentifier",
             "CreateDate",
