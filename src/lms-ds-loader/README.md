@@ -57,6 +57,10 @@ poetry run python edfi_lms_ds_loader --server localhost --dbname lms_toolkit --u
 
 ## Developer Notes
 
+### Dev test database
+
+Create an empty SQL Server database named "test_integration_lms_toolkit". This is required to run the SQL Server integration pytests.
+
 ### Dev Operations
 
 1. Style check: `poetry run flake8`

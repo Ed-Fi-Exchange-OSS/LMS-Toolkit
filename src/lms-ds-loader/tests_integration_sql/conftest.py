@@ -14,19 +14,19 @@ from edfi_lms_ds_loader.migrator import migrate
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
 
-def _new_engine() -> Engine:
+def _new_mssql_engine() -> Engine:
     return create_engine(
         "mssql+pyodbc://localhost,1433/test_integration_lms_toolkit?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes",
     )
 
 
 @pytest.fixture(scope="session")
-def connection() -> Connection:
+def mssql_connection():
     """
     Fixture that sets up a connection to use, and migrate the tables.
     Assumes existence of local SQLServer DB named 'test_integration_lms_toolkit'
     """
-    engine = _new_engine()
+    engine = _new_mssql_engine()
     migrate(engine)
 
     connection = engine.connect()
@@ -35,7 +35,7 @@ def connection() -> Connection:
 
 
 @pytest.fixture(autouse=True)
-def test_db(connection: Connection, request) -> Tuple[MssqlLmsOperations, Connection]:
+def test_mssql_db(mssql_connection: Connection, request) -> Tuple[MssqlLmsOperations, Connection]:
     """
     Fixture that takes the set-up connection and wraps in a transaction. Transaction
     will be rolled-back automatically after each test.
@@ -44,14 +44,14 @@ def test_db(connection: Connection, request) -> Tuple[MssqlLmsOperations, Connec
     MssqlLmsOperations that uses that Connection. They may be used interchangeably.
     """
     # Wrap connection in transaction
-    transaction: Transaction = connection.begin()
+    transaction: Transaction = mssql_connection.begin()
 
     # Rollback transaction in finalizer when test is done
     request.addfinalizer(lambda: transaction.rollback())
 
     # New version of _exec using our transaction
     def replace_exec(self: MssqlLmsOperations, statement: str) -> int:
-        result = connection.execute(statement)
+        result = mssql_connection.execute(statement)
         if result:
             return int(result.rowcount)
         return 0
@@ -60,7 +60,7 @@ def test_db(connection: Connection, request) -> Tuple[MssqlLmsOperations, Connec
     def replace_insert_into_staging(self: MssqlLmsOperations, df: DataFrame, table: str):
         df.to_sql(
             f"stg_{table}",
-            con=connection,
+            con=mssql_connection,
             schema="lms",
             if_exists="append",
             index=False,
@@ -69,10 +69,10 @@ def test_db(connection: Connection, request) -> Tuple[MssqlLmsOperations, Connec
         )
 
     # Monkey-patch MssqlLmsOperations to use our transaction
-    MssqlLmsOperations._exec = replace_exec
-    MssqlLmsOperations.insert_into_staging = replace_insert_into_staging
+    MssqlLmsOperations._exec = replace_exec                                # type:ignore
+    MssqlLmsOperations.insert_into_staging = replace_insert_into_staging   # type:ignore
 
     # Initialize monkey-patched adapter with a dummy engine, doesn't need a real one now
     adapter: MssqlLmsOperations = MssqlLmsOperations(MagicMock())
 
-    return (adapter, connection)
+    return (adapter, mssql_connection)
