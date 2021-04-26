@@ -11,6 +11,13 @@ from edfi_google_classroom_extractor.helpers.arg_parser import (
 )
 
 
+TEST_SYNC_DATABASE_DIRECTORY = "test_sync_database_directory"
+TEST_LOG_LEVEL = "DEBUG"
+TEST_OUTPUT_DIRECTORY = "output_directory"
+TEST_START_DATE = "fake_date"
+TEST_END_DATE = "fake_end_date"
+
+
 def assert_error_message(capsys):
     out, err = capsys.readouterr()
 
@@ -51,26 +58,31 @@ def describe_when_parsing_arguments():
                 "-a",
                 "fake_account",
                 "-l",
-                "DEBUG",
+                TEST_LOG_LEVEL,
                 "-o",
-                "output_directory",
+                TEST_OUTPUT_DIRECTORY,
                 "-s",
-                "fake_date",
+                TEST_START_DATE,
                 "-e",
-                "fake_end_date"
+                TEST_END_DATE,
+                "-d",
+                TEST_SYNC_DATABASE_DIRECTORY
             ]
 
             # Act
             return parse_main_arguments(parameters)
 
         def it_should_load_the_log_level(result: MainArguments):
-            assert result.log_level == "DEBUG"
+            assert result.log_level == TEST_LOG_LEVEL
 
         def it_should_load_the_output_directory(result: MainArguments):
-            assert result.output_directory == "output_directory"
+            assert result.output_directory == TEST_OUTPUT_DIRECTORY
 
         def it_should_load_the_start_date(result: MainArguments):
-            assert result.usage_start_date == "fake_date"
+            assert result.usage_start_date == TEST_START_DATE
 
         def it_should_load_the_end_date(result: MainArguments):
-            assert result.usage_end_date == "fake_end_date"
+            assert result.usage_end_date == TEST_END_DATE
+
+        def it_should_load_the_sync_database_directory(result: MainArguments):
+            assert result.sync_database_directory == TEST_SYNC_DATABASE_DIRECTORY

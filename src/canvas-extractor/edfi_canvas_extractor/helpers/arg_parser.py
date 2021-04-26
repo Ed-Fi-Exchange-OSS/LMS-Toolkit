@@ -15,11 +15,6 @@ from . import constants
 class MainArguments:
     """
     Container for holding arguments parsed at the command line.
-
-    Parameters
-    ----------
-    log_level: str
-        The log level for the tool. (optional)
     """
     base_url: str
     access_token: str

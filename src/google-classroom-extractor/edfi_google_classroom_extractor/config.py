@@ -10,7 +10,6 @@ from google.oauth2 import service_account
 from sqlalchemy import create_engine
 import sqlalchemy
 
-SYNC_DATABASE_LOCATION_SUFFIX = "data"
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ def _is_running_in_notebook() -> bool:
     return not hasattr(main, "__file__")
 
 
-def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
+def get_sync_db_engine(sync_database_directory: str) -> sqlalchemy.engine.base.Engine:
     """
     Create a SQL Alchemy Engine for a SQLite file
 
@@ -39,14 +38,14 @@ def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
     """
     running_in_notebook: bool = _is_running_in_notebook()
     logger.debug("Running in Jupyter Notebook: %s", running_in_notebook)
-    sync_database_directory = (
-        os.path.join("..", SYNC_DATABASE_LOCATION_SUFFIX)
+    sync_database_path = (
+        os.path.join("..", sync_database_directory)
         if running_in_notebook
-        else SYNC_DATABASE_LOCATION_SUFFIX
+        else sync_database_directory
     )
-    logger.debug("Ensuring database directory at %s", os.path.abspath(sync_database_directory))
-    os.makedirs(sync_database_directory, exist_ok=True)
-    return create_engine(f"sqlite:///{sync_database_directory}/sync.sqlite")
+    logger.debug("Ensuring database directory at %s", os.path.abspath(sync_database_path))
+    os.makedirs(sync_database_path, exist_ok=True)
+    return create_engine(f"sqlite:///{sync_database_path}/sync.sqlite")
 
 
 def get_credentials(classroom_account: str) -> service_account.Credentials:
