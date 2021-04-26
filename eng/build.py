@@ -78,7 +78,8 @@ def _run_tests():
     _run_command([
         "poetry",
         "run",
-        "pytest"
+        "pytest",
+        "tests",
     ])
 
 
@@ -89,7 +90,8 @@ def _run_coverage():
         "coverage",
         "run",
         "-m",
-        "pytest"
+        "pytest",
+        "tests",
     ], exit_immediately=False)
     _run_command([
         "poetry",
@@ -106,7 +108,8 @@ def _run_coverage_html():
         "coverage",
         "run",
         "-m",
-        "pytest"
+        "pytest",
+        "tests",
     ], exit_immediately=False)
     _run_command([
         "poetry",
@@ -123,7 +126,8 @@ def _run_coverage_xml():
         "coverage",
         "run",
         "-m",
-        "pytest"
+        "pytest",
+        "tests",
     ], exit_immediately=False)
     _run_command([
         "poetry",
