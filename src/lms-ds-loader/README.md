@@ -57,9 +57,26 @@ poetry run python edfi_lms_ds_loader --server localhost --dbname lms_toolkit --u
 
 ## Developer Notes
 
-### Dev test database
+### Database-Enabled Integration Tests
 
-Create an empty SQL Server database named "test_integration_lms_toolkit". This is required to run the SQL Server integration pytests.
+This package contains SQL Server-integrated tests, in addition to the standard
+unit tests. The specialized tests are in the `tests_integration_sql` directory
+and they will run automatically if you call `pytest` with no arguments.
+
+Before running the tests, create an empty SQL Server database named
+"test_integration_lms_toolkit": `sqlcmd -Q "create database
+test_integration_lms_toolkit"`. This is required to run the SQL Server
+integration pytests.
+
+To run only the _unit tests_: `poetry run pytest tests`. To run only the
+integration tests, `poetry run pytest tests_integration_sql`.
+
+#### Writing New Tests
+
+Please note and follow the existing pattern for database-enabled integration
+tests, as this pattern was carefully tuned to support use of database
+transactions for rolling back changes and thereby leaving behind a clean
+database.
 
 ### Dev Operations
 
