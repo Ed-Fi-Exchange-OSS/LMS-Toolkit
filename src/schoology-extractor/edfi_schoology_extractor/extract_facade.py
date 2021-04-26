@@ -27,7 +27,7 @@ def _initialize(arguments: MainArguments) -> Tuple[SchoologyExtractFacade, sqlal
 
     try:
         request_client: RequestClient = RequestClient(arguments.client_key, arguments.client_secret)
-        db_engine = get_sync_db_engine()
+        db_engine = get_sync_db_engine(arguments.sync_database_directory)
 
         facade = SchoologyExtractFacade(request_client, arguments.page_size, db_engine)
 
