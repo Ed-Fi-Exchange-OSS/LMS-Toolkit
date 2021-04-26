@@ -27,6 +27,7 @@ class MainArguments:
     output_directory: str
     start_date: str
     end_date: str
+    sync_database_directory: str
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -107,6 +108,15 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="END_DATE",
     )
 
+    parser.add(  # type: ignore
+        "-d",
+        "--sync-database-directory",
+        required=False,
+        help="The directory for the sync database.",
+        type=str,
+        default="data",
+        env_var="SYNC_DATABASE_DIRECTORY",
+    )
     args_parsed = parser.parse_args(args_in)
 
     arguments = MainArguments(
@@ -116,6 +126,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         output_directory=args_parsed.output_directory,
         start_date=args_parsed.start_date,
         end_date=args_parsed.end_date,
+        sync_database_directory=args_parsed.sync_database_directory
     )
 
     return arguments

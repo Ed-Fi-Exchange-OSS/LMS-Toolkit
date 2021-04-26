@@ -177,7 +177,7 @@ def _get_system_activities(
 
 def run(arguments: MainArguments) -> None:
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
-    sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
+    sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine(arguments.sync_database_directory)
     succeeded: bool = True
 
     succeeded = _get_courses(

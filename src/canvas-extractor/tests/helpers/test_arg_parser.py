@@ -21,6 +21,7 @@ TEST_START_DATE = "3"
 TEST_END_DATE = "3"
 TEST_LOG_LEVEL = "DEBUG"
 TEST_OUTPUT_DIRECTORY = "5"
+TEST_SYNC_DATABASE_DIRECTORY = "test_sync_database_directory"
 
 
 def describe_when_parsing_arguments():
@@ -77,6 +78,8 @@ def describe_when_parsing_arguments():
                 TEST_LOG_LEVEL,
                 "-o",
                 TEST_OUTPUT_DIRECTORY,
+                "-d",
+                TEST_SYNC_DATABASE_DIRECTORY
             ]
 
             # Act
@@ -99,3 +102,6 @@ def describe_when_parsing_arguments():
 
         def it_should_load_the_end_date(result: MainArguments):
             assert result.end_date == TEST_END_DATE
+
+        def it_should_load_the_sync_database_directory(result: MainArguments):
+            assert result.sync_database_directory == TEST_SYNC_DATABASE_DIRECTORY
