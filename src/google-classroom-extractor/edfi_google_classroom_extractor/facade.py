@@ -55,7 +55,7 @@ def request(arguments: MainArguments) -> Optional[Result]:
             "classroom", "v1", credentials=credentials, cache_discovery=False
         )
 
-        sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine()
+        sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine(arguments.sync_database_directory)
 
         return request_all(
             classroom_resource,

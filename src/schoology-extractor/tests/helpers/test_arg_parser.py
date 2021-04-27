@@ -13,6 +13,14 @@ from edfi_schoology_extractor.helpers.arg_parser import (
 )
 
 
+FAKE_SECRET = "fake_secret"
+FAKE_KEY = "fake_key"
+FAKE_OUTPUT_DIRECTORY = "output_directory"
+FAKE_INPUT_DIRECTORY = "output_input"
+LOG_LEVEL = "DEBUG"
+TEST_SYNC_DATABASE_DIRECTORY = "test_sync_database_directory"
+
+
 def assert_error_message(capsys):
     out, err = capsys.readouterr()
 
@@ -25,16 +33,16 @@ def describe_when_parsing_arguments():
         @pytest.fixture
         def result() -> MainArguments:
             # Arrange
-            parameters = ["-s", "fake_secret", "-k", "fake_key"]
+            parameters = ["-s", FAKE_SECRET, "-k", FAKE_KEY]
 
             # Act
             return parse_main_arguments(parameters)
 
         def it_should_load_the_secret(result: MainArguments):
-            assert result.client_secret == "fake_secret"
+            assert result.client_secret == FAKE_SECRET
 
         def it_should_load_the_key(result: MainArguments):
-            assert result.client_key == "fake_key"
+            assert result.client_key == FAKE_KEY
 
         def it_should_default_to_warn_level(result: MainArguments):
             assert result.log_level == "INFO"
@@ -51,47 +59,52 @@ def describe_when_parsing_arguments():
             # Arrange
             parameters = [
                 "-s",
-                "fake_secret",
+                FAKE_SECRET,
                 "-k",
-                "fake_key",
+                FAKE_KEY,
                 "-o",
-                "output_directory",
+                FAKE_OUTPUT_DIRECTORY,
                 "-l",
-                "DEBUG",
+                LOG_LEVEL,
                 "-p",
                 "30",
                 "-i",
-                "input_directory",
+                FAKE_INPUT_DIRECTORY,
+                "-d",
+                TEST_SYNC_DATABASE_DIRECTORY
             ]
 
             # Act
             return parse_main_arguments(parameters)
 
         def it_should_load_the_input_directory(result: MainArguments):
-            assert result.input_directory == "input_directory"
+            assert result.input_directory == FAKE_INPUT_DIRECTORY
 
         def it_should_load_the_output_directory(result: MainArguments):
-            assert result.output_directory == "output_directory"
+            assert result.output_directory == FAKE_OUTPUT_DIRECTORY
 
         def it_should_load_the_log_level(result: MainArguments):
-            assert result.log_level == "DEBUG"
+            assert result.log_level == LOG_LEVEL
 
         def it_should_load_the_page_size(result: MainArguments):
             assert result.page_size == 30
 
+        def it_should_load_the_sync_database_directory(result: MainArguments):
+            assert result.sync_database_directory == TEST_SYNC_DATABASE_DIRECTORY
+
     def describe_given_parameters_are_not_valid():
         @pytest.fixture
         def default_parameters() -> List[str]:
-            return ["-s", "fake_secret", "-k", "fake_key"]
+            return ["-s", FAKE_SECRET, "-k", FAKE_KEY]
 
         def given_client_key_parameter_is_missing_then_throw_error(capsys):
-            args = ["-s", "fake_secret"]
+            args = ["-s", FAKE_SECRET]
             with pytest.raises(SystemExit):
                 parse_main_arguments(args)
                 assert_error_message(capsys)
 
         def given_client_secret_parameter_is_missing_then_throw_error(capsys):
-            args = ["-k", "fake_key"]
+            args = ["-k", FAKE_KEY]
             with pytest.raises(SystemExit):
                 parse_main_arguments(args)
                 assert_error_message(capsys)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-canvas-extractor"
-version = "1.0.0-alpha.3"
+version = "1.0.0-alpha.4"
 homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 description = "Extract tool for retrieving student data from Canvas"

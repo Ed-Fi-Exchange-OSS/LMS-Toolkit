@@ -14,13 +14,12 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 
-SYNC_DATABASE_LOCATION_SUFFIX = "data"
 USAGE_TABLE_NAME = "USAGE_PROCESSED_FILES"
 
 logger = logging.getLogger(__name__)
 
 
-def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
+def get_sync_db_engine(sync_database_directory: str) -> sqlalchemy.engine.base.Engine:
     """
     Create a SQL Alchemy Engine for a SQLite file
 
@@ -29,7 +28,6 @@ def get_sync_db_engine() -> sqlalchemy.engine.base.Engine:
     sqlalchemy.engine.base.Engine
         a SQL Alchemy Engine
     """
-    sync_database_directory = os.path.join(SYNC_DATABASE_LOCATION_SUFFIX)
     logger.debug(
         "Ensuring database directory at %s", os.path.abspath(sync_database_directory)
     )

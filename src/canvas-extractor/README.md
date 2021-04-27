@@ -64,6 +64,7 @@ Supported parameters:
 | Base Canvas URL | yes | `-b` or `--base-url` | CANVAS_BASE_URL |
 | Canvas API access token | yes | `-a` or `--access-token` | CANVAS_ACCESS_TOKEN |
 | Output Directory | no (default: [working directory]/data) | `-o` or `--output-directory` | OUTPUT_DIRECTORY |
+| Sync database directory | no (default: [working directory]/data) | `-d` or `--sync-database-directory` | SYNC_DATABASE_DIRECTORY |
 | Start date*, yyyy-mm-dd format | yes | `-s` or `--start_date` | START_DATE |
 | End date*, yyyy-mm-dd format | yes | `-e` or `--end_date` | END_DATE |
 | Log level** | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |

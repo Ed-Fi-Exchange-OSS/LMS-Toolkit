@@ -15,11 +15,6 @@ from . import constants
 class MainArguments:
     """
     Container for holding arguments parsed at the command line.
-
-    Parameters
-    ----------
-    log_level: str
-        The log level for the tool. (optional)
     """
     base_url: str
     access_token: str
@@ -27,6 +22,7 @@ class MainArguments:
     output_directory: str
     start_date: str
     end_date: str
+    sync_database_directory: str
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -107,6 +103,15 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="END_DATE",
     )
 
+    parser.add(  # type: ignore
+        "-d",
+        "--sync-database-directory",
+        required=False,
+        help="The directory for the sync database.",
+        type=str,
+        default="data",
+        env_var="SYNC_DATABASE_DIRECTORY",
+    )
     args_parsed = parser.parse_args(args_in)
 
     arguments = MainArguments(
@@ -116,6 +121,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         output_directory=args_parsed.output_directory,
         start_date=args_parsed.start_date,
         end_date=args_parsed.end_date,
+        sync_database_directory=args_parsed.sync_database_directory
     )
 
     return arguments

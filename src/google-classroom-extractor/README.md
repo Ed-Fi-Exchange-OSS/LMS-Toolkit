@@ -63,7 +63,8 @@ Supported parameters:
 | ----------- | -------- | --------------------- | -------------------- |
 | The email address of the Google Classroom admin account. | yes | `-a` or `--classroom-account` | CLASSROOM_ACCOUNT |
 | The log level for the tool. | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
-| The output directory for the generated csv files. | no (default: data/) | `-s` or `--usage-start-date` | OUTPUT_PATH |
+| The output directory for the generated csv files. | no (default: [working directory]/data) | `-o` or `--output-directory` | OUTPUT_PATH |
+| Sync database directory | no (default: [working directory]/data) | `-d` or `--sync-database-directory` | SYNC_DATABASE_DIRECTORY |
 | Start date*, yyyy-mm-dd format | no (default: today) | `-s` or `--usage-start-date` | START_DATE |
 | End date*, yyyy-mm-dd format | no (default: today) | `-e` or `--usage-end-date` | END_DATE |
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |

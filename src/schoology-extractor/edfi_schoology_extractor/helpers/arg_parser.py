@@ -39,6 +39,7 @@ class MainArguments:
     log_level: str
     page_size: int
     input_directory: str
+    sync_database_directory: str
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -116,6 +117,16 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="SCHOOLOGY_INPUT_DIRECTORY",
     )
 
+    parser.add(  # type: ignore
+        "-d",
+        "--sync-database-directory",
+        required=False,
+        help="The directory for the sync database.",
+        type=str,
+        default="data",
+        env_var="SYNC_DATABASE_DIRECTORY",
+    )
+
     args_parsed = parser.parse_args(args_in)
     # Required
     assert isinstance(
@@ -143,6 +154,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         log_level=args_parsed.log_level,
         page_size=args_parsed.page_size,
         input_directory=args_parsed.input_directory,
+        sync_database_directory=args_parsed.sync_database_directory
     )
 
     return arguments
