@@ -158,7 +158,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "edfi-canvas-extractor"
-version = "1.0.0a3"
+version = "1.0.0a4"
 description = "Extract tool for retrieving student data from Canvas"
 category = "main"
 optional = false
@@ -180,7 +180,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-google-classroom-extractor"
-version = "1.0.0a5"
+version = "1.0.0a6"
 description = "Extract tool for retrieving student data from Google Classroom"
 category = "main"
 optional = false
@@ -249,7 +249,7 @@ pandas = ">=1.1.4,<2.0.0"
 
 [[package]]
 name = "edfi-schoology-extractor"
-version = "1.0.0a3"
+version = "1.0.0a4"
 description = "Extract tool for retrieving student data from Canvas"
 category = "main"
 optional = false
@@ -1299,7 +1299,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "3dec7a3b6e0b98e7a9370ccfab58771fed0a93fc77a60d6fa9da45ff09497f3d"
+content-hash = "a9c26939e80c0640ce19a94c0b7e9daf254802ed7f5f52c702eb2029b57a2b8e"
 
 [metadata.files]
 appnope = [
@@ -1413,12 +1413,12 @@ defusedxml = [
     {file = "defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69"},
 ]
 edfi-canvas-extractor = [
-    {file = "edfi-canvas-extractor-1.0.0a3.tar.gz", hash = "sha256:f5bcd3c7ce5cb4b28e592e178c877843829e94e4c9d959c0784f1d62457bdd8d"},
-    {file = "edfi_canvas_extractor-1.0.0a3-py3-none-any.whl", hash = "sha256:1876ad371e71baf07b4ef9f2a0a7244c7d1bca0c98f759ff72a3ed32226bdb47"},
+    {file = "edfi-canvas-extractor-1.0.0a4.tar.gz", hash = "sha256:185f8b173b3410de7ce86a7c8069b36ef2457a40d3f07ee64acaa20ff0be058b"},
+    {file = "edfi_canvas_extractor-1.0.0a4-py3-none-any.whl", hash = "sha256:6fe69486ad504fa19d7271aaf75947c053463273ecab1a0bd6cf2864200f97f5"},
 ]
 edfi-google-classroom-extractor = [
-    {file = "edfi-google-classroom-extractor-1.0.0a5.tar.gz", hash = "sha256:e626b4d0bbac28ac9fb1d782cf71eec08ed0df3d09c5c7cb74bb52e40730c390"},
-    {file = "edfi_google_classroom_extractor-1.0.0a5-py3-none-any.whl", hash = "sha256:376697e8c59629fcd6a74e70fc9a58a9b1d0edc1cf90982c587e94532a09b65b"},
+    {file = "edfi-google-classroom-extractor-1.0.0a6.tar.gz", hash = "sha256:a99fc92835bdf880479daf609f3387812c576f8fae2bfd51d8aaefada51a559e"},
+    {file = "edfi_google_classroom_extractor-1.0.0a6-py3-none-any.whl", hash = "sha256:d7a993518a25ccad83cb50376b3d3267aed89de3586751d45004615f5cacf5b0"},
 ]
 edfi-lms-ds-loader = [
     {file = "edfi-lms-ds-loader-1.0.0a1.tar.gz", hash = "sha256:f91ea25631dc7b2eaefac728b4278ba469bd0529a7daf6f89724f0ca8bc04021"},
@@ -1433,8 +1433,8 @@ edfi-lms-file-utils = [
     {file = "edfi_lms_file_utils-1.0.0b16-py3-none-any.whl", hash = "sha256:047517f99ca2b4098fa32b595011bab0a5110e4aee68e2ae90af6254f31c845c"},
 ]
 edfi-schoology-extractor = [
-    {file = "edfi-schoology-extractor-1.0.0a3.tar.gz", hash = "sha256:bcb9814e05715d414b102f4e5d240a2e3e961bc63a2549e296f5303f86f9f041"},
-    {file = "edfi_schoology_extractor-1.0.0a3-py3-none-any.whl", hash = "sha256:faf8513c36720a073d238a6386edb08bb669da248df1855236e62ff689743f97"},
+    {file = "edfi-schoology-extractor-1.0.0a4.tar.gz", hash = "sha256:2ffd139cfa022bb5a1cd87cf8eed9c8faa12b12e5ad5411b5f6ef6eeb074f00c"},
+    {file = "edfi_schoology_extractor-1.0.0a4-py3-none-any.whl", hash = "sha256:091247cdb608842c9f6c995fa55357943d99a21161e84bc54122499d02044565"},
 ]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
