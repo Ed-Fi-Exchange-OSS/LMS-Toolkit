@@ -35,16 +35,9 @@ def get_sync_db_engine(sync_database_directory: str) -> sqlalchemy.engine.base.E
     sqlalchemy.engine.base.Engine
         a SQL Alchemy Engine
     """
-    running_in_notebook: bool = _is_running_in_notebook()
-    logger.debug("Running in Jupyter Notebook: %s", running_in_notebook)
-    sync_database_path = (
-        os.path.join("..", sync_database_directory)
-        if running_in_notebook
-        else sync_database_directory
-    )
-    logger.debug("Ensuring database directory at %s", os.path.abspath(sync_database_path))
-    os.makedirs(sync_database_path, exist_ok=True)
-    return create_engine(f"sqlite:///{sync_database_path}/sync.sqlite")
+    logger.debug("Ensuring database directory at %s", os.path.abspath(sync_database_directory))
+    os.makedirs(sync_database_directory, exist_ok=True)
+    return create_engine(f"sqlite:///{sync_database_directory}/sync.sqlite")
 
 
 def get_canvas_api(canvas_base_url: str, canvas_access_token: str) -> Canvas:
