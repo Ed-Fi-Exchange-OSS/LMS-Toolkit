@@ -11,6 +11,7 @@ from typing import Dict, Optional, Tuple
 from pandas import DataFrame
 import sqlalchemy
 
+from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from edfi_schoology_extractor.helpers.arg_parser import MainArguments
 from edfi_schoology_extractor.api.request_client import RequestClient
 from edfi_schoology_extractor.helpers import csv_writer
@@ -60,6 +61,7 @@ def _create_file_from_dataframe(df: Optional[DataFrame], file_name) -> bool:
         return False
 
 
+@catch_exceptions
 def _get_users(extractorFacade: SchoologyExtractFacade) -> DataFrame:
     return extractorFacade.get_users()
 
@@ -69,18 +71,21 @@ def _get_users(extractorFacade: SchoologyExtractFacade) -> DataFrame:
 result_bucket: Dict[str, DataFrame] = {}
 
 
+@catch_exceptions
 def _get_sections(extractorFacade: SchoologyExtractFacade) -> DataFrame:
     sections_df: DataFrame = extractorFacade.get_sections()
     result_bucket["sections"] = sections_df
     return sections_df
 
 
+@catch_exceptions
 def _get_assignments(extractorFacade: SchoologyExtractFacade, section_id: int) -> Optional[DataFrame]:
     assignments_df: DataFrame = extractorFacade.get_assignments(section_id)
     result_bucket["assignments"] = assignments_df
     return assignments_df
 
 
+@catch_exceptions
 def _get_section_activities(extractorFacade: SchoologyExtractFacade, section_id: int) -> Optional[DataFrame]:
     section_activities_df: DataFrame = extractorFacade.get_section_activities(
         section_id
@@ -90,10 +95,12 @@ def _get_section_activities(extractorFacade: SchoologyExtractFacade, section_id:
     return section_activities_df
 
 
+@catch_exceptions
 def _get_submissions(extractorFacade: SchoologyExtractFacade, assignment_id: int, section_id: int) -> Optional[DataFrame]:
     return extractorFacade.get_submissions(assignment_id, section_id)
 
 
+@catch_exceptions
 def _get_section_associations(extractorFacade: SchoologyExtractFacade, section_id: int) -> DataFrame:
     section_associations_df: DataFrame = extractorFacade.get_section_associations(
         section_id
@@ -103,6 +110,7 @@ def _get_section_associations(extractorFacade: SchoologyExtractFacade, section_i
     return section_associations_df
 
 
+@catch_exceptions
 def _get_attendance_events(extractorFacade: SchoologyExtractFacade, section_id: int) -> DataFrame:
     section_associations_df: DataFrame = result_bucket["section_associations"]
     attendance_events_df: DataFrame = extractorFacade.get_attendance_events(
@@ -112,6 +120,7 @@ def _get_attendance_events(extractorFacade: SchoologyExtractFacade, section_id: 
     return attendance_events_df
 
 
+@catch_exceptions
 def _get_system_activities(input_directory: str, db_engine: sqlalchemy.engine.base.Engine) -> DataFrame:
     return usage_analytics_facade.get_system_activities(input_directory, db_engine)
 
