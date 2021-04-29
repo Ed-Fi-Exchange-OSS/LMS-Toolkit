@@ -4,6 +4,8 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 from typing import Callable
 from canvasapi.exceptions import CanvasException
+from requests import RequestException
+import socket
 from opnieuw import retry
 
 MAX_TOTAL_CALLS = 4
@@ -11,7 +13,13 @@ RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
 
 
 @retry(
-    retry_on_exceptions=(IOError, CanvasException),
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error
+        ),
     max_calls_total=MAX_TOTAL_CALLS,
     retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
 )

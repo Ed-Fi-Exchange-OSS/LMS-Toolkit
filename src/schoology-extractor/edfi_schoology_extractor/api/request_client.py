@@ -10,10 +10,11 @@ import time
 import random
 from typing import Union
 from http import HTTPStatus
+import socket
 
 from opnieuw import retry
 from requests import Response
-from requests.exceptions import ConnectionError, HTTPError, Timeout
+from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 from requests.packages.urllib3.exceptions import ProtocolError  # type: ignore
 from requests_oauthlib import OAuth1Session  # type: ignore
 
@@ -182,11 +183,15 @@ class RequestClient:
 
     @retry(
         retry_on_exceptions=(
+            IOError,
             ConnectionError,
+            RequestException,
             HTTPError,
             ProtocolError,
             Timeout,
             RuntimeError,
+            socket.timeout,
+            socket.error
         ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
@@ -228,11 +233,15 @@ class RequestClient:
 
     @retry(
         retry_on_exceptions=(
+            IOError,
             ConnectionError,
+            RequestException,
             HTTPError,
             ProtocolError,
             Timeout,
             RuntimeError,
+            socket.timeout,
+            socket.error
         ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
@@ -277,11 +286,15 @@ class RequestClient:
 
     @retry(
         retry_on_exceptions=(
+            IOError,
             ConnectionError,
+            RequestException,
             HTTPError,
             ProtocolError,
             Timeout,
             RuntimeError,
+            socket.timeout,
+            socket.error
         ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
@@ -329,11 +342,15 @@ class RequestClient:
 
     @retry(
         retry_on_exceptions=(
+            IOError,
             ConnectionError,
+            RequestException,
             HTTPError,
             ProtocolError,
             Timeout,
             RuntimeError,
+            socket.timeout,
+            socket.error
         ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
@@ -379,11 +396,15 @@ class RequestClient:
 
     @retry(
         retry_on_exceptions=(
+            IOError,
             ConnectionError,
+            RequestException,
             HTTPError,
             ProtocolError,
             Timeout,
             RuntimeError,
+            socket.timeout,
+            socket.error
         ),
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
