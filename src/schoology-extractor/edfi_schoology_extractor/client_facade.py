@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class SchoologyExtractFacade:
+class ClientFacade:
     """
     Provides business logic to orchestrate retrieval of data from the LMS and
     reshape it into the Ed-Fi LMS Unified Data Model (UDM).

@@ -17,19 +17,19 @@ from edfi_schoology_extractor.helpers import csv_writer
 from edfi_schoology_extractor import usage_analytics_facade
 import edfi_schoology_extractor.lms_filesystem as lms
 from edfi_schoology_extractor.helpers.sync import get_sync_db_engine
-from edfi_schoology_extractor.client_facade import SchoologyExtractFacade
+from edfi_schoology_extractor.client_facade import ClientFacade
 
 logger = logging.getLogger(__name__)
 
 
-def _initialize(arguments: MainArguments) -> Tuple[SchoologyExtractFacade, sqlalchemy.engine.base.Engine]:
+def _initialize(arguments: MainArguments) -> Tuple[ClientFacade, sqlalchemy.engine.base.Engine]:
     global logger
 
     try:
         request_client: RequestClient = RequestClient(arguments.client_key, arguments.client_secret)
         db_engine = get_sync_db_engine(arguments.sync_database_directory)
 
-        facade = SchoologyExtractFacade(request_client, arguments.page_size, db_engine)
+        facade = ClientFacade(request_client, arguments.page_size, db_engine)
 
         return facade, db_engine
     except BaseException as e:
@@ -60,7 +60,7 @@ def _create_file_from_dataframe(df: Optional[DataFrame], file_name) -> bool:
         return False
 
 
-def _get_users(extractorFacade: SchoologyExtractFacade) -> DataFrame:
+def _get_users(extractorFacade: ClientFacade) -> DataFrame:
     return extractorFacade.get_users()
 
 
@@ -69,19 +69,19 @@ def _get_users(extractorFacade: SchoologyExtractFacade) -> DataFrame:
 result_bucket: Dict[str, DataFrame] = {}
 
 
-def _get_sections(extractorFacade: SchoologyExtractFacade) -> DataFrame:
+def _get_sections(extractorFacade: ClientFacade) -> DataFrame:
     sections_df: DataFrame = extractorFacade.get_sections()
     result_bucket["sections"] = sections_df
     return sections_df
 
 
-def _get_assignments(extractorFacade: SchoologyExtractFacade, section_id: int) -> Optional[DataFrame]:
+def _get_assignments(extractorFacade: ClientFacade, section_id: int) -> Optional[DataFrame]:
     assignments_df: DataFrame = extractorFacade.get_assignments(section_id)
     result_bucket["assignments"] = assignments_df
     return assignments_df
 
 
-def _get_section_activities(extractorFacade: SchoologyExtractFacade, section_id: int) -> Optional[DataFrame]:
+def _get_section_activities(extractorFacade: ClientFacade, section_id: int) -> Optional[DataFrame]:
     section_activities_df: DataFrame = extractorFacade.get_section_activities(
         section_id
     )
@@ -90,11 +90,11 @@ def _get_section_activities(extractorFacade: SchoologyExtractFacade, section_id:
     return section_activities_df
 
 
-def _get_submissions(extractorFacade: SchoologyExtractFacade, assignment_id: int, section_id: int) -> Optional[DataFrame]:
+def _get_submissions(extractorFacade: ClientFacade, assignment_id: int, section_id: int) -> Optional[DataFrame]:
     return extractorFacade.get_submissions(assignment_id, section_id)
 
 
-def _get_section_associations(extractorFacade: SchoologyExtractFacade, section_id: int) -> DataFrame:
+def _get_section_associations(extractorFacade: ClientFacade, section_id: int) -> DataFrame:
     section_associations_df: DataFrame = extractorFacade.get_section_associations(
         section_id
     )
@@ -103,7 +103,7 @@ def _get_section_associations(extractorFacade: SchoologyExtractFacade, section_i
     return section_associations_df
 
 
-def _get_attendance_events(extractorFacade: SchoologyExtractFacade, section_id: int) -> DataFrame:
+def _get_attendance_events(extractorFacade: ClientFacade, section_id: int) -> DataFrame:
     section_associations_df: DataFrame = result_bucket["section_associations"]
     attendance_events_df: DataFrame = extractorFacade.get_attendance_events(
         section_id, section_associations_df
