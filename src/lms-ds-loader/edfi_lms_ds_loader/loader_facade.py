@@ -249,10 +249,10 @@ def run_loader(arguments: MainArguments) -> None:
 
     _load_users(csv_path, db_adapter)
     _load_sections(csv_path, db_adapter)
+    _load_section_associations(csv_path, db_adapter)
     _load_assignments(csv_path, db_adapter)
     _load_assignment_submissions(csv_path, db_adapter)
     _load_attendance_events(csv_path, db_adapter)
-    _load_section_associations(csv_path, db_adapter)
     _load_section_activities(csv_path, db_adapter)
     _load_system_activities(csv_path, db_adapter)
 
