@@ -40,6 +40,11 @@ def _initialize(
 
         facade = ClientFacade(request_client, arguments.page_size, db_engine)
 
+        # Will generate an exception if directory is not valid
+        os.lstat(arguments.output_directory)
+        if arguments.input_directory:
+            os.lstat(arguments.input_directory)
+
         return facade, db_engine
     except BaseException as e:
         logger.critical(e)
