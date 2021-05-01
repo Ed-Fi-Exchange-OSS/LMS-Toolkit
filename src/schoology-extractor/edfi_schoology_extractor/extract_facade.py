@@ -184,7 +184,7 @@ def run(arguments: MainArguments) -> None:
     _get_users(facade, arguments.output_directory)
 
     _get_sections(facade, arguments.output_directory)
-    succeeded = result_bucket["sections"] is not None
+    succeeded = result_bucket.get("sections", None) is not None
 
     if not succeeded:
         logger.critical(
@@ -195,7 +195,7 @@ def run(arguments: MainArguments) -> None:
     for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
 
         _get_assignments(facade, arguments.output_directory, section_id)
-        succeeded = result_bucket["assignments"] is not None
+        succeeded = result_bucket.get("assignments", None) is not None
 
         if succeeded:
             _get_submissions(facade, arguments.output_directory, section_id)
