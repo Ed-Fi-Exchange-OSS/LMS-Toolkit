@@ -8,7 +8,7 @@ import logging
 import os
 import time
 import random
-from typing import Union
+from typing import Any, Dict, List, Union
 from http import HTTPStatus
 import socket
 
@@ -57,11 +57,11 @@ class RequestClient:
     schoology_secret: str
     base_url: str = DEFAULT_URL
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.oauth = OAuth1Session(self.schoology_key, self.schoology_secret)
 
     @property
-    def _request_header(self) -> dict:
+    def _request_header(self) -> Dict[str, str]:
         """
         The _request_header property builds the Request Header for oauth requests
 
@@ -100,12 +100,12 @@ class RequestClient:
             "Content-Type": "application/json",
         }
 
-    def _build_query_params_for_first_page(self, page_size: int):
+    def _build_query_params_for_first_page(self, page_size: int) -> str:
         return f"start=0&limit={page_size}"
 
-    def _check_for_rate_limiting(self, response: Response, http_method: str, url: str):
+    def _check_for_rate_limiting(self, response: Response, http_method: str, url: str) -> None:
         """
-        Check for a rate limit response. If it has occured, log and
+        Check for a rate limit response. If it has occurred, log and
         raise an exception to be caught to trigger a retry.
 
         Parameters
@@ -132,7 +132,7 @@ class RequestClient:
                 f"{response.reason} ({response.status_code}): {response.text}"
             )
 
-    def _check_for_success(self, response: Response, success_status: HTTPStatus):
+    def _check_for_success(self, response: Response, success_status: HTTPStatus) -> None:
         """
         Check a response for success. If unsuccessful, log and
         raise an exception.
@@ -156,7 +156,7 @@ class RequestClient:
 
     def _check_response(
         self, response: Response, success_status: HTTPStatus, http_method: str, url: str
-    ):
+    ) -> None:
         """
         Check a response for rate limiting and success
 
@@ -196,7 +196,7 @@ class RequestClient:
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
-    def get(self, resource: str) -> dict:
+    def get(self, resource: str) -> Dict[str, Any]:
         """
         Send an HTTP GET request.
 
@@ -229,7 +229,7 @@ class RequestClient:
         self._check_response(
             response=response, success_status=HTTPStatus.OK, http_method="GET", url=url
         )
-        return response.json()
+        return response.json()  # type: ignore
 
     @retry(
         retry_on_exceptions=(
@@ -246,7 +246,7 @@ class RequestClient:
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
-    def post(self, resource: str, json: dict) -> dict:
+    def post(self, resource: str, json: Dict[str, Any]) -> Dict[str, Any]:
         """
         Send a HTTP POST request.
 
@@ -282,7 +282,7 @@ class RequestClient:
             url=url,
         )
 
-        return response.json()
+        return response.json()  # type: ignore
 
     @retry(
         retry_on_exceptions=(
@@ -299,7 +299,7 @@ class RequestClient:
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
-    def bulk_post(self, resource: str, json: dict) -> dict:
+    def bulk_post(self, resource: str, json: Dict[str, Any]) -> Dict[str, Any]:
         """
         Send a bulk HTTP POST request.
 
@@ -338,7 +338,7 @@ class RequestClient:
             url=url,
         )
 
-        return response.json()
+        return response.json()  # type: ignore
 
     @retry(
         retry_on_exceptions=(
@@ -355,7 +355,7 @@ class RequestClient:
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
-    def bulk_delete(self, resource: str, parameters: str) -> dict:
+    def bulk_delete(self, resource: str, parameters: str) -> Dict[str, Any]:
         """
         Send a bulk HTTP DELETE request.
 
@@ -392,7 +392,7 @@ class RequestClient:
             url=url,
         )
 
-        return response.json()
+        return response.json()  # type: ignore
 
     @retry(
         retry_on_exceptions=(
@@ -409,7 +409,7 @@ class RequestClient:
         max_calls_total=REQUEST_RETRY_COUNT,
         retry_window_after_first_call_in_seconds=REQUEST_RETRY_TIMEOUT_SECONDS,
     )
-    def delete(self, resource: str, id: str):
+    def delete(self, resource: str, id: str) -> None:
         """
         Send a HTTP DELETE request.
 
@@ -617,7 +617,7 @@ class RequestClient:
             self.base_url + url,
         )
 
-    def get_attendance(self, section_id: int) -> list:
+    def get_attendance(self, section_id: int) -> List[Dict[str, Any]]:
         """
         Retrieves attendance event data for a section. Note: attendance does
         not support paging.
@@ -642,9 +642,9 @@ class RequestClient:
 
         result = self.get(url)
 
-        return result["date"]
+        return result["date"]  # type: ignore
 
-    def get_discussions(self, section_id: int) -> list:
+    def get_discussions(self, section_id: int) -> List[Dict[str, Any]]:
         """
         Retrieves discussions list for a section.
 
@@ -665,11 +665,11 @@ class RequestClient:
         """
 
         result = self.get(f"sections/{section_id}/discussions")
-        return result["discussion"]
+        return result["discussion"]  # type: ignore
 
     def get_discussion_replies(
         self, section_id: int, discussion_id: Union[int, str]
-    ) -> list:
+    ) -> List[Dict[str, Any]]:
         """
         Retrieves replies list for a discussion.
 
@@ -692,7 +692,7 @@ class RequestClient:
         """
 
         result = self.get(f"sections/{section_id}/discussions/{discussion_id}/comments")
-        return result["comment"]
+        return result["comment"]  # type: ignore
 
     def get_section_updates(
         self, section_id: int, page_size: int = DEFAULT_PAGE_SIZE

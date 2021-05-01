@@ -4,14 +4,15 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from __future__ import annotations
-from typing import Optional
+from typing import Any, Dict, List, Optional
 from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from .request_client import RequestClient
 
 
-class PaginatedResult:
+class PaginatedResult():
     """
     The PaginatedResult class is bound with information from the response of the Schoology
     api, specifically when it returns a list of items that could be paginated.
@@ -47,7 +48,7 @@ class PaginatedResult:
         self,
         request_client: "RequestClient",
         page_size: int,
-        api_response: dict,
+        api_response: Dict[str, Any],
         resource_name: str,
         requested_url: str,
         current_page: int = 1,
@@ -106,7 +107,7 @@ class PaginatedResult:
 
         return self
 
-    def get_all_pages(self) -> list:
+    def get_all_pages(self) -> List[Dict[str, Any]]:
         """
         Returns all items from the PaginatedResult object within all available pages
 
@@ -116,7 +117,7 @@ class PaginatedResult:
             A list of all parsed results
         """
 
-        items: list = []
+        items: List[Dict[str, Any]] = []
         while True:
             items = items + self.current_page_items
             if self.get_next_page() is None:

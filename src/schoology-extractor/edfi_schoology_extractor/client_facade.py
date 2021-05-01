@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 import logging
-from typing import Union
+from typing import Any, Dict, List, Union
 
 from pandas import DataFrame, concat
 import sqlalchemy
@@ -47,17 +47,17 @@ class ClientFacade:
     db_engine: sqlalchemy.engine.base.Engine
 
     @property
-    def _client(self):
+    def _client(self) -> RequestClient:
         assert isinstance(self.request_client, RequestClient)
         return self.request_client
 
     @property
-    def _page_size(self):
+    def _page_size(self) -> int:
         assert isinstance(self.page_size, int)
         return self.page_size
 
     @property
-    def _db_engine(self):
+    def _db_engine(self) -> sqlalchemy.engine.base.Engine:
         assert isinstance(self.db_engine, sqlalchemy.engine.base.Engine)
         return self.db_engine
 
@@ -103,11 +103,11 @@ class ClientFacade:
         logger.debug("Exporting sections: get active courses")
         courses_list = self._client.get_courses(self._page_size).get_all_pages()
 
-        def _get_section_for_course(section_id: Union[int, str]):
+        def _get_section_for_course(section_id: Union[int, str]) -> List[Dict[str, Any]]:
             return self._client.get_section_by_course_id(section_id).get_all_pages()
 
         logger.debug("Exporting sections: get sections for active courses")
-        all_sections: list = []
+        all_sections: List[Dict[str, Any]] = []
         for course in courses_list:
             all_sections = all_sections + _get_section_for_course(course["id"])
 
@@ -254,7 +254,7 @@ class ClientFacade:
             DataFrame with all section activity data, in the unified data model format.
         """
 
-        def _get_discussions_and_discussion_replies():
+        def _get_discussions_and_discussion_replies() -> DataFrame:
             discussions = self._client.get_discussions(section_id)
             sync_discussions: DataFrame = sync.sync_resource(
                 RESOURCE_NAMES.DISCUSSIONS, self._db_engine, discussions
@@ -266,7 +266,7 @@ class ClientFacade:
             all_mapped_replies: DataFrame = DataFrame()
             for discussion in discussions:
                 discussion_id = discussion["id"]
-                replies: list = self._client.get_discussion_replies(
+                replies: List[Dict[str, Any]] = self._client.get_discussion_replies(
                     section_id, discussion_id
                 )
                 sync_replies: DataFrame = sync.sync_resource(
@@ -279,7 +279,7 @@ class ClientFacade:
 
             return concat([mapped_discussions, all_mapped_replies])
 
-        def _get_section_updates():
+        def _get_section_updates() -> DataFrame:
             section_updates = self.request_client.get_section_updates(
                 section_id
             ).get_all_pages()

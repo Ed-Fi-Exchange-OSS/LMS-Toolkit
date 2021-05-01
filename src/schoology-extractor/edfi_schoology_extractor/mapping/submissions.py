@@ -53,7 +53,7 @@ def map_to_udm(submissions_df: pd.DataFrame) -> pd.DataFrame:
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["SubmissionStatus"] = "on-time"
 
-    def _get_status(row: pd.Series):
+    def _get_status(row: pd.Series) -> str:
         if row["late"] == 1:
             return "late"
         if row["draft"] == 1:

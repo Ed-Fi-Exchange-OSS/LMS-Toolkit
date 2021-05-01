@@ -55,7 +55,7 @@ def _initialize(
         sys.exit(1)
 
 
-def _create_file_from_dataframe(df: Optional[DataFrame], file_name) -> None:
+def _create_file_from_dataframe(df: Optional[DataFrame], file_name: str) -> None:
     normalized_file_name = os.path.normpath(file_name)
     logger.info(f"Exporting {normalized_file_name}")
 

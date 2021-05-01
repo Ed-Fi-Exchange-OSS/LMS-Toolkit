@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 import os
 import logging
-from typing import Union
+from typing import Any, Dict, List, Union
 
 from pandas import DataFrame
 import sqlalchemy
@@ -39,7 +39,7 @@ def get_sync_db_engine(sync_database_directory: str) -> sqlalchemy.engine.base.E
 def sync_resource(
     resource_name: str,
     db_engine: sqlalchemy.engine.base.Engine,
-    data: list,
+    data: List[Dict[str, Any]],
     id_column: str = "id",
 ) -> DataFrame:
     if len(data) == 0:
@@ -77,7 +77,7 @@ def _table_exist(
         return True
 
 
-def _create_usage_table_if_it_does_not_exist(db_engine: sqlalchemy.engine.base.Engine):
+def _create_usage_table_if_it_does_not_exist(db_engine: sqlalchemy.engine.base.Engine) -> None:
     if _table_exist(USAGE_TABLE_NAME, db_engine) is False:
         db_engine.execute(
             f"""CREATE TABLE {USAGE_TABLE_NAME} (
@@ -86,14 +86,14 @@ def _create_usage_table_if_it_does_not_exist(db_engine: sqlalchemy.engine.base.E
         )
 
 
-def _map_result_to_dicts_arr(result: Union[ResultProxy, None]) -> list:
+def _map_result_to_dicts_arr(result: Union[ResultProxy, None]) -> List[Dict[str, Any]]:
     if result is None:
         return list()
 
     return [dict(row.items()) for row in result]
 
 
-def _map_single_result_to_dict(result: Union[ResultProxy, None]) -> dict:
+def _map_single_result_to_dict(result: Union[ResultProxy, None]) -> Dict[str, Any]:
     mapped_result = _map_result_to_dicts_arr(result)
     return mapped_result[0] if len(mapped_result) > 0 else dict()
 

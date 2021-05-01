@@ -3,14 +3,14 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Callable
+from typing import Any, Callable, Dict, List, Optional
 import pandas as pd
 
 from . import constants
 
 
 def _flatten_into_dataframe(
-    attendance: list,
+    attendance: List[Dict[str, Any]],
 ) -> pd.DataFrame:
     df = pd.DataFrame(columns=["enrollment_id", "EventDate", "AttendanceStatus"])
 
@@ -44,9 +44,9 @@ def _get_status(status_code: int) -> str:
 
 
 def map_to_udm(
-    attendance: list,
+    attendance: List[Dict[str, Any]],
     section_associations: pd.DataFrame,
-    sync_callback: Callable = None,
+    sync_callback: Optional[Callable[[pd.DataFrame], None]] = None,
 ) -> pd.DataFrame:
     """
     Maps a DataFrame containing Schoology attendance events into the Ed-Fi LMS
