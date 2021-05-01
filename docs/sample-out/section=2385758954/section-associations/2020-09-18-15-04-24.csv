@@ -1,3 +1,3 @@
-﻿SourceSystemIdentifier,SourceSystem,EnrollmentStatus,LMSUserSourceSystemIdentifier,LMSSectionSourceSystemIdentifier,CreateDate,LastModifiedDate,SourceCreateDate,SourceLastModifiedDate,StartDate,EndDate
-8123459,BestLMS,Active,100032890,2385758954,2020-08-20 12:34:56,2020-08-20 12:34:56,,,,
-8123457,BestLMS,Inactive,100032891,2385758954,2020-08-20 12:34:56,2020-08-20 12:34:56,,,,
+﻿SourceSystemIdentifier,SourceSystem,EnrollmentStatus,LMSUserSourceSystemIdentifier,LMSSectionSourceSystemIdentifier,CreateDate,LastModifiedDate,SourceCreateDate,SourceLastModifiedDate
+4123459,BestLMS,Active,100032890,2385758954,2020-08-20 12:34:56,2020-08-20 12:34:56,,
+4123457,BestLMS,Inactive,100032891,2385758954,2020-08-20 12:34:56,2020-08-20 12:34:56,,
