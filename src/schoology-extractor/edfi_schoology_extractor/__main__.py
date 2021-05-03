@@ -29,7 +29,7 @@ def _configure_logging(arguments: arg_parser.MainArguments) -> None:
     )
 
 
-def _main(arguments):
+def _main(arguments: arg_parser.MainArguments) -> None:
     error_tracker = ErrorHandler()
 
     run(arguments)

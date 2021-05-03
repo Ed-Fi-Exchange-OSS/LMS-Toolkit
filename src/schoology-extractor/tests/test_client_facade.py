@@ -10,7 +10,7 @@ import pytest
 from unittest.mock import Mock, MagicMock
 import sqlalchemy
 
-from edfi_schoology_extractor.client_facade import SchoologyExtractFacade
+from edfi_schoology_extractor.client_facade import ClientFacade
 from edfi_schoology_extractor.api.request_client import RequestClient
 from edfi_schoology_extractor.api.paginated_result import PaginatedResult
 from edfi_schoology_extractor.mapping import users as usersMap
@@ -57,7 +57,7 @@ def describe_when_getting_users():
                 side_effect=lambda v, w, x, y="", z="": DataFrame(x)
             )
 
-            service = SchoologyExtractFacade(request_client, page_size, db_engine)
+            service = ClientFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_users()
@@ -105,7 +105,7 @@ def describe_when_getting_users():
             usersMap.map_to_udm.return_value = DataFrame()
 
             # Arrange
-            service = SchoologyExtractFacade(request_client, page_size, db_engine)
+            service = ClientFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_users()
@@ -172,7 +172,7 @@ def describe_when_getting_sections():
             get_sections_mock.return_value = sections_page
 
             # Arrange
-            service = SchoologyExtractFacade(request_client, page_size, db_engine)
+            service = ClientFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_sections()
@@ -223,7 +223,7 @@ def describe_when_getting_sections():
             get_sections_mock.return_value = sections_page
 
             # Arrange
-            service = SchoologyExtractFacade(request_client, page_size, db_engine)
+            service = ClientFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_sections()
@@ -279,7 +279,7 @@ def describe_when_getting_assignments():
             assignmentsMap.map_to_udm = Mock()
             assignmentsMap.map_to_udm.return_value = DataFrame()
 
-            service = SchoologyExtractFacade(request_client, page_size, db_engine)
+            service = ClientFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_assignments(section_id)
@@ -344,7 +344,7 @@ def describe_when_getting_submissions():
                 submissions_page
             )
 
-            service = SchoologyExtractFacade(request_client, page_size, db_engine)
+            service = ClientFacade(request_client, page_size, db_engine)
 
             # Act
             result = service.get_submissions(assignment_id, section_id)
@@ -385,7 +385,7 @@ def describe_when_getting_section_associations():
         db_engine = Mock(spec=sqlalchemy.engine.base.Engine)
 
         # Arrange
-        service = SchoologyExtractFacade(request_client, page_size, db_engine)
+        service = ClientFacade(request_client, page_size, db_engine)
 
         # Act
         result = service.get_section_associations(section_id)
@@ -441,7 +441,7 @@ def describe_when_getting_attendance_events():
         section_associations = DataFrame([{"id": 123}])
 
         # Arrange
-        service = SchoologyExtractFacade(request_client, page_size, db_engine)
+        service = ClientFacade(request_client, page_size, db_engine)
 
         # Act
         result = service.get_attendance_events(section_id, section_associations)
@@ -554,7 +554,7 @@ def describe_when_getting_section_activities():
             "ignore me",
         )
 
-        service = SchoologyExtractFacade(
+        service = ClientFacade(
             request_client, page_size, Mock(spec=sqlalchemy.engine.base.Engine)
         )
         section_id = 1234

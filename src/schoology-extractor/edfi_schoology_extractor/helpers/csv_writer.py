@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def df_to_csv(df: pd.DataFrame, output_path: str):
+def df_to_csv(df: pd.DataFrame, output_path: str) -> None:
     """
     Exports a DataFrame to CSV
 

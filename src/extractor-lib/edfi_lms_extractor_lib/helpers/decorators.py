@@ -15,7 +15,7 @@ def catch_exceptions(func: Callable) -> Callable[..., bool]:
             func(*args, **kwargs)
             return True
         except BaseException as e:
-            logger.exception("An exception occurred", e)
+            logger.exception("An exception occurred: %s", e)
             return False
 
     return callable_function

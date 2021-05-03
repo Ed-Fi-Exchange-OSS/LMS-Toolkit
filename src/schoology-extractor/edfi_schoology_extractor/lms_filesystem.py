@@ -24,7 +24,7 @@ def _get_file_name() -> str:
     return datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + ".csv"
 
 
-def _create_directory_if_it_does_not_exist(dir: str):
+def _create_directory_if_it_does_not_exist(dir: str) -> None:
     if not os.path.exists(dir):
         os.makedirs(dir)
 
