@@ -1,0 +1,2 @@
+SourceSystemIdentifier,SourceSystem,ActivityType,ActivityDateTime,ActivityStatus,ActivityTimeInMinutes,LMSSectionSourceSystemIdentifier,LMSUserSourceSystemIdentifier,CreateDate,LastModifiedDate,SourceCreateDate,SourceLastModifiedDate
+B123456,BestLMS,Discussion,2021-01-01 00:00:00,Published,100,B098765,U123456,2021-01-01 00:00:00,2021-01-01 00:00:00,,

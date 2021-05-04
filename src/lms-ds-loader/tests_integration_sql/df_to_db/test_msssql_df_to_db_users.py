@@ -38,7 +38,9 @@ def create_user_df(names: List[str]) -> DataFrame:
 def describe_when_a_user_is_updated():
     UPDATED_USER_ROLE = "55"
 
-    def it_should_have_the_update_in_production(test_mssql_db: Tuple[MssqlLmsOperations, Connection]):
+    def it_should_have_the_update_in_production(
+        test_mssql_db: Tuple[MssqlLmsOperations, Connection]
+    ):
         adapter, connection = test_mssql_db
 
         def initial_upload():
@@ -46,20 +48,28 @@ def describe_when_a_user_is_updated():
             upload_users(adapter, create_user_df(USER_NAMES))
 
             # assert - staging table is correct
-            stg_LMSUser = connection.execute("SELECT Name, UserRole from lms.stg_LMSUser").fetchall()
+            stg_LMSUser = connection.execute(
+                "SELECT Name, UserRole from lms.stg_LMSUser"
+            ).fetchall()
             assert len(stg_LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in stg_LMSUser]
 
             # assert - user roles are correct in staging
-            assert [ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE] == [x["UserRole"] for x in stg_LMSUser]
+            assert [ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE] == [
+                x["UserRole"] for x in stg_LMSUser
+            ]
 
             # assert - production table is correct
-            LMSUser = connection.execute("SELECT Name, UserRole from lms.LMSUser").fetchall()
+            LMSUser = connection.execute(
+                "SELECT Name, UserRole from lms.LMSUser"
+            ).fetchall()
             assert len(LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in LMSUser]
 
             # assert - user roles are correct in production
-            assert [ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE] == [x["UserRole"] for x in LMSUser]
+            assert [ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE] == [
+                x["UserRole"] for x in LMSUser
+            ]
 
         def update_bob_user_role():
             # arrange - update to Bob's user role
@@ -71,20 +81,28 @@ def describe_when_a_user_is_updated():
             upload_users(adapter, updated_user_df)
 
             # assert - staging table is loaded
-            stg_LMSUser = connection.execute("SELECT Name, UserRole from lms.stg_LMSUser").fetchall()
+            stg_LMSUser = connection.execute(
+                "SELECT Name, UserRole from lms.stg_LMSUser"
+            ).fetchall()
             assert len(stg_LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in stg_LMSUser]
 
             # assert - user roles are correct in staging
-            assert [ORIGINAL_USER_ROLE, UPDATED_USER_ROLE, ORIGINAL_USER_ROLE] == [x["UserRole"] for x in stg_LMSUser]
+            assert [ORIGINAL_USER_ROLE, UPDATED_USER_ROLE, ORIGINAL_USER_ROLE] == [
+                x["UserRole"] for x in stg_LMSUser
+            ]
 
             # assert - production table is loaded
-            LMSUser = connection.execute("SELECT Name, UserRole from lms.LMSUser").fetchall()
+            LMSUser = connection.execute(
+                "SELECT Name, UserRole from lms.LMSUser"
+            ).fetchall()
             assert len(LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in LMSUser]
 
             # assert - user roles are correct in production
-            assert [ORIGINAL_USER_ROLE, UPDATED_USER_ROLE, ORIGINAL_USER_ROLE] == [x["UserRole"] for x in LMSUser]
+            assert [ORIGINAL_USER_ROLE, UPDATED_USER_ROLE, ORIGINAL_USER_ROLE] == [
+                x["UserRole"] for x in LMSUser
+            ]
 
         initial_upload()
         update_bob_user_role()
@@ -93,7 +111,9 @@ def describe_when_a_user_is_updated():
 def describe_when_a_user_goes_missing_then_reappears():
     USER_NAMES_WITHOUT_BOB = ["Alice", "Charlie"]
 
-    def it_should_soft_delete_then_restore(test_mssql_db: Tuple[MssqlLmsOperations, Connection]):
+    def it_should_soft_delete_then_restore(
+        test_mssql_db: Tuple[MssqlLmsOperations, Connection]
+    ):
         adapter, connection = test_mssql_db
 
         def initial_upload():
@@ -101,12 +121,16 @@ def describe_when_a_user_goes_missing_then_reappears():
             upload_users(adapter, create_user_df(USER_NAMES))
 
             # assert - staging table is correct
-            stg_LMSUser = connection.execute("SELECT Name from lms.stg_LMSUser").fetchall()
+            stg_LMSUser = connection.execute(
+                "SELECT Name from lms.stg_LMSUser"
+            ).fetchall()
             assert len(stg_LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in stg_LMSUser]
 
             # assert - production table is correct
-            LMSUser = connection.execute("SELECT Name, DeletedAt from lms.LMSUser").fetchall()
+            LMSUser = connection.execute(
+                "SELECT Name, DeletedAt from lms.LMSUser"
+            ).fetchall()
             assert len(LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in LMSUser]
             assert [None, None, None] == [x["DeletedAt"] for x in LMSUser]
@@ -116,12 +140,16 @@ def describe_when_a_user_goes_missing_then_reappears():
             upload_users(adapter, create_user_df(USER_NAMES_WITHOUT_BOB))
 
             # assert - staging table doesn't have Bob
-            stg_LMSUser = connection.execute("SELECT Name from lms.stg_LMSUser").fetchall()
+            stg_LMSUser = connection.execute(
+                "SELECT Name from lms.stg_LMSUser"
+            ).fetchall()
             assert len(stg_LMSUser) == 2
             assert USER_NAMES_WITHOUT_BOB == [x["Name"] for x in stg_LMSUser]
 
             # assert - production table still has all three, with Bob soft deleted
-            LMSUser = connection.execute("SELECT Name, DeletedAt from lms.LMSUser").fetchall()
+            LMSUser = connection.execute(
+                "SELECT Name, DeletedAt from lms.LMSUser"
+            ).fetchall()
             assert len(LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in LMSUser]
             deleted_ats = [x["DeletedAt"] for x in LMSUser]
@@ -138,12 +166,16 @@ def describe_when_a_user_goes_missing_then_reappears():
             upload_users(adapter, updated_user_df)
 
             # assert - staging table has Bob
-            stg_LMSUser = connection.execute("SELECT Name from lms.stg_LMSUser").fetchall()
+            stg_LMSUser = connection.execute(
+                "SELECT Name from lms.stg_LMSUser"
+            ).fetchall()
             assert len(stg_LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in stg_LMSUser]
 
             # assert - production table still has all three, with Bob no longer soft deleted
-            LMSUser = connection.execute("SELECT Name, DeletedAt from lms.LMSUser").fetchall()
+            LMSUser = connection.execute(
+                "SELECT Name, DeletedAt from lms.LMSUser"
+            ).fetchall()
             assert len(LMSUser) == 3
             assert USER_NAMES == [x["Name"] for x in LMSUser]
             assert [None, None, None] == [x["DeletedAt"] for x in LMSUser]

@@ -35,7 +35,9 @@ def mssql_connection() -> Iterable[Connection]:
 
 
 @pytest.fixture(autouse=True)
-def test_mssql_db(mssql_connection: Connection, request) -> Tuple[MssqlLmsOperations, Connection]:
+def test_mssql_db(
+    mssql_connection: Connection, request
+) -> Tuple[MssqlLmsOperations, Connection]:
     """
     Fixture that takes the set-up connection and wraps in a transaction. Transaction
     will be rolled-back automatically after each test.
@@ -57,7 +59,9 @@ def test_mssql_db(mssql_connection: Connection, request) -> Tuple[MssqlLmsOperat
         return 0
 
     # New version of insert_into_staging using our transaction
-    def replace_insert_into_staging(self: MssqlLmsOperations, df: DataFrame, table: str):
+    def replace_insert_into_staging(
+        self: MssqlLmsOperations, df: DataFrame, table: str
+    ):
         df.to_sql(
             f"stg_{table}",
             con=mssql_connection,
@@ -69,8 +73,8 @@ def test_mssql_db(mssql_connection: Connection, request) -> Tuple[MssqlLmsOperat
         )
 
     # Monkey-patch MssqlLmsOperations to use our transaction
-    MssqlLmsOperations._exec = replace_exec                                # type:ignore
-    MssqlLmsOperations.insert_into_staging = replace_insert_into_staging   # type:ignore
+    MssqlLmsOperations._exec = replace_exec  # type:ignore
+    MssqlLmsOperations.insert_into_staging = replace_insert_into_staging  # type:ignore
 
     # Initialize monkey-patched adapter with a dummy engine, doesn't need a real one now
     adapter: MssqlLmsOperations = MssqlLmsOperations(MagicMock())

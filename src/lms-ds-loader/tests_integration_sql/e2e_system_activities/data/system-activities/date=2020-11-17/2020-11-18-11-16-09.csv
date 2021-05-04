@@ -1,0 +1,2 @@
+LMSUserSourceSystemIdentifier,ActivityDateTime,SourceSystem,SourceSystemIdentifier,ActivityType,ActivityStatus,ParentSourceSystemIdentifier,ActivityTimeInMinutes,CreateDate,LastModifiedDate,SourceCreateDate,SourceLastModifiedDate
+U123456,2021-01-01 00:00:00,BestLMS,B123456,sign-in,active,,,2021-01-01 00:00:00,2021-01-01 00:00:00,,
