@@ -863,7 +863,9 @@ WHERE
     ResourceName = '{resource_name}'
 """.strip()
             result = pd.read_sql_query(query, self.engine)
-            return set(result["FullPath"])
+            if "FullPath" in result:
+                return set(result["FullPath"])
+            return set()
         except ProgrammingError as pe:
             logger.exception(pe)
             raise
