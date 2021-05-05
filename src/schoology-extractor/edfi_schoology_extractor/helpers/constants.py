@@ -20,3 +20,18 @@ class RESOURCE_NAMES:
     SECTION_UPDATE_API = "update"
     SECTION_UPDATE_TABLE = "section_update"
     SECTION_UPDATE_COMMENT = "comment"
+
+
+class Features():
+    Activities = "activities"
+    Attendance = "attendance"
+    Assignments = "assignments"
+    Grades = "grades"  # not implemented yet
+
+
+VALID_FEATURES = [
+    Features.Activities,
+    Features.Attendance,
+    Features.Assignments,
+    Features.Grades,
+]

@@ -18,8 +18,8 @@ RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
         CanvasException,
         RequestException,
         socket.timeout,
-        socket.error
-        ),
+        socket.error,
+    ),
     max_calls_total=MAX_TOTAL_CALLS,
     retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
 )

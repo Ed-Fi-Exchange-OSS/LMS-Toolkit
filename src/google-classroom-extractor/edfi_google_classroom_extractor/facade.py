@@ -61,8 +61,7 @@ def request(arguments: MainArguments) -> Optional[Result]:
             classroom_resource,
             reports_resource,
             sync_db,
-            arguments.usage_start_date,
-            arguments.usage_end_date,
+            arguments
         )
     except Exception:
         logger.exception("An exception occurred while connecting to the API")
@@ -107,50 +106,51 @@ def run(arguments: MainArguments):
         arguments.output_directory,
     )
 
-    logger.info("Writing LMS UDM Assignments to CSV files")
-    write_assignments(
-        coursework_to_assignments_dfs(result_dfs.coursework_df),
-        all_section_ids,
-        now,
-        arguments.output_directory,
-    )
+    if arguments.extract_assignments:
+        logger.info("Writing LMS UDM Assignments to CSV files")
+        write_assignments(
+            coursework_to_assignments_dfs(result_dfs.coursework_df),
+            all_section_ids,
+            now,
+            arguments.output_directory,
+        )
 
-    logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
-    write_assignment_submissions(
-        submissions_to_assignment_submissions_dfs(result_dfs.submissions_df),
-        now,
-        arguments.output_directory,
-    )
+        logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
+        write_assignment_submissions(
+            submissions_to_assignment_submissions_dfs(result_dfs.submissions_df),
+            now,
+            arguments.output_directory,
+        )
 
-    logger.info("Writing LMS UDM User Activities to CSV files")
-    write_user_activities(
-        submissions_to_user_submission_activities_dfs(result_dfs.submissions_df),
-        all_section_ids,
-        now,
-        arguments.output_directory,
-    )
+    if arguments.extract_activities:
+        logger.info("Writing LMS UDM User Activities to CSV files")
+        write_user_activities(
+            submissions_to_user_submission_activities_dfs(result_dfs.submissions_df),
+            all_section_ids,
+            now,
+            arguments.output_directory,
+        )
+        logger.info("Writing empty LMS UDM SectionActivities to CSV files")
+        write_section_activities(
+            dict(),
+            all_section_ids,
+            now,
+            arguments.output_directory,
+        )
+        logger.info("Writing empty LMS UDM SystemActivities to CSV file")
+        write_system_activities(
+            DataFrame(),
+            now,
+            arguments.output_directory,
+        )
 
-    logger.info("Writing empty LMS UDM Grades to CSV files")
-    write_grades(
-        dict(),
-        all_section_ids,
-        now,
-        arguments.output_directory,
-    )
-
-    logger.info("Writing empty LMS UDM SectionActivities to CSV files")
-    write_section_activities(
-        dict(),
-        all_section_ids,
-        now,
-        arguments.output_directory,
-    )
-
-    logger.info("Writing empty LMS UDM SystemActivities to CSV file")
-    write_system_activities(
-        DataFrame(),
-        now,
-        arguments.output_directory,
-    )
+    if arguments.extract_grades:
+        logger.info("Writing empty LMS UDM Grades to CSV files")
+        write_grades(
+            dict(),
+            all_section_ids,
+            now,
+            arguments.output_directory,
+        )
 
     logger.info("Finishing Ed-Fi LMS Google Classroom Extractor")

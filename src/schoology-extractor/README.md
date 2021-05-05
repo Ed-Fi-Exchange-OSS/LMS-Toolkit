@@ -46,7 +46,7 @@ directory must be provided to the extractor configuration.
 
       ```bash
       poetry run python edfi_schoology_extractor -k [schoology client key]
-          -s [schoology client secret]
+          -s [schoology client secret] -f assignments
       ```
 
    * Alternately, run with environment variables or `.env` file:
@@ -77,6 +77,7 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | Page size | no (default: 20) | `-p` or `--page-size` | PAGE_SIZE |
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
+| Feature*** | no (default: core, not removable) | `-f` or `--feature` | FEATURE |
 
 \** Valid values for the optional _log level_:
 
@@ -85,6 +86,23 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 * WARNING
 * ERROR
 * CRITICAL
+
+\*** Available features (can combine two or more):
+
+* activities (Enables the extraction of section activities and system activities)
+* attendance (Enables the extraction of attendance events)
+* assignments (Enables the extraction of assignments and submissions)
+* grades (Enables the extraction of grades)
+
+When setting features via `.env` file or through environment variable, combine
+features by using a bracketed comma-separate list, e.g.
+
+```none
+FEATURE=[activities, attendance, assignments, grades]
+```
+
+When there's no specified feature, the extractor will always process Users, Sections,
+and Section Associations, which are considered the core feature.
 
 ### Logging and Exit Codes
 

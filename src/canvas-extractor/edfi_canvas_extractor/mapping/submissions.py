@@ -75,7 +75,7 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
             "user_id",
             "CreateDate",
             "LastModifiedDate",
-            "graded_at"
+            "graded_at",
         ]
     ].copy()
 
@@ -87,10 +87,14 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
             "submitted_at": "SubmissionDateTime",
             "assignment_id": "AssignmentSourceSystemIdentifier",
             "user_id": "LMSUserSourceSystemIdentifier",
-            "grade": "Grade"
-        }, inplace=True)
+            "grade": "Grade",
+        },
+        inplace=True,
+    )
 
-    df["SubmissionDateTime"] = pd.to_datetime(df["SubmissionDateTime"]).dt.strftime(constants.DATE_FORMAT)
+    df["SubmissionDateTime"] = pd.to_datetime(df["SubmissionDateTime"]).dt.strftime(
+        constants.DATE_FORMAT
+    )
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["SubmissionStatus"] = df.apply(_get_status, axis=1)
     df["EarnedPoints"] = None

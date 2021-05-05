@@ -15,24 +15,7 @@ from . import constants
 class MainArguments:
     """
     Container for holding arguments parsed at the command line.
-
-    Parameters
-    ----------
-    client_key : str
-        Schoology client key.
-    client_secret: str
-        Schoology client secret.
-    output_directory: str
-        The output directory for the generated csv files. (optional)
-    log_level: str
-        The log level for the tool. (optional)
-    page_size: int
-        The size of the page for paginated requests. (optional)
-    input_directory: str
-        The input directory containing usage CSV files exported from the
-        Schoology site. (optional)
     """
-
     client_key: str
     client_secret: str
     output_directory: str
@@ -40,6 +23,10 @@ class MainArguments:
     page_size: int
     input_directory: str
     sync_database_directory: str
+    extract_activities: bool = False
+    extract_assignments: bool = False
+    extract_attendance: bool = False
+    extract_grades: bool = False
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -127,6 +114,18 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="SYNC_DATABASE_DIRECTORY",
     )
 
+    parser.add(  # type: ignore
+        "-f",
+        "--feature",
+        required=False,
+        help="Features to include.",
+        type=str,
+        nargs='*',
+        choices=constants.VALID_FEATURES,
+        default=[],
+        env_var="FEATURE",
+    )
+
     args_parsed = parser.parse_args(args_in)
     # Required
     assert isinstance(
@@ -154,7 +153,11 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         log_level=args_parsed.log_level,
         page_size=args_parsed.page_size,
         input_directory=args_parsed.input_directory,
-        sync_database_directory=args_parsed.sync_database_directory
+        sync_database_directory=args_parsed.sync_database_directory,
+        extract_activities=constants.Features.Activities in args_parsed.feature,
+        extract_assignments=constants.Features.Assignments in args_parsed.feature,
+        extract_attendance=constants.Features.Attendance in args_parsed.feature,
+        extract_grades=constants.Features.Grades in args_parsed.feature,
     )
 
     return arguments
