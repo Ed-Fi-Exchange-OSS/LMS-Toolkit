@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-lms-extractor-lib"
-version = "1.0.0-alpha.6"
+version = "1.0.0"
 homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 description = "Shared functions library for Ed-Fi LMS Extractor projects"
