@@ -81,7 +81,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         choices=constants.LOG_LEVELS,
         type=str,
         default="INFO",
-        env_var="SCHOOLOGY_LOG_LEVEL",
+        env_var="LOG_LEVEL",
     )
 
     parser.add(  # type: ignore
