@@ -70,7 +70,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         help="The output directory for the generated csv files.",
         type=str,
         default="",
-        env_var="SCHOOLOGY_OUTPUT_PATH",
+        env_var="OUTPUT_DIRECTORY",
     )
 
     parser.add(  # type: ignore

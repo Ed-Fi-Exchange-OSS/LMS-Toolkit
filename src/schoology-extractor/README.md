@@ -71,7 +71,7 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | Schoology API Key | yes | `-k` or `--client-key` | SCHOOLOGY_KEY |
 | Schoology API Secret | yes | `-s` or `--client-secret` | SCHOOLOGY_SECRET |
 | Usage analytics input directory | no | `-i` or `--input-directory` | SCHOOLOGY_INPUT_DIRECTORY |
-| Output Directory | no (default: [working directory]/data) | `-o` or `--output-directory` | SCHOOLOGY_OUTPUT_PATH |
+| Output Directory | no (default: [working directory]/data) | `-o` or `--output-directory` | OUTPUT_DIRECTORY |
 | Sync database directory | no (default: [working directory]/data) | `-d` or `--sync-database-directory` | SYNC_DATABASE_DIRECTORY |
 | Log level** | no (default: INFO) | `-l` or `--log-level` | SCHOOLOGY_LOG_LEVEL |
 | Page size | no (default: 20) | `-p` or `--page-size` | PAGE_SIZE |
