@@ -52,7 +52,7 @@ dedicated [`.env` file](https://pypi.org/project/python-dotenv/) like:
 ```none
 CLASSROOM_ACCOUNT[<email address of the Google Classroom admin account, required]
 LOG_LEVEL=[Log level, optional]
-OUTPUT_PATH=[The output directory for the csv files, optional]
+OUTPUT_DIRECTORY=[The output directory for the csv files, optional]
 START_DATE=[start date for usage data pull in yyyy-mm-dd format, optional]
 END_DATE=[end date for usage data pull in yyyy-mm-dd format, optional]
 ```
@@ -63,7 +63,7 @@ Supported parameters:
 | ----------- | -------- | --------------------- | -------------------- |
 | The email address of the Google Classroom admin account. | yes | `-a` or `--classroom-account` | CLASSROOM_ACCOUNT |
 | The log level for the tool. | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
-| The output directory for the generated csv files. | no (default: [working directory]/data) | `-o` or `--output-directory` | OUTPUT_PATH |
+| The output directory for the generated csv files. | no (default: [working directory]/data) | `-o` or `--output-directory` | OUTPUT_DIRECTORY |
 | Sync database directory | no (default: [working directory]/data) | `-d` or `--sync-database-directory` | SYNC_DATABASE_DIRECTORY |
 | Start date*, yyyy-mm-dd format | no (default: today) | `-s` or `--usage-start-date` | START_DATE |
 | End date*, yyyy-mm-dd format | no (default: today) | `-e` or `--usage-end-date` | END_DATE |

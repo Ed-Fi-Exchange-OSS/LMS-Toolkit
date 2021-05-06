@@ -1,5 +1,8 @@
 # file-tester
 
+| WARNING: this utility is currently out of date as of the release of version 1.0 |
+| -- |
+
 ## User Story
 
 As an Ed-Fi developer, I want to run extractor output files through a simple
