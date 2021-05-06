@@ -73,7 +73,7 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | Usage analytics input directory | no | `-i` or `--input-directory` | SCHOOLOGY_INPUT_DIRECTORY |
 | Output Directory | no (default: [working directory]/data) | `-o` or `--output-directory` | OUTPUT_DIRECTORY |
 | Sync database directory | no (default: [working directory]/data) | `-d` or `--sync-database-directory` | SYNC_DATABASE_DIRECTORY |
-| Log level** | no (default: INFO) | `-l` or `--log-level` | SCHOOLOGY_LOG_LEVEL |
+| Log level** | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
 | Page size | no (default: 20) | `-p` or `--page-size` | PAGE_SIZE |
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
