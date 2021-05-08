@@ -51,7 +51,6 @@ from edfi_lms_extractor_lib.csv_generation.write import (
     write_system_activities,
 )
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
-from .result import Result
 
 
 logger = logging.getLogger(__name__)
@@ -210,11 +209,13 @@ def _get_system_activities(output_directory: str):
 @catch_exceptions
 def _get_grades(output_directory: str):
     logger.info("Writing empty LMS UDM Grades to CSV files")
+
+    all_section_ids = result_bucket["section_ids"]
     write_grades(
         dict(),
         all_section_ids,
         now,
-        arguments.output_directory,
+        output_directory,
     )
 
 
