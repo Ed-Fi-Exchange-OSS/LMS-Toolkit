@@ -46,7 +46,6 @@ from edfi_lms_extractor_lib.csv_generation.write import (
     write_section_associations,
     write_section_activities,
     write_assignments,
-    write_user_activities,
     write_assignment_submissions,
     write_system_activities,
 )
@@ -169,26 +168,13 @@ def _get_assignment_submissions(
 
 
 @catch_exceptions
-def _get_user_activities(output_directory: str):
-    logger.info("Writing LMS UDM User Activities to CSV files")
+def _get_section_activities(output_directory: str):
+    logger.info("Writing LMS UDM Section Activities to CSV files")
 
     submissions_df: DataFrame = result_bucket["submissions_df"]
     all_section_ids = result_bucket["section_ids"]
-    write_user_activities(
-        submissions_to_user_submission_activities_dfs(submissions_df),
-        all_section_ids,
-        now,
-        output_directory,
-    )
-
-
-@catch_exceptions
-def _get_section_activities(output_directory: str):
-    logger.info("Writing empty LMS UDM SectionActivities to CSV files")
-
-    all_section_ids = result_bucket["section_ids"]
     write_section_activities(
-        dict(),
+        submissions_to_user_submission_activities_dfs(submissions_df),
         all_section_ids,
         now,
         output_directory,
@@ -241,7 +227,7 @@ def run(arguments: MainArguments):
     if not succeeded:
         _break_execution("Users")
 
-    succeeded = _get_section_associations(arguments.output_directory)
+    succeeded = _get_section_associations(classroom_resource, arguments.output_directory)
     if not succeeded:
         _break_execution("Section Associations")
 
@@ -257,7 +243,6 @@ def run(arguments: MainArguments):
         )
 
     if arguments.extract_activities:
-        _get_user_activities(arguments.output_directory)
         _get_section_activities(arguments.output_directory)
         _get_system_activities(arguments.output_directory)
 
