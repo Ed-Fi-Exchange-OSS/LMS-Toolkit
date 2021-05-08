@@ -5,7 +5,7 @@
 
 from datetime import datetime
 import logging
-from typing import Dict, List
+from typing import Any, Dict, List
 import sys
 
 from googleapiclient.discovery import build, Resource
@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 now = datetime.now()
 # This variable facilitates temporary storage of output results from one GET
 # request that need to be used for creating another GET request.
-result_bucket: Dict[str, any] = {}
+result_bucket: Dict[str, Any] = {}
 
 
 def _break_execution(failing_extraction: str) -> None:
