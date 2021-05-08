@@ -87,7 +87,8 @@ Sections, and Section Associations, which are considered the core feature. Other
 features (can combine two or more):
 
 * assignments (Enables the extraction of assignments and submissions)
-* activities (Enables the extraction of section activities and system activities) - **EXPERIMENTAL**, subject to breaking changes
+* activities (Enables the extraction of section activities and system
+  activities) - **EXPERIMENTAL**, subject to breaking changes
 * grades (Enables the extraction of grades) - **COMING SOON**
 
 When setting features via `.env` file or through environment variable, combine
