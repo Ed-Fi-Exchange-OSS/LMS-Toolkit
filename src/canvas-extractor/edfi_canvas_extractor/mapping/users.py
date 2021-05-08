@@ -49,7 +49,7 @@ def map_to_udm_users(users_df: DataFrame) -> DataFrame:
             "email",
             "login_id",
             "CreateDate",
-            "LastModifiedDate"
+            "LastModifiedDate",
         ]
     ].copy()
 
@@ -62,12 +62,16 @@ def map_to_udm_users(users_df: DataFrame) -> DataFrame:
             "login_id": "LocalUserIdentifier",
             "email": "EmailAddress",
             "name": "Name",
-            "created_at": "SourceCreateDate"
+            "created_at": "SourceCreateDate",
         },
         inplace=True,
     )
 
-    df["SourceCreateDate"] = df["SourceCreateDate"].apply(lambda x: datetime.strftime(datetime.strptime(x, "%Y-%m-%dT%H:%M:%S%z"), "%Y/%m/%d %H:%M:%S"))
+    df["SourceCreateDate"] = df["SourceCreateDate"].apply(
+        lambda x: datetime.strftime(
+            datetime.strptime(x, "%Y-%m-%dT%H:%M:%S%z"), "%Y/%m/%d %H:%M:%S"
+        )
+    )
     df["UserRole"] = constants.ROLES.STUDENT
 
     df["SourceLastModifiedDate"] = ""

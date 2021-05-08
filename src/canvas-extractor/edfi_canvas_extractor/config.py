@@ -35,7 +35,9 @@ def get_sync_db_engine(sync_database_directory: str) -> sqlalchemy.engine.base.E
     sqlalchemy.engine.base.Engine
         a SQL Alchemy Engine
     """
-    logger.debug("Ensuring database directory at %s", os.path.abspath(sync_database_directory))
+    logger.debug(
+        "Ensuring database directory at %s", os.path.abspath(sync_database_directory)
+    )
     os.makedirs(sync_database_directory, exist_ok=True)
     return create_engine(f"sqlite:///{sync_database_directory}/sync.sqlite")
 

@@ -31,7 +31,7 @@ the this tool and its output files, please see the main repository
 
       ```bash
       poetry run python edfi_canvas_extractor -b [canvas url] -a [api token]
-          -s [start date range] -e [end date range]
+          -s [start date range] -e [end date range] -f assignments
       ```
 
    * Alternately, run with environment variables or `.env` file:
@@ -68,6 +68,7 @@ Supported parameters:
 | Start date*, yyyy-mm-dd format | yes | `-s` or `--start_date` | START_DATE |
 | End date*, yyyy-mm-dd format | yes | `-e` or `--end_date` | END_DATE |
 | Log level** | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
+| Feature*** | no (default: core, not removable) | `-f` or `--feature` | FEATURE |
 
 \* _Start Date_ and _End Date_ are used in pulling course and system activity
 data and would typically span a semester or equivalent school calendar timespan.
@@ -79,6 +80,22 @@ data and would typically span a semester or equivalent school calendar timespan.
 * WARNING
 * ERROR
 * CRITICAL
+
+\*** When there's no specified feature, the extractor will always process Users,
+Sections, and Section Associations, which are considered the core feature. Other
+features (can combine two or more):
+
+* assignments (Enables the extraction of assignments and submissions)
+* activities (Enables the extraction of section activities and system
+  activities) - **EXPERIMENTAL**, subject to breaking changes
+* grades (Enables the extraction of grades) - **EXPERIMENTAL**, subject to
+  breaking changes
+
+When setting features via `.env` file or through environment variable, combine
+features by using a bracketed comma-separate list, e.g. `FEATURE=[activities,
+attendance, assignments, grades]`. To combine features at the command line,
+simply list them together: `--feature activities, attendance, assignments,
+grades]`.
 
 ### Output
 

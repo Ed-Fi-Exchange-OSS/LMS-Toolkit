@@ -19,6 +19,7 @@ FAKE_OUTPUT_DIRECTORY = "output_directory"
 FAKE_INPUT_DIRECTORY = "output_input"
 LOG_LEVEL = "DEBUG"
 TEST_SYNC_DATABASE_DIRECTORY = "test_sync_database_directory"
+TEST_FEATURES = "activities attendance assignments grades"
 
 
 def assert_error_message(capsys):
@@ -71,7 +72,9 @@ def describe_when_parsing_arguments():
                 "-i",
                 FAKE_INPUT_DIRECTORY,
                 "-d",
-                TEST_SYNC_DATABASE_DIRECTORY
+                TEST_SYNC_DATABASE_DIRECTORY,
+                "-f",
+                *TEST_FEATURES.split(),  # Split to convert it into a list and use * to unpack the list into separated values
             ]
 
             # Act
@@ -91,6 +94,12 @@ def describe_when_parsing_arguments():
 
         def it_should_load_the_sync_database_directory(result: MainArguments):
             assert result.sync_database_directory == TEST_SYNC_DATABASE_DIRECTORY
+
+        def it_should_load_the_features_array(result: MainArguments):
+            assert result.extract_attendance
+            assert result.extract_activities
+            assert result.extract_assignments
+            assert result.extract_grades
 
     def describe_given_parameters_are_not_valid():
         @pytest.fixture

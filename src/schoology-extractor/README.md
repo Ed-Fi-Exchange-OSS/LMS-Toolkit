@@ -46,7 +46,7 @@ directory must be provided to the extractor configuration.
 
       ```bash
       poetry run python edfi_schoology_extractor -k [schoology client key]
-          -s [schoology client secret]
+          -s [schoology client secret] -f assignments
       ```
 
    * Alternately, run with environment variables or `.env` file:
@@ -77,6 +77,7 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 | Page size | no (default: 20) | `-p` or `--page-size` | PAGE_SIZE |
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
+| Feature*** | no (default: core, not removable) | `-f` or `--feature` | FEATURE |
 
 \** Valid values for the optional _log level_:
 
@@ -85,6 +86,22 @@ to `.env`, and adjust to your desired parameters. Supported parameters:
 * WARNING
 * ERROR
 * CRITICAL
+
+\*** When there's no specified feature, the extractor will always process Users,
+Sections, and Section Associations, which are considered the core feature. Other
+features (can combine two or more):
+
+* assignments (Enables the extraction of assignments and submissions)
+* attendance (Enables the extraction of attendance events)
+* activities (Enables the extraction of section activities and system
+  activities) - **EXPERIMENTAL**, subject to breaking changes
+* grades (Enables the extraction of grades) - **COMING SOON**
+
+When setting features via `.env` file or through environment variable, combine
+features by using a bracketed comma-separate list, e.g. `FEATURE=[activities,
+attendance, assignments, grades]`. To combine features at the command line,
+simply list them together: `--feature activities, attendance, assignments,
+grades]`.
 
 ### Logging and Exit Codes
 

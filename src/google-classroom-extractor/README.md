@@ -29,7 +29,7 @@ repository [readme](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit).
    * Execute the extractor with minimum command line arguments:
 
       ```bash
-      poetry run python edfi_google_classroom_extractor -a [admin account email]
+      poetry run python edfi_google_classroom_extractor -a [admin account email] -f assignments
       ```
 
    * Alternately, run with environment variables or `.env` file:
@@ -42,7 +42,7 @@ repository [readme](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit).
 
 ## Configuration
 
-### Configuration
+### Module Configuration
 
 Application configuration is provided through environment variables or command
 line interface (CLI) arguments. CLI arguments take precedence over environment
@@ -62,13 +62,14 @@ Supported parameters:
 | Description | Required | Command Line Argument | Environment Variable |
 | ----------- | -------- | --------------------- | -------------------- |
 | The email address of the Google Classroom admin account. | yes | `-a` or `--classroom-account` | CLASSROOM_ACCOUNT |
-| The log level for the tool. | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
+| The log level for the tool. ** | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
 | The output directory for the generated csv files. | no (default: [working directory]/data) | `-o` or `--output-directory` | OUTPUT_PATH |
 | Sync database directory | no (default: [working directory]/data) | `-d` or `--sync-database-directory` | SYNC_DATABASE_DIRECTORY |
 | Start date*, yyyy-mm-dd format | no (default: today) | `-s` or `--usage-start-date` | START_DATE |
 | End date*, yyyy-mm-dd format | no (default: today) | `-e` or `--usage-end-date` | END_DATE |
 | Number of retry attempts for failed API calls | no (default: 4) | none | REQUEST_RETRY_COUNT |
 | Timeout window for retry attempts, in seconds | no (default: 60 seconds) | none | REQUEST_RETRY_TIMEOUT_SECONDS |
+| Feature*** | no (default: core, not removable) | `-f` or `--feature` | FEATURE |
 
 \* _Start Date_ and _End Date_ are used in pulling system activity (usage)
 data and could span any relevant date range.
@@ -80,6 +81,21 @@ data and could span any relevant date range.
 * WARNING
 * ERROR
 * CRITICAL
+
+\*** When there's no specified feature, the extractor will always process Users,
+Sections, and Section Associations, which are considered the core feature. Other
+features (can combine two or more):
+
+* assignments (Enables the extraction of assignments and submissions)
+* activities (Enables the extraction of section activities and system
+  activities) - **EXPERIMENTAL**, subject to breaking changes
+* grades (Enables the extraction of grades) - **COMING SOON**
+
+When setting features via `.env` file or through environment variable, combine
+features by using a bracketed comma-separate list, e.g. `FEATURE=[activities,
+attendance, assignments, grades]`. To combine features at the command line,
+simply list them together: `--feature activities, attendance, assignments,
+grades]`.
 
 Note: in order to make the extractor work, you still need to configure your
 `service-account.json` file. To do so, read the next section `API Permissions`

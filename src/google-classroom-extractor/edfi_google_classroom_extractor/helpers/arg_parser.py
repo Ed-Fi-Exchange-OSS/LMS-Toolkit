@@ -18,6 +18,10 @@ class MainArguments:
     usage_start_date: str
     usage_end_date: str
     sync_database_directory: str
+    extract_activities: bool = False
+    extract_assignments: bool = False
+    extract_attendance: bool = False
+    extract_grades: bool = False
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -98,6 +102,18 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="SYNC_DATABASE_DIRECTORY",
     )
 
+    parser.add(  # type: ignore
+        "-f",
+        "--feature",
+        required=False,
+        help="Features to include.",
+        type=str,
+        nargs='*',
+        choices=constants.VALID_FEATURES,
+        default=[],
+        env_var="FEATURE",
+    )
+
     args_parsed = parser.parse_args(args_in)
 
     assert isinstance(
@@ -110,7 +126,11 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         output_directory=args_parsed.output_directory,
         usage_start_date=args_parsed.usage_start_date,
         usage_end_date=args_parsed.usage_end_date,
-        sync_database_directory=args_parsed.sync_database_directory
+        sync_database_directory=args_parsed.sync_database_directory,
+        extract_activities=constants.Features.Activities in args_parsed.feature,
+        extract_assignments=constants.Features.Assignments in args_parsed.feature,
+        extract_attendance=constants.Features.Attendance in args_parsed.feature,
+        extract_grades=constants.Features.Grades in args_parsed.feature,
     )
 
     return arguments

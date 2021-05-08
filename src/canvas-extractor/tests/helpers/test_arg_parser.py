@@ -22,6 +22,7 @@ TEST_END_DATE = "3"
 TEST_LOG_LEVEL = "DEBUG"
 TEST_OUTPUT_DIRECTORY = "5"
 TEST_SYNC_DATABASE_DIRECTORY = "test_sync_database_directory"
+TEST_FEATURES = "activities attendance assignments grades"
 
 
 def describe_when_parsing_arguments():
@@ -79,7 +80,9 @@ def describe_when_parsing_arguments():
                 "-o",
                 TEST_OUTPUT_DIRECTORY,
                 "-d",
-                TEST_SYNC_DATABASE_DIRECTORY
+                TEST_SYNC_DATABASE_DIRECTORY,
+                "-f",
+                *TEST_FEATURES.split(),  # Split to convert it into a list and use * to unpack the list into separated values
             ]
 
             # Act
@@ -105,3 +108,9 @@ def describe_when_parsing_arguments():
 
         def it_should_load_the_sync_database_directory(result: MainArguments):
             assert result.sync_database_directory == TEST_SYNC_DATABASE_DIRECTORY
+
+        def it_should_load_the_features(result: MainArguments):
+            assert result.extract_grades
+            assert result.extract_activities
+            assert result.extract_assignments
+            assert result.extract_attendance

@@ -177,13 +177,13 @@ def _get_system_activities(
 
 def run(arguments: MainArguments) -> None:
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
-    sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine(arguments.sync_database_directory)
+    sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine(
+        arguments.sync_database_directory
+    )
     succeeded: bool = True
 
     succeeded = _get_courses(
-        arguments,
-        get_canvas_api(arguments.base_url, arguments.access_token),
-        sync_db
+        arguments, get_canvas_api(arguments.base_url, arguments.access_token), sync_db
     )
     if not succeeded:
         _break_execution("Courses")
@@ -192,22 +192,28 @@ def run(arguments: MainArguments) -> None:
     if not succeeded:
         _break_execution("Sections")
 
-    succeeded = _get_assignments(arguments, sync_db)
-    if not succeeded:
-        _break_execution("Assignments")
-
     succeeded = _get_students(arguments, sync_db)
     if not succeeded:
         _break_execution("Students")
-
-    _get_system_activities(arguments, sync_db)
-    _get_submissions(arguments, sync_db)
 
     succeeded = _get_enrollments(arguments, sync_db)
     if not succeeded:
         _break_execution("Enrollments")
 
-    _get_grades(arguments, )  # Grades don't need sync process because they are part of enrollments
-    _get_section_activities(arguments, )  # SectionActivities are empty
+    if arguments.extract_assignments:
+        succeeded = _get_assignments(arguments, sync_db)
+        if succeeded:
+            _get_submissions(arguments, sync_db)
+
+    if arguments.extract_activities:
+        _get_system_activities(arguments, sync_db)
+        _get_section_activities(
+            arguments,
+        )
+
+    if arguments.extract_grades:  # Grades are not supported by all the extractors
+        _get_grades(
+            arguments,
+        )  # Grades don't need sync process because they are part of enrollments
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")

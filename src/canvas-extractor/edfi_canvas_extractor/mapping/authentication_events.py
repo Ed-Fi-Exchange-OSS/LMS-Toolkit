@@ -78,6 +78,8 @@ def map_to_udm_system_activities(authentication_events: pd.DataFrame) -> pd.Data
     df["ActivityTimeInMinutes"] = ""
     df["SourceCreateDate"] = df["ActivityDateTime"]
     df["SourceLastModifiedDate"] = ""
-    df["ActivityDateTime"] = pd.to_datetime(df["ActivityDateTime"]).dt.strftime(constants.DATE_FORMAT)
+    df["ActivityDateTime"] = pd.to_datetime(df["ActivityDateTime"]).dt.strftime(
+        constants.DATE_FORMAT
+    )
 
     return df

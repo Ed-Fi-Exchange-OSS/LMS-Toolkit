@@ -94,9 +94,9 @@ def map_to_udm_assignments(
         columns=["course_id"]
     )
 
-    assignments_df["SourceSystemIdentifier"] = assignments_df[["LMSSectionSourceSystemIdentifier", "id"]].agg(
-        "-".join, axis=1
-    )
+    assignments_df["SourceSystemIdentifier"] = assignments_df[
+        ["LMSSectionSourceSystemIdentifier", "id"]
+    ].agg("-".join, axis=1)
 
     assignments_df.drop(columns="id", inplace=True)
 
@@ -118,7 +118,9 @@ def map_to_udm_assignments(
     assignments_df["AssignmentCategory"] = "assignment"
     assignments_df["SourceSystem"] = constants.SOURCE_SYSTEM
 
-    assignments_df["LMSSectionSourceSystemIdentifier"] = assignments_df["LMSSectionSourceSystemIdentifier"].astype("string")
+    assignments_df["LMSSectionSourceSystemIdentifier"] = assignments_df[
+        "LMSSectionSourceSystemIdentifier"
+    ].astype("string")
 
     # group by section id as a Dict of DataFrames
     result: Dict[str, DataFrame] = cast(

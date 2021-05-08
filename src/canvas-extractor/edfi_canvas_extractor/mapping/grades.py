@@ -61,9 +61,7 @@ def map_to_udm_grades(grades_df: pd.DataFrame) -> pd.DataFrame:
     ].copy()
 
     df.rename(
-        columns={
-            "final_score": "Grade"
-        },
+        columns={"final_score": "Grade"},
         inplace=True,
     )
 

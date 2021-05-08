@@ -10,7 +10,10 @@ import sqlalchemy
 from canvasapi import Canvas
 from canvasapi.account import Account
 from canvasapi.course import Course
-from edfi_lms_extractor_lib.api.resource_sync import cleanup_after_sync, sync_to_db_without_cleanup
+from edfi_lms_extractor_lib.api.resource_sync import (
+    cleanup_after_sync,
+    sync_to_db_without_cleanup,
+)
 from .api_caller import call_with_retry
 from .canvas_helper import to_df
 
