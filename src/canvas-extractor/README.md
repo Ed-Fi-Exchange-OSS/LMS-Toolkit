@@ -81,22 +81,19 @@ data and would typically span a semester or equivalent school calendar timespan.
 * ERROR
 * CRITICAL
 
-\*** Available features (can combine two or more):
+\*** When there's no specified feature, the extractor will always process Users,
+Sections, and Section Associations, which are considered the core feature. Other
+features (can combine two or more):
 
-* activities (Enables the extraction of section activities and system activities)
-* attendance (Enables the extraction of attendance events)
 * assignments (Enables the extraction of assignments and submissions)
-* grades (Enables the extraction of grades)
+* activities (Enables the extraction of section activities and system activities) - **EXPERIMENTAL**, subject to breaking changes
+* grades (Enables the extraction of grades) - **EXPERIMENTAL**, subject to breaking changes
 
 When setting features via `.env` file or through environment variable, combine
-features by using a bracketed comma-separate list, e.g.
-
-```none
-FEATURE=[activities, attendance, assignments, grades]
-```
-
-When there's no specified feature, the extractor will always process Users, 
-Sections, and Section Associations, which are considered the core feature.
+features by using a bracketed comma-separate list, e.g. `FEATURE=[activities,
+attendance, assignments, grades]`. To combine features at the command line,
+simply list them together: `--feature activities, attendance, assignments,
+grades]`.
 
 ### Output
 

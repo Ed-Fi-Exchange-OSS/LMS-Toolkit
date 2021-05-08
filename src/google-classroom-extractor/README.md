@@ -42,7 +42,7 @@ repository [readme](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit).
 
 ## Configuration
 
-### Configuration
+### Module Configuration
 
 Application configuration is provided through environment variables or command
 line interface (CLI) arguments. CLI arguments take precedence over environment
@@ -82,23 +82,19 @@ data and could span any relevant date range.
 * ERROR
 * CRITICAL
 
-\*** Available features (can combine two or more):
+\*** When there's no specified feature, the extractor will always process Users,
+Sections, and Section Associations, which are considered the core feature. Other
+features (can combine two or more):
 
-* activities (Enables the extraction of section activities and system activities)
-* attendance (Enables the extraction of attendance events)
 * assignments (Enables the extraction of assignments and submissions)
-* grades (Enables the extraction of grades)
+* activities (Enables the extraction of section activities and system activities) - **EXPERIMENTAL**, subject to breaking changes
+* grades (Enables the extraction of grades) - **COMING SOON**
 
 When setting features via `.env` file or through environment variable, combine
-features by using a bracketed comma-separate list, e.g.
-
-```none
-FEATURE=[activities, attendance, assignments, grades]
-```
-
-When there's no specified feature, the extractor will always process Users, Sections,
-and Section Associations, which are considered the core feature.
-
+features by using a bracketed comma-separate list, e.g. `FEATURE=[activities,
+attendance, assignments, grades]`. To combine features at the command line,
+simply list them together: `--feature activities, attendance, assignments,
+grades]`.
 
 Note: in order to make the extractor work, you still need to configure your
 `service-account.json` file. To do so, read the next section `API Permissions`
