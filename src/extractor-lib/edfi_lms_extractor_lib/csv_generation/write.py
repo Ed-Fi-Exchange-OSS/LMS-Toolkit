@@ -15,7 +15,6 @@ SECTIONS_ROOT_DIRECTORY = ["sections"]
 SECTION_ASSOCIATIONS_ROOT_DIRECTORY = ["section={id}", "section-associations"]
 ASSIGNMENT_ROOT_DIRECTORY = ["section={id}", "assignments"]
 SUBMISSION_ROOT_DIRECTORY = ["section={id1}", "assignment={id2}", "submissions"]
-USER_ACTIVITY_ROOT_DIRECTORY = ["section={id}", "user-activities"]
 GRADES_ROOT_DIRECTORY = ["section={id}", "grades"]
 SECTION_ACTIVITY_DIRECTORY = ["section={id}", "section-activities"]
 SYSTEM_ACTIVITY_ROOT_DIRECTORY = ["system-activities"]
@@ -225,33 +224,6 @@ def write_assignments(
         _fill_in_missing_section_ids(dfs_to_write, all_section_ids),
         output_date,
         _normalized_directory_template(output_directory, ASSIGNMENT_ROOT_DIRECTORY),
-    )
-
-
-def write_user_activities(
-    dfs_to_write: Dict[str, DataFrame],
-    all_section_ids: List[str],
-    output_date: datetime,
-    output_directory: str,
-):
-    """
-    Write a series of LMS UDM UserActivities DataFrames to CSV files
-
-    Parameters
-    ----------
-    dfs_to_write: Dict[str, DataFrame]
-        is a Dict of id/LMS UDM UserActivities DataFrame pairs
-    all_section_ids: List[str]
-        is a list of all known section ids
-    output_date: datetime
-        is the timestamp for the filename
-    output_directory: str
-        is the root output directory
-    """
-    _write_multi_csv(
-        _fill_in_missing_section_ids(dfs_to_write, all_section_ids),
-        output_date,
-        _normalized_directory_template(output_directory, USER_ACTIVITY_ROOT_DIRECTORY),
     )
 
 
