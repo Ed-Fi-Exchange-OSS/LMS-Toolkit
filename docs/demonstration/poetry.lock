@@ -158,11 +158,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "edfi-canvas-extractor"
-<<<<<<< HEAD
-version = "1.0.0b2"
-=======
-version = "1.0.0a5"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
+version = "1.0.0rc1"
 description = "Extract tool for retrieving student data from Canvas"
 category = "main"
 optional = false
@@ -171,12 +167,8 @@ python-versions = ">=3.9,<4.0"
 [package.dependencies]
 canvasapi = ">=2.0.0,<3.0.0"
 ConfigArgParse = ">=1.2.3,<2.0.0"
-<<<<<<< HEAD
-edfi-lms-extractor-lib = "1.0.0a6"
-=======
-edfi-lms-extractor-lib = "1.0.0a7"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
-edfi-lms-file-utils = "1.0.0b19"
+edfi-lms-extractor-lib = "1.0.0rc1"
+edfi-lms-file-utils = "1.0.0rc1"
 errorhandler = ">=2.0.1,<3.0.0"
 jupyter = ">=1.0.0,<2.0.0"
 opnieuw = ">=1.1.0,<2.0.0"
@@ -188,11 +180,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-google-classroom-extractor"
-<<<<<<< HEAD
-version = "1.0.0b2"
-=======
-version = "1.0.0a7"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
+version = "1.0.0rc1"
 description = "Extract tool for retrieving student data from Google Classroom"
 category = "main"
 optional = false
@@ -200,12 +188,8 @@ python-versions = ">=3.9,<4.0"
 
 [package.dependencies]
 ConfigArgParse = ">=1.2.3,<2.0.0"
-<<<<<<< HEAD
-edfi-lms-extractor-lib = "1.0.0a6"
-=======
-edfi-lms-extractor-lib = "1.0.0a7"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
-edfi-lms-file-utils = "1.0.0b19"
+edfi-lms-extractor-lib = "1.0.0rc1"
+edfi-lms-file-utils = "1.0.0rc1"
 errorhandler = ">=2.0.1,<3.0.0"
 google-api-python-client = ">=1.11.0,<2.0.0"
 google-auth-oauthlib = ">=0.4.1,<0.5.0"
@@ -220,11 +204,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-lms-ds-loader"
-<<<<<<< HEAD
-version = "1.0.0b2"
-=======
-version = "1.0.0a3"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
+version = "1.0.0rc1"
 description = "Ed-Fi LMS Toolkit Data Store Loader"
 category = "main"
 optional = false
@@ -232,12 +212,8 @@ python-versions = ">=3.9,<4.0"
 
 [package.dependencies]
 configargparse = ">=1.2.3,<2.0.0"
-<<<<<<< HEAD
-edfi-lms-extractor-lib = "1.0.0a6"
-=======
-edfi-lms-extractor-lib = "1.0.0a7"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
-edfi-lms-file-utils = "1.0.0b19"
+edfi-lms-extractor-lib = "1.0.0rc1"
+edfi-lms-file-utils = "1.0.0rc1"
 errorhandler = ">=2.0.1,<3.0.0"
 pandas = ">=1.1.2,<2.0.0"
 psycopg2 = ">=2.8.6,<3.0.0"
@@ -248,11 +224,7 @@ sqlparse = ">=0.4.1,<0.5.0"
 
 [[package]]
 name = "edfi-lms-extractor-lib"
-<<<<<<< HEAD
-version = "1.0.0a6"
-=======
-version = "1.0.0a7"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
+version = "1.0.0rc1"
 description = "Shared functions library for Ed-Fi LMS Extractor projects"
 category = "main"
 optional = false
@@ -265,7 +237,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-lms-file-utils"
-version = "1.0.0b19"
+version = "1.0.0rc1"
 description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
 category = "main"
 optional = false
@@ -277,11 +249,7 @@ pandas = ">=1.1.4,<2.0.0"
 
 [[package]]
 name = "edfi-schoology-extractor"
-<<<<<<< HEAD
-version = "1.0.0b2"
-=======
-version = "1.0.0a5"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
+version = "1.0.0rc2"
 description = "Extract tool for retrieving student data from Canvas"
 category = "main"
 optional = false
@@ -289,12 +257,8 @@ python-versions = ">=3.9,<4.0"
 
 [package.dependencies]
 configargparse = ">=1.2.3,<2.0.0"
-<<<<<<< HEAD
-edfi-lms-extractor-lib = "1.0.0a6"
-=======
-edfi-lms-extractor-lib = "1.0.0a7"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
-edfi-lms-file-utils = "1.0.0b19"
+edfi-lms-extractor-lib = "1.0.0rc1"
+edfi-lms-file-utils = "1.0.0rc1"
 errorhandler = ">=2.0.1,<3.0.0"
 oauthlib = ">=3.1.0,<4.0.0"
 opnieuw = ">=1.1.0,<2.0.0"
@@ -1347,11 +1311,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-<<<<<<< HEAD
-content-hash = "3f0dd08ab94dbf496b0424c9526161064a714245ae6403ee15554a129b1a55a2"
-=======
-content-hash = "2e946a0b4d8fbe249299562fcb9ddd5e1d2116984f181c8a8c2f03bda3e16549"
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
+content-hash = "405c0459b156451a4462646fe869ee5a86cd7a21626affb5637fb06ff503ebe5"
 
 [metadata.files]
 appnope = [
@@ -1465,50 +1425,28 @@ defusedxml = [
     {file = "defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69"},
 ]
 edfi-canvas-extractor = [
-<<<<<<< HEAD
-    {file = "edfi-canvas-extractor-1.0.0b2.tar.gz", hash = "sha256:d683f590a0a141f0b25ab0e77c753b6f161f83a8438d0147f2c1b9f6da927c75"},
-    {file = "edfi_canvas_extractor-1.0.0b2-py3-none-any.whl", hash = "sha256:104d552bb9924f38b8779bf05a3251cbfd5e8e0a2cfa4b3e0d8992786c002837"},
+    {file = "edfi-canvas-extractor-1.0.0rc1.tar.gz", hash = "sha256:22b87761f01964fc96548751475d899510c84fa6ff599d4f952afd93838237b3"},
+    {file = "edfi_canvas_extractor-1.0.0rc1-py3-none-any.whl", hash = "sha256:04bb801946a0b3888720fe2e02804d8259abc3833663cf6f7936a19943291946"},
 ]
 edfi-google-classroom-extractor = [
-    {file = "edfi-google-classroom-extractor-1.0.0b2.tar.gz", hash = "sha256:1f634ded801c9c6615f35a6b0828335374211c36b202225754d94e5da66a6f29"},
-    {file = "edfi_google_classroom_extractor-1.0.0b2-py3-none-any.whl", hash = "sha256:50cddbf3ac7b3433123ac97c321933030588ad91307496289838d980bf83c61f"},
+    {file = "edfi-google-classroom-extractor-1.0.0rc1.tar.gz", hash = "sha256:2b131a920a31cd4846540ce4a93ffbaefae1dc745e8217179c99ed6c825df85a"},
+    {file = "edfi_google_classroom_extractor-1.0.0rc1-py3-none-any.whl", hash = "sha256:a2f978ba86cddc1efdfab77a653754c6b3542c1452fbe77a2d45d756089ae942"},
 ]
 edfi-lms-ds-loader = [
-    {file = "edfi-lms-ds-loader-1.0.0b2.tar.gz", hash = "sha256:ecfa85e18551d946f4acc29b6ec25983821ca541e9840d5c068b3afd2caa47e1"},
-    {file = "edfi_lms_ds_loader-1.0.0b2-py3-none-any.whl", hash = "sha256:36b98ad1f82e7f0fd21dc87320f32702bcfd91d2a0933cc2da61dfc9a525b0ba"},
+    {file = "edfi-lms-ds-loader-1.0.0rc1.tar.gz", hash = "sha256:d095f3612bc5cc231ba751ddcca161611a72ad75a1792a87cabc617e97654d65"},
+    {file = "edfi_lms_ds_loader-1.0.0rc1-py3-none-any.whl", hash = "sha256:f4a698647d2d54b8a9b88ea207e6312a30c63a8f694d6835b632dde4a33a147f"},
 ]
 edfi-lms-extractor-lib = [
-    {file = "edfi-lms-extractor-lib-1.0.0a6.tar.gz", hash = "sha256:6080c7e1d834d66aea9c3a8b99385eb412111e2967f5605c131b88ef01bc4405"},
-    {file = "edfi_lms_extractor_lib-1.0.0a6-py3-none-any.whl", hash = "sha256:afa190cb4bb04d2751f3c66d942f5a6798a148171351621938d0bc4abaa27470"},
-=======
-    {file = "edfi-canvas-extractor-1.0.0a5.tar.gz", hash = "sha256:3d8a6452b2fe5563ecae43ded688c541800752160064ee9664972898eed1fcf5"},
-    {file = "edfi_canvas_extractor-1.0.0a5-py3-none-any.whl", hash = "sha256:38a2efdba8ea8296d9c44516925b312d60606f173435ed65f9cb34b9f7e89fab"},
-]
-edfi-google-classroom-extractor = [
-    {file = "edfi-google-classroom-extractor-1.0.0a7.tar.gz", hash = "sha256:07e5f455eac0dea8a0a2c4b4be58b5841efac8e76b8dfd875db0dd140db9f9ad"},
-    {file = "edfi_google_classroom_extractor-1.0.0a7-py3-none-any.whl", hash = "sha256:5c7457291c0daca1a37781ed69fe5dcd53d03c34f2ed8714a9767896ff6ab988"},
-]
-edfi-lms-ds-loader = [
-    {file = "edfi-lms-ds-loader-1.0.0a3.tar.gz", hash = "sha256:c019695a48c936833723179acaf2bbc23f14823b566aa6e87f23b59607127336"},
-    {file = "edfi_lms_ds_loader-1.0.0a3-py3-none-any.whl", hash = "sha256:cecb333fff8945a49c2766319039c91e347324159a955cc420fdf1ac60ddb13c"},
-]
-edfi-lms-extractor-lib = [
-    {file = "edfi-lms-extractor-lib-1.0.0a7.tar.gz", hash = "sha256:45f9db8c55901045675aa3f27008dcc7c3fb77235452ed582ddd09650bf2f862"},
-    {file = "edfi_lms_extractor_lib-1.0.0a7-py3-none-any.whl", hash = "sha256:25c8f45c6ab698185b78cb242c9572e015fc762665d416bb5ab01a1e7ed5fea4"},
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
+    {file = "edfi-lms-extractor-lib-1.0.0rc1.tar.gz", hash = "sha256:ba09dc12474e94c233faca7e4dd463058595af65056aab84fff9c5c7fa974aec"},
+    {file = "edfi_lms_extractor_lib-1.0.0rc1-py3-none-any.whl", hash = "sha256:27c0170539bbdb96a146851650d64c538dc399ee7b2dbcc37b8a62ecb1af3c09"},
 ]
 edfi-lms-file-utils = [
-    {file = "edfi-lms-file-utils-1.0.0b19.tar.gz", hash = "sha256:beec4861630ea42189b662fb9ded11575296f3f9f837d6924c881e98f4c70b03"},
-    {file = "edfi_lms_file_utils-1.0.0b19-py3-none-any.whl", hash = "sha256:3955bcbb933eb69f782bd8eeb0c2cf1f45d37a9a962673f567b5469281cb310e"},
+    {file = "edfi-lms-file-utils-1.0.0rc1.tar.gz", hash = "sha256:7ae07b3a8ffb40f78b99ba5dbfed14420129391fef4582fdc52af3d107416597"},
+    {file = "edfi_lms_file_utils-1.0.0rc1-py3-none-any.whl", hash = "sha256:405d15526f061247fd4b40da2494f7e216a7089ee5e5a8faafe0490a153f6d34"},
 ]
 edfi-schoology-extractor = [
-<<<<<<< HEAD
-    {file = "edfi-schoology-extractor-1.0.0b2.tar.gz", hash = "sha256:30dc0b041cc11548bc17e56f34085262644dcb28e56cbd54354cacc843502afd"},
-    {file = "edfi_schoology_extractor-1.0.0b2-py3-none-any.whl", hash = "sha256:f7b06c5be25ec1763ba142c28f1f62843d6320b27e2a4a1691ae65cff7ebca76"},
-=======
-    {file = "edfi-schoology-extractor-1.0.0a5.tar.gz", hash = "sha256:41f7ce9c74b3e9953a8375b5a1b0d9a37544da0d30b7bc7722cffff5d9e73638"},
-    {file = "edfi_schoology_extractor-1.0.0a5-py3-none-any.whl", hash = "sha256:bdcfa1a21e0de440b532d73b71cf2712718e747367fac9bfe5403934a778c52e"},
->>>>>>> 02ab75d... Bump for e2e testing at CLI and in demo notebooks
+    {file = "edfi-schoology-extractor-1.0.0rc2.tar.gz", hash = "sha256:94e933728e85e12504f114ee2b48a36d5799575f0c0971d5788406c86af076a1"},
+    {file = "edfi_schoology_extractor-1.0.0rc2-py3-none-any.whl", hash = "sha256:355eff01d93a12963db549c269771acfd67a9e7e82de41ba9f6845d95e8c12eb"},
 ]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
