@@ -27,6 +27,11 @@ def _configure_logging(arguments: arg_parser.MainArguments) -> None:
         level=arguments.log_level,
     )
 
+    # Canvas API logging should never be finer-grained than warning, to avoid PII in logs
+    canvasapi_logger = logging.getLogger("canvasapi")
+    if canvasapi_logger.getEffectiveLevel() < logging.WARN:
+        canvasapi_logger.setLevel(logging.WARN)
+
 
 def _main(arguments):
     error_tracker = ErrorHandler()
