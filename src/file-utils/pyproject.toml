@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-lms-file-utils"
-version = "1.0.0-rc.1"
+version = "1.0.0"
 homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"

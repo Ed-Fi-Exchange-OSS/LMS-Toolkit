@@ -158,7 +158,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "edfi-canvas-extractor"
-version = "1.0.0rc1"
+version = "1.0.0"
 description = "Extract tool for retrieving student data from Canvas"
 category = "main"
 optional = false
@@ -167,8 +167,8 @@ python-versions = ">=3.9,<4.0"
 [package.dependencies]
 canvasapi = ">=2.0.0,<3.0.0"
 ConfigArgParse = ">=1.2.3,<2.0.0"
-edfi-lms-extractor-lib = "1.0.0rc1"
-edfi-lms-file-utils = "1.0.0rc1"
+edfi-lms-extractor-lib = "1.0.0"
+edfi-lms-file-utils = "1.0.0"
 errorhandler = ">=2.0.1,<3.0.0"
 jupyter = ">=1.0.0,<2.0.0"
 opnieuw = ">=1.1.0,<2.0.0"
@@ -180,7 +180,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-google-classroom-extractor"
-version = "1.0.0rc1"
+version = "1.0.0"
 description = "Extract tool for retrieving student data from Google Classroom"
 category = "main"
 optional = false
@@ -188,8 +188,8 @@ python-versions = ">=3.9,<4.0"
 
 [package.dependencies]
 ConfigArgParse = ">=1.2.3,<2.0.0"
-edfi-lms-extractor-lib = "1.0.0rc1"
-edfi-lms-file-utils = "1.0.0rc1"
+edfi-lms-extractor-lib = "1.0.0"
+edfi-lms-file-utils = "1.0.0"
 errorhandler = ">=2.0.1,<3.0.0"
 google-api-python-client = ">=1.11.0,<2.0.0"
 google-auth-oauthlib = ">=0.4.1,<0.5.0"
@@ -204,7 +204,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-lms-ds-loader"
-version = "1.0.0rc1"
+version = "1.0.0"
 description = "Ed-Fi LMS Toolkit Data Store Loader"
 category = "main"
 optional = false
@@ -212,8 +212,8 @@ python-versions = ">=3.9,<4.0"
 
 [package.dependencies]
 configargparse = ">=1.2.3,<2.0.0"
-edfi-lms-extractor-lib = "1.0.0rc1"
-edfi-lms-file-utils = "1.0.0rc1"
+edfi-lms-extractor-lib = "1.0.0"
+edfi-lms-file-utils = "1.0.0"
 errorhandler = ">=2.0.1,<3.0.0"
 pandas = ">=1.1.2,<2.0.0"
 psycopg2 = ">=2.8.6,<3.0.0"
@@ -224,7 +224,7 @@ sqlparse = ">=0.4.1,<0.5.0"
 
 [[package]]
 name = "edfi-lms-extractor-lib"
-version = "1.0.0rc1"
+version = "1.0.0"
 description = "Shared functions library for Ed-Fi LMS Extractor projects"
 category = "main"
 optional = false
@@ -237,7 +237,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-lms-file-utils"
-version = "1.0.0rc1"
+version = "1.0.0"
 description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
 category = "main"
 optional = false
@@ -249,7 +249,7 @@ pandas = ">=1.1.4,<2.0.0"
 
 [[package]]
 name = "edfi-schoology-extractor"
-version = "1.0.0rc2"
+version = "1.0.0"
 description = "Extract tool for retrieving student data from Canvas"
 category = "main"
 optional = false
@@ -257,8 +257,8 @@ python-versions = ">=3.9,<4.0"
 
 [package.dependencies]
 configargparse = ">=1.2.3,<2.0.0"
-edfi-lms-extractor-lib = "1.0.0rc1"
-edfi-lms-file-utils = "1.0.0rc1"
+edfi-lms-extractor-lib = "1.0.0"
+edfi-lms-file-utils = "1.0.0"
 errorhandler = ">=2.0.1,<3.0.0"
 oauthlib = ">=3.1.0,<4.0.0"
 opnieuw = ">=1.1.0,<2.0.0"
@@ -1311,7 +1311,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "405c0459b156451a4462646fe869ee5a86cd7a21626affb5637fb06ff503ebe5"
+content-hash = "cc1da868b6a189b54a8e53ae66bdde328b87644d5b45294f20eb3b0e6fbda999"
 
 [metadata.files]
 appnope = [
@@ -1335,6 +1335,8 @@ argon2-cffi = [
     {file = "argon2_cffi-20.1.0-cp37-cp37m-win_amd64.whl", hash = "sha256:6678bb047373f52bcff02db8afab0d2a77d83bde61cfecea7c5c62e2335cb203"},
     {file = "argon2_cffi-20.1.0-cp38-cp38-win32.whl", hash = "sha256:77e909cc756ef81d6abb60524d259d959bab384832f0c651ed7dcb6e5ccdbb78"},
     {file = "argon2_cffi-20.1.0-cp38-cp38-win_amd64.whl", hash = "sha256:9dfd5197852530294ecb5795c97a823839258dfd5eb9420233c7cfedec2058f2"},
+    {file = "argon2_cffi-20.1.0-cp39-cp39-win32.whl", hash = "sha256:e2db6e85c057c16d0bd3b4d2b04f270a7467c147381e8fd73cbbe5bc719832be"},
+    {file = "argon2_cffi-20.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:8a84934bd818e14a17943de8099d41160da4a336bcc699bb4c394bbb9b94bd32"},
 ]
 async-generator = [
     {file = "async_generator-1.10-py3-none-any.whl", hash = "sha256:01c7bf666359b4967d2cda0000cc2e4af16a0ae098cbffcb8472fb9e8ad6585b"},
@@ -1412,6 +1414,7 @@ chardet = [
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
+    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
 configargparse = [
     {file = "ConfigArgParse-1.4.tar.gz", hash = "sha256:abef9ff44fb0091f0e3bb2ee7e5b26a02b5b62d45408a5272a9bd461f5b59b4b"},
@@ -1425,28 +1428,28 @@ defusedxml = [
     {file = "defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69"},
 ]
 edfi-canvas-extractor = [
-    {file = "edfi-canvas-extractor-1.0.0rc1.tar.gz", hash = "sha256:22b87761f01964fc96548751475d899510c84fa6ff599d4f952afd93838237b3"},
-    {file = "edfi_canvas_extractor-1.0.0rc1-py3-none-any.whl", hash = "sha256:04bb801946a0b3888720fe2e02804d8259abc3833663cf6f7936a19943291946"},
+    {file = "edfi-canvas-extractor-1.0.0.tar.gz", hash = "sha256:b1d2c663fe2bf06b924b02760a41832c53d5bc4b1b2a5f1a581db975b669859b"},
+    {file = "edfi_canvas_extractor-1.0.0-py3-none-any.whl", hash = "sha256:c3398247144e05784c620c4c4e09a5defdedbb4f92294b185f0af7bb74d6d838"},
 ]
 edfi-google-classroom-extractor = [
-    {file = "edfi-google-classroom-extractor-1.0.0rc1.tar.gz", hash = "sha256:2b131a920a31cd4846540ce4a93ffbaefae1dc745e8217179c99ed6c825df85a"},
-    {file = "edfi_google_classroom_extractor-1.0.0rc1-py3-none-any.whl", hash = "sha256:a2f978ba86cddc1efdfab77a653754c6b3542c1452fbe77a2d45d756089ae942"},
+    {file = "edfi-google-classroom-extractor-1.0.0.tar.gz", hash = "sha256:0aaa7245864304ac7a63fb3351547030ec52ef477a53846a20a5f268922d715c"},
+    {file = "edfi_google_classroom_extractor-1.0.0-py3-none-any.whl", hash = "sha256:57e55c2e1854ab3c6da3dbc0feadf578f8926bb4eb22aca0f3131d796268959b"},
 ]
 edfi-lms-ds-loader = [
-    {file = "edfi-lms-ds-loader-1.0.0rc1.tar.gz", hash = "sha256:d095f3612bc5cc231ba751ddcca161611a72ad75a1792a87cabc617e97654d65"},
-    {file = "edfi_lms_ds_loader-1.0.0rc1-py3-none-any.whl", hash = "sha256:f4a698647d2d54b8a9b88ea207e6312a30c63a8f694d6835b632dde4a33a147f"},
+    {file = "edfi-lms-ds-loader-1.0.0.tar.gz", hash = "sha256:ffe2bce7cdb0954259ca92ed017a850569fa33b9106181779bb478f68dfd6761"},
+    {file = "edfi_lms_ds_loader-1.0.0-py3-none-any.whl", hash = "sha256:c3cce12de8563cf275ad334ac84f7fd2f280858be1baf689517727fa03bd3064"},
 ]
 edfi-lms-extractor-lib = [
-    {file = "edfi-lms-extractor-lib-1.0.0rc1.tar.gz", hash = "sha256:ba09dc12474e94c233faca7e4dd463058595af65056aab84fff9c5c7fa974aec"},
-    {file = "edfi_lms_extractor_lib-1.0.0rc1-py3-none-any.whl", hash = "sha256:27c0170539bbdb96a146851650d64c538dc399ee7b2dbcc37b8a62ecb1af3c09"},
+    {file = "edfi-lms-extractor-lib-1.0.0.tar.gz", hash = "sha256:211ab333f995834fd27a1b4f05853eb859654c96f1dddb1a727705ebbb9cb1b6"},
+    {file = "edfi_lms_extractor_lib-1.0.0-py3-none-any.whl", hash = "sha256:3cea11ebd88569173f4ff82f879e59f0c76342ebf679475f2ed9eec77500944f"},
 ]
 edfi-lms-file-utils = [
-    {file = "edfi-lms-file-utils-1.0.0rc1.tar.gz", hash = "sha256:7ae07b3a8ffb40f78b99ba5dbfed14420129391fef4582fdc52af3d107416597"},
-    {file = "edfi_lms_file_utils-1.0.0rc1-py3-none-any.whl", hash = "sha256:405d15526f061247fd4b40da2494f7e216a7089ee5e5a8faafe0490a153f6d34"},
+    {file = "edfi-lms-file-utils-1.0.0.tar.gz", hash = "sha256:494beab3c3448ec6bf7993b77c0454f043862e1ac17475119ece16bd70219698"},
+    {file = "edfi_lms_file_utils-1.0.0-py3-none-any.whl", hash = "sha256:c7d08720b93b2c99af6f6610b7a6c5afceafc6073cfb9c3e7224a4a37217e582"},
 ]
 edfi-schoology-extractor = [
-    {file = "edfi-schoology-extractor-1.0.0rc2.tar.gz", hash = "sha256:94e933728e85e12504f114ee2b48a36d5799575f0c0971d5788406c86af076a1"},
-    {file = "edfi_schoology_extractor-1.0.0rc2-py3-none-any.whl", hash = "sha256:355eff01d93a12963db549c269771acfd67a9e7e82de41ba9f6845d95e8c12eb"},
+    {file = "edfi-schoology-extractor-1.0.0.tar.gz", hash = "sha256:efe1ae1999fad00a8134b2f50193721d7cd31eb26bb0abdecd1cbc6219262e0f"},
+    {file = "edfi_schoology_extractor-1.0.0-py3-none-any.whl", hash = "sha256:6f39428d548f705c91d8b9bcfa51b83437718dc79c89f8ba4855ea63f2923e66"},
 ]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
@@ -1564,20 +1567,39 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp35-cp35m-win32.whl", hash = "sha256:6dd73240d2af64df90aa7c4e7481e23825ea70af4b4922f8ede5b9e35f78a3b1"},
     {file = "MarkupSafe-1.1.1-cp35-cp35m-win_amd64.whl", hash = "sha256:9add70b36c5666a2ed02b43b335fe19002ee5235efd4b8a89bfcf9005bebac0d"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-macosx_10_6_intel.whl", hash = "sha256:24982cc2533820871eba85ba648cd53d8623687ff11cbb805be4ff7b4c971aff"},
+    {file = "MarkupSafe-1.1.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:d53bc011414228441014aa71dbec320c66468c1030aae3a6e29778a3382d96e5"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:00bc623926325b26bb9605ae9eae8a215691f33cae5df11ca5424f06f2d1f473"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:717ba8fe3ae9cc0006d7c451f0bb265ee07739daf76355d06366154ee68d221e"},
+    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2010_i686.whl", hash = "sha256:3b8a6499709d29c2e2399569d96719a1b21dcd94410a586a18526b143ec8470f"},
+    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:84dee80c15f1b560d55bcfe6d47b27d070b4681c699c572af2e3c7cc90a3b8e0"},
+    {file = "MarkupSafe-1.1.1-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:b1dba4527182c95a0db8b6060cc98ac49b9e2f5e64320e2b56e47cb2831978c7"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-win32.whl", hash = "sha256:535f6fc4d397c1563d08b88e485c3496cf5784e927af890fb3c3aac7f933ec66"},
     {file = "MarkupSafe-1.1.1-cp36-cp36m-win_amd64.whl", hash = "sha256:b1282f8c00509d99fef04d8ba936b156d419be841854fe901d8ae224c59f0be5"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-macosx_10_6_intel.whl", hash = "sha256:8defac2f2ccd6805ebf65f5eeb132adcf2ab57aa11fdf4c0dd5169a004710e7d"},
+    {file = "MarkupSafe-1.1.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:bf5aa3cbcfdf57fa2ee9cd1822c862ef23037f5c832ad09cfea57fa846dec193"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:46c99d2de99945ec5cb54f23c8cd5689f6d7177305ebff350a58ce5f8de1669e"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:ba59edeaa2fc6114428f1637ffff42da1e311e29382d81b339c1817d37ec93c6"},
+    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2010_i686.whl", hash = "sha256:6fffc775d90dcc9aed1b89219549b329a9250d918fd0b8fa8d93d154918422e1"},
+    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:a6a744282b7718a2a62d2ed9d993cad6f5f585605ad352c11de459f4108df0a1"},
+    {file = "MarkupSafe-1.1.1-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:195d7d2c4fbb0ee8139a6cf67194f3973a6b3042d742ebe0a9ed36d8b6f0c07f"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win32.whl", hash = "sha256:b00c1de48212e4cc9603895652c5c410df699856a2853135b3967591e4beebc2"},
     {file = "MarkupSafe-1.1.1-cp37-cp37m-win_amd64.whl", hash = "sha256:9bf40443012702a1d2070043cb6291650a0841ece432556f784f004937f0f32c"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:6788b695d50a51edb699cb55e35487e430fa21f1ed838122d722e0ff0ac5ba15"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:cdb132fc825c38e1aeec2c8aa9338310d29d337bebbd7baa06889d09a60a1fa2"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:13d3144e1e340870b25e7b10b98d779608c02016d5184cfb9927a9f10c689f42"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2010_i686.whl", hash = "sha256:acf08ac40292838b3cbbb06cfe9b2cb9ec78fce8baca31ddb87aaac2e2dc3bc2"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:d9be0ba6c527163cbed5e0857c451fcd092ce83947944d6c14bc95441203f032"},
+    {file = "MarkupSafe-1.1.1-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:caabedc8323f1e93231b52fc32bdcde6db817623d33e100708d9a68e1f53b26b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:d73a845f227b0bfe8a7455ee623525ee656a9e2e749e4742706d80a6065d5e2c"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux1_i686.whl", hash = "sha256:98bae9582248d6cf62321dcb52aaf5d9adf0bad3b40582925ef7c7f0ed85fceb"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:2beec1e0de6924ea551859edb9e7679da6e4870d32cb766240ce17e0a0ba2014"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2010_i686.whl", hash = "sha256:7fed13866cf14bba33e7176717346713881f56d9d2bcebab207f7a036f41b850"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:6f1e273a344928347c1290119b493a1f0303c52f5a5eae5f16d74f48c15d4a85"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:feb7b34d6325451ef96bc0e36e1a6c0c1c64bc1fbec4b854f4529e51887b1621"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-win32.whl", hash = "sha256:22c178a091fc6630d0d045bdb5992d2dfe14e3259760e713c490da5323866c39"},
+    {file = "MarkupSafe-1.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:b7d644ddb4dbd407d31ffb699f1d140bc35478da613b441c582aeb7c43838dd8"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
 matplotlib-inline = [
@@ -1799,6 +1821,8 @@ pyodbc = [
     {file = "pyodbc-4.0.30-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:d4ffeab51dcc03c4c1a9a200f70999ce9b827c91defc4f5740633a6d47d3a206"},
     {file = "pyodbc-4.0.30-cp38-cp38-win32.whl", hash = "sha256:d3ad340e0053b6ec4130957efbcecce6de48d68e7e78792ea7588e27ffa629f1"},
     {file = "pyodbc-4.0.30-cp38-cp38-win_amd64.whl", hash = "sha256:bce7e41c7cfc06ec976245f361221dfdd0f04e804010cf255cbb36985f6c3406"},
+    {file = "pyodbc-4.0.30-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:3bf7fd4d7a42fa4f0a50cf2418d49cd3c8fa05b8a1972534f0ebfadd92c7ce52"},
+    {file = "pyodbc-4.0.30-cp39-cp39-win_amd64.whl", hash = "sha256:b149b0c2d11833bbd5355a8fe5a8b41fba5518dacdc613a0218fd77c2969a4f5"},
     {file = "pyodbc-4.0.30.tar.gz", hash = "sha256:852b5deeeb3366af8b4408efed993501708be45d221881bce60c9aac54be726a"},
 ]
 pyparsing = [
