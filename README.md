@@ -31,7 +31,7 @@ The Toolkit consists of extractors and loaders:
   * [Canvas](src/canvas-extractor)
   * [Google Classroom](src/google-classroom-extractor)
   * [Schoology](src/schoology-extractor)
-* **LMS DS Loader**: pushes CSV files into a relational database (SQL Server
+* **[LMS DS Loader](src/lms-ds-loader)**: pushes CSV files into a relational database (SQL Server
   only, at this time).
 
 We also anticipate utilities and features that help reconcile this instructional

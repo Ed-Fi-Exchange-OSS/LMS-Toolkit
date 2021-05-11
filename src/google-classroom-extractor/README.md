@@ -52,7 +52,7 @@ dedicated [`.env` file](https://pypi.org/project/python-dotenv/) like:
 ```none
 CLASSROOM_ACCOUNT[<email address of the Google Classroom admin account, required]
 LOG_LEVEL=[Log level, optional]
-OUTPUT_PATH=[The output directory for the csv files, optional]
+OUTPUT_DIRECTORY=[The output directory for the csv files, optional]
 START_DATE=[start date for usage data pull in yyyy-mm-dd format, optional]
 END_DATE=[end date for usage data pull in yyyy-mm-dd format, optional]
 ```
