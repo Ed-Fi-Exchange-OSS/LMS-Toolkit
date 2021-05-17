@@ -64,7 +64,7 @@ def custom_get_new_page(self: PaginatedList):
 PaginatedList._get_next_page = custom_get_new_page
 
 
-def _request_events_for_student(
+def _request_events_for_student_with_retry(
     user: User, start_date: str, end_date: str
 ) -> List[AuthenticationEvent]:
     def _get_auth_events():
@@ -94,7 +94,7 @@ def request_events(
     logger.info("Pulling authentication events data")
     events: List[AuthenticationEvent] = []
     for user in users:
-        local_events = _request_events_for_student(user, start_date, end_date)
+        local_events = _request_events_for_student_with_retry(user, start_date, end_date)
         events.extend(local_events)
 
     return events

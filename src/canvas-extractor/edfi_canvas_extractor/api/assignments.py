@@ -22,7 +22,7 @@ ASSIGNMENTS_RESOURCE_NAME = "Assignments"
 logger = logging.getLogger(__name__)
 
 
-def _request_assignments_for_course(course: Course) -> List[Assignment]:
+def _request_assignments_for_course_with_retry(course: Course) -> List[Assignment]:
     """
     Fetch Assignments API data for a course
 
@@ -59,7 +59,7 @@ def request_assignments(courses: List[Course]) -> List[Assignment]:
     logger.info("Pulling assignment data")
     assignments: List[Assignment] = []
     for course in courses:
-        assignments.extend(_request_assignments_for_course(course))
+        assignments.extend(_request_assignments_for_course_with_retry(course))
 
     return assignments
 

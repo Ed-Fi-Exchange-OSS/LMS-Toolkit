@@ -22,7 +22,7 @@ SECTIONS_RESOURCE_NAME = "Sections"
 logger = logging.getLogger(__name__)
 
 
-def _request_sections_for_course(course: Course) -> List[Section]:
+def _request_sections_for_course_with_retry(course: Course) -> List[Section]:
     """
     Fetch Sections API data for a course
 
@@ -59,7 +59,7 @@ def request_sections(courses: List[Course]) -> List[Section]:
     logger.info("Pulling section data")
     sections: List[Section] = []
     for course in courses:
-        sections.extend(_request_sections_for_course(course))
+        sections.extend(_request_sections_for_course_with_retry(course))
 
     return sections
 

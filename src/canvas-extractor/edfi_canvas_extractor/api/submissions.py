@@ -22,7 +22,7 @@ SUBMISSIONS_RESOURCE_NAME = "Submissions"
 logger = logging.getLogger(__name__)
 
 
-def _request_submissions_for_assignment(assignment: Assignment) -> List[Submission]:
+def _request_submissions_for_assignment_with_retry(assignment: Assignment) -> List[Submission]:
     """
     Fetch Submissions API data for a assignment
 
@@ -55,7 +55,7 @@ def request_submissions(assignment: Assignment) -> List[Submission]:
     List[Submission]
         a list of Submission API objects
     """
-    return _request_submissions_for_assignment(assignment)
+    return _request_submissions_for_assignment_with_retry(assignment)
 
 
 def submissions_synced_as_df(

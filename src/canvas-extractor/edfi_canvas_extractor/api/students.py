@@ -22,7 +22,7 @@ STUDENTS_RESOURCE_NAME = "Students"
 logger = logging.getLogger(__name__)
 
 
-def _request_students_for_course(course: Course) -> List[User]:
+def _request_students_for_course_with_retry(course: Course) -> List[User]:
     """
     Fetch Students API data for a course
 
@@ -59,7 +59,7 @@ def request_students(courses: List[Course]) -> List[User]:
     logger.info("Pulling student data")
     students: List[User] = []
     for course in courses:
-        students.extend(_request_students_for_course(course))
+        students.extend(_request_students_for_course_with_retry(course))
 
     return remove_duplicates(students, "id")
 
