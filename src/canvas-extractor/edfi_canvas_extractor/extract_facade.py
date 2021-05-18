@@ -7,10 +7,14 @@ from datetime import datetime
 from typing import Dict, Tuple, cast
 import sys
 import logging
+import socket
 
 from pandas import DataFrame
 import sqlalchemy
 from canvasapi import Canvas
+from canvasapi.exceptions import CanvasException
+from requests import RequestException
+from opnieuw import retry
 
 from edfi_canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from edfi_lms_extractor_lib.csv_generation.write import (
@@ -39,9 +43,10 @@ from edfi_canvas_extractor.api.canvas_helper import to_df
 from edfi_canvas_extractor.helpers.arg_parser import MainArguments
 
 
+MAX_TOTAL_CALLS = 4
+RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
+
 logger = logging.getLogger(__name__)
-
-
 results_store: Dict[str, Tuple] = {}
 
 
@@ -52,6 +57,17 @@ def _break_execution(failing_extraction: str) -> None:
     sys.exit(1)
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_courses(
     arguments: MainArguments, canvas: Canvas, sync_db: sqlalchemy.engine.base.Engine
@@ -63,6 +79,17 @@ def _get_courses(
     results_store["courses"] = (courses, courses_df)
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_sections(
     arguments: MainArguments, sync_db: sqlalchemy.engine.base.Engine
@@ -75,6 +102,17 @@ def _get_sections(
     results_store["sections"] = (sections, udm_sections_df, all_section_ids)
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_section_activities(
     arguments: MainArguments,
@@ -86,6 +124,17 @@ def _get_section_activities(
     )
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_assignments(
     arguments: MainArguments,
@@ -105,6 +154,17 @@ def _get_assignments(
     results_store["assignments"] = (assignments, udm_assignments_df)
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_students(
     arguments: MainArguments, sync_db: sqlalchemy.engine.base.Engine
@@ -117,6 +177,17 @@ def _get_students(
     write_users(udm_students_df, datetime.now(), arguments.output_directory)
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_submissions(
     arguments: MainArguments,
@@ -133,6 +204,17 @@ def _get_submissions(
     )
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_enrollments(
     arguments: MainArguments, sync_db: sqlalchemy.engine.base.Engine
@@ -147,6 +229,17 @@ def _get_enrollments(
     results_store["enrollments"] = (enrollments, udm_enrollments)
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_grades(arguments: MainArguments) -> None:
     logger.info("Extracting Grades from Canvas API")
@@ -161,6 +254,17 @@ def _get_grades(arguments: MainArguments) -> None:
     )
 
 
+@retry(
+    retry_on_exceptions=(
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+    ),
+    max_calls_total=MAX_TOTAL_CALLS,
+    retry_window_after_first_call_in_seconds=RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+)
 @catch_exceptions
 def _get_system_activities(
     arguments: MainArguments, sync_db: sqlalchemy.engine.base.Engine
