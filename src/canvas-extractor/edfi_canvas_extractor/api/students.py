@@ -5,8 +5,10 @@
 
 import logging
 from typing import List
+
 from pandas import DataFrame
 import sqlalchemy
+from opnieuw import retry
 
 from canvasapi.course import Course
 from canvasapi.user import User
@@ -15,32 +17,15 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 from .canvas_helper import remove_duplicates, to_df
-from .api_caller import call_with_retry
+from edfi_canvas_extractor.config import RETRY_CONFIG
+
 
 STUDENTS_RESOURCE_NAME = "Students"
 
 logger = logging.getLogger(__name__)
 
 
-def _request_students_for_course(course: Course) -> List[User]:
-    """
-    Fetch Students API data for a course
-
-    Parameters
-    ----------
-    canvas: Canvas
-        a Canvas SDK object
-    course: Course
-        a Canvas Course object
-
-    Returns
-    -------
-    List[User]
-        a list of User API objects
-    """
-    return call_with_retry(course.get_users, enrollment_type=["student"])
-
-
+@retry(**RETRY_CONFIG)  # type: ignore
 def request_students(courses: List[Course]) -> List[User]:
     """
     Fetch Students API data for a range of courses and return a list of students as User API objects
@@ -59,7 +44,7 @@ def request_students(courses: List[Course]) -> List[User]:
     logger.info("Pulling student data")
     students: List[User] = []
     for course in courses:
-        students.extend(_request_students_for_course(course))
+        students.extend(course.get_users(enrollment_type=["student"]))
 
     return remove_duplicates(students, "id")
 

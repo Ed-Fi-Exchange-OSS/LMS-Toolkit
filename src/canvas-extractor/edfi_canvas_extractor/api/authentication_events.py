@@ -12,17 +12,22 @@ import sqlalchemy
 from canvasapi.authentication_event import AuthenticationEvent
 from canvasapi.user import User
 from canvasapi.paginated_list import PaginatedList
+from opnieuw import retry
 
 from .canvas_helper import to_df
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
 )
-from .api_caller import call_with_retry
+from edfi_canvas_extractor.config import RETRY_CONFIG
+
 
 AUTH_EVENTS_RESOURCE_NAME = "Authentication_Events"
 
 logger = logging.getLogger(__name__)
+
+
+# Do not modify this section: this is monkeypatching an existing functionality
 
 
 def custom_get_new_page(self: PaginatedList):
@@ -63,17 +68,10 @@ def custom_get_new_page(self: PaginatedList):
 
 PaginatedList._get_next_page = custom_get_new_page
 
-
-def _request_events_for_student(
-    user: User, start_date: str, end_date: str
-) -> List[AuthenticationEvent]:
-    def _get_auth_events():
-        return user.get_authentication_events(start_time=start_date, end_time=end_date)
-
-    response = call_with_retry(_get_auth_events)
-    return response
+# End of monkeypatch
 
 
+@retry(**RETRY_CONFIG)  # type: ignore
 def request_events(
     users: List[User], start_date: str, end_date: str
 ) -> List[AuthenticationEvent]:
@@ -94,7 +92,9 @@ def request_events(
     logger.info("Pulling authentication events data")
     events: List[AuthenticationEvent] = []
     for user in users:
-        local_events = _request_events_for_student(user, start_date, end_date)
+        local_events = user.get_authentication_events(
+            start_time=start_date, end_time=end_date
+        )
         events.extend(local_events)
 
     return events

@@ -4,8 +4,10 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 import logging
 from typing import List
+
 from pandas import DataFrame
 import sqlalchemy
+from opnieuw import retry
 
 from canvasapi import Canvas
 from canvasapi.account import Account
@@ -14,14 +16,16 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
 )
-from .api_caller import call_with_retry
 from .canvas_helper import to_df
+from edfi_canvas_extractor.config import RETRY_CONFIG
+
 
 COURSES_RESOURCE_NAME = "Courses"
 
 logger = logging.getLogger(__name__)
 
 
+@retry(**RETRY_CONFIG)  # type: ignore
 def request_courses(canvas: Canvas, start_date: str, end_date: str) -> List[Course]:
     """
     Fetch Course API data for all courses
@@ -40,10 +44,9 @@ def request_courses(canvas: Canvas, start_date: str, end_date: str) -> List[Cour
 
     results: List = []
 
-    accounts: List[Account] = call_with_retry(canvas.get_accounts)
+    accounts: List[Account] = canvas.get_accounts()
     for account in accounts:
-        courses: List[Course] = call_with_retry(
-            account.get_courses,
+        courses: List[Course] = account.get_courses(
             state=["available", "completed"],
             starts_before=end_date,
             ends_after=start_date,

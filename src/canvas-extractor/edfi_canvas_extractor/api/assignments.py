@@ -4,9 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
+
 from typing import List
 from pandas import DataFrame
 import sqlalchemy
+from opnieuw import retry
 
 from canvasapi.course import Course
 from canvasapi.assignment import Assignment
@@ -15,32 +17,14 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 from .canvas_helper import to_df
-from .api_caller import call_with_retry
+from edfi_canvas_extractor.config import RETRY_CONFIG
 
 ASSIGNMENTS_RESOURCE_NAME = "Assignments"
 
 logger = logging.getLogger(__name__)
 
 
-def _request_assignments_for_course(course: Course) -> List[Assignment]:
-    """
-    Fetch Assignments API data for a course
-
-    Parameters
-    ----------
-    canvas: Canvas
-        a Canvas SDK object
-    course: Course
-        a Canvas Course object
-
-    Returns
-    -------
-    List[Assignment]
-        a list of Assignment API objects
-    """
-    return call_with_retry(course.get_assignments)
-
-
+@retry(**RETRY_CONFIG)  # type: ignore
 def request_assignments(courses: List[Course]) -> List[Assignment]:
     """
     Fetch Assignments API data for a range of courses and return a list of assignments as Assignment API objects
@@ -59,7 +43,7 @@ def request_assignments(courses: List[Course]) -> List[Assignment]:
     logger.info("Pulling assignment data")
     assignments: List[Assignment] = []
     for course in courses:
-        assignments.extend(_request_assignments_for_course(course))
+        assignments.extend(course.get_assignments())
 
     return assignments
 

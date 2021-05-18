@@ -40,8 +40,6 @@ from edfi_canvas_extractor.helpers.arg_parser import MainArguments
 
 
 logger = logging.getLogger(__name__)
-
-
 results_store: Dict[str, Tuple] = {}
 
 

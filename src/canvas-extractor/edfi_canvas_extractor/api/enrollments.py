@@ -5,8 +5,10 @@
 
 import logging
 from typing import List
+
 from pandas import DataFrame
 import sqlalchemy
+from opnieuw import retry
 
 from canvasapi.section import Section
 from canvasapi.enrollment import Enrollment
@@ -15,13 +17,15 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 from .canvas_helper import to_df
-from .api_caller import call_with_retry
+from edfi_canvas_extractor.config import RETRY_CONFIG
+
 
 ENROLLMENTS_RESOURCE_NAME = "Enrollments"
 
 logger = logging.getLogger(__name__)
 
 
+@retry(**RETRY_CONFIG)  # type: ignore
 def request_enrollments_for_section(section: Section) -> List[Enrollment]:
     """
     Fetch Enrollments API data for a section
@@ -38,7 +42,7 @@ def request_enrollments_for_section(section: Section) -> List[Enrollment]:
     List[Enrollment]
         a list of Enrollment API objects
     """
-    return call_with_retry(section.get_enrollments)
+    return section.get_enrollments()
 
 
 def enrollments_synced_as_df(
