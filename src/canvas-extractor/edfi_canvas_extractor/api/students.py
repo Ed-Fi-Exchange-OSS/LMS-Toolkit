@@ -15,30 +15,10 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 from .canvas_helper import remove_duplicates, to_df
-from .api_caller import call_with_retry
 
 STUDENTS_RESOURCE_NAME = "Students"
 
 logger = logging.getLogger(__name__)
-
-
-def _request_students_for_course_with_retry(course: Course) -> List[User]:
-    """
-    Fetch Students API data for a course
-
-    Parameters
-    ----------
-    canvas: Canvas
-        a Canvas SDK object
-    course: Course
-        a Canvas Course object
-
-    Returns
-    -------
-    List[User]
-        a list of User API objects
-    """
-    return call_with_retry(course.get_users, enrollment_type=["student"])
 
 
 def request_students(courses: List[Course]) -> List[User]:
@@ -59,7 +39,7 @@ def request_students(courses: List[Course]) -> List[User]:
     logger.info("Pulling student data")
     students: List[User] = []
     for course in courses:
-        students.extend(_request_students_for_course_with_retry(course))
+        students.extend(course.get_users(enrollment_type=["student"]))
 
     return remove_duplicates(students, "id")
 

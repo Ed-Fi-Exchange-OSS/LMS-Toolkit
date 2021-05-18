@@ -15,30 +15,11 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 from .canvas_helper import to_df
-from .api_caller import call_with_retry
+
 
 SECTIONS_RESOURCE_NAME = "Sections"
 
 logger = logging.getLogger(__name__)
-
-
-def _request_sections_for_course_with_retry(course: Course) -> List[Section]:
-    """
-    Fetch Sections API data for a course
-
-    Parameters
-    ----------
-    canvas: Canvas
-        a Canvas SDK object
-    course: Course
-        a Canvas Course object
-
-    Returns
-    -------
-    List[Section]
-        a list of Section API objects
-    """
-    return call_with_retry(course.get_sections)
 
 
 def request_sections(courses: List[Course]) -> List[Section]:
@@ -59,7 +40,7 @@ def request_sections(courses: List[Course]) -> List[Section]:
     logger.info("Pulling section data")
     sections: List[Section] = []
     for course in courses:
-        sections.extend(_request_sections_for_course_with_retry(course))
+        sections.extend(course.get_sections())
 
     return sections
 
