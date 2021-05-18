@@ -58,7 +58,7 @@ def get_canvas_api(canvas_base_url: str, canvas_access_token: str) -> Canvas:
 
 
 MAX_TOTAL_CALLS = 4
-RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
+RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 600
 
 RETRY_CONFIG = {
     "retry_on_exceptions": (
