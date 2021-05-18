@@ -12,12 +12,14 @@ import sqlalchemy
 from canvasapi.authentication_event import AuthenticationEvent
 from canvasapi.user import User
 from canvasapi.paginated_list import PaginatedList
+from opnieuw import retry
 
 from .canvas_helper import to_df
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
 )
+from edfi_canvas_extractor.config import RETRY_CONFIG
 
 
 AUTH_EVENTS_RESOURCE_NAME = "Authentication_Events"
@@ -69,6 +71,7 @@ PaginatedList._get_next_page = custom_get_new_page
 # End of monkeypatch
 
 
+@retry(**RETRY_CONFIG)  # type: ignore
 def request_events(
     users: List[User], start_date: str, end_date: str
 ) -> List[AuthenticationEvent]:

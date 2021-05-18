@@ -5,8 +5,10 @@
 
 import logging
 from typing import List
+
 from pandas import DataFrame
 import sqlalchemy
+from opnieuw import retry
 
 from canvasapi.course import Course
 from canvasapi.section import Section
@@ -15,6 +17,7 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 from .canvas_helper import to_df
+from edfi_canvas_extractor.config import RETRY_CONFIG
 
 
 SECTIONS_RESOURCE_NAME = "Sections"
@@ -22,6 +25,7 @@ SECTIONS_RESOURCE_NAME = "Sections"
 logger = logging.getLogger(__name__)
 
 
+@retry(**RETRY_CONFIG)  # type: ignore
 def request_sections(courses: List[Course]) -> List[Section]:
     """
     Fetch Sections API data for a range of courses and return a list of sections as Section API objects

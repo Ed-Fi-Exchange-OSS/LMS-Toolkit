@@ -5,8 +5,10 @@
 
 import logging
 from typing import List
+
 from pandas import DataFrame
 import sqlalchemy
+from opnieuw import retry
 
 from canvasapi.assignment import Assignment
 from canvasapi.submission import Submission
@@ -15,6 +17,7 @@ from edfi_lms_extractor_lib.api.resource_sync import (
     sync_to_db_without_cleanup,
 )
 from .canvas_helper import to_df
+from edfi_canvas_extractor.config import RETRY_CONFIG
 
 
 SUBMISSIONS_RESOURCE_NAME = "Submissions"
@@ -22,6 +25,7 @@ SUBMISSIONS_RESOURCE_NAME = "Submissions"
 logger = logging.getLogger(__name__)
 
 
+@retry(**RETRY_CONFIG)  # type: ignore
 def request_submissions(assignment: Assignment) -> List[Submission]:
     """
     Fetch Submissions API data for a range of assignments and return a list of submissions as Submission API objects

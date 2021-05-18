@@ -5,7 +5,10 @@
 
 import logging
 import os
+import socket
 
+from canvasapi.exceptions import CanvasException
+from requests import RequestException
 from sqlalchemy import create_engine
 import sqlalchemy
 from canvasapi import Canvas
@@ -52,3 +55,21 @@ def get_canvas_api(canvas_base_url: str, canvas_access_token: str) -> Canvas:
         a new CanvasAPI object
     """
     return Canvas(canvas_base_url, canvas_access_token)
+
+
+MAX_TOTAL_CALLS = 4
+RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = 60
+
+RETRY_CONFIG = {
+    "retry_on_exceptions": (
+        IOError,
+        CanvasException,
+        RequestException,
+        socket.timeout,
+        socket.error,
+        ConnectionError,
+        ConnectionAbortedError,
+    ),
+    "max_calls_total": MAX_TOTAL_CALLS,
+    "retry_window_after_first_call_in_seconds": RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS,
+}
