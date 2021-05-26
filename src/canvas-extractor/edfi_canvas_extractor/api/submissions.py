@@ -10,7 +10,7 @@ from pandas import DataFrame
 import sqlalchemy
 from opnieuw import retry
 
-from canvasapi.assignment import Assignment
+from canvasapi.section import Section
 from canvasapi.submission import Submission
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
@@ -26,21 +26,21 @@ logger = logging.getLogger(__name__)
 
 
 @retry(**RETRY_CONFIG)  # type: ignore
-def request_submissions(assignment: Assignment) -> List[Submission]:
+def request_submissions(section: Section) -> List[Submission]:
     """
-    Fetch Submissions API data for a range of assignments and return a list of submissions as Submission API objects
+    Fetch Submissions API data for a range of assignments in a section and return a list of submissions as Submission API objects
 
     Parameters
     ----------
-    assignment: Assignment
-        a Canvas Assignment object
+    section: Section
+        a Canvas Section object
 
     Returns
     -------
     List[Submission]
         a list of Submission API objects
     """
-    return assignment.get_submissions()
+    return section.get_multiple_submissions(student_ids="all")
 
 
 def submissions_synced_as_df(

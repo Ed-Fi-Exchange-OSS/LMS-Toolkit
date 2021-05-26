@@ -157,17 +157,14 @@ def extract_assignments(
 
 
 def extract_submissions(
-    assignments: List[Assignment],
     sections: List[Section],
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> Dict[Tuple[str, str], DataFrame]:
     """
-    Gets all Canvas submissions, in the Ed-Fi UDM format.
+    Gets all Canvas submissions for sections, in the Ed-Fi UDM format.
 
     Parameters
     ----------
-    assignments: List[Assignment]
-        A list of Canvas Assignment objects.
     sections: List[Section]
         A List of Canvas Section objects.
     sync_db: sqlalchemy.engine.base.Engine
@@ -181,25 +178,26 @@ def extract_submissions(
     """
     export: Dict[Tuple[str, str], DataFrame] = {}
     for section in sections:
-        for assignment in [
-            assignment
-            for assignment in assignments
-            if assignment.course_id == section.course_id
-        ]:
-            submissions: List[Submission] = submissionsApi.request_submissions(
-                assignment
+        submissions: List[Submission] = submissionsApi.request_submissions(section)
+        if len(list(submissions)) < 1:
+            logger.info(
+                "Skipping submissions for section id %s - No data returned by API",
+                section.id,
             )
-            if len(list(submissions)) < 1:
-                logger.info(
-                    "Skipping submissions for assignment id %s - No data returned by API",
-                    assignment.id,
-                )
-                continue
-            submissions_df: DataFrame = submissionsApi.submissions_synced_as_df(
-                submissions, sync_db
-            )
+            continue
+        submissions_for_section_df: DataFrame = submissionsApi.submissions_synced_as_df(
+            submissions, sync_db
+        )
+        submissions_dfs_by_assignment_id = {
+            assignment_id: submissions_for_section_df.loc[submissions_df]
+            for assignment_id, submissions_df in submissions_for_section_df.groupby(
+                "assignment_id"
+            ).groups.items()
+        }
+
+        for assignment_id, submissions_df in submissions_dfs_by_assignment_id.items():
             submissions_df = submissionsMap.map_to_udm_submissions(submissions_df)
-            export[(str(section.id), str(assignment.id))] = submissions_df
+            export[(str(section.id), str(assignment_id))] = submissions_df
     return export
 
 
