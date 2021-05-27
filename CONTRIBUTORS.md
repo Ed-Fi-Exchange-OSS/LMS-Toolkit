@@ -9,3 +9,6 @@ contributors
 graph](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/graphs/contributors).
 New contributors should add their name and e-mail address or link to GitHub
 profile to this file with their first pull request.
+
+* Special thanks to Mario Palmisano at InnovateEdu for early-release testing and
+  suggestions for improving the code.
