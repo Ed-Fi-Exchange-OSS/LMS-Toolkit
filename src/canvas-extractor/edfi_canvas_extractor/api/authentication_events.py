@@ -27,10 +27,13 @@ AUTH_EVENTS_RESOURCE_NAME = "Authentication_Events"
 logger = logging.getLogger(__name__)
 
 
-# Do not modify this section: this is monkeypatching an existing functionality
-
-
-def custom_get_new_page(self: PaginatedList):
+def _authentication_event_get_next_page(self: PaginatedList):
+    """
+    This is a monkeypatched version of the CanvasAPI 2.2.0
+    PaginatedList._get_next_page function, modified to handle
+    the fact that authentication events are in the response
+    under "events".
+    """
     response = self._requester.request(
         self._request_method, self._next_url, **self._next_params
     )
@@ -52,10 +55,10 @@ def custom_get_new_page(self: PaginatedList):
         try:
             data = data[self._root]
         except KeyError:
-            # TODO: Fix this message to make more sense to an end user.
             raise ValueError("Invalid root value specified.")
 
-    if "audit/authentication/users" in self._first_url:
+    # This is the change to the code, added to get to the events object in the response
+    if "events" in data:
         data = data["events"]
 
     for element in data:
@@ -64,11 +67,6 @@ def custom_get_new_page(self: PaginatedList):
             content.append(self._content_class(self._requester, element))
 
     return content
-
-
-PaginatedList._get_next_page = custom_get_new_page
-
-# End of monkeypatch
 
 
 @retry(**RETRY_CONFIG)  # type: ignore
@@ -88,14 +86,21 @@ def request_events(
     List[AuthenticationEvent]
         a list of AuthenticationEvent API objects
     """
-
     logger.info("Pulling authentication events data")
+
+    # enable monkeypatch of CanvasApi's PaginatedList._get_next_page
+    original_get_next_page = PaginatedList._get_next_page
+    PaginatedList._get_next_page = _authentication_event_get_next_page
+
     events: List[AuthenticationEvent] = []
     for user in users:
         local_events = user.get_authentication_events(
             start_time=start_date, end_time=end_date
         )
         events.extend(local_events)
+
+    # revert monkeypatch
+    PaginatedList._get_next_page = original_get_next_page
 
     return events
 
