@@ -16,19 +16,6 @@ from canvasapi import Canvas
 logger = logging.getLogger(__name__)
 
 
-def _is_running_in_notebook() -> bool:
-    """
-    Determine whether code is running in a Jupyter Notebook
-
-    Returns
-    -------
-    bool
-        True if code is running in a Jupyter Notebook
-    """
-    main = __import__("__main__", None, None, fromlist=["__file__"])
-    return not hasattr(main, "__file__")
-
-
 def get_sync_db_engine(sync_database_directory: str) -> sqlalchemy.engine.base.Engine:
     """
     Create a SQL Alchemy Engine for a SQLite file
