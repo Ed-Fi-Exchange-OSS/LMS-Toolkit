@@ -47,9 +47,10 @@ jobs:
         id: cache-venv
         with:
           path: ${{ steps.venv-path.outputs.path }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles('src/' + env.package-name + '/poetry.lock') }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
+        working-directory: src/${{ env.package-name }}
 
       - name: Install Python Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
