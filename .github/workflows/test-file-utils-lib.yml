@@ -31,16 +31,16 @@ jobs:
       - name: Install Poetry
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
-      - name: Install Python Dependencies
-        run: python ./eng/build.py install file-utils
-
-      - name: Cache Dependencies
-        uses: actions/cache@0781355a23dac32fd3bac414512f4b903437991a
+      - name: Setup Dependency Caching
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
+
+      - name: Install Python Dependencies
+        run: python ./eng/build.py install file-utils
 
       - name: Run Tests with Coverage
         run: python ./eng/build.py coverage:html file-utils
