@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
+name: Extractor Library - Publish
+on:
+  workflow_dispatch
+
+jobs:
+  publish-extractor-lib:
+    name: Run unit tests and publish
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+
+      - name: Install Python 3.9
+        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
+        # uses: actions/setup-python@v2
+        uses: actions/setup-python@3105fb18c05ddd93efea5f9e0bef7a03a6e9e7df
+        with:
+          python-version: '3.9.x'
+
+      - name: Install Poetry
+        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
+        # uses: Gr1N/setup-poetry@v4
+        uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
+
+      - name: Install Python Dependencies
+        run: python ./eng/build.py install extractor-lib
+
+      - name: Cache Dependencies
+        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
+        # uses: actions/cache@v2
+        uses: actions/cache@0781355a23dac32fd3bac414512f4b903437991a
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Run Tests
+        run: python ./eng/build.py test extractor-lib
+
+      - name: Publish
+        env:
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+        run: python ./eng/build.py publish extractor-lib
