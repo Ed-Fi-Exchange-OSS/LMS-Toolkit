@@ -23,8 +23,8 @@ jobs:
     runs-on: ubuntu-20.04
     env:
         package_name: canvas-extractor
-        src_dir: src/${{ env.canvas-extractor }}
-        lock_file: ${{ env.src_dir }}/poetry.lock
+        src_dir: src/canvas-extractor
+        lock_file: src/canvas-extractor/poetry.lock
     steps:
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
