@@ -41,9 +41,11 @@ jobs:
         id: venv-path
         run: |
             poetry env use python
-            poetry env info -
             echo "::set-output path=poetry env info -p\n"
         working-directory: ${{ env.src_dir }}
+
+      - name: test
+        run: echo Hello $${{ env.venv-path.outputs.path }}
 
       - name: Setup Dependency Caching
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
