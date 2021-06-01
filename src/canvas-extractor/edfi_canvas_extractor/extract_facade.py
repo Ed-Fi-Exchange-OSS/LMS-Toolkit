@@ -45,7 +45,8 @@ results_store: Dict[str, Tuple] = {}
 
 def _break_execution(failing_extraction: str) -> None:
     logger.critical(
-        f"Unable to continue file generation because the load of {failing_extraction} failed. Please review the log for more information."
+        f"Unable to continue file generation because the load of {failing_extraction} failed. "
+        "Please review the log for more information."
     )
     sys.exit(1)
 
