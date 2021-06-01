@@ -44,9 +44,6 @@ jobs:
             echo "::set-output name=dir::$(poetry env info -p)"
         working-directory: ${{ env.SRC_DIR }}
 
-      - name: test
-        run: echo Hello ${{ env.venv-path.outputs.dir }}
-
       - name: Setup Dependency Caching
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         id: cache-venv
