@@ -15,7 +15,7 @@ on:
       - '!src/canvas-extractor/**/*.md'
     branches:
       - main
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   test-canvas-extractor:
