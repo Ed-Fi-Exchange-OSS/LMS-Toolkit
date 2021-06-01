@@ -43,7 +43,7 @@ jobs:
         id: cache-venv
         with:
           #path: ~/.cache/pypoetry/virtualenvs
-          path: ${{ steps.venv-path.path.outputs }}
+          path: ${{ steps.venv-path.outputs.path }}
           key: ${{ runner.os }}-poetry-${{ hashFiles('src/canvas-extractor/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
