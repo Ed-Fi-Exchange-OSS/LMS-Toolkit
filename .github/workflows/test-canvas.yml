@@ -15,6 +15,8 @@ on:
       - '!src/canvas-extractor/**/*.md'
     branches:
       - main
+  workflow_dispatch
+
 jobs:
   test-canvas-extractor:
     name: Run unit, style, and type checks
@@ -31,18 +33,26 @@ jobs:
       - name: Install Poetry
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
+
+      - name: Get virtual env path
+        id: venv-path
+        run: |
+            echo "::set-output path=poetry env info -p
+
       - name: Setup Dependency Caching
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         id: cache-venv
         with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          #path: ~/.cache/pypoetry/virtualenvs
+          path: ${{ steps.venv-path.path.outputs }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('src/canvas-extractor/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
 
       - name: Install Python Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: python ./eng/build.py install canvas-extractor
+        run: |
+            python ./eng/build.py install canvas-extractor
 
       - name: Run Tests with Coverage
         run: python ./eng/build.py coverage:html canvas-extractor
