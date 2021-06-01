@@ -41,6 +41,7 @@ jobs:
         id: venv-path
         run: |
             poetry env use python
+            poetry env info -
             echo "::set-output path=poetry env info -p\n"
         working-directory: ${{ env.src_dir }}
 
