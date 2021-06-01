@@ -21,6 +21,8 @@ jobs:
   test-canvas-extractor:
     name: Run unit, style, and type checks
     runs-on: ubuntu-20.04
+    env:
+        package-name: canvas-extractor
     steps:
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
@@ -33,37 +35,37 @@ jobs:
       - name: Install Poetry
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
-
       - name: Get virtual env path
         id: venv-path
         run: |
             poetry env use python
             echo "::set-output path=poetry env info -p\n"
+        working-directory: src/${{ env.package-name }}
 
       - name: Setup Dependency Caching
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         id: cache-venv
         with:
           path: ${{ steps.venv-path.outputs.path }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles('src/canvas-extractor/poetry.lock') }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles('src/' + env.package-name + '/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
 
       - name: Install Python Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: python ./eng/build.py install canvas-extractor
+        run: python ./eng/build.py install ${{ env.package-name }}
 
       - name: Run Tests with Coverage
-        run: python ./eng/build.py coverage:html canvas-extractor
+        run: python ./eng/build.py coverage:html ${{ env.package-name }}
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
         with:
           name: code-coverage-report
-          path: src/canvas-extractor/htmlcov/
+          path: src/${{ env.package-name }}r/htmlcov/
 
       - name: Type Check
-        run: python ./eng/build.py typecheck:xml canvas-extractor
+        run: python ./eng/build.py typecheck:xml ${{ env.package-name }}
 
       - name: Style Check
-        run: python ./eng/build.py lint canvas-extractor
+        run: python ./eng/build.py lint ${{ env.package-name }}
