@@ -36,8 +36,7 @@ jobs:
 
       - name: Get virtual env path
         id: venv-path
-        run: |
-            echo "::set-output path=poetry env info -p
+        run: echo "::set-output path=poetry env info -p\n"
 
       - name: Setup Dependency Caching
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
@@ -51,8 +50,7 @@ jobs:
 
       - name: Install Python Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: |
-            python ./eng/build.py install canvas-extractor
+        run: python ./eng/build.py install canvas-extractor
 
       - name: Run Tests with Coverage
         run: python ./eng/build.py coverage:html canvas-extractor
