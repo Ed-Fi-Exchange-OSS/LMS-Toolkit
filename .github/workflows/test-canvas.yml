@@ -33,6 +33,7 @@ jobs:
 
       - name: Setup Dependency Caching
         uses: actions/cache@0781355a23dac32fd3bac414512f4b903437991a
+        id: cache-venv
         with:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
@@ -40,6 +41,7 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Install Python Dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
         run: python ./eng/build.py install canvas-extractor
 
       - name: Run Tests with Coverage
