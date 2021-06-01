@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
+name: LMS Data Store Loader - Test
+on:
+  pull_request:
+    paths:
+      - 'src/lms-ds-loader/**'
+      - '!src/lms-ds-loader/**/*.md'
+  push:
+    paths:
+      - 'src/lms-ds-loader/**'
+      - '!src/lms-ds-loader/**/*.md'
+    branches:
+      - main
+jobs:
+  test-lms-ds-loader:
+    name: Run unit, style, and type checks
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+
+      - name: Install Python 3.9
+        uses: actions/setup-python@3105fb18c05ddd93efea5f9e0bef7a03a6e9e7df
+        with:
+          python-version: '3.9.x'
+
+      - name: Install Poetry
+        uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
+
+      - name: Install Python Dependencies
+        run: python ./eng/build.py install lms-ds-loader
+
+      - name: Cache Dependencies
+        uses: actions/cache@0781355a23dac32fd3bac414512f4b903437991a
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Run Tests with Coverage
+        run: python ./eng/build.py coverage:html lms-ds-loader
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
+        with:
+          name: code-coverage-report
+          path: src/lms-ds-loader/htmlcov/
+
+      - name: Type Check
+        run: python ./eng/build.py typecheck:xml lms-ds-loader
+
+      - name: Style Check
+        run: python ./eng/build.py lint lms-ds-loader
