@@ -36,13 +36,14 @@ jobs:
 
       - name: Get virtual env path
         id: venv-path
-        run: echo "::set-output path=poetry env info -p\n"
+        run: |
+            poetry env use python
+            echo "::set-output path=poetry env info -p\n"
 
       - name: Setup Dependency Caching
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
         id: cache-venv
         with:
-          #path: ~/.cache/pypoetry/virtualenvs
           path: ${{ steps.venv-path.outputs.path }}
           key: ${{ runner.os }}-poetry-${{ hashFiles('src/canvas-extractor/poetry.lock') }}
           restore-keys: |
