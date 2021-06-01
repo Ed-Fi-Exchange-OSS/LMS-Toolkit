@@ -64,9 +64,9 @@ def extract_courses(
         A tuple with the list of Canvas Course objects and the udm_courses dataframe.
     """
     courses: List[Course] = coursesApi.request_courses(canvas, start_date, end_date)
-    _courses_df: DataFrame = coursesApi.courses_synced_as_df(courses, sync_db)
+    courses_df: DataFrame = coursesApi.courses_synced_as_df(courses, sync_db)
 
-    return (courses, _courses_df)
+    return (courses, courses_df)
 
 
 def extract_sections(
