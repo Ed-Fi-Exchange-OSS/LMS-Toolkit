@@ -31,14 +31,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Install Python Dependencies
-        run: python ./eng/build.py install canvas-extractor
-
-      - name: Run Tests
-        run: python ./eng/build.py test canvas-extractor
-
-      - name: Publish
+      - name: Run CI Publish Task
+        run: python ./eng/build.py ci:publish canvas-extractor
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-        run: python ./eng/build.py publish canvas-extractor

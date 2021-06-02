@@ -25,6 +25,8 @@ def _display_help():
 * typecheck:xml
 * build
 * publish
+* ci:test
+* ci:publish
 
 For example, to run unit tests with code coverage, optimized for TeamCity
 output, on utility `lms-ds-loader`:
@@ -67,23 +69,23 @@ def _run_command(command: List[str], exit_immediately: bool = True):
         exit(result.returncode)
 
 
-def _run_install():
+def _run_install(exit_immediately: bool = True):
     _run_command([
         "poetry",
         "install"
-    ])
+    ], exit_immediately)
 
 
-def _run_tests():
+def _run_tests(exit_immediately: bool = True):
     _run_command([
         "poetry",
         "run",
         "pytest",
         "tests",
-    ])
+    ], exit_immediately)
 
 
-def _run_coverage():
+def _run_coverage_without_report():
     _run_command([
         "poetry",
         "run",
@@ -93,30 +95,28 @@ def _run_coverage():
         "pytest",
         "tests",
     ], exit_immediately=False)
+
+
+def _run_coverage():
+    _run_coverage_without_report()
+
     _run_command([
         "poetry",
         "run",
         "coverage",
         "report",
-    ], exit_immediately=False)
+    ])
 
 
-def _run_coverage_html():
-    _run_command([
-        "poetry",
-        "run",
-        "coverage",
-        "run",
-        "-m",
-        "pytest",
-        "tests",
-    ], exit_immediately=False)
+def _run_coverage_html(exit_immediately: bool = True):
+    _run_coverage_without_report()
+
     _run_command([
         "poetry",
         "run",
         "coverage",
         "html",
-    ], exit_immediately=False)
+    ], exit_immediately)
 
 
 def _run_coverage_xml():
@@ -129,6 +129,7 @@ def _run_coverage_xml():
         "pytest",
         "tests",
     ], exit_immediately=False)
+
     _run_command([
         "poetry",
         "run",
@@ -137,12 +138,12 @@ def _run_coverage_xml():
     ])
 
 
-def _run_lint():
+def _run_lint(exit_immediately: bool = True):
     _run_command([
         "poetry",
         "run",
         "flake8"
-    ])
+    ], exit_immediately)
 
 
 def _run_typecheck():
@@ -153,30 +154,27 @@ def _run_typecheck():
     ])
 
 
-def _run_typecheck_xml():
+def _run_typecheck_xml(exit_immediately: bool = True):
     _run_command([
         "poetry",
         "run",
         "mypy",
         "--junit-xml",
         "mypy.xml"
-    ])
+    ], exit_immediately)
 
 
-def _run_build():
+def _run_build(exit_immediately: bool = True):
     _run_command([
         "poetry",
         "build"
-    ])
+    ], exit_immediately)
 
 
-def _run_publish():
+def _run_publish(exit_immediately: bool = True):
     shutil.rmtree('dist', ignore_errors=True)
 
-    _run_command([
-        "poetry",
-        "build"
-    ], exit_immediately=False)
+    _run_build(False)
 
     _run_command([
         "poetry",
@@ -184,12 +182,31 @@ def _run_publish():
         "twine",
         "upload",
         "dist/*"
-    ])
+    ], exit_immediately)
+
+
+def _run_ci_test():
+    """
+    Calls the commands required for a continuous integration testing job.
+    """
+    _run_install(False)
+    _run_coverage_html(False)
+    _run_typecheck_xml(False)
+    _run_lint()
+
+
+def _run_ci_publish():
+    """
+    Calls the commands required for a continuous integration publishing job.
+    """
+    _run_install(False)
+    _run_tests(False)
+    _run_publish()
 
 
 if __name__ == "__main__":
-    if not sys.version_info >= (3, 8):
-        print("This program requires Python 3.8 or newer.", file=sys.stderr)
+    if not sys.version_info >= (3, 9):
+        print("This program requires Python 3.9 or newer.", file=sys.stderr)
         exit(-1)
 
     if len(sys.argv) < 3:
@@ -206,6 +223,8 @@ if __name__ == "__main__":
         "typecheck:xml": _run_typecheck_xml,
         "build": _run_build,
         "publish": _run_publish,
+        "ci:test": _run_ci_test,
+        "ci:publish": _run_ci_publish
     }
 
     switcher.get(sys.argv[1], _display_help)()
