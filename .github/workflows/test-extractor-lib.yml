@@ -3,22 +3,28 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-name: File Utilities Library
+name: Extractor Library - Test
 on:
   pull_request:
     paths:
-      - 'src/file-utils/**'
-      - '!src/file-utils/**/*.md'
+      - 'src/extractor-lib/**'
+      - '!src/extractor-lib/**/*.md'
   push:
     paths:
-      - 'src/file-utils/**'
-      - '!src/file-utils/**/*.md'
+      - 'src/extractor-lib/**'
+      - '!src/extractor-lib/**/*.md'
     branches:
       - main
+  workflow_dispatch:
+
 jobs:
-  test-file-utils:
+  test-extractor-lib:
     name: Run unit, style, and type checks
     runs-on: ubuntu-20.04
+    env:
+        PACKAGE_NAME: extractor-lib
+        SRC_DIR: src/extractor-lib
+        LOCK_FILE: src/extractor-lib/poetry.lock
     steps:
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
@@ -31,28 +37,27 @@ jobs:
       - name: Install Poetry
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
-      - name: Install Python Dependencies
-        run: python ./eng/build.py install file-utils
+      - name: Get virtual env path
+        id: venv-path
+        run: |
+            poetry env use python
+            echo "::set-output name=dir::$(poetry env info -p)"
+        working-directory: ${{ env.SRC_DIR }}
 
-      - name: Cache Dependencies
-        uses: actions/cache@0781355a23dac32fd3bac414512f4b903437991a
+      - name: Setup Dependency Caching
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        id: cache-venv
         with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          path: ${{ steps.venv-path.outputs.dir }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles(env.LOCK_FILE) }}
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Run Tests with Coverage
-        run: python ./eng/build.py coverage:html file-utils
+      - name: Run CI Test Task
+        run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
         with:
           name: code-coverage-report
-          path: src/file-utils/htmlcov/
-
-      - name: Type Check
-        run: python ./eng/build.py typecheck:xml file-utils
-
-      - name: Style Check
-        run: python ./eng/build.py lint file-utils
+          path: ${{ env.SRC_DIR }}/htmlcov/

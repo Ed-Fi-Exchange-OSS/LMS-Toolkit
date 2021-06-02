@@ -15,50 +15,51 @@ on:
       - '!src/canvas-extractor/**/*.md'
     branches:
       - main
+  workflow_dispatch:
+
 jobs:
   test-canvas-extractor:
     name: Run unit, style, and type checks
     runs-on: ubuntu-20.04
+    env:
+        PACKAGE_NAME: canvas-extractor
+        SRC_DIR: src/canvas-extractor
+        LOCK_FILE: src/canvas-extractor/poetry.lock
     steps:
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
       - name: Install Python 3.9
-        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
-        # uses: actions/setup-python@v2
         uses: actions/setup-python@3105fb18c05ddd93efea5f9e0bef7a03a6e9e7df
         with:
+          # This one needs to be hard-coded to avoid 3.9.5, due to a bug
+          # in one of the dependencies
           python-version: '3.9.4'
 
       - name: Install Poetry
-        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
-        # uses: Gr1N/setup-poetry@v4
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
-      - name: Install Python Dependencies
-        run: python ./eng/build.py install canvas-extractor
+      - name: Get virtual env path
+        id: venv-path
+        run: |
+            poetry env use python
+            echo "::set-output name=dir::$(poetry env info -p)"
+        working-directory: ${{ env.SRC_DIR }}
 
-      - name: Cache Dependencies
-        # very carefully use the tag when testing with act-cli on localhost, commit the hash version
-        # uses: actions/cache@v2
-        uses: actions/cache@0781355a23dac32fd3bac414512f4b903437991a
+      - name: Setup Dependency Caching
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        id: cache-venv
         with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          path: ${{ steps.venv-path.outputs.dir }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles(env.LOCK_FILE) }}
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Run Tests with Coverage
-        run: python ./eng/build.py coverage:html canvas-extractor
+      - name: Run CI Test Task
+        run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
         with:
           name: code-coverage-report
-          path: src/canvas-extractor/htmlcov/
-
-      - name: Type Check
-        run: python ./eng/build.py typecheck:xml canvas-extractor
-
-      - name: Style Check
-        run: python ./eng/build.py lint canvas-extractor
+          path: ${{ env.SRC_DIR }}/htmlcov/
