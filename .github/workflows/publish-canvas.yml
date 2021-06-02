@@ -25,11 +25,19 @@ jobs:
       - name: Install Poetry
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
 
+      - name: Get virtual env path
+        id: venv-path
+        run: |
+            poetry env use python
+            echo "::set-output name=dir::$(poetry env info -p)"
+        working-directory: ${{ env.SRC_DIR }}
+
       - name: Setup Dependency Caching
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        id: cache-venv
         with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          path: ${{ steps.venv-path.outputs.dir }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles(env.LOCK_FILE) }}
           restore-keys: |
             ${{ runner.os }}-poetry-
 
