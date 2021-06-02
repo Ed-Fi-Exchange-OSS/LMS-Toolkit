@@ -11,6 +11,9 @@ jobs:
   publish-canvas-extractor:
     name: Run unit tests and publish
     runs-on: ubuntu-20.04
+    env:
+        SRC_DIR: src/canvas-extractor
+        LOCK_FILE: src/canvas-extractor/poetry.lock
     steps:
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
@@ -42,7 +45,7 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Run CI Publish Task
-        run: python ./eng/build.py ci:publish canvas-extractor
+        run: python ./eng/build.py ci:publish ${{ env.SRC_DIR }}
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
