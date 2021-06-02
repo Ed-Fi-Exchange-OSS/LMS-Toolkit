@@ -53,21 +53,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Install Python Dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: python ./eng/build.py install ../utils/${{ env.PACKAGE_NAME }}
-
-      - name: Run Tests with Coverage
-        run: python ./eng/build.py coverage:html ../utils/${{ env.PACKAGE_NAME }}
+      - name: Run CI Test Task
+        run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
         with:
           name: code-coverage-report
           path: ${{ env.SRC_DIR }}/htmlcov/
-
-      - name: Type Check
-        run: python ./eng/build.py typecheck:xml ../utils/${{ env.PACKAGE_NAME }}
-
-      - name: Style Check
-        run: python ./eng/build.py lint ../utils/${{ env.PACKAGE_NAME }}
