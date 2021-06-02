@@ -12,6 +12,7 @@ jobs:
     name: Run unit tests and publish
     runs-on: ubuntu-20.04
     env:
+        PACKAGE_NAME: canvas-extractor
         SRC_DIR: src/canvas-extractor
         LOCK_FILE: src/canvas-extractor/poetry.lock
     steps:
@@ -45,7 +46,7 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Run CI Publish Task
-        run: python ./eng/build.py ci:publish ${{ env.SRC_DIR }}
+        run: python ./eng/build.py ci:publish ${{ env.PACKAGE_NAME }}
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
