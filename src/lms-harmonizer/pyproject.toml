@@ -1,19 +1,26 @@
 [tool.poetry]
 name = "lms-harmonizer"
-version = "0.1"
+version = "0.1.0"
 description = "Ed-Fi LMS Toolkit Harmonizer"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
 readme = "README.md"
 homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
-version = "0.1.0"
 
 [tool.poetry.dependencies]
 python = "^3.9"
+ConfigArgParse = "^1.4.1"
+SQLAlchemy = "^1.4.17"
+pytest-mock = "^3.6.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "6.2.3"
+black = "^21.5b2"
+flake8 = "^3.9.2"
+coverage = "^5.5"
+mypy = "^0.812"
+pytest-describe = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
