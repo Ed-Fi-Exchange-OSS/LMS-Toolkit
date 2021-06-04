@@ -1,8 +1,13 @@
 [tool.poetry]
 name = "lms-harmonizer"
+version = "0.1"
+description = "Ed-Fi LMS Toolkit Harmonizer"
+authors = ["Ed-Fi Alliance, LLC and contributors"]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
+repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 version = "0.1.0"
-description = ""
-authors = ["Luis <lalrg@outlook.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
