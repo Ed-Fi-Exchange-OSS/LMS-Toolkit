@@ -101,7 +101,7 @@ When setting features via `.env` file or through environment variable, combine
 features by using a bracketed comma-separate list, e.g. `FEATURE=[activities,
 attendance, assignments, grades]`. To combine features at the command line,
 simply list them together: `--feature activities, attendance, assignments,
-grades]`.
+grades`.
 
 ### Logging and Exit Codes
 
