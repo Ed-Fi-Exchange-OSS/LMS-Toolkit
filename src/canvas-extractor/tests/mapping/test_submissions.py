@@ -9,10 +9,12 @@ import json
 
 from edfi_canvas_extractor.mapping.submissions import map_to_udm_submissions
 
+SECTION_ID = "1234567890"
+
 
 def describe_when_mapping_empty_DataFrame():
     def it_should_return_empty_DataFrame():
-        df = map_to_udm_submissions(pd.DataFrame())
+        df = map_to_udm_submissions(pd.DataFrame(), SECTION_ID)
         assert (df == pd.DataFrame()).all().all()
 
 
@@ -33,7 +35,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         df = pd.DataFrame(section_associations)
 
         # Act
-        return map_to_udm_submissions(df)
+        return map_to_udm_submissions(df, SECTION_ID)
 
     def it_should_have_correct_number_of_columns(result):
         assert result.shape[1] == 12
@@ -43,6 +45,9 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
 
     def it_should_map_id_to_SourceSystemIdentifier(result):
         assert result["SourceSystemIdentifier"].iloc[0] == "130"
+
+    def it_should_map_section_and_assignment_id_to_SourceSystemIdentifier(result):
+        assert result["AssignmentSourceSystemIdentifier"].iloc[0] == f"{SECTION_ID}-114"
 
     def it_should_map_uid_to_LMSUserSourceSystemIdentifier(result):
         assert result["LMSUserSourceSystemIdentifier"].iloc[0] == "113"
@@ -123,7 +128,7 @@ def describe_when_mapping_submission_using_read_data_example():
         submissions_df = pd.DataFrame.from_dict(submission)
 
         # Act
-        return map_to_udm_submissions(submissions_df)
+        return map_to_udm_submissions(submissions_df, SECTION_ID)
 
     def it_should_have_correct_number_of_columns(result):
         assert result.shape[1] == 12
@@ -133,6 +138,9 @@ def describe_when_mapping_submission_using_read_data_example():
 
     def it_should_map_id_to_SourceSystemIdentifier(result):
         assert result["SourceSystemIdentifier"].iloc[0] == 7898567
+
+    def it_should_map_section_and_assignment_id_to_SourceSystemIdentifier(result):
+        assert result["AssignmentSourceSystemIdentifier"].iloc[0] == f"{SECTION_ID}-356597"
 
     def it_should_map_uid_to_LMSUserSourceSystemIdentifier(result):
         assert result["LMSUserSourceSystemIdentifier"].iloc[0] == 1163

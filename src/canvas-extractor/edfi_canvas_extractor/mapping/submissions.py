@@ -28,7 +28,7 @@ def _get_status(row: pd.Series):
     return "on-time"
 
 
-def map_to_udm_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
+def map_to_udm_submissions(submissions_df: pd.DataFrame, section_id: str) -> pd.DataFrame:
     """
     Maps a DataFrame containing Canvas submissions into the Ed-Fi LMS Unified Data
     Model (UDM) format.
@@ -37,11 +37,13 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
     ----------
     submissions_df: DataFrame
         Pandas DataFrame containing Canvas submissions for a section
+    section_id: str
+        The section id for this set of submissions
 
     Returns
     -------
     DataFrame
-        A Submissions-formatted DataFrame .
+        A Submissions-formatted DataFrame
 
     Notes
     -----
@@ -81,11 +83,13 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame) -> pd.DataFrame:
 
     df["submitted_at"] = df["submitted_at"].apply(_get_date_formated)
 
+    df["AssignmentSourceSystemIdentifier"] = df.apply(lambda row: f"{section_id}-{row.assignment_id}", axis=1)
+    df.drop(columns="assignment_id", inplace=True)
+
     df.rename(
         columns={
             "id": "SourceSystemIdentifier",
             "submitted_at": "SubmissionDateTime",
-            "assignment_id": "AssignmentSourceSystemIdentifier",
             "user_id": "LMSUserSourceSystemIdentifier",
             "grade": "Grade",
         },
