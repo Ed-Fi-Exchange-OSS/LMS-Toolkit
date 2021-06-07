@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "lms-harmonizer"
+name = "edfi_lms-harmonizer"
 version = "0.1.0"
 description = "Ed-Fi LMS Toolkit Harmonizer"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
@@ -13,6 +13,9 @@ python = "^3.9"
 ConfigArgParse = "^1.4.1"
 SQLAlchemy = "^1.4.17"
 pytest-mock = "^3.6.1"
+python-dotenv = "^0.17.1"
+edfi-lms-extractor-lib = "^1.0.0"
+errorhandler = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.3"
