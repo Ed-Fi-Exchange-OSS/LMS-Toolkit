@@ -3,7 +3,7 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-Shared String StringIdentifier
+Shared String Identifier
     documentation "A unique string identifier."
     min length 1
     max length 255

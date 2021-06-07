@@ -3,5 +3,5 @@
 // The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 // See the LICENSE and NOTICES files in the project root for more information.
 
-Descriptor SourceSystem
-    documentation "A code or name for the Learning Management System (LMS) of record."
+Descriptor SubmissionStatus
+    documentation "The status of the submission in relation to the late acceptance policy."
