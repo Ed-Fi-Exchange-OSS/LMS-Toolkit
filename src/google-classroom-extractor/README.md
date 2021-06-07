@@ -95,7 +95,7 @@ When setting features via `.env` file or through environment variable, combine
 features by using a bracketed comma-separate list, e.g. `FEATURE=[activities,
 attendance, assignments, grades]`. To combine features at the command line,
 simply list them together: `--feature activities, attendance, assignments,
-grades]`.
+grades`.
 
 Note: in order to make the extractor work, you still need to configure your
 `service-account.json` file. To do so, read the next section `API Permissions`
