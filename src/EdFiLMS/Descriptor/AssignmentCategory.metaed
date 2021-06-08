@@ -4,4 +4,4 @@
 // See the LICENSE and NOTICES files in the project root for more information.
 
 Descriptor AssignmentCategory
-    documentation "he category or type of assignment."
+    documentation "The category or type of assignment."
