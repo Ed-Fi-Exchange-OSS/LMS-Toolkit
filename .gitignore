@@ -153,3 +153,11 @@ act/
 
 
 service-account.json
+
+# .NET
+*.suo
+*.user
+**/bin/
+**/obj/
+.dtbcache.v2
+**/.vs/
