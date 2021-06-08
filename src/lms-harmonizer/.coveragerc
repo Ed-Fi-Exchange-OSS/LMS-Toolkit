@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = edfi_lms_harmonizer
+omit = edfi_lms_harmonizer/__main__.py
+
+[report]

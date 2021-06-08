@@ -100,7 +100,7 @@ def _run_coverage_without_report():
             "pytest",
             "tests",
         ],
-        exit_immediately=True,
+        exit_immediately=False,
     )
 
 
