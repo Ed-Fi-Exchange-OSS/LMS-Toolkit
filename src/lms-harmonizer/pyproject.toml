@@ -11,8 +11,7 @@ repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 [tool.poetry.dependencies]
 python = "^3.9"
 ConfigArgParse = "^1.4.1"
-SQLAlchemy = "^1.4.17"
-pytest-mock = "^3.6.1"
+SQLAlchemy = "1.3.23"
 python-dotenv = "^0.17.1"
 edfi-lms-extractor-lib = "^1.0.0"
 errorhandler = "^2.0.1"
@@ -24,6 +23,7 @@ flake8 = "^3.9.2"
 coverage = "^5.5"
 mypy = "^0.812"
 pytest-describe = "^1.0.0"
+pytest-mock = "^3.6.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

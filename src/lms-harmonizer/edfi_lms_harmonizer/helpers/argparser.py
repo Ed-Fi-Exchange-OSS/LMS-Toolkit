@@ -79,7 +79,6 @@ class MainArguments:
         port = MainArguments._get_mssql_port(port)
         self.connection_string = f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
 
-
     def get_db_engine(self) -> sa_Engine:
         return sa_create_engine(self.connection_string)
 

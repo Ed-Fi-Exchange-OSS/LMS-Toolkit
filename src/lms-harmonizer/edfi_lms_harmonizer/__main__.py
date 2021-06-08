@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from errorhandler import ErrorHandler  # type: ignore
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
-from helpers.argparser import MainArguments, parse_main_arguments
+from helpers.argparser import MainArguments, parse_main_arguments  # type: ignore
 
 
 logger: logging.Logger
@@ -55,5 +55,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
