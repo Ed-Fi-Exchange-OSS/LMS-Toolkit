@@ -14,6 +14,32 @@ into tables in the lms schema via LMS Data Store Loader.
    poetry install
    ```
 
+## Configuration
+
+Supported parameters:
+
+| Description | Required | Command Line Argument | Environment Variable |
+| ----------- | -------- | --------------------- | -------------------- |
+| DB Server | yes | `-s` or `--server` | DB_SERVER |
+| DB Port | no (default: 1433) | `--port` | DB_PORT |
+| DB Name | yes | `-d` or `--dbname` | DB_NAME |
+| DB Username ** | no (no default) | `-u` or `--username` | DB_USERNAME |
+| DB Password ** | no (no default) | `-p` or `--password` | DB_PASSWORD |
+| Use integrated security ** | no (default: false) | `-i` or `--useintegratedsecurity` | USE_INTEGRATED_SECURITY |
+| Log level* | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
+
+\* Valid values for the optional _log level_:
+
+* DEBUG
+* INFO(default)
+* WARNING
+* ERROR
+* CRITICAL
+
+\** If using integrated security, DB Username and password won't be required,
+otherwise they are required.
+
+
 ## Running the Tool
 
 For detailed help, execute `poetry run python edfi_lms_harmonizer -h`.
