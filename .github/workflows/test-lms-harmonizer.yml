@@ -34,7 +34,7 @@ jobs:
         with:
           # This one needs to be hard-coded to avoid 3.9.5, due to a bug
           # in one of the dependencies
-          python-version: '3.9.4'
+          python-version: '3.9.x'
 
       - name: Install Poetry
         uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
