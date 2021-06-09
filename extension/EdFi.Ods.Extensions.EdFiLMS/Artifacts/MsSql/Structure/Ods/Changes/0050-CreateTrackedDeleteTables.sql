@@ -19,6 +19,13 @@ CREATE TABLE [tracked_deletes_edfilms].[AssignmentSubmission]
        ChangeVersion bigint NOT NULL,
        CONSTRAINT PK_AssignmentSubmission PRIMARY KEY CLUSTERED (ChangeVersion)
 )
+CREATE TABLE [tracked_deletes_edfilms].[LMSSourceSystemDescriptor]
+(
+       LMSSourceSystemDescriptorId [INT] NOT NULL,
+       Id uniqueidentifier NOT NULL,
+       ChangeVersion bigint NOT NULL,
+       CONSTRAINT PK_LMSSourceSystemDescriptor PRIMARY KEY CLUSTERED (ChangeVersion)
+)
 CREATE TABLE [tracked_deletes_edfilms].[SubmissionStatusDescriptor]
 (
        SubmissionStatusDescriptorId [INT] NOT NULL,

@@ -38,6 +38,20 @@ $BODY$ LANGUAGE plpgsql;
 CREATE TRIGGER TrackDeletes AFTER DELETE ON edfilms.Assignment 
     FOR EACH ROW EXECUTE PROCEDURE tracked_deletes_edfilms.Assignment_TR_DelTrkg();
 
+CREATE FUNCTION tracked_deletes_edfilms.LMSSourceSystemDescriptor_TR_DelTrkg()
+    RETURNS trigger AS
+$BODY$
+BEGIN
+    INSERT INTO tracked_deletes_edfilms.LMSSourceSystemDescriptor(LMSSourceSystemDescriptorId, Id, ChangeVersion)
+    SELECT OLD.LMSSourceSystemDescriptorId, Id, nextval('changes.ChangeVersionSequence')
+    FROM edfi.Descriptor WHERE DescriptorId = OLD.LMSSourceSystemDescriptorId;
+    RETURN NULL;
+END;
+$BODY$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TrackDeletes AFTER DELETE ON edfilms.LMSSourceSystemDescriptor 
+    FOR EACH ROW EXECUTE PROCEDURE tracked_deletes_edfilms.LMSSourceSystemDescriptor_TR_DelTrkg();
+
 CREATE FUNCTION tracked_deletes_edfilms.SubmissionStatusDescriptor_TR_DelTrkg()
     RETURNS trigger AS
 $BODY$

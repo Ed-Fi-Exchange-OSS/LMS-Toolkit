@@ -1,7 +1,7 @@
 -- Extended Properties [edfilms].[Assignment] --
 COMMENT ON TABLE edfilms.Assignment IS 'Course work assigned to students enrolled in a section.';
 COMMENT ON COLUMN edfilms.Assignment.AssignmentIdentifier IS 'A unique string assigned to the assignment, based on the source system of record.';
-COMMENT ON COLUMN edfilms.Assignment.SourceSystemDescriptorId IS 'The system code or name providing the assignment data.';
+COMMENT ON COLUMN edfilms.Assignment.LMSSourceSystemDescriptorId IS 'The system code or name providing the assignment data.';
 COMMENT ON COLUMN edfilms.Assignment.Title IS 'The assignment title or name.';
 COMMENT ON COLUMN edfilms.Assignment.AssignmentCategoryDescriptorId IS 'The category or type of assignment.';
 COMMENT ON COLUMN edfilms.Assignment.AssignmentDescription IS 'The assignment description.';
@@ -33,6 +33,10 @@ COMMENT ON COLUMN edfilms.AssignmentSubmission.Grade IS 'The grade received for 
 COMMENT ON TABLE edfilms.AssignmentSubmissionType IS 'The type(s) of submissions available for the assignment.';
 COMMENT ON COLUMN edfilms.AssignmentSubmissionType.AssignmentIdentifier IS 'A unique string assigned to the assignment, based on the source system of record.';
 COMMENT ON COLUMN edfilms.AssignmentSubmissionType.SubmissionTypeDescriptorId IS 'The type(s) of submissions available for the assignment.';
+
+-- Extended Properties [edfilms].[LMSSourceSystemDescriptor] --
+COMMENT ON TABLE edfilms.LMSSourceSystemDescriptor IS 'The Learning Management System (LMS) source system';
+COMMENT ON COLUMN edfilms.LMSSourceSystemDescriptor.LMSSourceSystemDescriptorId IS 'A unique identifier used as Primary Key, not derived from business logic, when acting as Foreign Key, references the parent table.';
 
 -- Extended Properties [edfilms].[SubmissionStatusDescriptor] --
 COMMENT ON TABLE edfilms.SubmissionStatusDescriptor IS 'The status of the submission in relation to the late acceptance policy.';

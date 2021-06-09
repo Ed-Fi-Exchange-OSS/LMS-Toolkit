@@ -10,6 +10,9 @@
   <Aggregate root="AssignmentSubmission">
     <Entity table="AssignmentSubmission" schema="edfilms"/>
   </Aggregate>
+  <Aggregate root="LMSSourceSystemDescriptor">
+    <Entity table="LMSSourceSystemDescriptor" isA="Descriptor" schema="edfilms"/>
+  </Aggregate>
   <Aggregate root="SubmissionStatusDescriptor">
     <Entity table="SubmissionStatusDescriptor" isA="Descriptor" schema="edfilms"/>
   </Aggregate>

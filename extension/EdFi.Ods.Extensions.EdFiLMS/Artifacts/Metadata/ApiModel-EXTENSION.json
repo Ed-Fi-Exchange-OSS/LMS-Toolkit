@@ -49,6 +49,18 @@
     {
       "aggregateRootEntityName": {
         "schema": "edfilms",
+        "name": "LMSSourceSystemDescriptor"
+      },
+      "aggregateEntityNames": [
+        {
+          "schema": "edfilms",
+          "name": "LMSSourceSystemDescriptor"
+        }
+      ]
+    },
+    {
+      "aggregateRootEntityName": {
+        "schema": "edfilms",
         "name": "SubmissionStatusDescriptor"
       },
       "aggregateEntityNames": [
@@ -509,6 +521,31 @@
     },
     {
       "schema": "edfilms",
+      "name": "LMSSourceSystemDescriptor",
+      "locallyDefinedProperties": [],
+      "identifiers": [
+        {
+          "identifierName": "LMSSourceSystemDescriptor_PK",
+          "identifyingPropertyNames": [
+            "LMSSourceSystemDescriptorId"
+          ],
+          "isPrimary": true,
+          "isUpdatable": false,
+          "constraintNames": {
+            "sqlServer": "LMSSourceSystemDescriptor_PK",
+            "postgreSql": "LMSSourceSystemDescriptor_PK"
+          }
+        }
+      ],
+      "isAbstract": false,
+      "description": "The Learning Management System (LMS) source system",
+      "tableNames": {
+        "sqlServer": "LMSSourceSystemDescriptor",
+        "postgreSql": "LMSSourceSystemDescriptor"
+      }
+    },
+    {
+      "schema": "edfilms",
       "name": "SubmissionStatusDescriptor",
       "locallyDefinedProperties": [],
       "identifiers": [
@@ -616,6 +653,66 @@
       "constraintNames": {
         "sqlServer": "FK_Assignment_AssignmentCategoryDescriptor",
         "postgreSql": "FK_153cda_AssignmentCategoryDescriptor"
+      },
+      "potentiallyLogical": false
+    },
+    {
+      "fullName": {
+        "schema": "edfilms",
+        "name": "FK_Assignment_LMSSourceSystemDescriptor"
+      },
+      "cardinality": "OneToZeroOrMore",
+      "primaryEntityFullName": {
+        "schema": "edfilms",
+        "name": "LMSSourceSystemDescriptor"
+      },
+      "primaryEntityProperties": [
+        {
+          "propertyName": "LMSSourceSystemDescriptorId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "A unique identifier used as Primary Key, not derived from business logic, when acting as Foreign Key, references the parent table.",
+          "isIdentifying": false,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "LMSSourceSystemDescriptorId",
+            "postgreSql": "LMSSourceSystemDescriptorId"
+          }
+        }
+      ],
+      "secondaryEntityFullName": {
+        "schema": "edfilms",
+        "name": "Assignment"
+      },
+      "secondaryEntityProperties": [
+        {
+          "propertyName": "LMSSourceSystemDescriptorId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "The system code or name providing the assignment data.",
+          "isIdentifying": false,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "LMSSourceSystemDescriptorId",
+            "postgreSql": "LMSSourceSystemDescriptorId"
+          }
+        }
+      ],
+      "isIdentifying": false,
+      "isRequired": true,
+      "constraintNames": {
+        "sqlServer": "FK_Assignment_LMSSourceSystemDescriptor",
+        "postgreSql": "FK_153cda_LMSSourceSystemDescriptor"
       },
       "potentiallyLogical": false
     },
@@ -812,66 +909,6 @@
       "constraintNames": {
         "sqlServer": "FK_Assignment_Section",
         "postgreSql": "FK_153cda_Section"
-      },
-      "potentiallyLogical": false
-    },
-    {
-      "fullName": {
-        "schema": "edfilms",
-        "name": "FK_Assignment_SourceSystemDescriptor"
-      },
-      "cardinality": "OneToZeroOrMore",
-      "primaryEntityFullName": {
-        "schema": "edfi",
-        "name": "SourceSystemDescriptor"
-      },
-      "primaryEntityProperties": [
-        {
-          "propertyName": "SourceSystemDescriptorId",
-          "propertyType": {
-            "dbType": "Int32",
-            "maxLength": 0,
-            "precision": 10,
-            "scale": 0,
-            "isNullable": false
-          },
-          "description": "A unique identifier used as Primary Key, not derived from business logic, when acting as Foreign Key, references the parent table.",
-          "isIdentifying": false,
-          "isServerAssigned": false,
-          "columnNames": {
-            "sqlServer": "SourceSystemDescriptorId",
-            "postgreSql": "SourceSystemDescriptorId"
-          }
-        }
-      ],
-      "secondaryEntityFullName": {
-        "schema": "edfilms",
-        "name": "Assignment"
-      },
-      "secondaryEntityProperties": [
-        {
-          "propertyName": "SourceSystemDescriptorId",
-          "propertyType": {
-            "dbType": "Int32",
-            "maxLength": 0,
-            "precision": 10,
-            "scale": 0,
-            "isNullable": false
-          },
-          "description": "The system code or name providing the assignment data.",
-          "isIdentifying": false,
-          "isServerAssigned": false,
-          "columnNames": {
-            "sqlServer": "SourceSystemDescriptorId",
-            "postgreSql": "SourceSystemDescriptorId"
-          }
-        }
-      ],
-      "isIdentifying": false,
-      "isRequired": true,
-      "constraintNames": {
-        "sqlServer": "FK_Assignment_SourceSystemDescriptor",
-        "postgreSql": "FK_153cda_SourceSystemDescriptor"
       },
       "potentiallyLogical": false
     },
@@ -1232,6 +1269,66 @@
       "constraintNames": {
         "sqlServer": "FK_AssignmentSubmissionType_SubmissionTypeDescriptor",
         "postgreSql": "FK_6f15e4_SubmissionTypeDescriptor"
+      },
+      "potentiallyLogical": false
+    },
+    {
+      "fullName": {
+        "schema": "edfilms",
+        "name": "FK_LMSSourceSystemDescriptor_Descriptor"
+      },
+      "cardinality": "OneToOneInheritance",
+      "primaryEntityFullName": {
+        "schema": "edfi",
+        "name": "Descriptor"
+      },
+      "primaryEntityProperties": [
+        {
+          "propertyName": "DescriptorId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "A unique identifier used as Primary Key, not derived from business logic, when acting as Foreign Key, references the parent table.",
+          "isIdentifying": true,
+          "isServerAssigned": true,
+          "columnNames": {
+            "sqlServer": "DescriptorId",
+            "postgreSql": "DescriptorId"
+          }
+        }
+      ],
+      "secondaryEntityFullName": {
+        "schema": "edfilms",
+        "name": "LMSSourceSystemDescriptor"
+      },
+      "secondaryEntityProperties": [
+        {
+          "propertyName": "LMSSourceSystemDescriptorId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "A unique identifier used as Primary Key, not derived from business logic, when acting as Foreign Key, references the parent table.",
+          "isIdentifying": true,
+          "isServerAssigned": true,
+          "columnNames": {
+            "sqlServer": "LMSSourceSystemDescriptorId",
+            "postgreSql": "LMSSourceSystemDescriptorId"
+          }
+        }
+      ],
+      "isIdentifying": true,
+      "isRequired": true,
+      "constraintNames": {
+        "sqlServer": "FK_LMSSourceSystemDescriptor_Descriptor",
+        "postgreSql": "FK_d263fc_Descriptor"
       },
       "potentiallyLogical": false
     },

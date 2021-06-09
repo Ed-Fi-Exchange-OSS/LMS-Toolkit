@@ -13,7 +13,7 @@ Domain Entity Assignment
         documentation "The local identifier assigned to a section."
         is required
         merge SectionIdentifier with Section.SectionIdentifier
-    descriptor EdFi.SourceSystem
+    descriptor LMSSourceSystem
         documentation "The system code or name providing the assignment data."
         is required
     shared string Title

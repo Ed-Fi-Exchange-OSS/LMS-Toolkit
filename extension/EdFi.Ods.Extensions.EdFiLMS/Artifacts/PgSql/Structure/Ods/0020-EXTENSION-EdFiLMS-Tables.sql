@@ -1,7 +1,7 @@
 -- Table edfilms.Assignment --
 CREATE TABLE edfilms.Assignment (
     AssignmentIdentifier VARCHAR(255) NOT NULL,
-    SourceSystemDescriptorId INT NOT NULL,
+    LMSSourceSystemDescriptorId INT NOT NULL,
     Title VARCHAR(255) NOT NULL,
     AssignmentCategoryDescriptorId INT NOT NULL,
     AssignmentDescription VARCHAR(1024) NULL,
@@ -57,6 +57,12 @@ CREATE TABLE edfilms.AssignmentSubmissionType (
     CONSTRAINT AssignmentSubmissionType_PK PRIMARY KEY (AssignmentIdentifier, SubmissionTypeDescriptorId)
 ); 
 ALTER TABLE edfilms.AssignmentSubmissionType ALTER COLUMN CreateDate SET DEFAULT current_timestamp;
+
+-- Table edfilms.LMSSourceSystemDescriptor --
+CREATE TABLE edfilms.LMSSourceSystemDescriptor (
+    LMSSourceSystemDescriptorId INT NOT NULL,
+    CONSTRAINT LMSSourceSystemDescriptor_PK PRIMARY KEY (LMSSourceSystemDescriptorId)
+); 
 
 -- Table edfilms.SubmissionStatusDescriptor --
 CREATE TABLE edfilms.SubmissionStatusDescriptor (

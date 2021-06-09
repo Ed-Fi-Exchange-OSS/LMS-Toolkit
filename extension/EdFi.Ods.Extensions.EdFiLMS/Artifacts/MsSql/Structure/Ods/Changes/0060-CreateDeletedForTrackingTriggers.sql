@@ -50,6 +50,24 @@ ALTER TABLE [edfilms].[Assignment] ENABLE TRIGGER [edfilms_Assignment_TR_DeleteT
 GO
 
 
+CREATE TRIGGER [edfilms].[edfilms_LMSSourceSystemDescriptor_TR_DeleteTracking] ON [edfilms].[LMSSourceSystemDescriptor] AFTER DELETE AS
+BEGIN
+    IF @@rowcount = 0 
+        RETURN
+
+    SET NOCOUNT ON
+
+    INSERT INTO [tracked_deletes_edfilms].[LMSSourceSystemDescriptor](LMSSourceSystemDescriptorId, Id, ChangeVersion)
+    SELECT  d.LMSSourceSystemDescriptorId, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
+    FROM    deleted d
+            INNER JOIN edfi.Descriptor b ON d.LMSSourceSystemDescriptorId = b.DescriptorId
+END
+GO
+
+ALTER TABLE [edfilms].[LMSSourceSystemDescriptor] ENABLE TRIGGER [edfilms_LMSSourceSystemDescriptor_TR_DeleteTracking]
+GO
+
+
 CREATE TRIGGER [edfilms].[edfilms_SubmissionStatusDescriptor_TR_DeleteTracking] ON [edfilms].[SubmissionStatusDescriptor] AFTER DELETE AS
 BEGIN
     IF @@rowcount = 0 

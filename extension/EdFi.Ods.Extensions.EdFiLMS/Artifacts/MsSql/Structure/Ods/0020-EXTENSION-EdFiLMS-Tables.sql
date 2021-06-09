@@ -1,7 +1,7 @@
 -- Table [edfilms].[Assignment] --
 CREATE TABLE [edfilms].[Assignment] (
     [AssignmentIdentifier] [NVARCHAR](255) NOT NULL,
-    [SourceSystemDescriptorId] [INT] NOT NULL,
+    [LMSSourceSystemDescriptorId] [INT] NOT NULL,
     [Title] [NVARCHAR](255) NOT NULL,
     [AssignmentCategoryDescriptorId] [INT] NOT NULL,
     [AssignmentDescription] [NVARCHAR](1024) NULL,
@@ -76,6 +76,15 @@ CREATE TABLE [edfilms].[AssignmentSubmissionType] (
 ) ON [PRIMARY]
 GO
 ALTER TABLE [edfilms].[AssignmentSubmissionType] ADD CONSTRAINT [AssignmentSubmissionType_DF_CreateDate] DEFAULT (getdate()) FOR [CreateDate]
+GO
+
+-- Table [edfilms].[LMSSourceSystemDescriptor] --
+CREATE TABLE [edfilms].[LMSSourceSystemDescriptor] (
+    [LMSSourceSystemDescriptorId] [INT] NOT NULL,
+    CONSTRAINT [LMSSourceSystemDescriptor_PK] PRIMARY KEY CLUSTERED (
+        [LMSSourceSystemDescriptorId] ASC
+    ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
 -- Table [edfilms].[SubmissionStatusDescriptor] --

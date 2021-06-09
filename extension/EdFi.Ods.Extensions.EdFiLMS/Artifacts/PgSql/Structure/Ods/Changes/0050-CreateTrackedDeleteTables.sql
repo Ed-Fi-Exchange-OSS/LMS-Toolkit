@@ -22,6 +22,14 @@ CREATE TABLE tracked_deletes_edfilms.AssignmentSubmission
        CONSTRAINT AssignmentSubmission_PK PRIMARY KEY (ChangeVersion)
 );
 
+CREATE TABLE tracked_deletes_edfilms.LMSSourceSystemDescriptor
+(
+       LMSSourceSystemDescriptorId INT NOT NULL,
+       Id UUID NOT NULL,
+       ChangeVersion BIGINT NOT NULL,
+       CONSTRAINT LMSSourceSystemDescriptor_PK PRIMARY KEY (ChangeVersion)
+);
+
 CREATE TABLE tracked_deletes_edfilms.SubmissionStatusDescriptor
 (
        SubmissionStatusDescriptorId INT NOT NULL,

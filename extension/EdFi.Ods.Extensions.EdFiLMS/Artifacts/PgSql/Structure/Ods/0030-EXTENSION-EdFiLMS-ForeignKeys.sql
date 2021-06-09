@@ -5,6 +5,13 @@ REFERENCES edfilms.AssignmentCategoryDescriptor (AssignmentCategoryDescriptorId)
 CREATE INDEX FK_153cda_AssignmentCategoryDescriptor
 ON edfilms.Assignment (AssignmentCategoryDescriptorId ASC);
 
+ALTER TABLE edfilms.Assignment ADD CONSTRAINT FK_153cda_LMSSourceSystemDescriptor FOREIGN KEY (LMSSourceSystemDescriptorId)
+REFERENCES edfilms.LMSSourceSystemDescriptor (LMSSourceSystemDescriptorId)
+;
+
+CREATE INDEX FK_153cda_LMSSourceSystemDescriptor
+ON edfilms.Assignment (LMSSourceSystemDescriptorId ASC);
+
 ALTER TABLE edfilms.Assignment ADD CONSTRAINT FK_153cda_Section FOREIGN KEY (LocalCourseCode, SchoolId, SchoolYear, SectionIdentifier, SessionName)
 REFERENCES edfi.Section (LocalCourseCode, SchoolId, SchoolYear, SectionIdentifier, SessionName)
 ON UPDATE CASCADE
@@ -12,13 +19,6 @@ ON UPDATE CASCADE
 
 CREATE INDEX FK_153cda_Section
 ON edfilms.Assignment (LocalCourseCode ASC, SchoolId ASC, SchoolYear ASC, SectionIdentifier ASC, SessionName ASC);
-
-ALTER TABLE edfilms.Assignment ADD CONSTRAINT FK_153cda_SourceSystemDescriptor FOREIGN KEY (SourceSystemDescriptorId)
-REFERENCES edfi.SourceSystemDescriptor (SourceSystemDescriptorId)
-;
-
-CREATE INDEX FK_153cda_SourceSystemDescriptor
-ON edfilms.Assignment (SourceSystemDescriptorId ASC);
 
 ALTER TABLE edfilms.AssignmentCategoryDescriptor ADD CONSTRAINT FK_b35549_Descriptor FOREIGN KEY (AssignmentCategoryDescriptorId)
 REFERENCES edfi.Descriptor (DescriptorId)
@@ -60,6 +60,11 @@ REFERENCES edfilms.SubmissionTypeDescriptor (SubmissionTypeDescriptorId)
 
 CREATE INDEX FK_6f15e4_SubmissionTypeDescriptor
 ON edfilms.AssignmentSubmissionType (SubmissionTypeDescriptorId ASC);
+
+ALTER TABLE edfilms.LMSSourceSystemDescriptor ADD CONSTRAINT FK_d263fc_Descriptor FOREIGN KEY (LMSSourceSystemDescriptorId)
+REFERENCES edfi.Descriptor (DescriptorId)
+ON DELETE CASCADE
+;
 
 ALTER TABLE edfilms.SubmissionStatusDescriptor ADD CONSTRAINT FK_8e9244_Descriptor FOREIGN KEY (SubmissionStatusDescriptorId)
 REFERENCES edfi.Descriptor (DescriptorId)

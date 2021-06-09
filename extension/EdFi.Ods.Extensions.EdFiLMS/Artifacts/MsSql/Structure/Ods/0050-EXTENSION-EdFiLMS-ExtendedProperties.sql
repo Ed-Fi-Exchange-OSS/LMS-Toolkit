@@ -3,7 +3,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Course work as
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique string assigned to the assignment, based on the source system of record.', @level0type=N'SCHEMA', @level0name=N'edfilms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the assignment data.', @level0type=N'SCHEMA', @level0name=N'edfilms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'SourceSystemDescriptorId'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the assignment data.', @level0type=N'SCHEMA', @level0name=N'edfilms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'LMSSourceSystemDescriptorId'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The assignment title or name.', @level0type=N'SCHEMA', @level0name=N'edfilms', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'Title'
 GO
@@ -60,6 +60,12 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique string assigned to the assignment, based on the source system of record.', @level0type=N'SCHEMA', @level0name=N'edfilms', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type(s) of submissions available for the assignment.', @level0type=N'SCHEMA', @level0name=N'edfilms', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType', @level2type=N'COLUMN', @level2name=N'SubmissionTypeDescriptorId'
+GO
+
+-- Extended Properties [edfilms].[LMSSourceSystemDescriptor] --
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The Learning Management System (LMS) source system', @level0type=N'SCHEMA', @level0name=N'edfilms', @level1type=N'TABLE', @level1name=N'LMSSourceSystemDescriptor'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique identifier used as Primary Key, not derived from business logic, when acting as Foreign Key, references the parent table.', @level0type=N'SCHEMA', @level0name=N'edfilms', @level1type=N'TABLE', @level1name=N'LMSSourceSystemDescriptor', @level2type=N'COLUMN', @level2name=N'LMSSourceSystemDescriptorId'
 GO
 
 -- Extended Properties [edfilms].[SubmissionStatusDescriptor] --

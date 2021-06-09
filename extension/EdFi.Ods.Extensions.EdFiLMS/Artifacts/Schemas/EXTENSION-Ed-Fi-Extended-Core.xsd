@@ -27,11 +27,11 @@
               <xs:documentation>The local identifier assigned to a section.</xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="SourceSystem" type="SourceSystemDescriptorReferenceType">
+          <xs:element name="LMSSourceSystem" type="EXTENSION-LMSSourceSystemDescriptorReferenceType">
             <xs:annotation>
               <xs:documentation>The system code or name providing the assignment data.</xs:documentation>
               <xs:appinfo>
-                <ann:Descriptor>SourceSystemDescriptor</ann:Descriptor>
+                <ann:Descriptor>EXTENSION-LMSSourceSystemDescriptor</ann:Descriptor>
               </xs:appinfo>
             </xs:annotation>
           </xs:element>
@@ -156,6 +156,17 @@
       <xs:extension base="DescriptorType" />
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="EXTENSION-LMSSourceSystemDescriptor">
+    <xs:annotation>
+      <xs:documentation>The Learning Management System (LMS) source system</xs:documentation>
+      <xs:appinfo>
+        <ann:TypeGroup>Descriptor</ann:TypeGroup>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="DescriptorType" />
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="EXTENSION-SubmissionStatusDescriptor">
     <xs:annotation>
       <xs:documentation>The status of the submission in relation to the late acceptance policy.</xs:documentation>
@@ -258,6 +269,15 @@
   <xs:simpleType name="EXTENSION-AssignmentCategoryDescriptorReferenceType">
     <xs:annotation>
       <xs:documentation>The category or type of assignment.</xs:documentation>
+      <xs:appinfo>
+        <ann:TypeGroup>Extended Descriptor Reference</ann:TypeGroup>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:restriction base="DescriptorReferenceType" />
+  </xs:simpleType>
+  <xs:simpleType name="EXTENSION-LMSSourceSystemDescriptorReferenceType">
+    <xs:annotation>
+      <xs:documentation>The Learning Management System (LMS) source system</xs:documentation>
       <xs:appinfo>
         <ann:TypeGroup>Extended Descriptor Reference</ann:TypeGroup>
       </xs:appinfo>
