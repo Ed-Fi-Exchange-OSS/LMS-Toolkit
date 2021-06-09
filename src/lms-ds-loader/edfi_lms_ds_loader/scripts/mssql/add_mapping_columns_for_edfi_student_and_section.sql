@@ -7,13 +7,13 @@ ALTER TABLE lms.LMSSection ADD EdFiSectionId UNIQUEIDENTIFIER NULL;
 
 ALTER TABLE lms.LMSUser ADD EdFiStudentId UNIQUEIDENTIFIER NULL;
 
-CREATE UNIQUE NONCLUSTERED INDEX UX_LMSSection_EdfiSectionId
+CREATE NONCLUSTERED INDEX IX_LMSSection_EdfiSectionId
     ON lms.LMSSection (EdFiSectionId)
-    WHERE EdFiSectionId is NOT NULL;
+    WHERE DeletedAt is NOT NULL;
 
-CREATE UNIQUE NONCLUSTERED INDEX UX_LMSUser_EdfiStudentId
+CREATE NONCLUSTERED INDEX IX_LMSUser_EdfiStudentId
     ON lms.LMSUser (EdFiStudentId)
-    WHERE EdFiStudentId is NOT NULL;
+    WHERE DeletedAt is NOT NULL;
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A mapping from this LMSSection to an EdFi Section Id, which uniquely identifies an EdFi Section', @level0type=N'SCHEMA', @level0name=N'lms', @level1type=N'TABLE', @level1name=N'LMSSection', @level2type=N'COLUMN', @level2name=N'EdFiSectionId';
 
