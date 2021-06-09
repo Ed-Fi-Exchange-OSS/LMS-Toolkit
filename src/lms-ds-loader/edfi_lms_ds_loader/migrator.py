@@ -29,7 +29,8 @@ MIGRATION_SCRIPTS = [
     "create_section_activity_tables",
     "create_system_activity_tables",
     "create_attendance_tables",
-    "remove_startdate_enddate_from_sectionassociation"
+    "remove_startdate_enddate_from_sectionassociation",
+    "add_mapping_columns_for_edfi_student_and_section",
 ]
 
 
