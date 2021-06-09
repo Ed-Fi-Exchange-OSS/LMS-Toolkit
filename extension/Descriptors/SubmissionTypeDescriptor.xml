@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<InterchangeDescriptors xmlns="http://ed-fi.org/3.3.0-a" xmlns:ann="http://ed-fi.org/annotation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ed-fi.org/3.3.0-a ../Schemas/Bulk/EXTENSION-Interchange-Descriptors-Extension.xsd">
+	<SubmissionTypeDescriptor>
+		<CodeValue>basic_lti_launch</CodeValue>
+		<ShortDescription>Basic LTI launch</ShortDescription>
+		<Description>Submission made via LTI.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/SubmissionTypeDescriptor/Canvas</Namespace>
+	</SubmissionTypeDescriptor>
+    <SubmissionTypeDescriptor>
+		<CodeValue>discussion_topic</CodeValue>
+		<ShortDescription>Discussion topic</ShortDescription>
+		<Description>Submission is a discussion topic.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/SubmissionTypeDescriptor/Canvas</Namespace>
+	</SubmissionTypeDescriptor>
+    <SubmissionTypeDescriptor>
+		<CodeValue>media_recording</CodeValue>
+		<ShortDescription>Media recording</ShortDescription>
+		<Description>Submission is a media recording.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/SubmissionTypeDescriptor/Canvas</Namespace>
+	</SubmissionTypeDescriptor>
+    <SubmissionTypeDescriptor>
+		<CodeValue>online_quiz</CodeValue>
+		<ShortDescription>Online Quiz</ShortDescription>
+		<Description>Submission is an online quiz.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/SubmissionTypeDescriptor/Canvas</Namespace>
+	</SubmissionTypeDescriptor>
+    <SubmissionTypeDescriptor>
+		<CodeValue>online_text_entry</CodeValue>
+		<ShortDescription>Online text entry</ShortDescription>
+		<Description>Submission submitted in online form.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/SubmissionTypeDescriptor/Canvas</Namespace>
+	</SubmissionTypeDescriptor>
+    <SubmissionTypeDescriptor>
+		<CodeValue>online_upload</CodeValue>
+		<ShortDescription>online_upload</ShortDescription>
+		<Description>Submission was uploaded into Canvas.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/SubmissionTypeDescriptor/Canvas</Namespace>
+	</SubmissionTypeDescriptor>
+    <SubmissionTypeDescriptor>
+		<CodeValue>online_url</CodeValue>
+		<ShortDescription>Online URL</ShortDescription>
+		<Description>Submission of a website URL.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/SubmissionTypeDescriptor/Canvas</Namespace>
+	</SubmissionTypeDescriptor>
+</InterchangeDescriptors>
