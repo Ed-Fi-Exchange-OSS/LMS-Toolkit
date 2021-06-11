@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: Apache-2.0
+// Licensed to the Ed-Fi Alliance under one or more agreements.
+// The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+// See the LICENSE and NOTICES files in the project root for more information.
+
+Domain Entity AssignmentSubmission
+    documentation "A user's submission of course work for an assignment."
+    shared string Identifier
+        documentation "A unique numeric identifier assigned to the submission."
+        is part of identity
+        role name AssignmentSubmission
+    domain entity Assignment
+        documentation "A reference to the Assignment"
+        is required
+    domain entity EdFi.Student
+        documentation "A reference to the user providing the assignment submission."
+        is required
+    descriptor SubmissionStatus
+        documentation "The status of the submission in relation to the late acceptance policy."
+        is required
+    datetime SubmissionDateTime
+        documentation "The date and time of the assignment submission."
+        is required
+    shared integer Points
+        documentation "The points earned for the submission."
+        is optional
+        role name Earned
+    shared string Grade
+        documentation "The grade received for the submission."
+        is optional

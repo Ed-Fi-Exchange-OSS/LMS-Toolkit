@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<InterchangeDescriptors xmlns="http://ed-fi.org/3.3.0-a" xmlns:ann="http://ed-fi.org/annotation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ed-fi.org/3.3.0-a ../Schemas/Bulk/EXTENSION-Interchange-Descriptors-Extension.xsd">
+	<AssignmentCategoryDescriptor>
+		<CodeValue>Assignment</CodeValue>
+		<ShortDescription>Assignment</ShortDescription>
+		<Description>Assignment</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Canvas</Namespace>
+	</AssignmentCategoryDescriptor>
+    <AssignmentCategoryDescriptor>
+		<CodeValue>Assignment</CodeValue>
+		<ShortDescription>Assignment</ShortDescription>
+		<Description>Assignment</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Schoology</Namespace>
+	</AssignmentCategoryDescriptor>
+    <AssignmentCategoryDescriptor>
+		<CodeValue>Discussion</CodeValue>
+		<ShortDescription>Discussion</ShortDescription>
+		<Description>Discussion</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Schoology</Namespace>
+	</AssignmentCategoryDescriptor>
+    <AssignmentCategoryDescriptor>
+		<CodeValue>Assessment</CodeValue>
+		<ShortDescription>Assessment</ShortDescription>
+		<Description>Assessment</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Schoology</Namespace>
+	</AssignmentCategoryDescriptor>
+    <AssignmentCategoryDescriptor>
+		<CodeValue>COURSE_WORK_TYPE_UNSPECIFIED</CodeValue>
+		<ShortDescription>Unspecified</ShortDescription>
+		<Description>Course work type is not specified</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Google</Namespace>
+	</AssignmentCategoryDescriptor>
+    <AssignmentCategoryDescriptor>
+		<CodeValue>COURSE_WORK_TYPE_UNSPECIFIED</CodeValue>
+		<ShortDescription>Unspecified</ShortDescription>
+		<Description>No work type specified. This is never returned.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Google</Namespace>
+	</AssignmentCategoryDescriptor>
+    <AssignmentCategoryDescriptor>
+		<CodeValue>Assignment</CodeValue>
+		<ShortDescription>Assignment</ShortDescription>
+		<Description>An assignment.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Google</Namespace>
+	</AssignmentCategoryDescriptor>
+    <AssignmentCategoryDescriptor>
+		<CodeValue>SHORT_ANSWER_QUESTION</CodeValue>
+		<ShortDescription>Short answer question</ShortDescription>
+		<Description>A short answer question.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Google</Namespace>
+	</AssignmentCategoryDescriptor>
+    <AssignmentCategoryDescriptor>
+		<CodeValue>MULTIPLE_CHOICE_QUESTION</CodeValue>
+		<ShortDescription>Multiple choice question</ShortDescription>
+		<Description>A multiple-choice question.</Description>
+		<Namespace>uri://edfilms.ed-fi.org/AssignmentCategoryDescriptor/Google</Namespace>
+	</AssignmentCategoryDescriptor>
+</InterchangeDescriptors>

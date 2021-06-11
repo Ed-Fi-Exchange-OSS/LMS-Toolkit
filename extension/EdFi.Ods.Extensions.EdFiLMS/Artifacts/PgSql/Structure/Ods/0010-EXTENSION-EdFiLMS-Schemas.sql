@@ -1,0 +1,1 @@
+CREATE SCHEMA edfilms AUTHORIZATION postgres;
