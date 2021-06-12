@@ -17,6 +17,7 @@ DB_NAME = "EdFi_ODS"
 USERNAME = "my_user"
 PASSWORD = "my_password"
 PORT = 1234
+REPORT_FILE = "./exceptions.csv"
 
 
 def _server_args() -> List[str]:
@@ -41,6 +42,10 @@ def _username_args() -> List[str]:
 
 def _password_args() -> List[str]:
     return ["--password", PASSWORD]
+
+
+def _exception_report_args() -> List[str]:
+    return ["--exceptions-report-file", REPORT_FILE]
 
 
 def _assert_no_messages(capsys) -> None:
@@ -144,18 +149,18 @@ def describe_given_optional_port_is_provided() -> None:
         assert str(PORT) in parsed.connection_string
 
 
-def it_should_parse_csv_path(capsys) -> None:
-    args = [
-        *_server_args(),
-        *_db_name_args(),
-        *_integrated_security_arg(),
-    ]
+def describe_given_exception_report_arg() -> None:
+    def it_should_store_the_file_path(capsys) -> None:
+        args = [
+            *_server_args(),
+            *_db_name_args(),
+            *_integrated_security_arg(),
+            *_exception_report_args(),
+        ]
 
-    parsed = parse_main_arguments(args)
+        parsed = parse_main_arguments(args)
 
-    assert parsed is not None, "No arguments detected"
-
-    _assert_no_messages(capsys)
+        assert parsed.exceptions_report_file == REPORT_FILE
 
 
 def describe_given_engine_mssql() -> None:
@@ -248,7 +253,7 @@ def describe_when_initializing_MainArguments() -> None:
     def it_passes_initializer_arguments_into_instance_properties() -> None:
         logging = LOG_LEVELS[0]
 
-        a = MainArguments(logging)
+        a = MainArguments(logging, None)
 
         assert a.log_level == logging
 
@@ -262,7 +267,7 @@ def describe_given_engine_is_mssql() -> None:
                 port = 1234
                 expect = "mssql+pyodbc://my-server,1234/my-database?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
 
-                a = MainArguments(LOG_LEVELS[0])
+                a = MainArguments(LOG_LEVELS[0], None)
                 a.set_connection_string_using_integrated_security(
                     server,
                     port,
@@ -278,7 +283,7 @@ def describe_given_engine_is_mssql() -> None:
                 port = None
                 expected = "mssql+pyodbc://my-server,1433/my-database?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
 
-                a = MainArguments(LOG_LEVELS[0])
+                a = MainArguments(LOG_LEVELS[0], None)
                 a.set_connection_string_using_integrated_security(
                     server,
                     port,
@@ -297,7 +302,7 @@ def describe_given_engine_is_mssql() -> None:
                 password = "yo"
                 expected = "mssql+pyodbc://me:yo@my-server,1234/my-database?driver=ODBC+Driver+17+for+SQL+Server"
 
-                a = MainArguments(LOG_LEVELS[0])
+                a = MainArguments(LOG_LEVELS[0], None)
                 a.set_connection_string(server, port, database, username, password)
 
                 assert a.connection_string == expected
@@ -312,7 +317,7 @@ def describe_given_engine_is_mssql() -> None:
                 username = "me"
                 password = "yo"
 
-                a = MainArguments(LOG_LEVELS[0])
+                a = MainArguments(LOG_LEVELS[0], None)
                 a.set_connection_string(server, port, database, username, password)
 
                 assert a.connection_string == expected

@@ -5,7 +5,7 @@
 
 from dataclasses import dataclass
 import os
-from typing import List, Union
+from typing import List, Union, Optional
 
 from configargparse import ArgParser  # type: ignore
 from sqlalchemy.engine import Engine as sa_Engine
@@ -26,6 +26,7 @@ class MainArguments:
     """
 
     log_level: str
+    exceptions_report_file: Optional[str]
 
     @staticmethod
     def _get_mssql_port(port: Union[int, None]) -> int:
@@ -165,12 +166,24 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="LOG_LEVEL",
     )
 
+    parser.add(  # type: ignore
+        "-e",
+        "--exceptions-report-file",
+        required=False,
+        help="File path for optional output of a CSV exception report.",
+        type=str,
+        env_var="EXCEPTION_REPORT_FILE"
+    )
+
     args_parsed = parser.parse_args(args_in)
     args_parsed.useintegratedsecurity = (
         args_parsed.useintegratedsecurity or not user_name_required
     )
 
-    arguments = MainArguments(args_parsed.log_level)
+    arguments = MainArguments(
+        args_parsed.log_level,
+        args_parsed.exceptions_report_file
+    )
 
     if args_parsed.useintegratedsecurity:
         arguments.set_connection_string_using_integrated_security(
