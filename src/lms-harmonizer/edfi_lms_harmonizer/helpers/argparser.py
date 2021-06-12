@@ -26,7 +26,7 @@ class MainArguments:
     """
 
     log_level: str
-    exceptions_report_file: Optional[str]
+    exceptions_report_directory: Optional[str]
 
     @staticmethod
     def _get_mssql_port(port: Union[int, None]) -> int:
@@ -168,11 +168,11 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
 
     parser.add(  # type: ignore
         "-e",
-        "--exceptions-report-file",
+        "--exceptions-report-directory",
         required=False,
         help="File path for optional output of a CSV exception report.",
         type=str,
-        env_var="EXCEPTION_REPORT_FILE"
+        env_var="EXCEPTIONs_REPORT_DIRECTORY"
     )
 
     args_parsed = parser.parse_args(args_in)
@@ -182,7 +182,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
 
     arguments = MainArguments(
         args_parsed.log_level,
-        args_parsed.exceptions_report_file
+        args_parsed.exceptions_report_directory
     )
 
     if args_parsed.useintegratedsecurity:

@@ -17,7 +17,7 @@ DB_NAME = "EdFi_ODS"
 USERNAME = "my_user"
 PASSWORD = "my_password"
 PORT = 1234
-REPORT_FILE = "./exceptions.csv"
+REPORT_DIR = "./exceptions"
 
 
 def _server_args() -> List[str]:
@@ -45,7 +45,7 @@ def _password_args() -> List[str]:
 
 
 def _exception_report_args() -> List[str]:
-    return ["--exceptions-report-file", REPORT_FILE]
+    return ["--exceptions-report-directory", REPORT_DIR]
 
 
 def _assert_no_messages(capsys) -> None:
@@ -160,7 +160,7 @@ def describe_given_exception_report_arg() -> None:
 
         parsed = parse_main_arguments(args)
 
-        assert parsed.exceptions_report_file == REPORT_FILE
+        assert parsed.exceptions_report_directory == REPORT_DIR
 
 
 def describe_given_engine_mssql() -> None:
