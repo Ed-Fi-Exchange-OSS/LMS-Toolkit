@@ -14,7 +14,6 @@ CREATE TABLE lms.LMSSection (
     LMSSectionStatus NVARCHAR(60) NULL,
     SourceCreateDate DATETIME2(7) NULL,
     SourceLastModifiedDate DATETIME2(7) NULL,
-    Discriminator NVARCHAR(128) NULL,
     CreateDate DATETIME2 NOT NULL,
     LastModifiedDate DATETIME2 NOT NULL,
     DeletedAt DATETIME2(7) NULL,
@@ -51,7 +50,6 @@ CREATE TABLE lms.stg_LMSSection (
     LMSSectionStatus NVARCHAR(60) NULL,
     SourceCreateDate DATETIME2(7) NULL,
     SourceLastModifiedDate DATETIME2(7) NULL,
-    Discriminator NVARCHAR(128) NULL,
     CreateDate DATETIME2 NOT NULL,
     LastModifiedDate DATETIME2 NOT NULL,
     CONSTRAINT stg_LMSSection_PK PRIMARY KEY CLUSTERED (
