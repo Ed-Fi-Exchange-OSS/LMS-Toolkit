@@ -2,6 +2,11 @@
 
 Lightweight wrapper to facilitate connections to SQL databases.
 
+## Developer Notes
+
+This package deliberately does not have any unit tests, because of the intrinsic
+difficulty in unit testing an adapter.
+
 ## Legal Information
 
 Copyright (c) 2021 Ed-Fi Alliance, LLC and contributors.

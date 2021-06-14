@@ -8,6 +8,7 @@ license = "Apache-2.0"
 [tool.poetry.dependencies]
 python = "^3.9"
 SQLAlchemy = "^1.4.18"
+pytest = "^6.2.4"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
