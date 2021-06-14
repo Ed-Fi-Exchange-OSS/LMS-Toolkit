@@ -30,7 +30,9 @@ BEGIN
     WHERE
         SISUserIdentifier = selectcodes.IdentificationCode
     AND
-        EdFiStudentId is NULL;
+        EdFiStudentId is NULL
+	AND
+        DeletedAt IS NULL;
         
 -- Update based on any EdFi Student Electronic Mail matching with a LMS SISUserIdentifier
     UPDATE 
@@ -55,6 +57,8 @@ BEGIN
     WHERE
         SISUserIdentifier = selectemails.ElectronicMailAddress
     AND
-        EdFiStudentId is NULL;
+        EdFiStudentId is NULL
+	AND
+        DeletedAt IS NULL;
    
 END;

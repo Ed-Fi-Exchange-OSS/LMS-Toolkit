@@ -20,5 +20,7 @@ BEGIN
     WHERE
         lmsuser.SourceSystem = 'Schoology'
     AND
-        lmsuser.EdFiStudentId is NULL;
+        lmsuser.EdFiStudentId is NULL
+	AND
+        lmsuser.DeletedAt IS NULL;
 END;

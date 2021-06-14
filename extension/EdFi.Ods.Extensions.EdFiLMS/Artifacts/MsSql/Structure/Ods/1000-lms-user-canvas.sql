@@ -20,5 +20,7 @@ BEGIN
     WHERE
         lmsuser.SourceSystem = 'Canvas'
     AND
-        lmsuser.EdFiStudentId is NULL;
+        lmsuser.EdFiStudentId is NULL
+	AND
+        lmsuser.DeletedAt IS NULL;		
 END;
