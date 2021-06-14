@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = edfi_sql_adapter
+omit = edfi_sql_adapter/__main__.py
+
+[report]

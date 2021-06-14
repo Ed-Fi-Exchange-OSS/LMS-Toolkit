@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "edfi-sql-adapter"
+version = "1.0.0-alpha1"
+description = "Lightweight wrapper to facilitate connections to SQL databases"
+authors = ["Ed-Fi Alliance, LLC, and contributors"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+SQLAlchemy = "^1.4.18"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.9.2"
+coverage = "^5.5"
+mypy = "^0.902"
+black = "^21.6b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

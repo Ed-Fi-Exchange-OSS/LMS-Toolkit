@@ -16,6 +16,7 @@ python-dotenv = "^0.17.1"
 edfi-lms-extractor-lib = "^1.0.0"
 errorhandler = "^2.0.1"
 pyodbc = "^4.0.30"
+pandas = "^1.2.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.3"

@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+import pandas as pd
 
 # Scaffold only for now
 
@@ -24,7 +25,15 @@ FROM
     """
 
 
+def _read_from_database(query: str) -> pd.DataFrame:
+    return pd.read_sql(
+        
+    )
+
+
 def get_summary() -> None:
+
+
 
     pass
 
