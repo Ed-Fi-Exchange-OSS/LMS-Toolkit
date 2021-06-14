@@ -208,3 +208,31 @@ INSERT INTO [edfi].[StudentEducationOrganizationAssociationStudentIdentification
            )
 """
     )
+
+
+def insert_edfi_student_electronic_mail(
+    connection: Connection,
+    student_usi: int,
+    email_address: str,
+):
+    connection.execute(
+        f"""
+INSERT INTO [edfi].[StudentEducationOrganizationAssociationElectronicMail]
+           ([EducationOrganizationId]
+           ,[ElectronicMailTypeDescriptorId]
+           ,[StudentUSI]
+           ,[ElectronicMailAddress]
+           ,[PrimaryEmailAddressIndicator]
+           ,[DoNotPublishIndicator]
+           ,[CreateDate])
+     VALUES
+           (1
+           ,1
+           ,{student_usi}
+           ,N'{email_address}'
+           ,NULL
+           ,NULL
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           )
+"""
+    )

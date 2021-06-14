@@ -18,5 +18,7 @@ BEGIN
     ON
         lmsuser.SISUserIdentifier = edfistudent.StudentUniqueId
     WHERE
-        lmsuser.SourceSystem = 'Schoology';
+        lmsuser.SourceSystem = 'Schoology'
+    AND
+        lmsuser.EdFiStudentId is NULL;
 END;

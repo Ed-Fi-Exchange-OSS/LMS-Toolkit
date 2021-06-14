@@ -22,14 +22,39 @@ BEGIN
                 SELECT
                     IdentificationCode  
                 FROM
-					edfi.StudentEducationOrganizationAssociationStudentIdentificationCode sic
+                    edfi.StudentEducationOrganizationAssociationStudentIdentificationCode sic
                 WHERE
-					s.StudentUsi=sic.StudentUsi
+                    s.StudentUsi = sic.StudentUsi
             ) AS codes
         ) AS selectcodes
     WHERE
-		SISUserIdentifier = selectcodes.IdentificationCode
+        SISUserIdentifier = selectcodes.IdentificationCode
     AND
-		EdFiStudentId is NULL;
+        EdFiStudentId is NULL;
+        
+-- Update based on any EdFi Student Electronic Mail matching with a LMS SISUserIdentifier
+    UPDATE 
+        lms.LMSUser
+    SET
+        EdFiStudentId = selectemails.Id
+    FROM
+        (
+            SELECT
+                emails.ElectronicMailAddress, s.Id
+            FROM
+                edfi.Student s
+            OUTER APPLY (
+                SELECT
+                    ElectronicMailAddress  
+                FROM
+                    edfi.StudentEducationOrganizationAssociationElectronicMail sem
+                WHERE
+                    s.StudentUsi = sem.StudentUsi
+            ) AS emails
+        ) AS selectemails
+    WHERE
+        SISUserIdentifier = selectemails.ElectronicMailAddress
+    AND
+        EdFiStudentId is NULL;
    
 END;

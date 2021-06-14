@@ -18,5 +18,7 @@ BEGIN
     ON
         lmsuser.SISUserIdentifier = edfistudent.StudentUniqueId
     WHERE
-        lmsuser.SourceSystem = 'Canvas';
+        lmsuser.SourceSystem = 'Canvas'
+    AND
+        lmsuser.EdFiStudentId is NULL;
 END;
