@@ -5,26 +5,17 @@
 from sqlalchemy.engine.base import Connection
 
 # This is a copy/paste shortcut to initialize the test database with the proper structure
-
-
-def migrate_lms_user_and_edfi_student(connection: Connection):
-    connection.execute(
-        """
+CREATE_SCHEMA_EDFI = """
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'edfi')
 EXEC sys.sp_executesql N'CREATE SCHEMA edfi';
         """
-    )
 
-    connection.execute(
-        """
+CREATE_SCHEMA_LMS = """
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'lms')
 EXEC sys.sp_executesql N'CREATE SCHEMA lms';
         """
-    )
 
-    # from edfi_lms_ds_loader's create_user_tables.sql and add_mapping_columns_for_edfi_student_and_section.sql
-    connection.execute(
-        """
+CREATE_TABLE_LMS_USER = """
 IF OBJECT_ID(N'lms.LMSUser', N'U') IS NULL
 BEGIN
 
@@ -61,11 +52,8 @@ CREATE NONCLUSTERED INDEX IX_LMSUser_EdfiStudentId
 
 END;
         """
-    )
 
-    # from ODS/API 5.2's 0002-Tables.sql
-    connection.execute(
-        """
+CREATED_TABLE_EDFI_STUDENT_ETC = """
 IF OBJECT_ID(N'edfi.Student', N'U') IS NULL
 BEGIN
 
@@ -158,4 +146,12 @@ CREATE TABLE [edfi].[StudentEducationOrganizationAssociationStudentIdentificatio
 ) ON [PRIMARY];
 END;
         """
-    )
+
+
+def migrate_lms_user_and_edfi_student(connection: Connection):
+    connection.execute(CREATE_SCHEMA_EDFI)
+    connection.execute(CREATE_SCHEMA_LMS)
+    # from edfi_lms_ds_loader's create_user_tables.sql and add_mapping_columns_for_edfi_student_and_section.sql
+    connection.execute(CREATE_TABLE_LMS_USER)
+    # from ODS/API 5.2's 0002-Tables.sql
+    connection.execute(CREATED_TABLE_EDFI_STUDENT_ETC)
