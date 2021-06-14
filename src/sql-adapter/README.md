@@ -4,8 +4,9 @@ Lightweight wrapper to facilitate connections to SQL databases.
 
 ## Developer Notes
 
-This package deliberately does not have any unit tests, because of the intrinsic
-difficulty in unit testing an adapter.
+This package is light on unit tests, because the functions are well tested from
+an integration perspective. Would be nice to add unit tests for error handling
+in particular, but that would mean a lot of mocking of SQLAlchemy.
 
 ## Legal Information
 

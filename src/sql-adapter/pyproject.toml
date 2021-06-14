@@ -4,17 +4,23 @@ version = "1.0.0-alpha1"
 description = "Lightweight wrapper to facilitate connections to SQL databases"
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
 license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
+repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 
 [tool.poetry.dependencies]
 python = "^3.9"
 SQLAlchemy = "^1.4.18"
-pytest = "^6.2.4"
+pyodbc = "^4.0.30"
+psycopg2 = "^2.8.6"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
 coverage = "^5.5"
 mypy = "^0.902"
 black = "^21.6b0"
+pytest = "^6.2.4"
+pytest-describe = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
