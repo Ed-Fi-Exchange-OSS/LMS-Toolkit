@@ -124,3 +124,87 @@ INSERT INTO [edfi].[Student]
            )
 """
     )
+
+
+def insert_edfi_student_with_usi(
+    connection: Connection,
+    student_usi: int,
+    id: str = "00000000-0000-0000-0000-000000000000",
+):
+    connection.execute(
+        f"""
+SET IDENTITY_INSERT edfi.Student ON;
+
+INSERT INTO [edfi].[Student]
+           ([StudentUSI]
+           ,[PersonalTitlePrefix]
+           ,[FirstName]
+           ,[MiddleName]
+           ,[LastSurname]
+           ,[GenerationCodeSuffix]
+           ,[MaidenName]
+           ,[BirthDate]
+           ,[BirthCity]
+           ,[BirthStateAbbreviationDescriptorId]
+           ,[BirthInternationalProvince]
+           ,[BirthCountryDescriptorId]
+           ,[DateEnteredUS]
+           ,[MultipleBirthStatus]
+           ,[BirthSexDescriptorId]
+           ,[CitizenshipStatusDescriptorId]
+           ,[StudentUniqueId]
+           ,[CreateDate]
+           ,[LastModifiedDate]
+           ,[Id])
+     VALUES
+           ({student_usi}
+           ,NULL
+           ,N'FirstName'
+           ,NULL
+           ,N'LastName'
+           ,NULL
+           ,NULL
+           ,CAST(N'2010-01-01 00:00:00' AS DateTime)
+           ,NULL
+           ,NULL
+           ,NULL
+           ,NULL
+           ,NULL
+           ,NULL
+           ,NULL
+           ,NULL
+           ,N'{student_usi}{student_usi}'
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           ,CAST('{id}' AS UNIQUEIDENTIFIER)
+           );
+
+SET IDENTITY_INSERT edfi.Student OFF;
+"""
+    )
+
+
+def insert_edfi_student_identification_code(
+    connection: Connection,
+    student_usi: int,
+    identification_code: str,
+):
+    connection.execute(
+        f"""
+INSERT INTO [edfi].[StudentEducationOrganizationAssociationStudentIdentificationCode]
+           ([AssigningOrganizationIdentificationCode]
+           ,[EducationOrganizationId]
+           ,[StudentIdentificationSystemDescriptorId]
+           ,[StudentUSI]
+           ,[IdentificationCode]
+           ,[CreateDate])
+     VALUES
+           (N'{identification_code}'
+           ,1
+           ,2
+           ,{student_usi}
+           ,N'{identification_code}'
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           )
+"""
+    )
