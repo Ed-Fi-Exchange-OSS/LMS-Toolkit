@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from sqlalchemy.engine.base import Connection
-from tests_integration_sql.mssql_helper import insert_lms_user, insert_edfi_student, script_sql
+from tests_integration_sql.mssql_helper import insert_lms_user, insert_edfi_student, insert_lms_user_deleted, script_sql
 
 SOURCE_SYSTEM = "Canvas"
 PROC_SQL_DEFINITION = script_sql("1000-lms-user-canvas.sql")
@@ -61,6 +61,27 @@ def describe_when_lms_and_ods_tables_have_a_match():
         ).fetchall()
         assert len(LMSUser) == 1
         assert LMSUser[0]["EdFiStudentId"] == STUDENT_ID
+
+
+def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
+    STUDENT_ID = "10000000-0000-0000-0000-000000000000"
+    SIS_ID = "sis_id"
+
+    def it_should_ignore_the_deleted_record(test_mssql_db: Connection):
+        # arrange
+        test_mssql_db.execute(PROC_SQL_DEFINITION)
+        insert_lms_user_deleted(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
+        insert_edfi_student(test_mssql_db, SIS_ID, STUDENT_ID)
+
+        # act
+        test_mssql_db.execute("EXEC lms.harmonize_lmsuser_canvas;")
+
+        # assert
+        LMSUser = test_mssql_db.execute(
+            "SELECT EdFiStudentId from lms.LMSUser"
+        ).fetchall()
+        assert len(LMSUser) == 1
+        assert LMSUser[0]["EdFiStudentId"] is None
 
 
 def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():

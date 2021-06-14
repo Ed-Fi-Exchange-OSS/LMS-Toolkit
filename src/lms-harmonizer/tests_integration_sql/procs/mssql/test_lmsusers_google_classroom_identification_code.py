@@ -6,6 +6,7 @@
 from sqlalchemy.engine.base import Connection
 from tests_integration_sql.mssql_helper import (
     insert_lms_user,
+    insert_lms_user_deleted,
     insert_edfi_student_with_usi,
     insert_edfi_student_identification_code,
     script_sql,
@@ -69,6 +70,28 @@ def describe_when_lms_and_ods_tables_have_a_match():
         ).fetchall()
         assert len(LMSUser) == 1
         assert LMSUser[0]["EdFiStudentId"] == STUDENT_ID
+
+
+def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
+    STUDENT_ID = "10000000-0000-0000-0000-000000000000"
+    SIS_ID = "sis_id"
+
+    def it_should_ignore_the_deleted_record(test_mssql_db: Connection):
+        # arrange
+        test_mssql_db.execute(PROC_SQL_DEFINITION)
+        insert_lms_user_deleted(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
+        insert_edfi_student_with_usi(test_mssql_db, 1, STUDENT_ID)
+        insert_edfi_student_identification_code(test_mssql_db, 1, SIS_ID)
+
+        # act
+        test_mssql_db.execute("EXEC lms.harmonize_lmsuser_google_classroom;")
+
+        # assert
+        LMSUser = test_mssql_db.execute(
+            "SELECT EdFiStudentId from lms.LMSUser"
+        ).fetchall()
+        assert len(LMSUser) == 1
+        assert LMSUser[0]["EdFiStudentId"] is None
 
 
 def describe_when_single_student_has_multiple_identification_codes_with_one_match():

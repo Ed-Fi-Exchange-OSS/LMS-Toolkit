@@ -74,6 +74,40 @@ def insert_lms_user(connection: Connection, sis_identifier: str, source_system: 
     )
 
 
+def insert_lms_user_deleted(connection: Connection, sis_identifier: str, source_system: str):
+    connection.execute(
+        f"""
+    INSERT INTO [lms].[LMSUser]
+           ([SourceSystemIdentifier]
+           ,[SourceSystem]
+           ,[UserRole]
+           ,[SISUserIdentifier]
+           ,[LocalUserIdentifier]
+           ,[Name]
+           ,[EmailAddress]
+           ,[SourceCreateDate]
+           ,[SourceLastModifiedDate]
+           ,[CreateDate]
+           ,[LastModifiedDate]
+           ,[DeletedAt])
+     VALUES
+           (N'{sis_identifier}'
+           ,N'{source_system}'
+           ,N'student'
+           ,N'{sis_identifier}'
+           ,N'{sis_identifier}'
+           ,N'{sis_identifier}'
+           ,N'{sis_identifier}'
+           ,NULL
+           ,NULL
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           ,CAST(N'2021-01-02 00:00:00' AS DateTime)
+           )
+"""
+    )
+
+
 def insert_edfi_student(
     connection: Connection,
     student_unique_id: str,
