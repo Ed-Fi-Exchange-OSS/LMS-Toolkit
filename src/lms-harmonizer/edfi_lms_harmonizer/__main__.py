@@ -8,10 +8,10 @@ import sys
 
 from dotenv import load_dotenv
 from errorhandler import ErrorHandler  # type: ignore
-from sqlalchemy.engine.base import Engine
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from helpers.argparser import MainArguments, parse_main_arguments  # type: ignore
+from harmonizer import run
 
 logger: logging.Logger
 
@@ -73,7 +73,7 @@ def main() -> None:
     _configure_logging(arguments)
     error_tracker: ErrorHandler = ErrorHandler()
 
-    _run(arguments)
+    run(arguments)
 
     if error_tracker.fired:
         print(
