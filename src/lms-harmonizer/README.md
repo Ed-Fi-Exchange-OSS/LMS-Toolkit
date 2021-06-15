@@ -61,6 +61,7 @@ poetry run python edfi_lms_harmonizer --server localhost --dbname lms_toolkit --
 1. Run unit tests: `poetry run pytest`
 1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
 1. View code coverage: `poetry run coverage report`
+1. Run SQL integration tests: `poetry run pytest tests_integration_sql`
 
 _Also see
 [build.py](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/blob/main/docs/build.md)_

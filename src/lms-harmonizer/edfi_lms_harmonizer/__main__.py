@@ -8,10 +8,10 @@ import sys
 
 from dotenv import load_dotenv
 from errorhandler import ErrorHandler  # type: ignore
+from sqlalchemy.engine.base import Engine
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from helpers.argparser import MainArguments, parse_main_arguments  # type: ignore
-
 
 logger: logging.Logger
 
@@ -33,7 +33,17 @@ def _configure_logging(arguments: MainArguments) -> None:
 
 @catch_exceptions
 def _run(arguments: MainArguments) -> None:
-    print('base project')
+    global logger
+    engine: Engine = arguments.get_db_engine()
+
+    logger.info("Harmonizing Canvas LMS Users.")
+    engine.execute("EXEC lms.harmonize_lmsuser_canvas;")
+
+    logger.info("Harmonizing Google Classroom LMS Users.")
+    engine.execute("EXEC lms.harmonize_lmsuser_google_classroom;")
+
+    logger.info("Harmonizing Schoology LMS Users.")
+    engine.execute("EXEC lms.harmonize_lmsuser_schoology;")
 
 
 def main() -> None:
