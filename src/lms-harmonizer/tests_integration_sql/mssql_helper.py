@@ -74,7 +74,9 @@ def insert_lms_user(connection: Connection, sis_identifier: str, source_system: 
     )
 
 
-def insert_lms_user_deleted(connection: Connection, sis_identifier: str, source_system: str):
+def insert_lms_user_deleted(
+    connection: Connection, sis_identifier: str, source_system: str
+):
     connection.execute(
         f"""
     INSERT INTO [lms].[LMSUser]

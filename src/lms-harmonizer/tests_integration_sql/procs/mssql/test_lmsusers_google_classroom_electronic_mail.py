@@ -9,7 +9,7 @@ from tests_integration_sql.mssql_helper import (
     insert_edfi_student_with_usi,
     insert_edfi_student_electronic_mail,
     script_sql,
-    insert_lms_user_deleted
+    insert_lms_user_deleted,
 )
 
 SOURCE_SYSTEM = "Google Classroom"
@@ -81,6 +81,7 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
         ).fetchall()
         assert len(LMSUser) == 1
         assert LMSUser[0]["EdFiStudentId"] is None
+
 
 def describe_when_single_student_has_multiple_emails_with_one_match():
     STUDENT_ID = "10000000-0000-0000-0000-000000000000"

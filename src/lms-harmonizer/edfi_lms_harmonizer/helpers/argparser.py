@@ -170,9 +170,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         args_parsed.useintegratedsecurity or not user_name_required
     )
 
-    arguments = MainArguments(
-        args_parsed.log_level
-    )
+    arguments = MainArguments(args_parsed.log_level)
 
     if args_parsed.useintegratedsecurity:
         arguments.set_connection_string_using_integrated_security(

@@ -4,7 +4,12 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from sqlalchemy.engine.base import Connection
-from tests_integration_sql.mssql_helper import insert_lms_user, insert_edfi_student, insert_lms_user_deleted, script_sql
+from tests_integration_sql.mssql_helper import (
+    insert_lms_user,
+    insert_edfi_student,
+    insert_lms_user_deleted,
+    script_sql,
+)
 
 SOURCE_SYSTEM = "Canvas"
 PROC_SQL_DEFINITION = script_sql("1000-lms-user-canvas.sql")

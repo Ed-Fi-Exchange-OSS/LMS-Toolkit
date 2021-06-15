@@ -7,7 +7,9 @@ from typing import Iterable
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine, Connection, Transaction
-from tests_integration_sql.migrator_helper_mssql import migrate_lms_user_and_edfi_student
+from tests_integration_sql.migrator_helper_mssql import (
+    migrate_lms_user_and_edfi_student,
+)
 
 
 def _new_mssql_engine() -> Engine:
@@ -39,9 +41,7 @@ def mssql_connection() -> Iterable[Connection]:
 
 
 @pytest.fixture(autouse=True)
-def test_mssql_db(
-    mssql_connection: Connection, request
-) -> Connection:
+def test_mssql_db(mssql_connection: Connection, request) -> Connection:
     """
     Fixture that takes the set-up connection and wraps in a transaction. Transaction
     will be rolled-back automatically after each test.
