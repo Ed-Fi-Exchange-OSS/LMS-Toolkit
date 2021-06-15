@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from logging import getLogger
-from os import path
+from os import path, makedirs
 
 import pandas as pd
 from sqlalchemy.engine.base import Engine as sa_Engine
@@ -34,12 +34,18 @@ USERS = "users"
 
 
 def _get_file_path(output_directory: str, report_type: str) -> str:
-    return path.join(
-        output_directory, report_type, f"{datetime.now().strftime('%Y-%m-%d')}"
+    dir_path = path.join(
+        output_directory, report_type
     )
 
+    makedirs(dir_path, exist_ok=True)
 
-def get_summary(engine: sa_Engine) -> None:
+    file_path = path.join(dir_path, f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv")
+
+    return file_path
+
+
+def print_summary(engine: sa_Engine) -> None:
     sections_count = sql_adapter.get_int(engine, QUERY_FOR_SECTION_SUMMARY)
     users_count = sql_adapter.get_int(engine, QUERY_FOR_USERS_SUMMARY)
 
@@ -52,9 +58,11 @@ def get_summary(engine: sa_Engine) -> None:
         logger.info("There are no unmatched sections or users in the database.")
 
 
-def create_files(engine: sa_Engine, output_directory: str) -> None:
+def create_exception_reports(engine: sa_Engine, output_directory: str) -> None:
+    logger.info("Writing the Sections exception report")
     sections = pd.read_sql(QUERY_FOR_SECTIONS, engine)
-    sections.to_csv(_get_file_path(output_directory, SECTIONS))
+    sections.to_csv(_get_file_path(output_directory, SECTIONS), index=False)
 
+    logger.info("Writing the Users exception report")
     users = pd.read_sql(QUERY_FOR_USERS, engine)
-    users.to_csv(_get_file_path(output_directory, USERS))
+    users.to_csv(_get_file_path(output_directory, USERS), index=False)

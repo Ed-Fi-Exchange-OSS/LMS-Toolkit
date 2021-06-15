@@ -9,6 +9,7 @@ from sqlalchemy.engine.base import Engine
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from helpers.argparser import MainArguments
+import exceptions_reports
 
 
 logger = logging.getLogger(__name__)
@@ -32,3 +33,8 @@ def run(arguments: MainArguments) -> None:
 
     engine: Engine = arguments.get_db_engine()
     harmonize_users(engine)
+
+    if arguments.exceptions_report_directory is not None:
+        exceptions_reports.create_exception_reports(engine, arguments.exceptions_report_directory)
+
+    exceptions_reports.print_summary(engine)
