@@ -36,14 +36,15 @@ def _run(arguments: MainArguments) -> None:
     global logger
     engine: Engine = arguments.get_db_engine()
 
-    logger.info("Harmonizing Canvas LMS Users.")
-    engine.execute("EXEC lms.harmonize_lmsuser_canvas;")
+    with engine.connect().execution_options(autocommit=True) as connection:
+        logger.info("Harmonizing Canvas LMS Users.")
+        connection.execute("EXEC lms.harmonize_lmsuser_canvas;")
 
-    logger.info("Harmonizing Google Classroom LMS Users.")
-    engine.execute("EXEC lms.harmonize_lmsuser_google_classroom;")
+        logger.info("Harmonizing Google Classroom LMS Users.")
+        connection.execute("EXEC lms.harmonize_lmsuser_google_classroom;")
 
-    logger.info("Harmonizing Schoology LMS Users.")
-    engine.execute("EXEC lms.harmonize_lmsuser_schoology;")
+        logger.info("Harmonizing Schoology LMS Users.")
+        connection.execute("EXEC lms.harmonize_lmsuser_schoology;")
 
 
 def main() -> None:
