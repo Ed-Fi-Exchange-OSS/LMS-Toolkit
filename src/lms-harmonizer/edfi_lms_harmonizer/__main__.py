@@ -31,20 +31,40 @@ def _configure_logging(arguments: MainArguments) -> None:
     )
 
 
+def _harmonize_users(connection) -> None:
+    global logger
+
+    logger.info("Harmonizing Canvas LMS Users.")
+    connection.execute("EXEC lms.harmonize_lmsuser_canvas;")
+
+    logger.info("Harmonizing Google Classroom LMS Users.")
+    connection.execute("EXEC lms.harmonize_lmsuser_google_classroom;")
+
+    logger.info("Harmonizing Schoology LMS Users.")
+    connection.execute("EXEC lms.harmonize_lmsuser_schoology;")
+
+
+def _harmonize_sections(connection) -> None:
+    global logger
+
+    logger.info("Harmonizing Canvas LMS Sections.")
+    connection.execute("EXEC lms.harmonize_lmssection_canvas;")
+
+    logger.info("Harmonizing Google Classroom LMS Sections.")
+    connection.execute("EXEC lms.harmonize_lmssection_google_classroom;")
+
+    logger.info("Harmonizing Schoology LMS Sections.")
+    connection.execute("EXEC lms.harmonize_lmssection_schoology;")
+
+
 @catch_exceptions
 def _run(arguments: MainArguments) -> None:
     global logger
     engine: Engine = arguments.get_db_engine()
 
     with engine.connect().execution_options(autocommit=True) as connection:
-        logger.info("Harmonizing Canvas LMS Users.")
-        connection.execute("EXEC lms.harmonize_lmsuser_canvas;")
-
-        logger.info("Harmonizing Google Classroom LMS Users.")
-        connection.execute("EXEC lms.harmonize_lmsuser_google_classroom;")
-
-        logger.info("Harmonizing Schoology LMS Users.")
-        connection.execute("EXEC lms.harmonize_lmsuser_schoology;")
+        _harmonize_users(connection)
+        _harmonize_sections(connection)
 
 
 def main() -> None:
