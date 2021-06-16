@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-sql-adapter"
-version = "1.0.0-alpha.2"
+version = "1.0.0-alpha.3"
 description = "Lightweight wrapper to facilitate connections to SQL databases"
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
 license = "Apache-2.0"

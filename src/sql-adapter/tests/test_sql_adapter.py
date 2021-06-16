@@ -13,19 +13,18 @@ def describe_when_creating_mssql_engine() -> None:
                 "mssql+pyodbc://a:b@c,1/d?driver=ODBC+Driver+17+for+SQL+Server"
             )
 
-            actual = sql_adapter.create_mssql_engine("a", "b", "c", 1, "d")
+            actual = sql_adapter.create_mssql_adapter("a", "b", "c", "d", 1)
 
-            assert str(actual.url) == expected_connection_string
+            assert str(actual.engine.url) == expected_connection_string
 
     def describe_using_integrated_security() -> None:
         def it_should_create_an_engine_with_proper_connection_string() -> None:
             expected_connection_string = (
-                "mssql+pyodbc://c,1/d?driver=ODBC+Driver+17+for+SQL+Server%3FTrusted_Connection%3Dyes"
+                "mssql+pyodbc://c,1/d?driver=ODBC+Driver+17+for+SQL+Server"
             )
 
-            actual = sql_adapter.create_mssql_engine_with_integrated_security("c", 1, "d")
-
-            assert str(actual.url) == expected_connection_string
+            actual = sql_adapter.create_mssql_adapter_with_integrated_security("c", "d", 1)
+            assert str(actual.engine.url) == expected_connection_string
 
 
 def describe_when_creating_postgresql_engine() -> None:
@@ -35,6 +34,6 @@ def describe_when_creating_postgresql_engine() -> None:
                 "postgresql://a:b@c:1/d"
             )
 
-            actual = sql_adapter.create_postgresql_engine("a", "b", "c", 1, "d")
+            actual = sql_adapter.create_postgresql_adapter("a", "b", "c", "d", 1)
 
-            assert str(actual.url) == expected_connection_string
+            assert str(actual.engine.url) == expected_connection_string
