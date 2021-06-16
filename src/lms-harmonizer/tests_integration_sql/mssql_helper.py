@@ -74,6 +74,12 @@ def insert_lms_user(connection: Connection, sis_identifier: str, source_system: 
     )
 
 
+def manually_set_lmsuser_edfistudentid(connection: Connection, sis_identifier: str, student_id: str) -> None:
+    connection.execute(
+        f"UPDATE lms.LMSUser SET EdFiStudentId = '{student_id}' where SourceSystemIdentifier = '{sis_identifier}'"
+    )
+
+
 def insert_lms_user_deleted(
     connection: Connection, sis_identifier: str, source_system: str
 ):
@@ -298,6 +304,12 @@ def insert_lms_section(connection: Connection, sis_identifier: str, source_syste
         ,CAST(N'2021-01-01 00:00:00' AS DateTime)
         )
 """
+    )
+
+
+def manually_set_lmssection_edfisectionid(connection: Connection, sis_identifier: str, section_id: str) -> None:
+    connection.execute(
+        f"UPDATE lms.LMSSection SET EdFiSectionId = '{section_id}' where SourceSystemIdentifier = '{sis_identifier}'"
     )
 
 

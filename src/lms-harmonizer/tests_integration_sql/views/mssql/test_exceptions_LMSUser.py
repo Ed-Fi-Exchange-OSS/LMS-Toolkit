@@ -7,7 +7,8 @@ from sqlalchemy.engine.base import Connection
 from tests_integration_sql.mssql_helper import (
     insert_lms_user,
     script_sql,
-    insert_edfi_student
+    insert_edfi_student,
+    manually_set_lmsuser_edfistudentid
 )
 
 SOURCE_SYSTEM = "Canvas"
@@ -44,10 +45,11 @@ def describe_given_there_are_no_unmatched_users() -> None:
             test_mssql_db.execute(VIEW_SQL_DEFINITION)
             insert_lms_user(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
             insert_edfi_student(test_mssql_db, SIS_ID, STUDENT_ID)
+            manually_set_lmsuser_edfistudentid(test_mssql_db, SIS_ID, STUDENT_ID)
 
             # Act
             results = test_mssql_db.execute("SELECT COUNT(1) FROM edfilms.exceptions_LMSUser")
 
             # Assert
-            assert results.rowcount == 0
+            assert results.first()[0] == 0
 
