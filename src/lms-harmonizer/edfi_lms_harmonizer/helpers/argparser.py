@@ -33,12 +33,12 @@ class MainArguments:
     def __post_init__(self) -> None:
         self.adapter: sql_adapter.Adapter
 
-    def build_mssql_adapter(self, username: str, password: str) -> sql_adapter.Adapter:
+    def build_mssql_adapter(self, username: str, password: str) -> None:
         self.adapter = sql_adapter.create_mssql_adapter(
             username, password, self.server, self.db_name, self.port
         )
 
-    def build_mssql_adapter_with_integrated_security(self) -> sql_adapter.Adapter:
+    def build_mssql_adapter_with_integrated_security(self) -> None:
         self.adapter = sql_adapter.create_mssql_adapter_with_integrated_security(
             self.server, self.db_name, self.port
         )
