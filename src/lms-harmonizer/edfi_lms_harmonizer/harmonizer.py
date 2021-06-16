@@ -6,10 +6,7 @@
 import logging
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
-from edfi_sql_adapter.sql_adapter import (
-    Adapter,
-    Statement
-)
+from edfi_sql_adapter.sql_adapter import Adapter, Statement
 
 
 logger = logging.getLogger(__name__)
@@ -19,9 +16,16 @@ logger = logging.getLogger(__name__)
 def harmonize_users(adapter: Adapter) -> None:
 
     statements = [
-        Statement("EXEC lms.harmonize_lmsuser_canvas;",  "Harmonizing Canvas LMS Users."),
-        Statement("EXEC lms.harmonize_lmsuser_google_classroom;",  "Harmonizing Google Classroom LMS Users."),
-        Statement("EXEC lms.harmonize_lmsuser_schoology;", "Harmonizing Schoology LMS Users.")
+        Statement(
+            "EXEC lms.harmonize_lmsuser_canvas;", "Harmonizing Canvas LMS Users."
+        ),
+        Statement(
+            "EXEC lms.harmonize_lmsuser_google_classroom;",
+            "Harmonizing Google Classroom LMS Users.",
+        ),
+        Statement(
+            "EXEC lms.harmonize_lmsuser_schoology;", "Harmonizing Schoology LMS Users."
+        ),
     ]
 
     adapter.execute(statements)
@@ -31,9 +35,17 @@ def harmonize_users(adapter: Adapter) -> None:
 def harmonize_sections(adapter: Adapter) -> None:
 
     statements = [
-        Statement("EXEC lms.harmonize_lmssection_canvas;",  "Harmonizing Canvas LMS Sections."),
-        Statement("EXEC lms.harmonize_lmssection_google_classroom;",  "Harmonizing Google Classroom LMS Sections."),
-        Statement("EXEC lms.harmonize_lmssection_schoology;", "Harmonizing Schoology LMS Sections.")
+        Statement(
+            "EXEC lms.harmonize_lmssection_canvas;", "Harmonizing Canvas LMS Sections."
+        ),
+        Statement(
+            "EXEC lms.harmonize_lmssection_google_classroom;",
+            "Harmonizing Google Classroom LMS Sections.",
+        ),
+        Statement(
+            "EXEC lms.harmonize_lmssection_schoology;",
+            "Harmonizing Schoology LMS Sections.",
+        ),
     ]
 
     adapter.execute(statements)

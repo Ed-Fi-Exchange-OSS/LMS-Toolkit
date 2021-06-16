@@ -8,7 +8,7 @@ from tests_integration_sql.mssql_helper import (
     script_sql,
     insert_lms_section,
     insert_lms_section_deleted,
-    insert_edfi_section
+    insert_edfi_section,
 )
 
 SOURCE_SYSTEM = "Canvas"
@@ -100,8 +100,12 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
         insert_lms_section(test_mssql_db, SIS_ID, SOURCE_SYSTEM)  # Matching section
         insert_edfi_section(test_mssql_db, SIS_ID, SECTION_ID)  # Matching section
 
-        insert_lms_section(test_mssql_db, NOT_MATCHING_SIS_ID, SOURCE_SYSTEM)  # Not matching section
-        insert_edfi_section(test_mssql_db, "also_not_matching_sis_id")  # Not matching section
+        insert_lms_section(
+            test_mssql_db, NOT_MATCHING_SIS_ID, SOURCE_SYSTEM
+        )  # Not matching section
+        insert_edfi_section(
+            test_mssql_db, "also_not_matching_sis_id"
+        )  # Not matching section
 
         # act
         test_mssql_db.execute(PROC_EXEC_STATEMENT)

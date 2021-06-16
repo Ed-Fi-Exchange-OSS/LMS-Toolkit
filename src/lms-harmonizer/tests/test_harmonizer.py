@@ -3,10 +3,8 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Tuple
-
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 
 from edfi_sql_adapter.sql_adapter import Adapter
 

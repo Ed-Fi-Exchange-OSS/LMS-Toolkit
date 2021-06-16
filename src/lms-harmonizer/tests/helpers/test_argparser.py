@@ -8,8 +8,6 @@ from typing import List
 import pytest
 
 from edfi_lms_harmonizer.helpers.argparser import parse_main_arguments, MainArguments
-from edfi_lms_harmonizer.helpers.constants import LOG_LEVELS
-
 
 PATH = "./lms_udm_files"
 SERVER = "localhost"

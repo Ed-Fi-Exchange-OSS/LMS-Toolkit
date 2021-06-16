@@ -8,12 +8,9 @@ import logging
 from edfi_lms_harmonizer.helpers.argparser import MainArguments
 from edfi_lms_harmonizer.exceptions_reports import (
     create_exception_reports,
-    print_summary
+    print_summary,
 )
-from edfi_lms_harmonizer.harmonizer import (
-    harmonize_users,
-    harmonize_sections
-)
+from edfi_lms_harmonizer.harmonizer import harmonize_users, harmonize_sections
 
 
 logger = logging.getLogger(__name__)

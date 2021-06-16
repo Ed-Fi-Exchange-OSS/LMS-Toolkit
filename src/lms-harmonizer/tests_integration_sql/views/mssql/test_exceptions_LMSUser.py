@@ -8,7 +8,7 @@ from tests_integration_sql.mssql_helper import (
     insert_lms_user,
     script_sql,
     insert_edfi_student,
-    manually_set_lmsuser_edfistudentid
+    manually_set_lmsuser_edfistudentid,
 )
 
 SOURCE_SYSTEM = "Canvas"
@@ -28,7 +28,9 @@ def describe_given_there_is_one_unmatched_user() -> None:
             insert_edfi_student(test_mssql_db, SIS_ID, STUDENT_ID)
 
             # Act
-            results = test_mssql_db.execute("SELECT COUNT(1) FROM edfilms.exceptions_LMSUser")
+            results = test_mssql_db.execute(
+                "SELECT COUNT(1) FROM edfilms.exceptions_LMSUser"
+            )
 
             # Assert
             results.first()[0] == 1
@@ -48,8 +50,9 @@ def describe_given_there_are_no_unmatched_users() -> None:
             manually_set_lmsuser_edfistudentid(test_mssql_db, SIS_ID, STUDENT_ID)
 
             # Act
-            results = test_mssql_db.execute("SELECT COUNT(1) FROM edfilms.exceptions_LMSUser")
+            results = test_mssql_db.execute(
+                "SELECT COUNT(1) FROM edfilms.exceptions_LMSUser"
+            )
 
             # Assert
             assert results.first()[0] == 0
-

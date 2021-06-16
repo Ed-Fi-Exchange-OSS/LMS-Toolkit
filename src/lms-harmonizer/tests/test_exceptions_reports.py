@@ -20,18 +20,22 @@ class When_getting_the_summary_report(TestCase):
     # case, the log messages are the entire point and therefore they should be
     # unit tested. Not using pytest-describe here because we need the log
     # context manager in regular pytest.
-    def test_given_there_are_no_exceptions_then_it_should_only_log_to_info(self) -> None:
+    def test_given_there_are_no_exceptions_then_it_should_only_log_to_info(
+        self,
+    ) -> None:
         # Arrange
         adapter = Mock(spec=Adapter)
         adapter.get_int.return_value = 0
 
         # Act
-        with self.assertLogs(level='INFO') as log:
+        with self.assertLogs(level="INFO") as log:
             exceptions_reports.print_summary(adapter)
 
         assert "There are no unmatched" in str(log.output)
 
-    def test_given_there_is_one_unmatched_section_then_it_should_report_a_warning(self) -> None:
+    def test_given_there_is_one_unmatched_section_then_it_should_report_a_warning(
+        self,
+    ) -> None:
         # Arrange
         adapter = Mock(spec=Adapter)
         adapter.get_int.side_effect = [1, 0]
@@ -42,7 +46,9 @@ class When_getting_the_summary_report(TestCase):
 
         assert "There are 1 unmatched sections and 0 unmatched users" in str(log.output)
 
-    def test_given_there_is_one_unmatched_user_then_it_should_report_a_warning(self) -> None:
+    def test_given_there_is_one_unmatched_user_then_it_should_report_a_warning(
+        self,
+    ) -> None:
         # Arrange
         adapter = Mock(spec=Adapter)
         adapter.get_int.side_effect = [0, 1]
@@ -86,7 +92,9 @@ def describe_when_writing_exception_reports() -> None:
         files = os.listdir(os.path.join(OUTPUT_DIR, "users"))
         assert len(files) == 1
 
-    def it_should_have_written_the_users_to_the_csv_file(given_there_are_exceptions, fs) -> None:
+    def it_should_have_written_the_users_to_the_csv_file(
+        given_there_are_exceptions, fs
+    ) -> None:
         dir = os.path.join(OUTPUT_DIR, "users")
         files = os.listdir(dir)
 
@@ -97,11 +105,15 @@ def describe_when_writing_exception_reports() -> None:
     def it_should_create_the_sections_directory(given_there_are_exceptions, fs) -> None:
         assert os.path.exists(os.path.join(OUTPUT_DIR, "sections"))
 
-    def it_should_have_created_a_sections_csv_file(given_there_are_exceptions, fs) -> None:
+    def it_should_have_created_a_sections_csv_file(
+        given_there_are_exceptions, fs
+    ) -> None:
         files = os.listdir(os.path.join(OUTPUT_DIR, "sections"))
         assert len(files) == 1
 
-    def it_should_have_written_the_sections_to_the_csv_file(given_there_are_exceptions, fs) -> None:
+    def it_should_have_written_the_sections_to_the_csv_file(
+        given_there_are_exceptions, fs
+    ) -> None:
         dir = os.path.join(OUTPUT_DIR, "sections")
         files = os.listdir(dir)
 

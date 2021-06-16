@@ -5,11 +5,9 @@
 
 from dataclasses import dataclass
 import os
-from typing import List, Union, Optional
+from typing import List, Optional
 
 from configargparse import ArgParser  # type: ignore
-from sqlalchemy.engine import Engine as sa_Engine
-from sqlalchemy import create_engine as sa_create_engine
 
 from .constants import LOG_LEVELS
 from edfi_sql_adapter import sql_adapter
@@ -78,7 +76,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         help="Database server port number",
         type=int,
         env_var="DB_PORT",
-        default=1433
+        default=1433,
     )
     parser.add(  # type: ignore
         "-d",

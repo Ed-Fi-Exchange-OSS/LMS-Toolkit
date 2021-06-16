@@ -34,13 +34,13 @@ USERS = "users"
 
 
 def _get_file_path(output_directory: str, report_type: str) -> str:
-    dir_path = path.join(
-        output_directory, report_type
-    )
+    dir_path = path.join(output_directory, report_type)
 
     makedirs(dir_path, exist_ok=True)
 
-    file_path = path.join(dir_path, f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv")
+    file_path = path.join(
+        dir_path, f"{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv"
+    )
 
     return file_path
 
