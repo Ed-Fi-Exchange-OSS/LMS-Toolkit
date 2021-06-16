@@ -13,6 +13,11 @@ IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'lms')
 EXEC sys.sp_executesql N'CREATE SCHEMA lms';
         """
 
+CREATE_SCHEMA_EDFILMS = """
+IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'edfilms')
+EXEC sys.sp_executesql N'CREATE SCHEMA edfilms';
+        """
+
 CREATE_TABLE_LMS_USER = """
 IF OBJECT_ID(N'lms.LMSUser', N'U') IS NULL
 BEGIN
