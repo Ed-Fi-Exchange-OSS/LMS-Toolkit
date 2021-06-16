@@ -6,43 +6,59 @@
 from typing import Tuple
 
 import pytest
-from unittest.mock import MagicMock, patch, Mock
-from sqlalchemy.engine.base import Engine
+from unittest.mock import patch, MagicMock
 
-from edfi_lms_harmonizer.harmonizer import run
-from edfi_lms_harmonizer.helpers.argparser import MainArguments
+from edfi_sql_adapter.sql_adapter import Adapter
+
+from edfi_lms_harmonizer.harmonizer import harmonize_users
 
 
-def describe_given_not_running_exception_reports() -> None:
+def describe_when_harmonizing_users() -> None:
     @pytest.fixture
-    @patch(
-        "edfi_sql_adapter.sql_adapter.Adapter.execute"
-    )
-    def when_running_the_harmonizer(mock_executor) -> Mock:
+    def fixture() -> MagicMock:
         # Arrange
-        args = MainArguments("DEBUG", None, "server", "dbname", 2)
-        args.build_mssql_adapter_with_integrated_security()
+        adapter = MagicMock(spec=Adapter)
 
         # Act
-        run(args)
+        harmonize_users(adapter)
 
         # Prepare for assertions
-        return mock_executor
+        return adapter
 
-    def it_opens_a_database_connection(when_running_the_harmonizer) -> None:
-        mock_executor = when_running_the_harmonizer
+    def it_makes_one_call_to_the_adapter(fixture) -> None:
+        adapter = fixture
 
-        assert mock_executor.called_once()
+        assert adapter.execute.call_count == 1
 
-    # def it_runs_user_harmonization_for_canvas(when_running_the_harmonizer) -> None:
-    #     _, mock_execute = when_running_the_harmonizer
+    def it_runs_user_harmonization_for_canvas(fixture) -> None:
+        adapter = fixture
 
-    #     print("------------------")
-    #     print(mock_execute)
-    #     print(mock_execute.return_value)
-    #     print(mock_execute.call_args)
-    #     print(mock_execute.return_value.call_args)
-    #     print(mock_execute.return_value.execute.return_value.call_list)
-    #     print("------------------")
+        args = adapter.execute.call_args[0]
 
-    #     # assert mock_connection.return_value.execute.assert_called_once()
+        found = False
+        for a in args[0]:
+            found = found or "harmonize_lmsuser_canvas" in a.sql
+
+        assert found
+
+    def it_runs_user_harmonization_for_google(fixture) -> None:
+        adapter = fixture
+
+        args = adapter.execute.call_args[0]
+
+        found = False
+        for a in args[0]:
+            found = found or "harmonize_lmsuser_google_classroom" in a.sql
+
+        assert found
+
+    def it_runs_user_harmonization_for_schoology(fixture) -> None:
+        adapter = fixture
+
+        args = adapter.execute.call_args[0]
+
+        found = False
+        for a in args[0]:
+            found = found or "harmonize_lmsuser_schoology" in a.sql
+
+        assert found

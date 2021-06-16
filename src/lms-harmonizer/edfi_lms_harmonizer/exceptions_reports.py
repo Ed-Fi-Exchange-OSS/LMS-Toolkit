@@ -8,9 +8,10 @@ from logging import getLogger
 from os import path, makedirs
 
 import pandas as pd
-from sqlalchemy.engine.base import Engine as sa_Engine
 
+from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from edfi_sql_adapter.sql_adapter import Adapter
+
 
 logger = getLogger(__name__)
 
@@ -44,12 +45,13 @@ def _get_file_path(output_directory: str, report_type: str) -> str:
     return file_path
 
 
+@catch_exceptions
 def print_summary(adapter: Adapter) -> None:
     sections_count = adapter.get_int(QUERY_FOR_SECTION_SUMMARY)
     users_count = adapter.get_int(QUERY_FOR_USERS_SUMMARY)
 
     if sections_count > 0 or users_count > 0:
-        logger.warn(
+        logger.warning(
             f"There are {sections_count} unmatched sections and {users_count} "
             f"unmatched users in the database."
         )
@@ -57,6 +59,7 @@ def print_summary(adapter: Adapter) -> None:
         logger.info("There are no unmatched sections or users in the database.")
 
 
+@catch_exceptions
 def create_exception_reports(adapter: Adapter, output_directory: str) -> None:
     logger.info("Writing the Sections exception report")
     sections = pd.read_sql(QUERY_FOR_SECTIONS, adapter.engine)

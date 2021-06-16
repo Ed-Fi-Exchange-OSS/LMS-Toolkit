@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 from errorhandler import ErrorHandler  # type: ignore
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
-from helpers.argparser import MainArguments, parse_main_arguments  # type: ignore
-from harmonizer import run
+from edfi_lms_harmonizer.helpers.argparser import MainArguments, parse_main_arguments  # type: ignore
+from edfi_lms_harmonizer.runner import run
 
 logger: logging.Logger
 
