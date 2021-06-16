@@ -27,6 +27,7 @@ class Adapter:
     Alchemy, providing a set of common utility functions for interacting with a
     database.
     """
+
     engine: sa_Engine
 
     def __init__(self, engine: sa_Engine) -> None:
@@ -149,6 +150,7 @@ class Adapter:
 
 # Below is a set of "static" functions for generating a new Adapter object
 
+
 def create_mssql_adapter(
     username: str, password: str, server: str, db_name: str, port: int = 1433
 ) -> Adapter:
@@ -173,9 +175,11 @@ def create_mssql_adapter(
     -------
     An instance of Adapter
     """
-    return Adapter(sa_create_engine(
-        f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
-    ))
+    return Adapter(
+        sa_create_engine(
+            f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
+        )
+    )
 
 
 def create_mssql_adapter_with_integrated_security(
@@ -198,9 +202,11 @@ def create_mssql_adapter_with_integrated_security(
     -------
     An instance of Adapter
     """
-    return Adapter(sa_create_engine(
-        f"mssql+pyodbc://{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
-    ))
+    return Adapter(
+        sa_create_engine(
+            f"mssql+pyodbc://{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
+        )
+    )
 
 
 def create_postgresql_adapter(
@@ -226,6 +232,8 @@ def create_postgresql_adapter(
     -------
     An instance of Adapter
     """
-    return Adapter(sa_create_engine(
-        f"postgresql://{username}:{password}@{server}:{port}/{db_name}"
-    ))
+    return Adapter(
+        sa_create_engine(
+            f"postgresql://{username}:{password}@{server}:{port}/{db_name}"
+        )
+    )
