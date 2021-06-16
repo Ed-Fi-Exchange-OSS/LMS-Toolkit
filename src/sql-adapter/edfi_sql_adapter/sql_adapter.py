@@ -118,7 +118,7 @@ class Adapter:
         """
         with self.engine.connect().execution_options(autocommit=True) as connection:
             for s in statements:
-                logger.info(s.info_msg),
+                logger.info(s.info_msg)
                 connection.execute(s.sql)
 
     def get_int(self, statement: str) -> int:
