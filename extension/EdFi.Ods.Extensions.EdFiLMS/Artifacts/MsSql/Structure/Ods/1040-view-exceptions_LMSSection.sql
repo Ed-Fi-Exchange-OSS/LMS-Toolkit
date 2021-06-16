@@ -15,23 +15,3 @@ CREATE VIEW edfilms.exceptions_LMSSection AS
         EdFiSectionId IS NULL
     AND
         DeletedAt IS NULL;
-
-GO
-
-
-CREATE VIEW edfilms.exceptions_LMSUser AS
-    SELECT
-        LMSUserIdentifier,
-        SourceSystemIdentifier,
-        SourceSystem,
-        SISUserIdentifier,
-        LocalUserIdentifier,
-        UserRole
-    FROM
-        lms.LMSUser
-    WHERE
-        EdFiStudentId IS NULL
-    AND
-        DeletedAt IS NULL;
-
-GO
