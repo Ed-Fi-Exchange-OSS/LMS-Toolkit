@@ -5,6 +5,7 @@
 
 from edfi_lms_harmonizer import exceptions_reports
 
+
 def describe_when_getting_the_summary_report() -> None:
 
     # Need to mock the sql_adapter to return expected counts

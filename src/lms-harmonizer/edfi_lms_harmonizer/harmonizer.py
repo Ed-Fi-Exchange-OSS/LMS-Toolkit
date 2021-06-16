@@ -4,37 +4,47 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
+from typing import Optional
 
 from sqlalchemy.engine.base import Engine
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
-from helpers.argparser import MainArguments
-import exceptions_reports
+from edfi_lms_harmonizer.helpers.argparser import MainArguments
+from edfi_lms_harmonizer.exceptions_reports import (
+    create_exception_reports,
+    print_summary
+)
+from edfi_sql_adapter.sql_adapter import (
+    Adapter,
+    Statement
+)
 
 
 logger = logging.getLogger(__name__)
 
 
 @catch_exceptions
-def harmonize_users(engine: Engine) -> None:
+def _harmonize_users(adapter: Adapter) -> None:
 
-    with engine.connect().execution_options(autocommit=True) as connection:
-        logger.info("Harmonizing Canvas LMS Users.")
-        connection.execute("EXEC lms.harmonize_lmsuser_canvas;")
+    statements = [
+        Statement("EXEC lms.harmonize_lmsuser_canvas;",  "Harmonizing Canvas LMS Users."),
+        Statement("EXEC lms.harmonize_lmsuser_google_classroom;",  "Harmonizing Google Classroom LMS Users."),
+        Statement("EXEC lms.harmonize_lmsuser_schoology;", "Harmonizing Schoology LMS Users.")
+    ]
 
-        logger.info("Harmonizing Google Classroom LMS Users.")
-        connection.execute("EXEC lms.harmonize_lmsuser_google_classroom;")
+    adapter.execute(statements)
 
-        logger.info("Harmonizing Schoology LMS Users.")
-        connection.execute("EXEC lms.harmonize_lmsuser_schoology;")
+# @catch_exceptions
+# def _exception_reporting(adapter: Adapter, exceptions_report_directory: Optional[str]) -> None:
+#     if exceptions_report_directory is not None:
+#         create_exception_reports(adapter, exceptions_report_directory)
+
+#     print_summary(adapter)
 
 
 def run(arguments: MainArguments) -> None:
+    adapter = arguments.get_adapter()
+    # exceptions_report_directory = arguments.exceptions_report_directory
 
-    engine: Engine = arguments.get_db_engine()
-    harmonize_users(engine)
-
-    if arguments.exceptions_report_directory is not None:
-        exceptions_reports.create_exception_reports(engine, arguments.exceptions_report_directory)
-
-    exceptions_reports.print_summary(engine)
+    _harmonize_users(adapter)
+    # _exception_reporting(adapter, exceptions_report_directory)

@@ -146,7 +146,7 @@ def describe_given_optional_port_is_provided() -> None:
 
         assert parsed is not None, "No arguments detected"
 
-        assert str(PORT) in parsed.connection_string
+        assert parsed.port == PORT
 
 
 def describe_given_exception_report_arg() -> None:
@@ -176,9 +176,8 @@ def describe_given_engine_mssql() -> None:
 
             assert parsed is not None, "No arguments detected"
 
-            # Test the details of the connection string in a more appropriate test
-            # suite - test only enough here to prove the point
-            assert "Trusted_Connection=yes" in parsed.connection_string
+            # Only need to confirm that the adapter was created
+            assert parsed.get_adapter() is not None
 
     @pytest.fixture
     def fixture(capsys) -> MainArguments:
@@ -203,33 +202,33 @@ def describe_given_engine_mssql() -> None:
     ) -> None:
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert SERVER in fixture.connection_string
+        assert SERVER in str(fixture.get_adapter().engine.url)
 
     def it_should_set_port_in_the_connection_string(fixture: MainArguments) -> None:
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert str(PORT) in fixture.connection_string
+        assert str(PORT) in str(fixture.get_adapter().engine.url)
 
     def it_should_set_database_name_in_the_connection_string(
         fixture: MainArguments,
     ) -> None:
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert DB_NAME in fixture.connection_string
+        assert DB_NAME in str(fixture.get_adapter().engine.url)
 
     def it_should_set_username_in_the_connection_string(
         fixture: MainArguments,
     ) -> None:
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert USERNAME in fixture.connection_string
+        assert USERNAME in str(fixture.get_adapter().engine.url)
 
     def it_should_set_password_in_the_connection_string(
         fixture: MainArguments,
     ) -> None:
         # Test the details of the connection string in a more appropriate test
         # suite - test only enough here to prove the point
-        assert PASSWORD in fixture.connection_string
+        assert PASSWORD in str(fixture.get_adapter().engine.url)
 
     def describe_given_optional_non_default_log_level() -> None:
         def it_should_parse_the_log_level(capsys) -> None:
@@ -247,77 +246,3 @@ def describe_given_engine_mssql() -> None:
 
             assert parsed is not None, "No arguments detected"
             assert parsed.log_level == "DEBUG"
-
-
-def describe_when_initializing_MainArguments() -> None:
-    def it_passes_initializer_arguments_into_instance_properties() -> None:
-        logging = LOG_LEVELS[0]
-
-        a = MainArguments(logging, None)
-
-        assert a.log_level == logging
-
-
-def describe_given_engine_is_mssql() -> None:
-    def describe_given_using_integrated_security() -> None:
-        def describe_given_port_is_provided() -> None:
-            def it_should_return_a_pyodbc_connection_string_with_trusted_connection() -> None:
-                server = "my-server"
-                database = "my-database"
-                port = 1234
-                expect = "mssql+pyodbc://my-server,1234/my-database?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
-
-                a = MainArguments(LOG_LEVELS[0], None)
-                a.set_connection_string_using_integrated_security(
-                    server,
-                    port,
-                    database,
-                )
-
-                assert a.connection_string == expect
-
-        def describe_given_port_is_not_provided() -> None:
-            def it_should_use_default_value_of_1433() -> None:
-                server = "my-server"
-                database = "my-database"
-                port = None
-                expected = "mssql+pyodbc://my-server,1433/my-database?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
-
-                a = MainArguments(LOG_LEVELS[0], None)
-                a.set_connection_string_using_integrated_security(
-                    server,
-                    port,
-                    database,
-                )
-
-                assert a.connection_string == expected
-
-    def describe_given_using_username_and_password() -> None:
-        def describe_given_port_is_provided() -> None:
-            def it_should_return_a_pyodbc_connection_string_with_trusted_connection() -> None:
-                server = "my-server"
-                database = "my-database"
-                port = 1234
-                username = "me"
-                password = "yo"
-                expected = "mssql+pyodbc://me:yo@my-server,1234/my-database?driver=ODBC+Driver+17+for+SQL+Server"
-
-                a = MainArguments(LOG_LEVELS[0], None)
-                a.set_connection_string(server, port, database, username, password)
-
-                assert a.connection_string == expected
-
-        def describe_given_port_is_not_provided() -> None:
-            def it_should_use_default_value_of_1433() -> None:
-                expected = "mssql+pyodbc://me:yo@my-server,1433/my-database?driver=ODBC+Driver+17+for+SQL+Server"
-
-                server = "my-server"
-                database = "my-database"
-                port = None
-                username = "me"
-                password = "yo"
-
-                a = MainArguments(LOG_LEVELS[0], None)
-                a.set_connection_string(server, port, database, username, password)
-
-                assert a.connection_string == expected

@@ -10,8 +10,7 @@ from os import path, makedirs
 import pandas as pd
 from sqlalchemy.engine.base import Engine as sa_Engine
 
-from edfi_sql_adapter import sql_adapter
-
+from edfi_sql_adapter.sql_adapter import Adapter
 
 logger = getLogger(__name__)
 
@@ -45,9 +44,9 @@ def _get_file_path(output_directory: str, report_type: str) -> str:
     return file_path
 
 
-def print_summary(engine: sa_Engine) -> None:
-    sections_count = sql_adapter.get_int(engine, QUERY_FOR_SECTION_SUMMARY)
-    users_count = sql_adapter.get_int(engine, QUERY_FOR_USERS_SUMMARY)
+def print_summary(adapter: Adapter) -> None:
+    sections_count = adapter.get_int(QUERY_FOR_SECTION_SUMMARY)
+    users_count = adapter.get_int(QUERY_FOR_USERS_SUMMARY)
 
     if sections_count > 0 or users_count > 0:
         logger.warn(
@@ -58,11 +57,11 @@ def print_summary(engine: sa_Engine) -> None:
         logger.info("There are no unmatched sections or users in the database.")
 
 
-def create_exception_reports(engine: sa_Engine, output_directory: str) -> None:
+def create_exception_reports(adapter: Adapter, output_directory: str) -> None:
     logger.info("Writing the Sections exception report")
-    sections = pd.read_sql(QUERY_FOR_SECTIONS, engine)
+    sections = pd.read_sql(QUERY_FOR_SECTIONS, adapter.engine)
     sections.to_csv(_get_file_path(output_directory, SECTIONS), index=False)
 
     logger.info("Writing the Users exception report")
-    users = pd.read_sql(QUERY_FOR_USERS, engine)
+    users = pd.read_sql(QUERY_FOR_USERS, adapter.engine)
     users.to_csv(_get_file_path(output_directory, USERS), index=False)

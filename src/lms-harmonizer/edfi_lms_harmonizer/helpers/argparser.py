@@ -12,6 +12,7 @@ from sqlalchemy.engine import Engine as sa_Engine
 from sqlalchemy import create_engine as sa_create_engine
 
 from .constants import LOG_LEVELS
+from edfi_sql_adapter import sql_adapter
 
 
 @dataclass
@@ -27,61 +28,25 @@ class MainArguments:
 
     log_level: str
     exceptions_report_directory: Optional[str]
+    server: str
+    db_name: str
+    port: int
 
-    @staticmethod
-    def _get_mssql_port(port: Union[int, None]) -> int:
-        if not port:
-            port = 1433
+    def __post_init__(self) -> None:
+        self.adapter: sql_adapter.Adapter
 
-        return port
+    def build_mssql_adapter(self, username: str, password: str) -> sql_adapter.Adapter:
+        self.adapter = sql_adapter.create_mssql_adapter(
+            username, password, self.server, self.db_name, self.port
+        )
 
-    def set_connection_string_using_integrated_security(
-        self, server: str, port: Union[int, None], db_name: str
-    ) -> None:
-        """
-        Creates a PyODBC connection string using integrated security.
+    def build_mssql_adapter_with_integrated_security(self) -> sql_adapter.Adapter:
+        self.adapter = sql_adapter.create_mssql_adapter_with_integrated_security(
+            self.server, self.db_name, self.port
+        )
 
-        Parameters
-        ----------
-        server : str
-            Database server name or IP address.
-        port : int or None
-            Database port number.
-        db_name : str
-            Database name.
-        """
-        port = MainArguments._get_mssql_port(port)
-        self.connection_string = f"mssql+pyodbc://{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
-
-    def set_connection_string(
-        self,
-        server: str,
-        port: Union[int, None],
-        db_name: str,
-        username: str,
-        password: str,
-    ) -> None:
-        """
-        Creates a PyODBC connection string using username and password.
-
-        Parameters
-        ----------
-        server : str
-            Database server name or IP address.
-        port : int or None
-            Database port number.
-        db_name : str
-            Database name.
-        username : str
-            Database user name.
-        password : str
-            Database password.
-        """
-        port = MainArguments._get_mssql_port(port)
-        self.connection_string = f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
-
-    def get_db_engine(self) -> sa_Engine:
-        return sa_create_engine(self.connection_string)
+    def get_adapter(self) -> sql_adapter.Adapter:
+        return self.adapter
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -113,6 +78,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         help="Database server port number",
         type=int,
         env_var="DB_PORT",
+        default=1433
     )
     parser.add(  # type: ignore
         "-d",
@@ -172,7 +138,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         required=False,
         help="File path for optional output of a CSV exception report.",
         type=str,
-        env_var="EXCEPTIONs_REPORT_DIRECTORY"
+        env_var="EXCEPTIONs_REPORT_DIRECTORY",
     )
 
     args_parsed = parser.parse_args(args_in)
@@ -182,18 +148,16 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
 
     arguments = MainArguments(
         args_parsed.log_level,
-        args_parsed.exceptions_report_directory
+        args_parsed.exceptions_report_directory,
+        args_parsed.server,
+        args_parsed.dbname,
+        args_parsed.port,
     )
 
     if args_parsed.useintegratedsecurity:
-        arguments.set_connection_string_using_integrated_security(
-            args_parsed.server, args_parsed.port, args_parsed.dbname
-        )
+        arguments.build_mssql_adapter_with_integrated_security()
     else:
-        arguments.set_connection_string(
-            args_parsed.server,
-            args_parsed.port,
-            args_parsed.dbname,
+        arguments.build_mssql_adapter(
             args_parsed.username,
             args_parsed.password,
         )
