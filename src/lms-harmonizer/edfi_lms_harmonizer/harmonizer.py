@@ -26,3 +26,14 @@ def harmonize_users(adapter: Adapter) -> None:
 
     adapter.execute(statements)
 
+
+@catch_exceptions
+def harmonize_sections(adapter: Adapter) -> None:
+
+    statements = [
+        Statement("EXEC lms.harmonize_lmssection_canvas;",  "Harmonizing Canvas LMS Sections."),
+        Statement("EXEC lms.harmonize_lmssection_google_classroom;",  "Harmonizing Google Classroom LMS Sections."),
+        Statement("EXEC lms.harmonize_lmssection_schoology;", "Harmonizing Schoology LMS Sections.")
+    ]
+
+    adapter.execute(statements)
