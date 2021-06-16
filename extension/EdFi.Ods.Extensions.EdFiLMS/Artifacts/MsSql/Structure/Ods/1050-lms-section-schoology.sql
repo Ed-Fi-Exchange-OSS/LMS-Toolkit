@@ -16,9 +16,9 @@ BEGIN
     INNER JOIN
         edfi.Section edfisection
     ON
-        LMSSection.SISSectionIdentifier = edfisection.id
+        LMSSection.SISSectionIdentifier = edfisection.SectionIdentifier
     WHERE
-        LMSSection.SourceSystem = 'Canvas'
+        LMSSection.SourceSystem = 'Schoology'
     AND
         LMSSection.EdFiSectionId is NULL
 	AND

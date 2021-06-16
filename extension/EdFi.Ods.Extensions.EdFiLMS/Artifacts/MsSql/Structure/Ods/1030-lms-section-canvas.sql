@@ -16,7 +16,7 @@ BEGIN
     INNER JOIN
         edfi.Section edfisection
     ON
-        LMSSection.SISSectionIdentifier = edfisection.id
+        LMSSection.SISSectionIdentifier = edfisection.SectionIdentifier
     WHERE
         LMSSection.SourceSystem = 'Canvas'
     AND

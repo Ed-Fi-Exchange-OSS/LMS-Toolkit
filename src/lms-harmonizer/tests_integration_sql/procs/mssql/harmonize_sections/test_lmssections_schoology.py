@@ -11,9 +11,9 @@ from tests_integration_sql.mssql_helper import (
     insert_edfi_section
 )
 
-SOURCE_SYSTEM = "Canvas"
-PROC_SQL_DEFINITION = script_sql("1030-lms-section-canvas.sql")
-PROC_EXEC_STATEMENT = "EXEC lms.harmonize_lmssection_canvas;"
+SOURCE_SYSTEM = "Schoology"
+PROC_SQL_DEFINITION = script_sql("1050-lms-section-schoology.sql")
+PROC_EXEC_STATEMENT = "EXEC lms.harmonize_lmssection_schoology;"
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
