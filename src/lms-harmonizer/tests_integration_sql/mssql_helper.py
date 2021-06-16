@@ -272,3 +272,92 @@ INSERT INTO [edfi].[StudentEducationOrganizationAssociationElectronicMail]
            )
 """
     )
+
+
+def insert_lms_section(connection: Connection, sis_identifier: str, source_system: str):
+    connection.execute(
+        f"""
+    INSERT INTO [lms].[LMSSection]
+        (
+        SourceSystemIdentifier,
+        SourceSystem,
+        SISSectionIdentifier,
+        Title,
+        SourceCreateDate,
+        SourceLastModifiedDate,
+        CreateDate,
+        LastModifiedDate)
+    VALUES
+        (N'{sis_identifier}'
+        ,N'{source_system}'
+        ,N'{sis_identifier}'
+        ,N'test section'
+        ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+        ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+        ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+        ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+        )
+"""
+    )
+
+
+def insert_lms_section_deleted(
+    connection: Connection, sis_identifier: str, source_system: str
+):
+    connection.execute(
+        f"""
+    INSERT INTO [lms].[LMSSection]
+        (SourceSystemIdentifier,
+        SourceSystem,
+        SISSectionIdentifier,
+        Title,
+        SourceCreateDate,
+        SourceLastModifiedDate,
+        CreateDate,
+        LastModifiedDate,
+        [DeletedAt])
+     VALUES
+        (N'{sis_identifier}'
+        ,N'{source_system}'
+        ,N'{sis_identifier}'
+        ,N'test section deleted'
+        ,GETDATE()
+        ,GETDATE()
+        ,GETDATE()
+        ,GETDATE()
+        ,GETDATE()
+        )
+"""
+    )
+
+
+def insert_edfi_section(
+    connection: Connection,
+    sis_id: str,
+    uid: str = None
+):
+    connection.execute(
+        f"""
+INSERT INTO [edfi].[Section]
+        (
+        [LocalCourseCode],
+        [SchoolId],
+        [SchoolYear],
+        [SessionName],
+        [LastModifiedDate],
+        [ChangeVersion],
+        [SectionIdentifier]
+        {',[id]' if uid is not None else ''})
+     VALUES
+        (
+        N'Local course code test'
+        ,1
+        ,1
+        ,N'session name test'
+        ,CAST(N'2021-01-01 00:00:00' AS DateTime2(7))
+        ,1
+        ,N'{sis_id}'
+        {f",CAST(N'{uid}' AS UNIQUEIDENTIFIER)" if uid is not None else ''}
+        )
+"""
+    )
