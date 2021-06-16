@@ -7,7 +7,7 @@
 
 from collections import namedtuple
 import logging
-from typing import Any, Callable, List, NamedTuple, TypeVar, Tuple
+from typing import Any, Callable, List, TypeVar
 
 from sqlalchemy.engine.base import Engine as sa_Engine
 from sqlalchemy import create_engine as sa_create_engine
