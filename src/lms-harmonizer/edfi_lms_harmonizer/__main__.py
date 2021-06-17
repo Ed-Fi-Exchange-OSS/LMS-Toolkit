@@ -8,10 +8,10 @@ import sys
 
 from dotenv import load_dotenv
 from errorhandler import ErrorHandler  # type: ignore
-from sqlalchemy.engine.base import Engine
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
-from helpers.argparser import MainArguments, parse_main_arguments  # type: ignore
+from edfi_lms_harmonizer.helpers.argparser import MainArguments, parse_main_arguments  # type: ignore
+from edfi_lms_harmonizer.runner import run
 
 logger: logging.Logger
 
@@ -31,49 +31,13 @@ def _configure_logging(arguments: MainArguments) -> None:
     )
 
 
-def _harmonize_users(connection) -> None:
-    global logger
-
-    logger.info("Harmonizing Canvas LMS Users.")
-    connection.execute("EXEC lms.harmonize_lmsuser_canvas;")
-
-    logger.info("Harmonizing Google Classroom LMS Users.")
-    connection.execute("EXEC lms.harmonize_lmsuser_google_classroom;")
-
-    logger.info("Harmonizing Schoology LMS Users.")
-    connection.execute("EXEC lms.harmonize_lmsuser_schoology;")
-
-
-def _harmonize_sections(connection) -> None:
-    global logger
-
-    logger.info("Harmonizing Canvas LMS Sections.")
-    connection.execute("EXEC lms.harmonize_lmssection_canvas;")
-
-    logger.info("Harmonizing Google Classroom LMS Sections.")
-    connection.execute("EXEC lms.harmonize_lmssection_google_classroom;")
-
-    logger.info("Harmonizing Schoology LMS Sections.")
-    connection.execute("EXEC lms.harmonize_lmssection_schoology;")
-
-
-@catch_exceptions
-def _run(arguments: MainArguments) -> None:
-    global logger
-    engine: Engine = arguments.get_db_engine()
-
-    with engine.connect().execution_options(autocommit=True) as connection:
-        _harmonize_users(connection)
-        _harmonize_sections(connection)
-
-
 def main() -> None:
     load_dotenv()
     arguments = parse_main_arguments(sys.argv[1:])
     _configure_logging(arguments)
     error_tracker: ErrorHandler = ErrorHandler()
 
-    _run(arguments)
+    run(arguments)
 
     if error_tracker.fired:
         print(

@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
+name: SQL Adapter Library - Publish
+on:
+  workflow_dispatch
+
+jobs:
+  publish-sql-adapter-lib:
+    name: Run unit tests and publish
+    runs-on: ubuntu-20.04
+    env:
+        PACKAGE_NAME: sql-adapter
+        SRC_DIR: src/sql-adapter
+        LOCK_FILE: src/sql-adapter/poetry.lock
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+
+      - name: Install Python 3.9
+        uses: actions/setup-python@3105fb18c05ddd93efea5f9e0bef7a03a6e9e7df
+        with:
+          python-version: '3.9.x'
+
+      - name: Install Poetry
+        uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
+
+      - name: Get virtual env path
+        id: venv-path
+        run: |
+            poetry env use python
+            echo "::set-output name=dir::$(poetry env info -p)"
+        working-directory: ${{ env.SRC_DIR }}
+
+      - name: Setup Dependency Caching
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        id: cache-venv
+        with:
+          path: ${{ steps.venv-path.outputs.dir }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles(env.LOCK_FILE) }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Run CI Publish Task
+        run: python ./eng/build.py ci:publish ${{ env.PACKAGE_NAME }}
+        env:
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
