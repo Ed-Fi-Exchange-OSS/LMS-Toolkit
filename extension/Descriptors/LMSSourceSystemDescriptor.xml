@@ -4,18 +4,18 @@
 		<CodeValue>Schoology</CodeValue>
 		<ShortDescription>Schoology</ShortDescription>
 		<Description>Schoology</Description>
-		<Namespace>uri://edfilms.ed-fi.org/LMSSourceSystem/Schoology</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/LMSSourceSystem/Schoology</Namespace>
 	</LMSSourceSystem>
     <LMSSourceSystem>
 		<CodeValue>Canvas</CodeValue>
 		<ShortDescription>Canvas</ShortDescription>
 		<Description>Canvas</Description>
-		<Namespace>uri://edfilms.ed-fi.org/LMSSourceSystem/Canvas</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/LMSSourceSystem/Canvas</Namespace>
 	</LMSSourceSystem>
     <LMSSourceSystem>
 		<CodeValue>Google</CodeValue>
 		<ShortDescription>Google Classroom</ShortDescription>
 		<Description>Google Classroom</Description>
-		<Namespace>uri://edfilms.ed-fi.org/LMSSourceSystem/Google</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/LMSSourceSystem/Google</Namespace>
 	</LMSSourceSystem>
 </InterchangeDescriptors>

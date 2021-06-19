@@ -4,78 +4,78 @@
 		<CodeValue>late</CodeValue>
 		<ShortDescription>Late</ShortDescription>
 		<Description>The revision was turned in late.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Schoology</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology</Namespace>
 	</SubmissionStatusDescriptor>
 	<SubmissionStatusDescriptor>
 		<CodeValue>draft</CodeValue>
 		<ShortDescription>Draft</ShortDescription>
 		<Description>The revision is a draft.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Schoology</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology</Namespace>
 	</SubmissionStatusDescriptor>
 	<SubmissionStatusDescriptor>
 		<CodeValue>on-time</CodeValue>
 		<ShortDescription>On-time</ShortDescription>
 		<Description>The revision was turned in on-time.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Schoology</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>late</CodeValue>
 		<ShortDescription>Late</ShortDescription>
 		<Description>Whether the submission was made after the applicable due date.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Canvas</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>missing</CodeValue>
 		<ShortDescription>Missing</ShortDescription>
 		<Description>Whether the submission is missing, which generally means past-due and not yet submitted.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Canvas</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>graded</CodeValue>
 		<ShortDescription>Graded</ShortDescription>
 		<Description>The submission has been graded.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Canvas</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>on-time</CodeValue>
 		<ShortDescription>On-time</ShortDescription>
 		<Description>The assignment was submitted before the applicable due date.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Canvas</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>SUBMISSION_STATE_UNSPECIFIED</CodeValue>
 		<ShortDescription>Unspecified</ShortDescription>
 		<Description>No state specified. This should never be returned.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Google</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>NEW</CodeValue>
 		<ShortDescription>New</ShortDescription>
 		<Description>The student has never accessed this submission. Attachments are not returned and timestamps is not set.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Google</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>CREATED</CodeValue>
 		<ShortDescription>Created</ShortDescription>
 		<Description>Has been created.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Google</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>TURNED_IN</CodeValue>
 		<ShortDescription>Turned in</ShortDescription>
 		<Description>Has been turned in to the teacher.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Google</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>RETURNED</CodeValue>
 		<ShortDescription>Returned</ShortDescription>
 		<Description>Has been returned to the student.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Google</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
 		<CodeValue>RECLAIMED_BY_STUDENT</CodeValue>
 		<ShortDescription>Reclaimed by student</ShortDescription>
 		<Description>Student chose to "unsubmit" the assignment.</Description>
-		<Namespace>uri://edfilms.ed-fi.org/SubmissionStatusDescriptor/Google</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
 	</SubmissionStatusDescriptor>
 </InterchangeDescriptors>
