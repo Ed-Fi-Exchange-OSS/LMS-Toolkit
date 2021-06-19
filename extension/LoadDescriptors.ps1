@@ -7,8 +7,9 @@ $args = @(
     "--data",  ".\descriptors",
     "--baseUrl", "http://localhost:54746/",
     "--working", "C:\temp\bulkd-upload-client",
-    "--key", "A6jIwZbNDPtoqTGY9lMaf",
-    "--secret", "HICepkXyGD8JQaETdbfuM",
+    # Replace with valid key and secrete from your installation
+    "--key", "5RUEXTjlDL8HebpyY2Gzg",
+    "--secret", "HB3pt2Y9D4MCG0AmRLPrc",
     "--maxRequests", 1,
     "--include-stats",
     "--force",
