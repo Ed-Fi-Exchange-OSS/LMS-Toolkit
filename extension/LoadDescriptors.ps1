@@ -8,6 +8,8 @@ $args = @(
     "--baseUrl", "http://localhost:54746/",
     "--working", "C:\temp\bulkd-upload-client",
     # Replace with valid key and secrete from your installation
+    # !! Warning !! do not place production credentials into
+    # source control.
     "--key", "5RUEXTjlDL8HebpyY2Gzg",
     "--secret", "HB3pt2Y9D4MCG0AmRLPrc",
     "--maxRequests", 1,
