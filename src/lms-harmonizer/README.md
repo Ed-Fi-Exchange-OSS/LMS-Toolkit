@@ -68,6 +68,11 @@ _Also see
 [build.py](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/blob/main/docs/build.md)_
 for use of the build script.
 
+### Integration Testing
+
+See [Integration test setup](./tests_integration_sql/README.md) for information on
+configuring integration testing to work in various environments.
+
 ## Legal Information
 
 Copyright (c) 2021 Ed-Fi Alliance, LLC and contributors.
