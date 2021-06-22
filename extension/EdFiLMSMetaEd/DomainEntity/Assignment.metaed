@@ -9,6 +9,9 @@ Domain Entity Assignment
         documentation "A unique string assigned to the assignment, based on the source system of record."
         is part of identity
         role name Assignment
+    domain entity EdFi.School
+        documentation "Reference to a School in the standard Ed-Fi data model."
+        is part of identity
     shared string EdFi.SectionIdentifier
         documentation "The local identifier assigned to a section."
         is required
@@ -43,7 +46,4 @@ Domain Entity Assignment
         role name Max
     domain entity EdFi.Section
         documentation "Reference to an Section in the standard Ed-Fi data model."
-        is required
-    domain entity EdFi.School
-        documentation "Reference to a School in the standard Ed-Fi data model."
         is required
