@@ -20,8 +20,11 @@ Extension](https://techdocs.ed-fi.org/display/EFTD/LMS+Extension) in Tech Docs.
 
 These instructions assume you have already [gotten
 started](https://techdocs.ed-fi.org/display/ODSAPIS3V520/Getting+Started) with
-the Ed-Fi ODS/API, and they assume that the LMS Toolkit repository exists in the
-same parent directory as `Ed-Fi-ODS` and `Ed-Fi-ODS-Implementation`.
+the Ed-Fi ODS/API Suite 3, Version 5.2*, and they assume that the LMS Toolkit
+repository exists in the same parent directory as `Ed-Fi-ODS` and
+`Ed-Fi-ODS-Implementation`. (* be sure to use the code from the v5.2 release,
+not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
+`Ed-Fi-ODS-Implementation`).
 
 1. Copy the entire
    [EdFi.Ods.Extensions.EdFiLMS](../extension/EdFi.Ods.Extensions.EdFiLMS) directory
