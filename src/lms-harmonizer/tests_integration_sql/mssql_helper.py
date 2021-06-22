@@ -4,7 +4,6 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 from os import path
 from sqlalchemy.engine.base import Connection
-from edfi_lms_harmonizer.helpers.argparser import MainArguments
 
 
 def _script_path(script_name: str) -> str:
@@ -30,14 +29,6 @@ def script_sql(script_name: str) -> str:
     result = script.read()
     script.close()
     return result
-
-
-def main_arguments() -> MainArguments:
-    args = MainArguments(log_level="INFO")
-    args.set_connection_string_using_integrated_security(
-        "localhost", 1433, "test_harmonizer_lms_toolkit"
-    )
-    return args
 
 
 def insert_lms_user(connection: Connection, sis_identifier: str, source_system: str):

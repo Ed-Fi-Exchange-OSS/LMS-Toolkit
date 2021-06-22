@@ -5,37 +5,69 @@
 
 from typing import Iterable
 import pytest
-from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine, Connection, Transaction
+from edfi_sql_adapter import sql_adapter
 from tests_integration_sql.migrator_helper_mssql import (
     migrate_lms_user_and_edfi_student,
 )
 
 
-def _new_mssql_engine() -> Engine:
+def pytest_addoption(parser):
     """
-    Assumes existence of local SQLServer DB named 'test_harmonizer_lms_toolkit'
+    Injects command line options mirroring the harmonizer itself
     """
-    return create_engine(
-        "mssql+pyodbc://localhost,1433/test_harmonizer_lms_toolkit?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes",
+    parser.addoption(
+        "--server", action="store", default="localhost", help="Database server name or IP address"
+    )
+    parser.addoption(
+        "--port", action="store", default="1433", help="Database server port number"
+    )
+    parser.addoption(
+        "--dbname", action="store", default="test_harmonizer_lms_toolkit", help="Name of the test database"
+    )
+    parser.addoption(
+        "--useintegratedsecurity", action="store", default="true", help="Use Integrated Security for the database connection"
+    )
+    parser.addoption(
+        "--username", action="store", default="localuser", help="Database username when not using integrated security"
+    )
+    parser.addoption(
+        "--password", action="store", default="localpassword", help="Database user password, when not using integrated security"
     )
 
 
-def _migrate(connection: Connection):
-    # something here to initialize db structure
-    # both on the LMS and ODS sides
+@pytest.fixture(scope="session")
+def mssql_engine(request) -> Engine:
+    """
+    Reads from injected command line options mirroring the harmonizer itself
+    """
+    useintegratedsecurity: str = request.config.getoption("--useintegratedsecurity")
+    server: str = request.config.getoption("--server")
+    port: str = request.config.getoption("--port")
+    db_name: str = request.config.getoption("--dbname")
 
+    if useintegratedsecurity == "true":
+        return sql_adapter.create_mssql_adapter_with_integrated_security(
+            server, db_name, int(port)
+        ).engine
+    else:
+        username: str = request.config.getoption("--username")
+        password: str = request.config.getoption("--password")
+        return sql_adapter.create_mssql_adapter(
+            username, password, server, db_name, int(port)
+        ).engine
+
+
+def _migrate(connection: Connection):
     migrate_lms_user_and_edfi_student(connection)
 
 
 @pytest.fixture(scope="session")
-def mssql_connection() -> Iterable[Connection]:
+def mssql_connection(mssql_engine) -> Iterable[Connection]:
     """
-    Fixture that sets up a connection to use, and migrate the tables.
+    Fixture that sets up a connection to use
     """
-    engine = _new_mssql_engine()
-
-    connection = engine.connect()
+    connection = mssql_engine.connect()
     yield connection
     connection.close()
 
