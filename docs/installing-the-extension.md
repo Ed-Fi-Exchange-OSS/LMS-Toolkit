@@ -27,12 +27,20 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
 `Ed-Fi-ODS-Implementation`).
 
 1. Copy the entire
-   [EdFi.Ods.Extensions.EdFiLMS](../extension/EdFi.Ods.Extensions.EdFiLMS) directory
+   [EdFi.Ods.Extensions.LMSX](../extension/EdFi.Ods.Extensions.LMSX) directory
    into your `Ed-Fi-ODS-Implementation/Application` directory.
 1. Add this project as a reference in the API project:
-   1. Open the solution in Visual Studio
-   1. Add the extension project into the "Ed-Fi Extensions" folder in the solution
-   1. Add the new project as a reference in the WebAPI project.
+   1. Through Visual Studio:
+      1. Open the solution in Visual Studio
+      1. Add the extension project into the "Ed-Fi Extensions" folder in the solution
+      1. Add the new project as a reference in the WebAPI project.
+   1. Or through the command line:
+
+      ```powershell
+      > dotnet sln .\Ed-Fi-Ods.sln add -s "Ed-Fi Extensions" .\EdFi.Ods.Extensions.LMSX\
+      > dotnet add .\EdFi.Ods.WebApi\ reference .\EdFi.Ods.Extensions.LMSX\
+      ```
+
 1. Re-run `initdev`.
 1. To test, run the solution by starting the API in the default Sandbox mode,
    and starting the Sandbox Admin and Swagger UI.
@@ -62,3 +70,19 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
    > cd LMS-Toolkit\extension
    > ./LoadDescriptor.sps1
    ```
+
+## Installing LMS Harmonizer Support
+
+Pre-requisites:
+
+1. You have successfully run `initdev` following the instructions above.
+1. You have run the [LMS Data Store Loader](../src/lms-ds-loader) once
+   against the desired ODS database, thus creating the LMS Toolkit tables.
+
+There is a set of SQL files in
+[EdFi.Ods.Extensions.LMSX\LMS-Harmonizer](../extension/EdFi.Ods.Extensions.LMSX/LMS-Harmonizer)
+that need to be installed into the ODS. For now this is a manual install
+process. The files are named in sequence order and should be installed into
+the ODS database in that order. After that, you will be able to run the [LMS
+Harmonizer](../src/lms-harmonizer) to move data from LMS Toolkit tables into
+the Ed-Fi extension tables.
