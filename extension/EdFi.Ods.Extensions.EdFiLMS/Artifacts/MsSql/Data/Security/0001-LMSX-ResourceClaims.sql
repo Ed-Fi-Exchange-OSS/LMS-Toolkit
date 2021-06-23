@@ -25,42 +25,42 @@ USING (
 		 (
 			'assignment',
 			'assignment',
-			'http://ed-fi.org/ods/identity/claims/ed-fi-xlms/assignment',
+			'http://ed-fi.org/ods/identity/claims/lmsx/assignment',
 			@relationshipBasedDataResourceClaimId,
 			@applicationId
 		),
 		(
 			'assignmentSubmission',
 			'assignmentSubmission',
-			'http://ed-fi.org/ods/identity/claims/ed-fi-xlms/assignmentSubmission',
+			'http://ed-fi.org/ods/identity/claims/lmsx/assignmentSubmission',
 			@relationshipBasedDataResourceClaimId,
 			@applicationId
 		),
 		(
 			'assignmentCategoryDescriptor',
 			'assignmentCategoryDescriptor',
-			'http://ed-fi.org/ods/identity/claims/ed-fi-xlms/assignmentCategoryDescriptor',
+			'http://ed-fi.org/ods/identity/claims/lmsx/assignmentCategoryDescriptor',
 			@systemDescriptorsResourceClaimId,
 			@ApplicationId
 		),
 		(
 			'lMSSourceSystemDescriptor',
 			'lMSSourceSystemDescriptor',
-			'http://ed-fi.org/ods/identity/claims/ed-fi-xlms/lMSSourceSystemDescriptor',
+			'http://ed-fi.org/ods/identity/claims/lmsx/lMSSourceSystemDescriptor',
 			@systemDescriptorsResourceClaimId,
 			@ApplicationId
 		),
 		(
 			'submissionStatusDescriptor',
 			'submissionStatusDescriptor',
-			'http://ed-fi.org/ods/identity/claims/ed-fi-xlms/submissionStatusDescriptor',
+			'http://ed-fi.org/ods/identity/claims/lmsx/submissionStatusDescriptor',
 			@systemDescriptorsResourceClaimId,
 			@ApplicationId
 		),
 		(
 			'submissionTypeDescriptor',
 			'submissionTypeDescriptor',
-			'http://ed-fi.org/ods/identity/claims/ed-fi-xlms/submissionTypeDescriptor',
+			'http://ed-fi.org/ods/identity/claims/lmsx/submissionTypeDescriptor',
 			@systemDescriptorsResourceClaimId,
 			@ApplicationId
 		)

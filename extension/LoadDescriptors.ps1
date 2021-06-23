@@ -10,13 +10,13 @@ $args = @(
     # Replace with valid key and secrete from your installation
     # !! Warning !! do not place production credentials into
     # source control.
-    "--key", "5RUEXTjlDL8HebpyY2Gzg",
-    "--secret", "HB3pt2Y9D4MCG0AmRLPrc",
+    "--key", "PBSb1sUyu8MvNFXYC640A",
+    "--secret", "FhMbvZVepj3YgoCfsDrmK",
     "--maxRequests", 1,
     "--include-stats",
     "--force",
     "--novalidation",
-    "--extension", "ed-fi-lms"
+    "--extension", "lmsx"
 )
 $exe = "..\..\Ed-Fi-ODS\Utilities\DataLoading\EdFi.BulkLoadClient.Console\bin\Debug\netcoreapp3.1\EdFi.BulkLoadClient.Console.exe"
 &$exe @args
