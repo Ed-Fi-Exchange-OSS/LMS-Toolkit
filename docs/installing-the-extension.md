@@ -36,7 +36,7 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
 1. Re-run `initdev`.
 1. To test, run the solution by starting the API in the default Sandbox mode,
    and starting the Sandbox Admin and Swagger UI.
-1. In Swagger UI, confirm that the new descriptors and  resources are available.
+1. In Swagger UI, confirm that the new descriptors and resources are available.
 
 ## Bulk-Loading Default Descriptors
 
