@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyName>EdFi.Ods.Extensions.EdFiLMS</AssemblyName>
-    <RootNamespace>EdFi.Ods.Extensions.EdFiLMS</RootNamespace>
+    <AssemblyName>EdFi.Ods.Extensions.LMSX</AssemblyName>
+    <RootNamespace>EdFi.Ods.Extensions.LMSX</RootNamespace>
     <RestorePackages>true</RestorePackages>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -35,11 +35,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="EdFi.Ods.Extensions.EdFiLMS.nuspec">
+    <Content Include="EdFi.Ods.Extensions.LMSX.nuspec">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Content>
-    <Content Include="Marker_EdFi_Ods_Extensions_EdFiLMS.cs">
+    <Content Include="Marker_EdFi_Ods_Extensions_LMSX.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Content>
