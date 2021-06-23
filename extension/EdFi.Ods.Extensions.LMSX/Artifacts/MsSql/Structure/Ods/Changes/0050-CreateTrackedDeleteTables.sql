@@ -1,39 +1,41 @@
-CREATE TABLE [tracked_deletes_edfilms].[Assignment]
+CREATE TABLE [tracked_deletes_lmsx].[Assignment]
 (
        AssignmentIdentifier [NVARCHAR](255) NOT NULL,
+       SchoolId [INT] NOT NULL,
        Id uniqueidentifier NOT NULL,
        ChangeVersion bigint NOT NULL,
        CONSTRAINT PK_Assignment PRIMARY KEY CLUSTERED (ChangeVersion)
 )
-CREATE TABLE [tracked_deletes_edfilms].[AssignmentCategoryDescriptor]
+CREATE TABLE [tracked_deletes_lmsx].[AssignmentCategoryDescriptor]
 (
        AssignmentCategoryDescriptorId [INT] NOT NULL,
        Id uniqueidentifier NOT NULL,
        ChangeVersion bigint NOT NULL,
        CONSTRAINT PK_AssignmentCategoryDescriptor PRIMARY KEY CLUSTERED (ChangeVersion)
 )
-CREATE TABLE [tracked_deletes_edfilms].[AssignmentSubmission]
+CREATE TABLE [tracked_deletes_lmsx].[AssignmentSubmission]
 (
        AssignmentSubmissionIdentifier [NVARCHAR](255) NOT NULL,
+       StudentUSI [INT] NOT NULL,
        Id uniqueidentifier NOT NULL,
        ChangeVersion bigint NOT NULL,
        CONSTRAINT PK_AssignmentSubmission PRIMARY KEY CLUSTERED (ChangeVersion)
 )
-CREATE TABLE [tracked_deletes_edfilms].[LMSSourceSystemDescriptor]
+CREATE TABLE [tracked_deletes_lmsx].[LMSSourceSystemDescriptor]
 (
        LMSSourceSystemDescriptorId [INT] NOT NULL,
        Id uniqueidentifier NOT NULL,
        ChangeVersion bigint NOT NULL,
        CONSTRAINT PK_LMSSourceSystemDescriptor PRIMARY KEY CLUSTERED (ChangeVersion)
 )
-CREATE TABLE [tracked_deletes_edfilms].[SubmissionStatusDescriptor]
+CREATE TABLE [tracked_deletes_lmsx].[SubmissionStatusDescriptor]
 (
        SubmissionStatusDescriptorId [INT] NOT NULL,
        Id uniqueidentifier NOT NULL,
        ChangeVersion bigint NOT NULL,
        CONSTRAINT PK_SubmissionStatusDescriptor PRIMARY KEY CLUSTERED (ChangeVersion)
 )
-CREATE TABLE [tracked_deletes_edfilms].[SubmissionTypeDescriptor]
+CREATE TABLE [tracked_deletes_lmsx].[SubmissionTypeDescriptor]
 (
        SubmissionTypeDescriptorId [INT] NOT NULL,
        Id uniqueidentifier NOT NULL,

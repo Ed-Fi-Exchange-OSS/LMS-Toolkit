@@ -1,106 +1,106 @@
-CREATE TRIGGER [edfilms].[edfilms_AssignmentCategoryDescriptor_TR_DeleteTracking] ON [edfilms].[AssignmentCategoryDescriptor] AFTER DELETE AS
+CREATE TRIGGER [lmsx].[lmsx_AssignmentCategoryDescriptor_TR_DeleteTracking] ON [lmsx].[AssignmentCategoryDescriptor] AFTER DELETE AS
 BEGIN
     IF @@rowcount = 0 
         RETURN
 
     SET NOCOUNT ON
 
-    INSERT INTO [tracked_deletes_edfilms].[AssignmentCategoryDescriptor](AssignmentCategoryDescriptorId, Id, ChangeVersion)
+    INSERT INTO [tracked_deletes_lmsx].[AssignmentCategoryDescriptor](AssignmentCategoryDescriptorId, Id, ChangeVersion)
     SELECT  d.AssignmentCategoryDescriptorId, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
     FROM    deleted d
             INNER JOIN edfi.Descriptor b ON d.AssignmentCategoryDescriptorId = b.DescriptorId
 END
 GO
 
-ALTER TABLE [edfilms].[AssignmentCategoryDescriptor] ENABLE TRIGGER [edfilms_AssignmentCategoryDescriptor_TR_DeleteTracking]
+ALTER TABLE [lmsx].[AssignmentCategoryDescriptor] ENABLE TRIGGER [lmsx_AssignmentCategoryDescriptor_TR_DeleteTracking]
 GO
 
 
-CREATE TRIGGER [edfilms].[edfilms_AssignmentSubmission_TR_DeleteTracking] ON [edfilms].[AssignmentSubmission] AFTER DELETE AS
+CREATE TRIGGER [lmsx].[lmsx_AssignmentSubmission_TR_DeleteTracking] ON [lmsx].[AssignmentSubmission] AFTER DELETE AS
 BEGIN
     IF @@rowcount = 0 
         RETURN
 
     SET NOCOUNT ON
 
-    INSERT INTO [tracked_deletes_edfilms].[AssignmentSubmission](AssignmentSubmissionIdentifier, Id, ChangeVersion)
-    SELECT  AssignmentSubmissionIdentifier, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
+    INSERT INTO [tracked_deletes_lmsx].[AssignmentSubmission](AssignmentSubmissionIdentifier, StudentUSI, Id, ChangeVersion)
+    SELECT  AssignmentSubmissionIdentifier, StudentUSI, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
     FROM    deleted d
 END
 GO
 
-ALTER TABLE [edfilms].[AssignmentSubmission] ENABLE TRIGGER [edfilms_AssignmentSubmission_TR_DeleteTracking]
+ALTER TABLE [lmsx].[AssignmentSubmission] ENABLE TRIGGER [lmsx_AssignmentSubmission_TR_DeleteTracking]
 GO
 
 
-CREATE TRIGGER [edfilms].[edfilms_Assignment_TR_DeleteTracking] ON [edfilms].[Assignment] AFTER DELETE AS
+CREATE TRIGGER [lmsx].[lmsx_Assignment_TR_DeleteTracking] ON [lmsx].[Assignment] AFTER DELETE AS
 BEGIN
     IF @@rowcount = 0 
         RETURN
 
     SET NOCOUNT ON
 
-    INSERT INTO [tracked_deletes_edfilms].[Assignment](AssignmentIdentifier, Id, ChangeVersion)
-    SELECT  AssignmentIdentifier, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
+    INSERT INTO [tracked_deletes_lmsx].[Assignment](AssignmentIdentifier, SchoolId, Id, ChangeVersion)
+    SELECT  AssignmentIdentifier, SchoolId, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
     FROM    deleted d
 END
 GO
 
-ALTER TABLE [edfilms].[Assignment] ENABLE TRIGGER [edfilms_Assignment_TR_DeleteTracking]
+ALTER TABLE [lmsx].[Assignment] ENABLE TRIGGER [lmsx_Assignment_TR_DeleteTracking]
 GO
 
 
-CREATE TRIGGER [edfilms].[edfilms_LMSSourceSystemDescriptor_TR_DeleteTracking] ON [edfilms].[LMSSourceSystemDescriptor] AFTER DELETE AS
+CREATE TRIGGER [lmsx].[lmsx_LMSSourceSystemDescriptor_TR_DeleteTracking] ON [lmsx].[LMSSourceSystemDescriptor] AFTER DELETE AS
 BEGIN
     IF @@rowcount = 0 
         RETURN
 
     SET NOCOUNT ON
 
-    INSERT INTO [tracked_deletes_edfilms].[LMSSourceSystemDescriptor](LMSSourceSystemDescriptorId, Id, ChangeVersion)
+    INSERT INTO [tracked_deletes_lmsx].[LMSSourceSystemDescriptor](LMSSourceSystemDescriptorId, Id, ChangeVersion)
     SELECT  d.LMSSourceSystemDescriptorId, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
     FROM    deleted d
             INNER JOIN edfi.Descriptor b ON d.LMSSourceSystemDescriptorId = b.DescriptorId
 END
 GO
 
-ALTER TABLE [edfilms].[LMSSourceSystemDescriptor] ENABLE TRIGGER [edfilms_LMSSourceSystemDescriptor_TR_DeleteTracking]
+ALTER TABLE [lmsx].[LMSSourceSystemDescriptor] ENABLE TRIGGER [lmsx_LMSSourceSystemDescriptor_TR_DeleteTracking]
 GO
 
 
-CREATE TRIGGER [edfilms].[edfilms_SubmissionStatusDescriptor_TR_DeleteTracking] ON [edfilms].[SubmissionStatusDescriptor] AFTER DELETE AS
+CREATE TRIGGER [lmsx].[lmsx_SubmissionStatusDescriptor_TR_DeleteTracking] ON [lmsx].[SubmissionStatusDescriptor] AFTER DELETE AS
 BEGIN
     IF @@rowcount = 0 
         RETURN
 
     SET NOCOUNT ON
 
-    INSERT INTO [tracked_deletes_edfilms].[SubmissionStatusDescriptor](SubmissionStatusDescriptorId, Id, ChangeVersion)
+    INSERT INTO [tracked_deletes_lmsx].[SubmissionStatusDescriptor](SubmissionStatusDescriptorId, Id, ChangeVersion)
     SELECT  d.SubmissionStatusDescriptorId, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
     FROM    deleted d
             INNER JOIN edfi.Descriptor b ON d.SubmissionStatusDescriptorId = b.DescriptorId
 END
 GO
 
-ALTER TABLE [edfilms].[SubmissionStatusDescriptor] ENABLE TRIGGER [edfilms_SubmissionStatusDescriptor_TR_DeleteTracking]
+ALTER TABLE [lmsx].[SubmissionStatusDescriptor] ENABLE TRIGGER [lmsx_SubmissionStatusDescriptor_TR_DeleteTracking]
 GO
 
 
-CREATE TRIGGER [edfilms].[edfilms_SubmissionTypeDescriptor_TR_DeleteTracking] ON [edfilms].[SubmissionTypeDescriptor] AFTER DELETE AS
+CREATE TRIGGER [lmsx].[lmsx_SubmissionTypeDescriptor_TR_DeleteTracking] ON [lmsx].[SubmissionTypeDescriptor] AFTER DELETE AS
 BEGIN
     IF @@rowcount = 0 
         RETURN
 
     SET NOCOUNT ON
 
-    INSERT INTO [tracked_deletes_edfilms].[SubmissionTypeDescriptor](SubmissionTypeDescriptorId, Id, ChangeVersion)
+    INSERT INTO [tracked_deletes_lmsx].[SubmissionTypeDescriptor](SubmissionTypeDescriptorId, Id, ChangeVersion)
     SELECT  d.SubmissionTypeDescriptorId, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
     FROM    deleted d
             INNER JOIN edfi.Descriptor b ON d.SubmissionTypeDescriptorId = b.DescriptorId
 END
 GO
 
-ALTER TABLE [edfilms].[SubmissionTypeDescriptor] ENABLE TRIGGER [edfilms_SubmissionTypeDescriptor_TR_DeleteTracking]
+ALTER TABLE [lmsx].[SubmissionTypeDescriptor] ENABLE TRIGGER [lmsx_SubmissionTypeDescriptor_TR_DeleteTracking]
 GO
 
 

@@ -1,6 +1,7 @@
--- Table edfilms.Assignment --
-CREATE TABLE edfilms.Assignment (
+-- Table lmsx.Assignment --
+CREATE TABLE lmsx.Assignment (
     AssignmentIdentifier VARCHAR(255) NOT NULL,
+    SchoolId INT NOT NULL,
     LMSSourceSystemDescriptorId INT NOT NULL,
     Title VARCHAR(255) NOT NULL,
     AssignmentCategoryDescriptorId INT NOT NULL,
@@ -10,31 +11,31 @@ CREATE TABLE edfilms.Assignment (
     DueDateTime TIMESTAMP NULL,
     MaxPoints INT NULL,
     SectionIdentifier VARCHAR(255) NOT NULL,
-    LocalCourseCode VARCHAR(60) NULL,
-    SessionName VARCHAR(60) NULL,
-    SchoolYear SMALLINT NULL,
-    SchoolId INT NULL,
+    LocalCourseCode VARCHAR(60) NOT NULL,
+    SessionName VARCHAR(60) NOT NULL,
+    SchoolYear SMALLINT NOT NULL,
     Discriminator VARCHAR(128) NULL,
     CreateDate TIMESTAMP NOT NULL,
     LastModifiedDate TIMESTAMP NOT NULL,
     Id UUID NOT NULL,
-    CONSTRAINT Assignment_PK PRIMARY KEY (AssignmentIdentifier)
+    CONSTRAINT Assignment_PK PRIMARY KEY (AssignmentIdentifier, SchoolId)
 ); 
-ALTER TABLE edfilms.Assignment ALTER COLUMN CreateDate SET DEFAULT current_timestamp;
-ALTER TABLE edfilms.Assignment ALTER COLUMN Id SET DEFAULT gen_random_uuid();
-ALTER TABLE edfilms.Assignment ALTER COLUMN LastModifiedDate SET DEFAULT current_timestamp;
+ALTER TABLE lmsx.Assignment ALTER COLUMN CreateDate SET DEFAULT current_timestamp;
+ALTER TABLE lmsx.Assignment ALTER COLUMN Id SET DEFAULT gen_random_uuid();
+ALTER TABLE lmsx.Assignment ALTER COLUMN LastModifiedDate SET DEFAULT current_timestamp;
 
--- Table edfilms.AssignmentCategoryDescriptor --
-CREATE TABLE edfilms.AssignmentCategoryDescriptor (
+-- Table lmsx.AssignmentCategoryDescriptor --
+CREATE TABLE lmsx.AssignmentCategoryDescriptor (
     AssignmentCategoryDescriptorId INT NOT NULL,
     CONSTRAINT AssignmentCategoryDescriptor_PK PRIMARY KEY (AssignmentCategoryDescriptorId)
 ); 
 
--- Table edfilms.AssignmentSubmission --
-CREATE TABLE edfilms.AssignmentSubmission (
+-- Table lmsx.AssignmentSubmission --
+CREATE TABLE lmsx.AssignmentSubmission (
     AssignmentSubmissionIdentifier VARCHAR(255) NOT NULL,
-    AssignmentIdentifier VARCHAR(255) NOT NULL,
     StudentUSI INT NOT NULL,
+    AssignmentIdentifier VARCHAR(255) NOT NULL,
+    SchoolId INT NOT NULL,
     SubmissionStatusDescriptorId INT NOT NULL,
     SubmissionDateTime TIMESTAMP NOT NULL,
     EarnedPoints INT NULL,
@@ -43,35 +44,36 @@ CREATE TABLE edfilms.AssignmentSubmission (
     CreateDate TIMESTAMP NOT NULL,
     LastModifiedDate TIMESTAMP NOT NULL,
     Id UUID NOT NULL,
-    CONSTRAINT AssignmentSubmission_PK PRIMARY KEY (AssignmentSubmissionIdentifier)
+    CONSTRAINT AssignmentSubmission_PK PRIMARY KEY (AssignmentSubmissionIdentifier, StudentUSI)
 ); 
-ALTER TABLE edfilms.AssignmentSubmission ALTER COLUMN CreateDate SET DEFAULT current_timestamp;
-ALTER TABLE edfilms.AssignmentSubmission ALTER COLUMN Id SET DEFAULT gen_random_uuid();
-ALTER TABLE edfilms.AssignmentSubmission ALTER COLUMN LastModifiedDate SET DEFAULT current_timestamp;
+ALTER TABLE lmsx.AssignmentSubmission ALTER COLUMN CreateDate SET DEFAULT current_timestamp;
+ALTER TABLE lmsx.AssignmentSubmission ALTER COLUMN Id SET DEFAULT gen_random_uuid();
+ALTER TABLE lmsx.AssignmentSubmission ALTER COLUMN LastModifiedDate SET DEFAULT current_timestamp;
 
--- Table edfilms.AssignmentSubmissionType --
-CREATE TABLE edfilms.AssignmentSubmissionType (
+-- Table lmsx.AssignmentSubmissionType --
+CREATE TABLE lmsx.AssignmentSubmissionType (
     AssignmentIdentifier VARCHAR(255) NOT NULL,
+    SchoolId INT NOT NULL,
     SubmissionTypeDescriptorId INT NOT NULL,
     CreateDate TIMESTAMP NOT NULL,
-    CONSTRAINT AssignmentSubmissionType_PK PRIMARY KEY (AssignmentIdentifier, SubmissionTypeDescriptorId)
+    CONSTRAINT AssignmentSubmissionType_PK PRIMARY KEY (AssignmentIdentifier, SchoolId, SubmissionTypeDescriptorId)
 ); 
-ALTER TABLE edfilms.AssignmentSubmissionType ALTER COLUMN CreateDate SET DEFAULT current_timestamp;
+ALTER TABLE lmsx.AssignmentSubmissionType ALTER COLUMN CreateDate SET DEFAULT current_timestamp;
 
--- Table edfilms.LMSSourceSystemDescriptor --
-CREATE TABLE edfilms.LMSSourceSystemDescriptor (
+-- Table lmsx.LMSSourceSystemDescriptor --
+CREATE TABLE lmsx.LMSSourceSystemDescriptor (
     LMSSourceSystemDescriptorId INT NOT NULL,
     CONSTRAINT LMSSourceSystemDescriptor_PK PRIMARY KEY (LMSSourceSystemDescriptorId)
 ); 
 
--- Table edfilms.SubmissionStatusDescriptor --
-CREATE TABLE edfilms.SubmissionStatusDescriptor (
+-- Table lmsx.SubmissionStatusDescriptor --
+CREATE TABLE lmsx.SubmissionStatusDescriptor (
     SubmissionStatusDescriptorId INT NOT NULL,
     CONSTRAINT SubmissionStatusDescriptor_PK PRIMARY KEY (SubmissionStatusDescriptorId)
 ); 
 
--- Table edfilms.SubmissionTypeDescriptor --
-CREATE TABLE edfilms.SubmissionTypeDescriptor (
+-- Table lmsx.SubmissionTypeDescriptor --
+CREATE TABLE lmsx.SubmissionTypeDescriptor (
     SubmissionTypeDescriptorId INT NOT NULL,
     CONSTRAINT SubmissionTypeDescriptor_PK PRIMARY KEY (SubmissionTypeDescriptorId)
 ); 

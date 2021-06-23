@@ -1,12 +1,13 @@
-CREATE TABLE tracked_deletes_edfilms.Assignment
+CREATE TABLE tracked_deletes_lmsx.Assignment
 (
        AssignmentIdentifier VARCHAR(255) NOT NULL,
+       SchoolId INT NOT NULL,
        Id UUID NOT NULL,
        ChangeVersion BIGINT NOT NULL,
        CONSTRAINT Assignment_PK PRIMARY KEY (ChangeVersion)
 );
 
-CREATE TABLE tracked_deletes_edfilms.AssignmentCategoryDescriptor
+CREATE TABLE tracked_deletes_lmsx.AssignmentCategoryDescriptor
 (
        AssignmentCategoryDescriptorId INT NOT NULL,
        Id UUID NOT NULL,
@@ -14,15 +15,16 @@ CREATE TABLE tracked_deletes_edfilms.AssignmentCategoryDescriptor
        CONSTRAINT AssignmentCategoryDescriptor_PK PRIMARY KEY (ChangeVersion)
 );
 
-CREATE TABLE tracked_deletes_edfilms.AssignmentSubmission
+CREATE TABLE tracked_deletes_lmsx.AssignmentSubmission
 (
        AssignmentSubmissionIdentifier VARCHAR(255) NOT NULL,
+       StudentUSI INT NOT NULL,
        Id UUID NOT NULL,
        ChangeVersion BIGINT NOT NULL,
        CONSTRAINT AssignmentSubmission_PK PRIMARY KEY (ChangeVersion)
 );
 
-CREATE TABLE tracked_deletes_edfilms.LMSSourceSystemDescriptor
+CREATE TABLE tracked_deletes_lmsx.LMSSourceSystemDescriptor
 (
        LMSSourceSystemDescriptorId INT NOT NULL,
        Id UUID NOT NULL,
@@ -30,7 +32,7 @@ CREATE TABLE tracked_deletes_edfilms.LMSSourceSystemDescriptor
        CONSTRAINT LMSSourceSystemDescriptor_PK PRIMARY KEY (ChangeVersion)
 );
 
-CREATE TABLE tracked_deletes_edfilms.SubmissionStatusDescriptor
+CREATE TABLE tracked_deletes_lmsx.SubmissionStatusDescriptor
 (
        SubmissionStatusDescriptorId INT NOT NULL,
        Id UUID NOT NULL,
@@ -38,7 +40,7 @@ CREATE TABLE tracked_deletes_edfilms.SubmissionStatusDescriptor
        CONSTRAINT SubmissionStatusDescriptor_PK PRIMARY KEY (ChangeVersion)
 );
 
-CREATE TABLE tracked_deletes_edfilms.SubmissionTypeDescriptor
+CREATE TABLE tracked_deletes_lmsx.SubmissionTypeDescriptor
 (
        SubmissionTypeDescriptorId INT NOT NULL,
        Id UUID NOT NULL,

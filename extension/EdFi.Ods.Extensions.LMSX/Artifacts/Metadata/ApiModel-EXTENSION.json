@@ -1,83 +1,83 @@
 {
   "odsApiVersion": "5.2",
   "schemaDefinition": {
-    "logicalName": "EdFiLMS",
-    "physicalName": "edfilms",
+    "logicalName": "LMSX",
+    "physicalName": "lmsx",
     "version": "1.0.0"
   },
   "aggregateDefinitions": [
     {
       "aggregateRootEntityName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "Assignment"
       },
       "aggregateEntityNames": [
         {
-          "schema": "edfilms",
+          "schema": "lmsx",
           "name": "Assignment"
         },
         {
-          "schema": "edfilms",
+          "schema": "lmsx",
           "name": "AssignmentSubmissionType"
         }
       ]
     },
     {
       "aggregateRootEntityName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentCategoryDescriptor"
       },
       "aggregateEntityNames": [
         {
-          "schema": "edfilms",
+          "schema": "lmsx",
           "name": "AssignmentCategoryDescriptor"
         }
       ]
     },
     {
       "aggregateRootEntityName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentSubmission"
       },
       "aggregateEntityNames": [
         {
-          "schema": "edfilms",
+          "schema": "lmsx",
           "name": "AssignmentSubmission"
         }
       ]
     },
     {
       "aggregateRootEntityName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "LMSSourceSystemDescriptor"
       },
       "aggregateEntityNames": [
         {
-          "schema": "edfilms",
+          "schema": "lmsx",
           "name": "LMSSourceSystemDescriptor"
         }
       ]
     },
     {
       "aggregateRootEntityName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "SubmissionStatusDescriptor"
       },
       "aggregateEntityNames": [
         {
-          "schema": "edfilms",
+          "schema": "lmsx",
           "name": "SubmissionStatusDescriptor"
         }
       ]
     },
     {
       "aggregateRootEntityName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "SubmissionTypeDescriptor"
       },
       "aggregateEntityNames": [
         {
-          "schema": "edfilms",
+          "schema": "lmsx",
           "name": "SubmissionTypeDescriptor"
         }
       ]
@@ -86,7 +86,7 @@
   "aggregateExtensionDefinitions": [],
   "entityDefinitions": [
     {
-      "schema": "edfilms",
+      "schema": "lmsx",
       "name": "Assignment",
       "locallyDefinedProperties": [
         {
@@ -264,7 +264,8 @@
         {
           "identifierName": "Assignment_PK",
           "identifyingPropertyNames": [
-            "AssignmentIdentifier"
+            "AssignmentIdentifier",
+            "SchoolId"
           ],
           "isPrimary": true,
           "isUpdatable": false,
@@ -294,7 +295,7 @@
       }
     },
     {
-      "schema": "edfilms",
+      "schema": "lmsx",
       "name": "AssignmentCategoryDescriptor",
       "locallyDefinedProperties": [],
       "identifiers": [
@@ -319,7 +320,7 @@
       }
     },
     {
-      "schema": "edfilms",
+      "schema": "lmsx",
       "name": "AssignmentSubmission",
       "locallyDefinedProperties": [
         {
@@ -446,7 +447,8 @@
         {
           "identifierName": "AssignmentSubmission_PK",
           "identifyingPropertyNames": [
-            "AssignmentSubmissionIdentifier"
+            "AssignmentSubmissionIdentifier",
+            "StudentUSI"
           ],
           "isPrimary": true,
           "isUpdatable": false,
@@ -476,7 +478,7 @@
       }
     },
     {
-      "schema": "edfilms",
+      "schema": "lmsx",
       "name": "AssignmentSubmissionType",
       "locallyDefinedProperties": [
         {
@@ -502,6 +504,7 @@
           "identifierName": "AssignmentSubmissionType_PK",
           "identifyingPropertyNames": [
             "AssignmentIdentifier",
+            "SchoolId",
             "SubmissionTypeDescriptorId"
           ],
           "isPrimary": true,
@@ -520,7 +523,7 @@
       }
     },
     {
-      "schema": "edfilms",
+      "schema": "lmsx",
       "name": "LMSSourceSystemDescriptor",
       "locallyDefinedProperties": [],
       "identifiers": [
@@ -545,7 +548,7 @@
       }
     },
     {
-      "schema": "edfilms",
+      "schema": "lmsx",
       "name": "SubmissionStatusDescriptor",
       "locallyDefinedProperties": [],
       "identifiers": [
@@ -570,7 +573,7 @@
       }
     },
     {
-      "schema": "edfilms",
+      "schema": "lmsx",
       "name": "SubmissionTypeDescriptor",
       "locallyDefinedProperties": [],
       "identifiers": [
@@ -598,12 +601,12 @@
   "associationDefinitions": [
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_Assignment_AssignmentCategoryDescriptor"
       },
       "cardinality": "OneToZeroOrMore",
       "primaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentCategoryDescriptor"
       },
       "primaryEntityProperties": [
@@ -626,7 +629,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "Assignment"
       },
       "secondaryEntityProperties": [
@@ -658,12 +661,12 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_Assignment_LMSSourceSystemDescriptor"
       },
       "cardinality": "OneToZeroOrMore",
       "primaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "LMSSourceSystemDescriptor"
       },
       "primaryEntityProperties": [
@@ -686,7 +689,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "Assignment"
       },
       "secondaryEntityProperties": [
@@ -718,7 +721,67 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
+        "name": "FK_Assignment_School"
+      },
+      "cardinality": "OneToZeroOrMore",
+      "primaryEntityFullName": {
+        "schema": "edfi",
+        "name": "School"
+      },
+      "primaryEntityProperties": [
+        {
+          "propertyName": "SchoolId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "The identifier assigned to a school.",
+          "isIdentifying": true,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "SchoolId",
+            "postgreSql": "SchoolId"
+          }
+        }
+      ],
+      "secondaryEntityFullName": {
+        "schema": "lmsx",
+        "name": "Assignment"
+      },
+      "secondaryEntityProperties": [
+        {
+          "propertyName": "SchoolId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "The identifier assigned to a school.",
+          "isIdentifying": true,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "SchoolId",
+            "postgreSql": "SchoolId"
+          }
+        }
+      ],
+      "isIdentifying": true,
+      "isRequired": true,
+      "constraintNames": {
+        "sqlServer": "FK_Assignment_School",
+        "postgreSql": "FK_153cda_School"
+      },
+      "potentiallyLogical": false
+    },
+    {
+      "fullName": {
+        "schema": "lmsx",
         "name": "FK_Assignment_Section"
       },
       "cardinality": "OneToZeroOrMore",
@@ -814,7 +877,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "Assignment"
       },
       "secondaryEntityProperties": [
@@ -825,7 +888,7 @@
             "maxLength": 60,
             "precision": 0,
             "scale": 0,
-            "isNullable": true
+            "isNullable": false
           },
           "description": "The local code assigned by the School that identifies the course offering provided for the instruction of students.",
           "isIdentifying": false,
@@ -842,7 +905,7 @@
             "maxLength": 0,
             "precision": 10,
             "scale": 0,
-            "isNullable": true
+            "isNullable": false
           },
           "description": "The identifier assigned to a school.",
           "isIdentifying": false,
@@ -859,7 +922,7 @@
             "maxLength": 0,
             "precision": 5,
             "scale": 0,
-            "isNullable": true
+            "isNullable": false
           },
           "description": "The identifier for the school year.",
           "isIdentifying": false,
@@ -893,7 +956,7 @@
             "maxLength": 60,
             "precision": 0,
             "scale": 0,
-            "isNullable": true
+            "isNullable": false
           },
           "description": "The identifier for the calendar for the academic session (e.g., 2010/11, 2011 Summer).",
           "isIdentifying": false,
@@ -905,7 +968,7 @@
         }
       ],
       "isIdentifying": false,
-      "isRequired": false,
+      "isRequired": true,
       "constraintNames": {
         "sqlServer": "FK_Assignment_Section",
         "postgreSql": "FK_153cda_Section"
@@ -914,7 +977,7 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_AssignmentCategoryDescriptor_Descriptor"
       },
       "cardinality": "OneToOneInheritance",
@@ -942,7 +1005,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentCategoryDescriptor"
       },
       "secondaryEntityProperties": [
@@ -974,12 +1037,12 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_AssignmentSubmission_Assignment"
       },
       "cardinality": "OneToZeroOrMore",
       "primaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "Assignment"
       },
       "primaryEntityProperties": [
@@ -999,10 +1062,27 @@
             "sqlServer": "AssignmentIdentifier",
             "postgreSql": "AssignmentIdentifier"
           }
+        },
+        {
+          "propertyName": "SchoolId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "The identifier assigned to a school.",
+          "isIdentifying": false,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "SchoolId",
+            "postgreSql": "SchoolId"
+          }
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentSubmission"
       },
       "secondaryEntityProperties": [
@@ -1022,6 +1102,23 @@
             "sqlServer": "AssignmentIdentifier",
             "postgreSql": "AssignmentIdentifier"
           }
+        },
+        {
+          "propertyName": "SchoolId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "The identifier assigned to a school.",
+          "isIdentifying": false,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "SchoolId",
+            "postgreSql": "SchoolId"
+          }
         }
       ],
       "isIdentifying": false,
@@ -1034,7 +1131,7 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_AssignmentSubmission_Student"
       },
       "cardinality": "OneToZeroOrMore",
@@ -1053,7 +1150,7 @@
             "isNullable": false
           },
           "description": "A unique alphanumeric code assigned to a student.",
-          "isIdentifying": false,
+          "isIdentifying": true,
           "isServerAssigned": true,
           "columnNames": {
             "sqlServer": "StudentUSI",
@@ -1062,7 +1159,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentSubmission"
       },
       "secondaryEntityProperties": [
@@ -1076,7 +1173,7 @@
             "isNullable": false
           },
           "description": "A unique alphanumeric code assigned to a student.",
-          "isIdentifying": false,
+          "isIdentifying": true,
           "isServerAssigned": false,
           "columnNames": {
             "sqlServer": "StudentUSI",
@@ -1084,7 +1181,7 @@
           }
         }
       ],
-      "isIdentifying": false,
+      "isIdentifying": true,
       "isRequired": true,
       "constraintNames": {
         "sqlServer": "FK_AssignmentSubmission_Student",
@@ -1094,12 +1191,12 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_AssignmentSubmission_SubmissionStatusDescriptor"
       },
       "cardinality": "OneToZeroOrMore",
       "primaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "SubmissionStatusDescriptor"
       },
       "primaryEntityProperties": [
@@ -1122,7 +1219,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentSubmission"
       },
       "secondaryEntityProperties": [
@@ -1154,12 +1251,12 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_AssignmentSubmissionType_Assignment"
       },
       "cardinality": "OneToZeroOrMore",
       "primaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "Assignment"
       },
       "primaryEntityProperties": [
@@ -1179,10 +1276,27 @@
             "sqlServer": "AssignmentIdentifier",
             "postgreSql": "AssignmentIdentifier"
           }
+        },
+        {
+          "propertyName": "SchoolId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "The identifier assigned to a school.",
+          "isIdentifying": true,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "SchoolId",
+            "postgreSql": "SchoolId"
+          }
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentSubmissionType"
       },
       "secondaryEntityProperties": [
@@ -1202,6 +1316,23 @@
             "sqlServer": "AssignmentIdentifier",
             "postgreSql": "AssignmentIdentifier"
           }
+        },
+        {
+          "propertyName": "SchoolId",
+          "propertyType": {
+            "dbType": "Int32",
+            "maxLength": 0,
+            "precision": 10,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "The identifier assigned to a school.",
+          "isIdentifying": true,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "SchoolId",
+            "postgreSql": "SchoolId"
+          }
         }
       ],
       "isIdentifying": true,
@@ -1214,12 +1345,12 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_AssignmentSubmissionType_SubmissionTypeDescriptor"
       },
       "cardinality": "OneToZeroOrMore",
       "primaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "SubmissionTypeDescriptor"
       },
       "primaryEntityProperties": [
@@ -1242,7 +1373,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "AssignmentSubmissionType"
       },
       "secondaryEntityProperties": [
@@ -1274,7 +1405,7 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_LMSSourceSystemDescriptor_Descriptor"
       },
       "cardinality": "OneToOneInheritance",
@@ -1302,7 +1433,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "LMSSourceSystemDescriptor"
       },
       "secondaryEntityProperties": [
@@ -1334,7 +1465,7 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_SubmissionStatusDescriptor_Descriptor"
       },
       "cardinality": "OneToOneInheritance",
@@ -1362,7 +1493,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "SubmissionStatusDescriptor"
       },
       "secondaryEntityProperties": [
@@ -1394,7 +1525,7 @@
     },
     {
       "fullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "FK_SubmissionTypeDescriptor_Descriptor"
       },
       "cardinality": "OneToOneInheritance",
@@ -1422,7 +1553,7 @@
         }
       ],
       "secondaryEntityFullName": {
-        "schema": "edfilms",
+        "schema": "lmsx",
         "name": "SubmissionTypeDescriptor"
       },
       "secondaryEntityProperties": [

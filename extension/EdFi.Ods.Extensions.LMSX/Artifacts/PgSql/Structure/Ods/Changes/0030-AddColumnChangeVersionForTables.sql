@@ -1,6 +1,6 @@
-ALTER TABLE edfilms.Assignment
+ALTER TABLE lmsx.Assignment
 ADD ChangeVersion BIGINT DEFAULT nextval('changes.ChangeVersionSequence') NOT NULL;
 
-ALTER TABLE edfilms.AssignmentSubmission
+ALTER TABLE lmsx.AssignmentSubmission
 ADD ChangeVersion BIGINT DEFAULT nextval('changes.ChangeVersionSequence') NOT NULL;
 

@@ -3,10 +3,10 @@ BEGIN
     IF NOT EXISTS(
         SELECT schema_name
           FROM information_schema.schemata
-          WHERE schema_name = 'tracked_deletes_edfilms'
+          WHERE schema_name = 'tracked_deletes_lmsx'
       )
     THEN
-      EXECUTE 'CREATE SCHEMA tracked_deletes_edfilms AUTHORIZATION postgres';
+      EXECUTE 'CREATE SCHEMA tracked_deletes_lmsx AUTHORIZATION postgres';
     END IF;
 
 END
