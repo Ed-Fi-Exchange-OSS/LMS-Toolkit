@@ -1,0 +1,1 @@
+CREATE SCHEMA lmsx AUTHORIZATION postgres;

@@ -1,0 +1,14 @@
+{
+    "assignmentSubmissionIdentifier": "ABCD9875654-604822",
+    "assignmentReference": {
+      "assignmentIdentifier": "ABCD9875654",
+      "schoolId": 255901001
+    },
+    "studentReference": {
+      "studentUniqueId": "604822"
+    },
+    "earnedPoints": 10,
+    "grade": "F",
+    "submissionDateTime": "2021-06-22T22:07:54.524Z",
+    "submissionStatusDescriptor": "uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas#late"
+  }

@@ -9,11 +9,11 @@ Domain Entity AssignmentSubmission
         documentation "A unique numeric identifier assigned to the submission."
         is part of identity
         role name AssignmentSubmission
-    domain entity Assignment
-        documentation "A reference to the Assignment"
-        is required
     domain entity EdFi.Student
         documentation "A reference to the user providing the assignment submission."
+        is part of identity
+    domain entity Assignment
+        documentation "A reference to the Assignment"
         is required
     descriptor SubmissionStatus
         documentation "The status of the submission in relation to the late acceptance policy."

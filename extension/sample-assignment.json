@@ -1,0 +1,26 @@
+{
+    "assignmentIdentifier": "ABCD9875654",
+    "schoolReference": {
+        "schoolId": 255901001
+    },
+    "title": "Assignment 12354",
+    "sectionReference": {
+        "localCourseCode": "ALG-1",
+        "schoolId": "255901001",
+        "schoolYear": 2011,
+        "sectionIdentifier": "25590100102Trad220ALG112011",
+        "sessionName": "2010-2011 Fall Semester"
+    },
+    "assignmentCategoryDescriptor": "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Canvas#Assignment",
+    "assignmentDescription": "string",
+    "dueDateTime": "2021-06-19T19:59:16.809Z",
+    "endDateTime": "2021-06-19T19:59:16.809Z",
+    "lmsSourceSystemDescriptor": "uri://ed-fi.org/edfilms/LMSSourceSystem#Canvas",
+    "maxPoints": 0,
+    "startDateTime": "2021-06-19T19:59:16.809Z",
+    "submissionTypes": [
+        {
+            "submissionTypeDescriptor": "uri://ed-fi.org/edfilms/SubmissionTypeDescriptor/Canvas#online_text_entry"
+        }
+    ]
+}

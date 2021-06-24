@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <InterchangeDescriptors xmlns="http://ed-fi.org/3.3.0-a" xmlns:ann="http://ed-fi.org/annotation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ed-fi.org/3.3.0-a ../Schemas/Bulk/EXTENSION-Interchange-Descriptors-Extension.xsd">
-	<LMSSourceSystem>
+	<LMSSourceSystemDescriptor>
 		<CodeValue>Schoology</CodeValue>
 		<ShortDescription>Schoology</ShortDescription>
 		<Description>Schoology</Description>
-		<Namespace>uri://edfilms.ed-fi.org/LMSSourceSystem/Schoology</Namespace>
-	</LMSSourceSystem>
-    <LMSSourceSystem>
+		<Namespace>uri://ed-fi.org/edfilms/LMSSourceSystem</Namespace>
+	</LMSSourceSystemDescriptor>
+    <LMSSourceSystemDescriptor>
 		<CodeValue>Canvas</CodeValue>
 		<ShortDescription>Canvas</ShortDescription>
 		<Description>Canvas</Description>
-		<Namespace>uri://edfilms.ed-fi.org/LMSSourceSystem/Canvas</Namespace>
-	</LMSSourceSystem>
-    <LMSSourceSystem>
+		<Namespace>uri://ed-fi.org/edfilms/LMSSourceSystem</Namespace>
+	</LMSSourceSystemDescriptor>
+    <LMSSourceSystemDescriptor>
 		<CodeValue>Google</CodeValue>
 		<ShortDescription>Google Classroom</ShortDescription>
 		<Description>Google Classroom</Description>
-		<Namespace>uri://edfilms.ed-fi.org/LMSSourceSystem/Google</Namespace>
-	</LMSSourceSystem>
+		<Namespace>uri://ed-fi.org/edfilms/LMSSourceSystem</Namespace>
+	</LMSSourceSystemDescriptor>
 </InterchangeDescriptors>

@@ -1,6 +1,11 @@
 {
+  "name": "ed-fi-lms-extension",
+  "version": "1.0.0",
+  "description": "The Ed-Fi LMS extension data model",
+  "repository": "https://github.com/Ed-Fi-Alliance-OSS/LMS-Toolkit",
+  "license": "Apache-2.0",
   "metaEdProject": {
-    "projectName": "EdFiLMS",
+    "projectName": "LMSX",
     "projectVersion": "1.0.0"
   }
 }
