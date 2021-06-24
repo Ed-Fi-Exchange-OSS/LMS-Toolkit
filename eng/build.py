@@ -89,6 +89,21 @@ def _run_tests(exit_immediately: bool = True):
     )
 
 
+def _run_integration_tests(exit_immediately: bool = True):
+    _run_command(
+        [
+            "poetry",
+            "run",
+            "pytest",
+            "tests_integration_sql",
+            "--useintegratedsecurity=false",
+            "--username=sa",
+            "--password=abcdefgh1!",
+        ],
+        exit_immediately,
+    )
+
+
 def _run_coverage_without_report():
     _run_command(
         [
@@ -183,6 +198,14 @@ def _run_ci_test():
     _run_lint(True)
 
 
+def _run_ci_integration_test():
+    """
+    Calls the commands required for a continuous integration integration testing job.
+    """
+    _run_install(False)
+    _run_integration_tests(False)
+
+
 def _run_ci_publish():
     """
     Calls the commands required for a continuous integration publishing job.
@@ -212,6 +235,7 @@ if __name__ == "__main__":
         "build": _run_build,
         "publish": _run_publish,
         "ci:test": _run_ci_test,
+        "ci:integration-test": _run_ci_integration_test,
         "ci:publish": _run_ci_publish,
     }
 
