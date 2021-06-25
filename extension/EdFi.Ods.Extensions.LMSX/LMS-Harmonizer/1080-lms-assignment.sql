@@ -3,10 +3,10 @@
 -- The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 -- See the LICENSE and NOTICES files in the project root for more information.
 
-CREATE OR ALTER PROCEDURE lms.harmonize_assignment AS
+CREATE OR ALTER PROCEDURE lmsx.harmonize_assignment AS
 BEGIN
 
-	INSERT INTO [edfilms].[Assignment]
+	INSERT INTO lmsx.[Assignment]
 		([AssignmentIdentifier]
 		,[LMSSourceSystemDescriptorId]
 		,[Title]
@@ -21,14 +21,12 @@ BEGIN
 		,[SessionName]
 		,[SchoolYear]
 		,[SchoolId]
-		,[CreateDate]
-		,[LastModifiedDate]
 		,[Id])
 	SELECT
 		lmsAssignment.AssignmentIdentifier,
-		-- lmsAssignment.[LMSSourceSystemDescriptorId], -- [SourceSystem]
+		sourceSystemDescriptor.id, -- [SourceSystem]
 		lmsAssignment.[Title],
-		-- [AssignmentCategoryDescriptorId], -- [AssignmentCategory]
+		assignmentCategoryDescriptor.Id, -- [AssignmentCategory]
 		lmsAssignment.[AssignmentDescription],
 		lmsAssignment.[StartDateTime],
 		lmsAssignment.[EndDateTime],
@@ -39,20 +37,26 @@ BEGIN
 		edfiSection.[SessionName],
 		edfiSection.[SchoolYear],
 		edfiSection.[SchoolId],
-		lmsAssignment.[CreateDate],
-		lmsAssignment.[LastModifiedDate],
 		lmsAssignment.SourceSystemIdentifier
 
 	FROM lms.Assignment lmsAssignment
 		INNER JOIN lms.LMSSection lmssection
 			ON lmsAssignment.LMSSectionIdentifier = lmssection.LMSSectionIdentifier
+
 		INNER JOIN edfi.Section edfiSection
 			ON lmssection.EdFiSectionId = edfiSection.Id
+
 		INNER JOIN edfi.Descriptor sourceSystemDescriptor
-			ON sourceSystemDescriptor.Id
+			ON sourceSystemDescriptor.ShortDescription = lmsAssignment.SourceSystem
+			AND sourceSystemDescriptor.Id in (select * from lmsx.LMSSourceSystemDescriptor)
+
+		INNER JOIN edfi.Descriptor assignmentCategoryDescriptor
+			ON assignmentCategoryDescriptor.ShortDescription = lmsAssignment.AssignmentCategory
+			AND assignmentCategoryDescriptor.id in (select * from lmsx.AssignmentCategoryDescriptor)
+
 	WHERE
 		LMSSection.DeletedAt IS NULL
 		AND
-		lmsAssignment.DeletedAt IS NULL;
+		lmsAssignment.DeletedAt IS NULL
 
 END;
