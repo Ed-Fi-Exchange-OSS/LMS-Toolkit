@@ -2,33 +2,8 @@
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
-from os import path
-from sqlalchemy.engine.base import Connection
-
-
-def _script_path(script_name: str) -> str:
-    return path.normpath(
-        path.join(
-            path.dirname(__file__),
-            "..",
-            "..",
-            "..",
-            "extension",
-            "EdFi.Ods.Extensions.EdFiLMS",
-            "Artifacts",
-            "MsSql",
-            "Structure",
-            "Ods",
-            script_name,
-        )
-    )
-
-
-def script_sql(script_name: str) -> str:
-    script = open(_script_path(script_name), "r")
-    result = script.read()
-    script.close()
-    return result
+# from os import path
+from pyodbc import Connection
 
 
 def insert_lms_user(connection: Connection, sis_identifier: str, source_system: str):
@@ -62,14 +37,6 @@ def insert_lms_user(connection: Connection, sis_identifier: str, source_system: 
            ,NULL
            )
 """
-    )
-
-
-def manually_set_lmsuser_edfistudentid(
-    connection: Connection, sis_identifier: str, student_id: str
-) -> None:
-    connection.execute(
-        f"UPDATE lms.LMSUser SET EdFiStudentId = '{student_id}' where SourceSystemIdentifier = '{sis_identifier}'"
     )
 
 
@@ -300,14 +267,6 @@ def insert_lms_section(connection: Connection, sis_identifier: str, source_syste
     )
 
 
-def manually_set_lmssection_edfisectionid(
-    connection: Connection, sis_identifier: str, section_id: str
-) -> None:
-    connection.execute(
-        f"UPDATE lms.LMSSection SET EdFiSectionId = '{section_id}' where SourceSystemIdentifier = '{sis_identifier}'"
-    )
-
-
 def insert_lms_section_deleted(
     connection: Connection, sis_identifier: str, source_system: str
 ):
@@ -348,7 +307,6 @@ INSERT INTO [edfi].[Section]
         [SchoolYear],
         [SessionName],
         [LastModifiedDate],
-        [ChangeVersion],
         [SectionIdentifier]
         {',[id]' if uid is not None else ''})
      VALUES
@@ -358,7 +316,6 @@ INSERT INTO [edfi].[Section]
         ,1
         ,N'session name test'
         ,CAST(N'2021-01-01 00:00:00' AS DateTime2(7))
-        ,1
         ,N'{sis_id}'
         {f",CAST(N'{uid}' AS UNIQUEIDENTIFIER)" if uid is not None else ''}
         )

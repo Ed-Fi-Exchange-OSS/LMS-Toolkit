@@ -3,56 +3,125 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from sqlalchemy.engine.base import Connection
-from tests_integration_sql.mssql_helper import (
+from tests_integration_sql.mssql_loader import (
     insert_lms_user,
-    script_sql,
+    insert_lms_user_deleted,
     insert_edfi_student,
-    manually_set_lmsuser_edfistudentid,
 )
+from tests_integration_sql.mssql_connection import MSSqlConnection, query
+from tests_integration_sql.server_config import ServerConfig
+from tests_integration_sql.orchestrator import run_harmonizer
+
 
 SOURCE_SYSTEM = "Canvas"
-VIEW_SQL_DEFINITION = script_sql("1070-view-exceptions_LMSUser.sql")
 
 
-def describe_given_there_is_one_unmatched_user() -> None:
+def describe_when_lms_and_ods_tables_are_both_empty():
+    def it_should_return_no_exceptions(test_db_config: ServerConfig):
+        # act
+        run_harmonizer(test_db_config)
+
+        # Assert
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            exceptions = query(
+                connection, "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSUser"
+            )
+
+            assert len(exceptions) == 0
+
+
+def describe_when_lms_and_ods_tables_have_no_matches():
+    SIS_ID_1 = "sis_id_1"
+    SIS_ID_2 = "sis_id_2"
+
+    def it_should_return_exceptions(test_db_config: ServerConfig):
+        # arrange
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            insert_lms_user(connection, SIS_ID_1, SOURCE_SYSTEM)
+            insert_lms_user(connection, SIS_ID_2, SOURCE_SYSTEM)
+            insert_edfi_student(connection, "not_matching_sis_id_1")
+            insert_edfi_student(connection, "not_matching_sis_id_2")
+
+        # act
+        run_harmonizer(test_db_config)
+
+        # assert
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            exceptions = query(
+                connection, "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSUser"
+            )
+
+            assert len(exceptions) == 2
+            assert exceptions[0]["SourceSystemIdentifier"] == SIS_ID_1
+            assert exceptions[1]["SourceSystemIdentifier"] == SIS_ID_2
+
+
+def describe_when_lms_and_ods_tables_have_a_match():
     STUDENT_ID = "10000000-0000-0000-0000-000000000000"
     SIS_ID = "sis_id"
 
-    def describe_when_querying_for_user_exceptions() -> None:
-        def it_should_return_that_one_user(test_mssql_db: Connection) -> None:
-            # Arrange
+    def it_should_return_no_exceptions(test_db_config: ServerConfig):
+        # arrange
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            insert_lms_user(connection, SIS_ID, SOURCE_SYSTEM)
+            insert_edfi_student(connection, SIS_ID, STUDENT_ID)
 
-            test_mssql_db.execute(VIEW_SQL_DEFINITION)
-            insert_lms_user(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
-            insert_edfi_student(test_mssql_db, SIS_ID, STUDENT_ID)
+        # act
+        run_harmonizer(test_db_config)
 
-            # Act
-            results = test_mssql_db.execute(
-                "SELECT COUNT(1) FROM LMSX.exceptions_LMSUser"
+        # assert
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            exceptions = query(
+                connection, "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSUser"
             )
 
-            # Assert
-            results.first()[0] == 1
+            assert len(exceptions) == 0
 
 
-def describe_given_there_are_no_unmatched_users() -> None:
+def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
     STUDENT_ID = "10000000-0000-0000-0000-000000000000"
     SIS_ID = "sis_id"
 
-    def describe_when_querying_for_user_exceptions() -> None:
-        def it_should_return__no_records(test_mssql_db: Connection) -> None:
-            # Arrange
+    def it_should_return_no_exceptions(test_db_config: ServerConfig):
+        # arrange
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            insert_lms_user_deleted(connection, SIS_ID, SOURCE_SYSTEM)
+            insert_edfi_student(connection, SIS_ID, STUDENT_ID)
 
-            test_mssql_db.execute(VIEW_SQL_DEFINITION)
-            insert_lms_user(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
-            insert_edfi_student(test_mssql_db, SIS_ID, STUDENT_ID)
-            manually_set_lmsuser_edfistudentid(test_mssql_db, SIS_ID, STUDENT_ID)
+        # act
+        run_harmonizer(test_db_config)
 
-            # Act
-            results = test_mssql_db.execute(
-                "SELECT COUNT(1) FROM LMSX.exceptions_LMSUser"
+        # assert
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            exceptions = query(
+                connection, "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSUser"
             )
 
-            # Assert
-            assert results.first()[0] == 0
+            assert len(exceptions) == 0
+
+
+def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
+    STUDENT_ID = "10000000-0000-0000-0000-000000000000"
+    SIS_ID = "sis_id"
+    NOT_MATCHING_SIS_ID = "not_matching_sis_id"
+
+    def it_should_return_one_exception(test_db_config: ServerConfig):
+        # arrange
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            insert_lms_user(connection, SIS_ID, SOURCE_SYSTEM)
+            insert_edfi_student(connection, SIS_ID, STUDENT_ID)
+
+            insert_lms_user(connection, NOT_MATCHING_SIS_ID, SOURCE_SYSTEM)
+            insert_edfi_student(connection, "also_not_matching_sis_id")
+
+        # act
+        run_harmonizer(test_db_config)
+
+        # assert
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            exceptions = query(
+                connection, "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSUser"
+            )
+
+            assert len(exceptions) == 1
+            assert exceptions[0]["SourceSystemIdentifier"] == NOT_MATCHING_SIS_ID
