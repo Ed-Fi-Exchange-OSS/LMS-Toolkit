@@ -20,13 +20,13 @@ BEGIN
 		,[LocalCourseCode]
 		,[SessionName]
 		,[SchoolYear]
-		,[SchoolId]
-		,[Id])
+        ,[SchoolId]
+        ,[Id])
 	SELECT
 		lmsAssignment.AssignmentIdentifier,
-		sourceSystemDescriptor.id, -- [SourceSystem]
+		sourceSystemDescriptor.DescriptorId,
 		lmsAssignment.[Title],
-		assignmentCategoryDescriptor.Id, -- [AssignmentCategory]
+		assignmentCatDescriptor.DescriptorId,
 		lmsAssignment.[AssignmentDescription],
 		lmsAssignment.[StartDateTime],
 		lmsAssignment.[EndDateTime],
@@ -47,12 +47,16 @@ BEGIN
 			ON lmssection.EdFiSectionId = edfiSection.Id
 
 		INNER JOIN edfi.Descriptor sourceSystemDescriptor
-			ON sourceSystemDescriptor.ShortDescription = lmsAssignment.SourceSystem
-			AND sourceSystemDescriptor.Id in (select * from lmsx.LMSSourceSystemDescriptor)
+			ON sourceSystemDescriptor.CodeValue = lmsAssignment.SourceSystem
 
-		INNER JOIN edfi.Descriptor assignmentCategoryDescriptor
-			ON assignmentCategoryDescriptor.ShortDescription = lmsAssignment.AssignmentCategory
-			AND assignmentCategoryDescriptor.id in (select * from lmsx.AssignmentCategoryDescriptor)
+		INNER JOIN lmsx.LMSSourceSystemDescriptor
+		ON sourceSystemDescriptor.DescriptorId  = LMSSourceSystemDescriptor.LMSSourceSystemDescriptorId
+
+		INNER JOIN edfi.Descriptor assignmentCatDescriptor
+			ON assignmentCatDescriptor.CodeValue = lmsAssignment.AssignmentCategory
+
+		INNER JOIN lmsx.AssignmentCategoryDescriptor
+			ON assignmentCatDescriptor.DescriptorId = AssignmentCategoryDescriptor.AssignmentCategoryDescriptorId
 
 	WHERE
 		LMSSection.DeletedAt IS NULL
