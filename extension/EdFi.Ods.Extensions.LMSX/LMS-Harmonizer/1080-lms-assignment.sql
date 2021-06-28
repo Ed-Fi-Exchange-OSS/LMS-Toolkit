@@ -20,8 +20,7 @@ BEGIN
 		,[LocalCourseCode]
 		,[SessionName]
 		,[SchoolYear]
-        ,[SchoolId]
-        ,[Id])
+		,[SchoolId])
 	SELECT
 		lmsAssignment.AssignmentIdentifier,
 		sourceSystemDescriptor.DescriptorId,
@@ -32,12 +31,11 @@ BEGIN
 		lmsAssignment.[EndDateTime],
 		lmsAssignment.[DueDateTime],
 		lmsAssignment.[MaxPoints],
-		lmssection.EdFiSectionId,
+		edfiSection.SectionIdentifier,
 		edfiSection.LocalCourseCode,
 		edfiSection.[SessionName],
 		edfiSection.[SchoolYear],
-		edfiSection.[SchoolId],
-		lmsAssignment.SourceSystemIdentifier
+		edfiSection.[SchoolId]
 
 	FROM lms.Assignment lmsAssignment
 		INNER JOIN lms.LMSSection lmssection
@@ -62,5 +60,7 @@ BEGIN
 		LMSSection.DeletedAt IS NULL
 		AND
 		lmsAssignment.DeletedAt IS NULL
+		AND
+		lmsAssignment.SourceSystemIdentifier not in (select AssignmentIdentifier from lmsx.Assignment)
 
 END;
