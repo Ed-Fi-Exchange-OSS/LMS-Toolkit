@@ -10,7 +10,7 @@ from edfi_lms_harmonizer.exceptions_reports import (
     create_exception_reports,
     print_summary,
 )
-from edfi_lms_harmonizer.harmonizer import harmonize_users, harmonize_sections
+from edfi_lms_harmonizer.harmonizer import harmonize_users, harmonize_sections, harmonize_assignments
 
 
 logger = logging.getLogger(__name__)
@@ -37,6 +37,7 @@ def run(arguments: MainArguments) -> None:
 
     harmonize_users(adapter)
     harmonize_sections(adapter)
+    harmonize_assignments(adapter)
 
     if exceptions_report_directory is not None:
         create_exception_reports(adapter, exceptions_report_directory)
