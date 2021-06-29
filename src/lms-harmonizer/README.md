@@ -63,7 +63,7 @@ this repository and modify the stored procedures to fit alternate logic.
 1. Manually install the stored procedures and views used by the Harmonizer
    (NOTE: the development team is exploring automation options) into your ODS
    database. These are in
-   [extension/EdFi.Ods.Extensions.EdFiLMS/Artifacts/LMS-Harmonizer](../../extension/EdFi.Ods.Extensions.EdFiLMS/Artifacts/LMS-Harmonizer)
+   [extension/EdFi.Ods.Extensions.LMSX/Artifacts/LMS-Harmonizer](../../extension/EdFi.Ods.Extensions.LMSX/Artifacts/LMS-Harmonizer)
 1. Install required Python packages:
 
    ```bash

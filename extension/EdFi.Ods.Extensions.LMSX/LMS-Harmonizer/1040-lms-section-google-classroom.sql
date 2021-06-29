@@ -18,7 +18,7 @@ BEGIN
     ON
         LMSSection.SISSectionIdentifier = edfisection.SectionIdentifier
     WHERE
-        LMSSection.SourceSystem = 'Google Classroom'
+        LMSSection.SourceSystem = 'Google'
     AND
         LMSSection.EdFiSectionId is NULL
 	AND

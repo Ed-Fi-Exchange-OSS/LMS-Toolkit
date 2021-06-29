@@ -12,7 +12,7 @@ from tests_integration_sql.mssql_helper import (
 )
 
 SOURCE_SYSTEM = "Canvas"
-VIEW_SQL_DEFINITION = script_sql("1040-view-exceptions_LMSSection.sql")
+VIEW_SQL_DEFINITION = script_sql("1060-view-exceptions_LMSSection.sql")
 
 
 def describe_given_there_is_one_unmatched_user() -> None:
@@ -29,7 +29,7 @@ def describe_given_there_is_one_unmatched_user() -> None:
 
             # Act
             results = test_mssql_db.execute(
-                "SELECT COUNT(1) FROM edfilms.exceptions_LMSSection"
+                "SELECT COUNT(1) FROM LMSX.exceptions_LMSSection"
             )
 
             # Assert
@@ -51,7 +51,7 @@ def describe_given_there_are_no_unmatched_users() -> None:
 
             # Act
             results = test_mssql_db.execute(
-                "SELECT COUNT(1) FROM edfilms.exceptions_LMSSection"
+                "SELECT COUNT(1) FROM LMSX.exceptions_LMSSection"
             )
 
             # Assert

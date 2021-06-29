@@ -14,11 +14,8 @@ def _script_path(script_name: str) -> str:
             "..",
             "..",
             "extension",
-            "EdFi.Ods.Extensions.EdFiLMS",
-            "Artifacts",
-            "MsSql",
-            "Structure",
-            "Ods",
+            "EdFi.Ods.Extensions.LMSX",
+            "LMS-Harmonizer",
             script_name,
         )
     )

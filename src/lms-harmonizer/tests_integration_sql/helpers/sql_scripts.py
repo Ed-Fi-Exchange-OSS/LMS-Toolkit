@@ -13,9 +13,9 @@ IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'lms')
 EXEC sys.sp_executesql N'CREATE SCHEMA lms';
         """
 
-CREATE_SCHEMA_EDFILMS = """
-IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'edfilms')
-EXEC sys.sp_executesql N'CREATE SCHEMA edfilms';
+CREATE_SCHEMA_LMSX = """
+IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'LMSX')
+EXEC sys.sp_executesql N'CREATE SCHEMA LMSX';
         """
 
 CREATE_TABLE_LMS_USER = """

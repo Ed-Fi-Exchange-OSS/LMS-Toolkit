@@ -7,7 +7,7 @@ from sqlalchemy.engine.base import Connection
 from .helpers.sql_scripts import (
     CREATE_SCHEMA_EDFI,
     CREATE_SCHEMA_LMS,
-    CREATE_SCHEMA_EDFILMS,
+    CREATE_SCHEMA_LMSX,
     CREATE_TABLE_LMS_USER,
     CREATE_TABLE_EDFI_STUDENT_ETC,
     CREATE_TABLE_EDFI_SECTION,
@@ -18,7 +18,7 @@ from .helpers.sql_scripts import (
 def _create_schemas(connection: Connection):
     connection.execute(CREATE_SCHEMA_EDFI)
     connection.execute(CREATE_SCHEMA_LMS)
-    connection.execute(CREATE_SCHEMA_EDFILMS)
+    connection.execute(CREATE_SCHEMA_LMSX)
 
 
 def _create_user_tables(connection: Connection):

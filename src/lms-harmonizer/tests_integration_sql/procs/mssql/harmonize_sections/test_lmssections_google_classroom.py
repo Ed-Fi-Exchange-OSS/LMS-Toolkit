@@ -11,7 +11,7 @@ from tests_integration_sql.mssql_helper import (
     insert_edfi_section,
 )
 
-SOURCE_SYSTEM = "Google Classroom"
+SOURCE_SYSTEM = "Google"
 PROC_SQL_DEFINITION = script_sql("1040-lms-section-google-classroom.sql")
 PROC_EXEC_STATEMENT = "EXEC lms.harmonize_lmssection_google_classroom;"
 
