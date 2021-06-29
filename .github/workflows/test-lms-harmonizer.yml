@@ -112,5 +112,8 @@ jobs:
       - name: Create integration database
         run: docker exec -t mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P abcdefgh1! -Q "CREATE DATABASE test_harmonizer_lms_toolkit"
 
+      - name: Add sqlcmd to PATH
+        run: echo "/opt/mssql-tools/bin" >> $GITHUB_PATH
+
       - name: Run CI Integration Task
         run: python ./eng/build.py ci:integration-test ${{ env.PACKAGE_NAME }}
