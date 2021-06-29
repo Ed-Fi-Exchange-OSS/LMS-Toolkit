@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from subprocess import run
+import subprocess
 import os
 import tempfile
 from tests_integration_sql.server_config import ServerConfig
@@ -22,11 +22,12 @@ def _run(command: str):
         # All versions of Windows are "nt"
         command = f"cmd /c {command}"
 
-    result = run(command)
+    result = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = result.communicate()
 
     if result.returncode != 0:
         # Only exits the script for non-zero return code
-        exit(result.returncode)
+        raise Exception(f"Run command failed with code {result.returncode} {output} {error}")
 
 
 def run_harmonizer(config: ServerConfig):
