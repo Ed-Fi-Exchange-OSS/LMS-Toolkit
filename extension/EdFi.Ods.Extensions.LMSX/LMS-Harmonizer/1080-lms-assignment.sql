@@ -5,6 +5,46 @@
 
 CREATE OR ALTER PROCEDURE lmsx.harmonize_assignment AS
 BEGIN
+	-- This will be used to handle creates and updates from the same temp table
+	SELECT
+		lmsAssignment.AssignmentIdentifier [AssignmentIdentifier],
+		sourceSystemDescriptor.DescriptorId [LMSSourceSystemDescriptorId],
+		lmsAssignment.[Title] [Title],
+		assignmentCatDescriptor.DescriptorId [AssignmentCategoryDescriptorId],
+		lmsAssignment.[AssignmentDescription] [AssignmentDescription],
+		lmsAssignment.[StartDateTime] [StartDateTime],
+		lmsAssignment.[EndDateTime] [EndDateTime],
+		lmsAssignment.[DueDateTime] [DueDateTime],
+		lmsAssignment.[MaxPoints] [MaxPoints],
+		edfiSection.SectionIdentifier [SectionIdentifier],
+		edfiSection.LocalCourseCode [LocalCourseCode],
+		edfiSection.[SessionName] [SessionName],
+		edfiSection.[SchoolYear] [SchoolYear],
+		edfiSection.[SchoolId] [SchoolId],
+		lmsAssignment.LastModifiedDate [ASSIGNMENT_LAST_MODIFIED_DATE],
+		lmssection.DeletedAt [SECTION_DELETED],
+		lmsAssignment.DeletedAt [ASSIGNMENT_DELETED]
+	INTO #ALL_ASSIGNMENTS
+ 	FROM lms.Assignment lmsAssignment
+		INNER JOIN lms.LMSSection lmssection
+			ON lmsAssignment.LMSSectionIdentifier = lmssection.LMSSectionIdentifier
+
+		INNER JOIN edfi.Section edfiSection
+			ON lmssection.EdFiSectionId = edfiSection.Id
+
+		INNER JOIN edfi.Descriptor sourceSystemDescriptor
+			ON sourceSystemDescriptor.CodeValue = lmsAssignment.SourceSystem
+
+		INNER JOIN lmsx.LMSSourceSystemDescriptor
+		ON sourceSystemDescriptor.DescriptorId  = LMSSourceSystemDescriptor.LMSSourceSystemDescriptorId
+
+		INNER JOIN edfi.Descriptor assignmentCatDescriptor
+			ON assignmentCatDescriptor.CodeValue = lmsAssignment.AssignmentCategory
+			AND assignmentCatDescriptor.Namespace = 'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + 'Google Classroom'
+
+		INNER JOIN lmsx.AssignmentCategoryDescriptor
+			ON assignmentCatDescriptor.DescriptorId = AssignmentCategoryDescriptor.AssignmentCategoryDescriptorId
+
 
 	INSERT INTO lmsx.[Assignment]
 		([AssignmentIdentifier]
@@ -21,46 +61,46 @@ BEGIN
 		,[SessionName]
 		,[SchoolYear]
 		,[SchoolId])
-	SELECT
-		lmsAssignment.AssignmentIdentifier,
-		sourceSystemDescriptor.DescriptorId,
-		lmsAssignment.[Title],
-		assignmentCatDescriptor.DescriptorId,
-		lmsAssignment.[AssignmentDescription],
-		lmsAssignment.[StartDateTime],
-		lmsAssignment.[EndDateTime],
-		lmsAssignment.[DueDateTime],
-		lmsAssignment.[MaxPoints],
-		edfiSection.SectionIdentifier,
-		edfiSection.LocalCourseCode,
-		edfiSection.[SessionName],
-		edfiSection.[SchoolYear],
-		edfiSection.[SchoolId]
-
-	FROM lms.Assignment lmsAssignment
-		INNER JOIN lms.LMSSection lmssection
-			ON lmsAssignment.LMSSectionIdentifier = lmssection.LMSSectionIdentifier
-
-		INNER JOIN edfi.Section edfiSection
-			ON lmssection.EdFiSectionId = edfiSection.Id
-
-		INNER JOIN edfi.Descriptor sourceSystemDescriptor
-			ON sourceSystemDescriptor.CodeValue = lmsAssignment.SourceSystem
-
-		INNER JOIN lmsx.LMSSourceSystemDescriptor
-		ON sourceSystemDescriptor.DescriptorId  = LMSSourceSystemDescriptor.LMSSourceSystemDescriptorId
-
-		INNER JOIN edfi.Descriptor assignmentCatDescriptor
-			ON assignmentCatDescriptor.CodeValue = lmsAssignment.AssignmentCategory
-
-		INNER JOIN lmsx.AssignmentCategoryDescriptor
-			ON assignmentCatDescriptor.DescriptorId = AssignmentCategoryDescriptor.AssignmentCategoryDescriptorId
-
+	select
+		[AssignmentIdentifier]
+		,[LMSSourceSystemDescriptorId]
+		,[Title]
+		,[AssignmentCategoryDescriptorId]
+		,[AssignmentDescription]
+		,[StartDateTime]
+		,[EndDateTime]
+		,[DueDateTime]
+		,[MaxPoints]
+		,[SectionIdentifier]
+		,[LocalCourseCode]
+		,[SessionName]
+		,[SchoolYear]
+		,[SchoolId]
+	from
+	#ALL_ASSIGNMENTS
 	WHERE
-		LMSSection.DeletedAt IS NULL
+		#ALL_ASSIGNMENTS.[AssignmentIdentifier] not in (select AssignmentIdentifier from lmsx.Assignment)
 		AND
-		lmsAssignment.DeletedAt IS NULL
+			[SECTION_DELETED] IS NULL
 		AND
-		lmsAssignment.SourceSystemIdentifier not in (select AssignmentIdentifier from lmsx.Assignment)
+			[ASSIGNMENT_DELETED] IS NULL
+
+	UPDATE LMSX.Assignment
+	SET
+		LMSX.Assignment.[Title] = #ALL_ASSIGNMENTS.Title,
+		LMSX.Assignment.[AssignmentCategoryDescriptorId] = #ALL_ASSIGNMENTS.AssignmentCategoryDescriptorId,
+		LMSX.Assignment.[AssignmentDescription] = #ALL_ASSIGNMENTS.AssignmentDescription,
+		LMSX.Assignment.[StartDateTime] = #ALL_ASSIGNMENTS.StartDateTime,
+		LMSX.Assignment.[EndDateTime] = #ALL_ASSIGNMENTS.EndDateTime,
+		LMSX.Assignment.[DueDateTime] = #ALL_ASSIGNMENTS.DueDateTime,
+		LMSX.Assignment.[MaxPoints] = #ALL_ASSIGNMENTS.MaxPoints
+	FROM
+		#ALL_ASSIGNMENTS
+	WHERE
+		LMSX.Assignment.AssignmentIdentifier = #ALL_ASSIGNMENTS.AssignmentIdentifier
+		AND
+			#ALL_ASSIGNMENTS.[ASSIGNMENT_LAST_MODIFIED_DATE] > LMSX.Assignment.LastModifiedDate
+
+	DROP TABLE #ALL_ASSIGNMENTS
 
 END;
