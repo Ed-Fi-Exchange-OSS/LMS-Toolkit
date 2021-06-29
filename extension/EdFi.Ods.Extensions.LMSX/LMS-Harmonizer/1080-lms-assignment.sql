@@ -3,7 +3,7 @@
 -- The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 -- See the LICENSE and NOTICES files in the project root for more information.
 
-CREATE OR ALTER PROCEDURE lmsx.harmonize_assignment AS
+CREATE OR ALTER PROCEDURE lms.harmonize_assignment AS
 BEGIN
 	-- This will be used to handle creates and updates from the same temp table
 	SELECT
@@ -40,7 +40,7 @@ BEGIN
 
 		INNER JOIN edfi.Descriptor assignmentCatDescriptor
 			ON assignmentCatDescriptor.CodeValue = lmsAssignment.AssignmentCategory
-			AND assignmentCatDescriptor.Namespace = 'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + 'Google Classroom'
+			AND assignmentCatDescriptor.Namespace = 'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + lmsAssignment.SourceSystem
 
 		INNER JOIN lmsx.AssignmentCategoryDescriptor
 			ON assignmentCatDescriptor.DescriptorId = AssignmentCategoryDescriptor.AssignmentCategoryDescriptorId
