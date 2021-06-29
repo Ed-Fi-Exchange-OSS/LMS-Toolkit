@@ -19,18 +19,18 @@ logger = logging.getLogger(__name__)
 MIGRATION_SCRIPTS = [
     # CAUTION: these scripts will run in order from "top to bottom", so it is
     # critical to maintain the script order at all times.
-    "initialize_lms_database",
-    "create_processed_files_table",
-    "create_user_tables",
-    "create_section_tables",
-    "create_assignment_tables",
-    "create_section_association_tables",
-    "create_assignment_submission_tables",
-    "create_section_activity_tables",
-    "create_system_activity_tables",
-    "create_attendance_tables",
-    "remove_startdate_enddate_from_sectionassociation",
-    "add_mapping_columns_for_edfi_student_and_section",
+    "0001_initialize_lms_database",
+    "0002_create_processed_files_table",
+    "0003_create_user_tables",
+    "0004_create_section_tables",
+    "0005_create_assignment_tables",
+    "0006_create_section_association_tables",
+    "0007_create_assignment_submission_tables",
+    "0008_create_section_activity_tables",
+    "0009_create_system_activity_tables",
+    "0010_create_attendance_tables",
+    "0011_remove_startdate_enddate_from_sectionassociation",
+    "0012_add_mapping_columns_for_edfi_student_and_section",
 ]
 
 
@@ -112,7 +112,7 @@ def migrate(engine: sa_Engine) -> None:
     logger.info("Begin database auto-migration...")
 
     if not _lms_schema_exists(engine):
-        _run_migration_script(engine, "initialize_lms_database")
+        _run_migration_script(engine, "0001_initialize_lms_database")
 
     for migration in MIGRATION_SCRIPTS:
         # The following block of code does not belong in _run_migration_script

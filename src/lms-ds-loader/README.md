@@ -15,9 +15,38 @@ one LMS provider. Thus if an education organization uses multiple LMS providers,
 then each LMS Extractor needs to write files to a separate, dedicated directory,
 and the LMS DS Loader must be run once for each extractor's output directory.
 
-Limitations as of April 2021:
+## What's New
 
-* This tool only supports SQL Server (tested on MSSQL 2019). PostgreSQL support will be added at a future data.
+* Version 1.1:
+  * The SQL script names have been modified so that it is easier to add
+    new scripts in the future. If you have previously run version 1.0.0,
+    then you will need to run the following script once manually before
+    running the 1.1.x version of this tool:
+
+    <details>
+    <summary>SQL Update Script</summary>
+    <div>
+    <code>
+    update lms.MigrationJournal set script = '0001_initialize_lms_database' where script = 'initialize_lms_database';
+    update lms.MigrationJournal set script = '0002_create_processed_files_table' where script = 'create_processed_files_table';
+    update lms.MigrationJournal set script = '0003_create_user_tables' where script = 'create_user_tables';
+    update lms.MigrationJournal set script = '0004_create_section_tables' where script = 'create_section_tables';
+    update lms.MigrationJournal set script = '0005_create_assignment_tables' where script = 'create_assignment_tables';
+    update lms.MigrationJournal set script = '0006_create_section_association_tables' where script = 'create_section_association_tables';
+    update lms.MigrationJournal set script = '0007_create_assignment_submission_tables' where script = 'create_assignment_submission_tables';
+    update lms.MigrationJournal set script = '0008_create_section_activity_tables' where script = 'create_section_activity_tables';
+    update lms.MigrationJournal set script = '0009_create_system_activity_tables' where script = 'create_system_activity_tables';
+    update lms.MigrationJournal set script = '0010_create_attendance_tables' where script = 'create_attendance_tables';
+    update lms.MigrationJournal set script = '0011_remove_startdate_enddate_from_sectionassociation' where script = 'remove_startdate_enddate_from_sectionassociation';
+    update lms.MigrationJournal set script = '0012_add_mapping_columns_for_edfi_student_and_section' where script = 'add_mapping_columns_for_edfi_student_and_section';
+    </code>
+    </div>
+    </details>
+
+## Limitations as of April 2021
+
+* This tool only supports SQL Server (tested on MSSQL 2019). PostgreSQL support
+  will be added at a future data.
 
 ## Getting Started
 
@@ -52,7 +81,11 @@ Sample call using full integrated security, loading from the sample files
 directory:
 
 ```bash
-poetry run python edfi_lms_ds_loader --server localhost --dbname lms_toolkit --useintegratedsecurity --csvpath ../../docs/sample-out
+poetry run python edfi_lms_ds_loader \
+  --server localhost \
+  --dbname lms_toolkit \
+  --useintegratedsecurity \
+  --csvpath ../../docs/sample-out
 ```
 
 ## Developer Notes
