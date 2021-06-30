@@ -69,6 +69,10 @@ def describe_when_there_are_assignments_to_insert():
 
         insert_lms_section(test_mssql_db, SIS_SECTION_ID, SOURCE_SYSTEM)
         insert_edfi_section(test_mssql_db, SIS_SECTION_ID)
+        test_mssql_db.execute(
+            """UPDATE LMS.LMSSECTION SET
+                EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+            )
 
         insert_lms_assignment(
             test_mssql_db,
@@ -85,9 +89,5 @@ def describe_when_there_are_assignments_to_insert():
         LMSAssignment = test_mssql_db.execute(
             "SELECT AssignmentIdentifier from [lmsx].[Assignment]"
         ).fetchall()
-        DESCRIPTORS = test_mssql_db.execute(
-            "SELECT * from [edfi].[descriptor]"
-        ).fetchall()
-        print(DESCRIPTORS)
         assert len(LMSAssignment) == 1
         assert LMSAssignment[0]["AssignmentIdentifier"] == ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER
