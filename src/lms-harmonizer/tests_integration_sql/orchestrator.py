@@ -10,7 +10,7 @@ from tests_integration_sql.server_config import ServerConfig
 from typing import List
 
 
-def _run(command: str):
+def _run(command: List[str]):
 
     print(f"\033[95m{command}\033[0m")
 
@@ -20,44 +20,63 @@ def _run(command: str):
 
     if os.name == "nt":
         # All versions of Windows are "nt"
-        command = f"cmd /c {command}"
+        command = ["cmd", "/c", *command]
 
     result = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, error = result.communicate()
+    stdout, stderr = result.communicate()
 
     if result.returncode != 0:
-        # Only exits the script for non-zero return code
-        raise Exception(f"Run command failed with code {result.returncode} {output} {error}")
+        raise Exception("Command failed %d %s %s" % (result.returncode, stdout, stderr))
 
 
 def run_harmonizer(config: ServerConfig):
-    login: str = (
-        "--useintegratedsecurity"
+    login: List[str] = (
+        ["--useintegratedsecurity"]
         if config.useintegratedsecurity == "true"
-        else f"--username {config.username} --password {config.password}"
+        else ["--username", config.username, "--password", config.password]
     )
     _run(
-        f"poetry run python edfi_lms_harmonizer --server {config.server} --port {config.port} --dbname {config.db_name} {login}"
+        [
+            "poetry",
+            "run",
+            "python",
+            "edfi_lms_harmonizer",
+            "--server",
+            config.server,
+            "--port",
+            config.port,
+            "--dbname",
+            config.db_name,
+            *login,
+        ],
     )
 
 
-def _sqlcmd_parameters_from(config: ServerConfig) -> str:
-    login: str = (
-        "-E"
+def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
+    login: List[str] = (
+        ["-E"]
         if config.useintegratedsecurity == "true"
-        else f"-U {config.username} -P {config.password}"
+        else ["-U", config.username, "-P", config.password]
     )
 
-    return f"-S {config.server},{config.port} {login}"
+    return ["-S", f"{config.server},{config.port}", *login]
 
 
 def _execute_sql_against_master(config: ServerConfig, sql: str):
-    _run(f'sqlcmd {_sqlcmd_parameters_from(config)} -Q "{sql}"')
+    _run(["sqlcmd", *_sqlcmd_parameters_from(config), "-Q", f'"{sql}"'])
 
 
 def _execute_sql_file_against_database(config: ServerConfig, filename: str):
     _run(
-        f'sqlcmd -I {_sqlcmd_parameters_from(config)} -d {config.db_name} -i "{filename}"'
+        [
+            "sqlcmd",
+            "-I",
+            *_sqlcmd_parameters_from(config),
+            "-d",
+            config.db_name,
+            "-i",
+            filename,
+        ]
     )
 
 
