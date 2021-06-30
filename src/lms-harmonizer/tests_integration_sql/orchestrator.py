@@ -5,7 +5,6 @@
 
 import subprocess
 import os
-import tempfile
 from tests_integration_sql.server_config import ServerConfig
 from typing import List
 
@@ -27,7 +26,7 @@ def _run(command: List[str]):
     stdout, stderr = result.communicate()
 
     if result.returncode != 0:
-        raise Exception("Command failed %d %s %s" % (result.returncode, stdout, stderr))
+        raise Exception("Command failed %d %a %a" % (result.returncode, stdout, stderr))
 
 
 def run_harmonizer(config: ServerConfig):
@@ -64,13 +63,14 @@ def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
 
 
 def _execute_sql_against_master(config: ServerConfig, sql: str):
-    _run(["sqlcmd", *_sqlcmd_parameters_from(config), "-Q", sql])
+    _run(["sqlcmd", "-b", *_sqlcmd_parameters_from(config), "-Q", sql])
 
 
 def _execute_sql_file_against_database(config: ServerConfig, filename: str):
     _run(
         [
             "sqlcmd",
+            "-b",
             "-I",
             *_sqlcmd_parameters_from(config),
             "-d",
@@ -178,18 +178,20 @@ def _load_harmonizer_scripts(config: ServerConfig):
 
 
 def create_snapshot(config: ServerConfig):
-    temp_filename: str = os.path.join(tempfile.gettempdir(), "temp_snapshot")
+    temp_filename: str = os.path.join(os.getcwd(), "temp_harmonizer_snapshot")
     _execute_sql_against_master(
         config,
-        "DROP DATABASE IF EXISTS temp_snapshot;"
-        "CREATE DATABASE temp_snapshot ON"
+        "DROP DATABASE IF EXISTS temp_harmonizer_snapshot;"
+        "CREATE DATABASE temp_harmonizer_snapshot ON"
         f"    (NAME=[{config.db_name}], FILENAME='{temp_filename}')"
         f"    AS SNAPSHOT OF [{config.db_name}];",
     )
 
 
 def delete_snapshot(config: ServerConfig):
-    _execute_sql_against_master(config, "DROP DATABASE IF EXISTS temp_snapshot")
+    _execute_sql_against_master(
+        config, "DROP DATABASE IF EXISTS temp_harmonizer_snapshot"
+    )
 
 
 def restore_snapshot(config: ServerConfig):
@@ -197,7 +199,7 @@ def restore_snapshot(config: ServerConfig):
         config,
         f"ALTER DATABASE {config.db_name} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;"
         f"RESTORE DATABASE {config.db_name} "
-        "FROM DATABASE_SNAPSHOT = 'temp_snapshot';"
+        "FROM DATABASE_SNAPSHOT = 'temp_harmonizer_snapshot';"
         f"ALTER DATABASE {config.db_name} SET MULTI_USER;",
     )
 
@@ -205,7 +207,9 @@ def restore_snapshot(config: ServerConfig):
 def initialize_database(config: ServerConfig):
     _execute_sql_against_master(
         config,
-        f"DROP DATABASE IF EXISTS {config.db_name}; CREATE DATABASE {config.db_name};",
+        "DROP DATABASE IF EXISTS temp_harmonizer_snapshot;"
+        f"DROP DATABASE IF EXISTS {config.db_name};"
+        f"CREATE DATABASE {config.db_name};",
     )
     _load_edfi_scripts(config)
     _load_lms_extension_scripts(config)

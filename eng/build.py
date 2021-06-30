@@ -89,7 +89,7 @@ def _run_tests(exit_immediately: bool = True):
     )
 
 
-def _run_integration_tests(exit_immediately: bool = True):
+def _run_integration_tests_on_github(exit_immediately: bool = True):
     _run_command(
         [
             "poetry",
@@ -98,6 +98,8 @@ def _run_integration_tests(exit_immediately: bool = True):
             "tests_integration_sql",
             "--useintegratedsecurity=false",
             "--username=sa",
+            # Hardcoded password matches temporary SQL Server
+            # Docker container instance
             "--password=abcdefgh1!",
         ],
         exit_immediately,
@@ -203,7 +205,7 @@ def _run_ci_integration_test():
     Calls the commands required for a continuous integration integration testing job.
     """
     _run_install(False)
-    _run_integration_tests(False)
+    _run_integration_tests_on_github(False)
 
 
 def _run_ci_publish():
