@@ -134,3 +134,45 @@ def describe_when_there_are_assignments_to_update():
         ).fetchall()
         assert len(LMSAssignment) == 1
         assert LMSAssignment[0]["Title"] == 'AN UPDATED TITLE'
+
+
+def describe_when_there_are_assignments_to_delete():
+    SIS_SECTION_ID = "sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+    ASSIGNMENT_CATEGORY = 'test_category'
+
+    def it_should_update_existing_assignments(test_mssql_db: Connection):
+        # arrange
+        test_mssql_db.execute(PROC_SQL_DEFINITION)
+
+        insert_descriptor(test_mssql_db, DESCRIPTOR_NAMESPACE, ASSIGNMENT_CATEGORY)
+        insert_lmsx_assignmentcategory_descriptor(test_mssql_db, 1)
+
+        insert_descriptor(test_mssql_db, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
+        insert_lmsx_sourcesystem_descriptor(test_mssql_db, 2)
+
+        insert_lms_section(test_mssql_db, SIS_SECTION_ID, SOURCE_SYSTEM)
+        insert_edfi_section(test_mssql_db, SIS_SECTION_ID)
+        test_mssql_db.execute(
+            """UPDATE LMS.LMSSECTION SET
+                EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+            )
+
+        insert_lms_assignment(
+            test_mssql_db,
+            ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+            SOURCE_SYSTEM,
+            1,
+            ASSIGNMENT_CATEGORY
+            )
+        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+        test_mssql_db.execute("UPDATE LMS.ASSIGNMENT SET TITLE = 'AN UPDATED TITLE', LastModifiedDate = GETDATE(), DeletedAt = GETDATE()")
+
+        # act
+        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+
+        # assert
+        LMSAssignment = test_mssql_db.execute(
+            "SELECT Title from [lmsx].[Assignment]"
+        ).fetchall()
+        assert len(LMSAssignment) == 0
