@@ -374,13 +374,15 @@ INSERT INTO [edfi].[Descriptor]
         [Namespace],
         [CodeValue],
         [ShortDescription],
-        [Description])
+        [Description],
+        [ChangeVersion])
      VALUES
         (
             N'{namespace}',
             N'{value}',
             N'{value}',
-            N'{value}'
+            N'{value}',
+            1
         )
 """
     )
@@ -456,16 +458,15 @@ def insert_lms_assignment(
         connection: Connection,
         source_system_identifier: str,
         source_system: str,
-        section_identifier: str,
+        section_identifier: int,
         assignment_category: str,
-        school_id: int = 1,
         title_and_description: str = "default title and description",
         ):
     # it is not necessary to have a different title and description since
     # both should be updated when required
     connection.execute(
         f"""
-INSERT INTO [lmsx].[Assignment]
+INSERT INTO [lms].[Assignment]
     (
         SourceSystemIdentifier,
         SourceSystem,
@@ -479,8 +480,7 @@ INSERT INTO [lmsx].[Assignment]
      VALUES (
         N'{source_system_identifier}',
         N'{source_system}',
-        N'{section_identifier}',
-        N'{title_and_description}',
+        {section_identifier},
         N'{title_and_description}',
         N'{assignment_category}',
         N'{title_and_description}',
