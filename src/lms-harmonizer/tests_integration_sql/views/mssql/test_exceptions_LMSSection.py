@@ -25,7 +25,7 @@ def describe_when_lms_and_ods_tables_are_both_empty():
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSSection",
+                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
             )
 
             assert len(exceptions) == 0
@@ -50,7 +50,7 @@ def describe_when_lms_and_ods_tables_have_no_matches():
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSSection",
+                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
             )
 
             assert len(exceptions) == 2
@@ -75,7 +75,7 @@ def describe_when_lms_and_ods_tables_have_a_match():
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSSection",
+                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
             )
 
             assert len(exceptions) == 0
@@ -98,7 +98,7 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSSection",
+                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
             )
 
             assert len(exceptions) == 0
@@ -129,7 +129,7 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lms.exceptions_LMSSection",
+                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
             )
 
             assert len(exceptions) == 1

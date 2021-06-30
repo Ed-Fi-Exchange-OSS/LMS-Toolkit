@@ -321,3 +321,122 @@ INSERT INTO [edfi].[Section]
         )
 """
     )
+
+
+def insert_descriptor(connection: Connection, namespace: str, value: str):
+    connection.execute(
+        f"""
+INSERT INTO [edfi].[Descriptor]
+        (
+        [Namespace],
+        [CodeValue],
+        [ShortDescription],
+        [Description])
+     VALUES
+        (
+            N'{namespace}',
+            N'{value}',
+            N'{value}',
+            N'{value}'
+        )
+"""
+    )
+
+
+def insert_lmsx_sourcesystem_descriptor(connection: Connection, id: int):
+    connection.execute(
+        f"""
+INSERT INTO [lmsx].[LMSSourceSystemDescriptor]
+    (LMSSourceSystemDescriptorId)
+     VALUES ( {str(id)} )
+"""
+    )
+
+
+def insert_lmsx_assignmentcategory_descriptor(connection: Connection, id: int):
+    connection.execute(
+        f"""
+INSERT INTO [lmsx].[AssignmentCategoryDescriptor]
+    (AssignmentCategoryDescriptorId)
+     VALUES ( {str(id)} )
+"""
+    )
+
+
+def insert_lmsx_assignment(
+    connection: Connection,
+    assignment_identifier: str,
+    source_system_descriptor_id: int,
+    assignment_category_descriptor_id: int,
+    section_identifier: str,
+    school_id: int = 1,
+    title_and_description: str = "default title and description",
+):
+    # it is not necessary to have a different title and description since
+    # both should be updated when required
+    connection.execute(
+        f"""
+INSERT INTO [lmsx].[Assignment]
+    (
+        AssignmentIdentifier,
+        SchoolId,
+        LMSSourceSystemDescriptorId,
+        Title,
+        AssignmentCategoryDescriptorId,
+        AssignmentDescription,
+        SectionIdentifier,
+        LocalCourseCode,
+        SessionName,
+        SchoolYear
+    )
+     VALUES (
+        N'{assignment_identifier}',
+        {school_id},
+        {source_system_descriptor_id},
+        N'{title_and_description}',
+        {assignment_category_descriptor_id},
+        N'{title_and_description}',
+        N'{section_identifier}',
+        N'Local course code test',
+        N'session name test',
+        1
+     )
+"""
+    )
+
+
+def insert_lms_assignment(
+    connection: Connection,
+    source_system_identifier: str,
+    source_system: str,
+    section_identifier: int,
+    assignment_category: str,
+    title_and_description: str = "default title and description",
+):
+    # it is not necessary to have a different title and description since
+    # both should be updated when required
+    connection.execute(
+        f"""
+INSERT INTO [lms].[Assignment]
+    (
+        SourceSystemIdentifier,
+        SourceSystem,
+        LMSSectionIdentifier,
+        Title,
+        AssignmentCategory,
+        AssignmentDescription,
+        CreateDate,
+        LastModifiedDate
+    )
+     VALUES (
+        N'{source_system_identifier}',
+        N'{source_system}',
+        {section_identifier},
+        N'{title_and_description}',
+        N'{assignment_category}',
+        N'{title_and_description}',
+        GETDATE(),
+        GETDATE()
+     )
+"""
+    )
