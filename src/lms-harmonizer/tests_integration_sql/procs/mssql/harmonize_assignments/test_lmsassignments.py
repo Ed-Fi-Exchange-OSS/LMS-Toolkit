@@ -26,25 +26,25 @@ def describe_when_lms_and_ods_tables_are_both_empty():
         # assert - no errors
 
 
-# def describe_when_lms_and_ods_tables_have_no_matches():
-#     def it_should_run_successfully(test_mssql_db: Connection):
-#         # arrange
-#         test_mssql_db.execute(PROC_SQL_DEFINITION)
-#         insert_lms_section(test_mssql_db, "sis_id_1", SOURCE_SYSTEM)
-#         insert_lms_section(test_mssql_db, "sis_id_2", SOURCE_SYSTEM)
-#         insert_edfi_section(test_mssql_db, "not_matching_sis_id_1")
-#         insert_edfi_section(test_mssql_db, "not_matching_sis_id_2")
+def describe_when_lms_and_ods_tables_have_no_section_matches():
+    def it_should_run_successfully(test_mssql_db: Connection):
+        section_id_1 = "sis_id_1"
+        section_id_2 = "sis_id_2"
+        # arrange
+        test_mssql_db.execute(PROC_SQL_DEFINITION)
+        insert_lms_section(test_mssql_db, section_id_1, SOURCE_SYSTEM)
+        insert_lms_section(test_mssql_db, section_id_2, SOURCE_SYSTEM)
+        insert_edfi_section(test_mssql_db, "not_matching_sis_id_1")
+        insert_edfi_section(test_mssql_db, "not_matching_sis_id_2")
 
-#         # act
-#         test_mssql_db.execute(PROC_EXEC_STATEMENT)
+        # act
+        test_mssql_db.execute(PROC_EXEC_STATEMENT)
 
-#         # assert
-#         LMSSection = test_mssql_db.execute(
-#             "SELECT EdFiSectionId from lms.LMSSection"
-#         ).fetchall()
-#         assert len(LMSSection) == 2
-#         assert LMSSection[0]["EdFiSectionId"] is None
-#         assert LMSSection[1]["EdFiSectionId"] is None
+        # assert
+        LMSSection = test_mssql_db.execute(
+            "SELECT AssignmentIdentifier from [lmsx].[Assignment]"
+        ).fetchall()
+        assert len(LMSSection) == 0
 
 
 # def describe_when_lms_and_ods_tables_have_a_match():

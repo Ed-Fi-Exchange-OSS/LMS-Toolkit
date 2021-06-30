@@ -361,3 +361,50 @@ INSERT INTO [edfi].[Section]
         )
 """
     )
+
+
+def insert_descriptor(
+        connection: Connection,
+        namespace: str,
+        value: str):
+    connection.execute(
+        f"""
+INSERT INTO [edfi].[Descriptor]
+        (
+        [Namespace],
+        [CodeValue],
+        [ShortDescription],
+        [Description])
+     VALUES
+        (
+            N'{namespace}',
+            N'{value}',
+            N'{value}',
+            N'{value}'
+        )
+"""
+    )
+
+
+def insert_lmsx_sourcesystem_descriptor(
+        connection: Connection,
+        id: int):
+    connection.execute(
+        f"""
+INSERT INTO [lmsx].[LMSSourceSystemDescriptor]
+    (LMSSourceSystemDescriptorId)
+     VALUES ( {str(id)} )
+"""
+    )
+
+
+def insert_lmsx_assignmentcategory_descriptor(
+        connection: Connection,
+        id: int):
+    connection.execute(
+        f"""
+INSERT INTO [lmsx].[AssignmentCategoryDescriptor]
+    (AssignmentCategoryDescriptorId)
+     VALUES ( {str(id)} )
+"""
+    )
