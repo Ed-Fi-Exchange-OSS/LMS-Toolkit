@@ -87,7 +87,8 @@ def describe_when_there_are_assignments_to_insert():
 
         # assert
         LMSAssignment = test_mssql_db.execute(
-            "SELECT AssignmentIdentifier from [lmsx].[Assignment]"
+            "SELECT * from [lmsx].[Assignment]"
         ).fetchall()
+        print(LMSAssignment)
         assert len(LMSAssignment) == 1
-        assert LMSAssignment[0]["AssignmentIdentifier"] == ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER
+        assert int(LMSAssignment[0]["AssignmentIdentifier"]) == 1  # It is using the identity field from lms.Assignment

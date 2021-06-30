@@ -288,8 +288,7 @@ CREATE TABLE [lmsx].[Assignment](
     [Discriminator] [nvarchar](128) NULL,
     [CreateDate] [datetime2](7) NOT NULL,
     [LastModifiedDate] [datetime2](7) NOT NULL,
-    [Id] [uniqueidentifier] NOT NULL,
-    [ChangeVersion] [bigint] NOT NULL);
+    [Id] [uniqueidentifier] NOT NULL);
 
 ALTER TABLE [lmsx].[Assignment] ADD  CONSTRAINT [Assignment_DF_CreateDate]  DEFAULT (getdate()) FOR [CreateDate];
 ALTER TABLE [lmsx].[Assignment] ADD  CONSTRAINT [Assignment_DF_LastModifiedDate]  DEFAULT (getdate()) FOR [LastModifiedDate];
