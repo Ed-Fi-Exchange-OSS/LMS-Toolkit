@@ -55,9 +55,7 @@ def harmonize_sections(adapter: Adapter) -> None:
 def harmonize_assignments(adapter: Adapter) -> None:
 
     statements = [
-        Statement(
-            "EXEC lms.harmonize_assignment;", "Harmonizing LMS Assignments."
-        ),
+        Statement("EXEC lms.harmonize_assignment;", "Harmonizing LMS Assignments."),
     ]
 
     adapter.execute(statements)

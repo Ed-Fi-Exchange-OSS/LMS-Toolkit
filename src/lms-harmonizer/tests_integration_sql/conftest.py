@@ -2,14 +2,15 @@
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
-
-from typing import Iterable
+from typing import Iterator
 import pytest
-from sqlalchemy.engine.base import Engine, Connection, Transaction
-from edfi_sql_adapter import sql_adapter
-from tests_integration_sql.migrator_helper_mssql import (
-    migrate_lms_user_and_edfi_student,
+from tests_integration_sql.orchestrator import (
+    create_snapshot,
+    delete_snapshot,
+    initialize_database,
+    restore_snapshot,
 )
+from tests_integration_sql.server_config import ServerConfig
 
 
 def pytest_addoption(parser):
@@ -17,76 +18,77 @@ def pytest_addoption(parser):
     Injects command line options mirroring the harmonizer itself
     """
     parser.addoption(
-        "--server", action="store", default="localhost", help="Database server name or IP address"
+        "--server",
+        action="store",
+        default="localhost",
+        help="Database server name or IP address",
     )
     parser.addoption(
         "--port", action="store", default="1433", help="Database server port number"
     )
     parser.addoption(
-        "--dbname", action="store", default="test_harmonizer_lms_toolkit", help="Name of the test database"
+        "--dbname",
+        action="store",
+        default="test_harmonizer_lms_toolkit",
+        help="Name of the test database",
     )
     parser.addoption(
-        "--useintegratedsecurity", action="store", default="true", help="Use Integrated Security for the database connection"
+        "--useintegratedsecurity",
+        action="store",
+        default="true",
+        help="Use Integrated Security for the database connection",
     )
     parser.addoption(
-        "--username", action="store", default="localuser", help="Database username when not using integrated security"
+        "--username",
+        action="store",
+        default="localuser",
+        help="Database username when not using integrated security",
     )
     parser.addoption(
-        "--password", action="store", default="localpassword", help="Database user password, when not using integrated security"
+        "--password",
+        action="store",
+        default="localpassword",
+        help="Database user password, when not using integrated security",
+    )
+
+
+def _server_config_from(request) -> ServerConfig:
+    return ServerConfig(
+        useintegratedsecurity=request.config.getoption("--useintegratedsecurity"),
+        server=request.config.getoption("--server"),
+        port=request.config.getoption("--port"),
+        db_name=request.config.getoption("--dbname"),
+        username=request.config.getoption("--username"),
+        password=request.config.getoption("--password"),
     )
 
 
 @pytest.fixture(scope="session")
-def mssql_engine(request) -> Engine:
+def mssql_db_config(request) -> Iterator[ServerConfig]:
     """
-    Reads from injected command line options mirroring the harmonizer itself
+    Fixture that wraps an engine to use with snapshot
+    creation and deletion
     """
-    useintegratedsecurity: str = request.config.getoption("--useintegratedsecurity")
-    server: str = request.config.getoption("--server")
-    port: str = request.config.getoption("--port")
-    db_name: str = request.config.getoption("--dbname")
+    config: ServerConfig = _server_config_from(request)
+    initialize_database(config)
+    create_snapshot(config)
 
-    if useintegratedsecurity == "true":
-        return sql_adapter.create_mssql_adapter_with_integrated_security(
-            server, db_name, int(port)
-        ).engine
-    else:
-        username: str = request.config.getoption("--username")
-        password: str = request.config.getoption("--password")
-        return sql_adapter.create_mssql_adapter(
-            username, password, server, db_name, int(port)
-        ).engine
+    yield config
 
-
-def _migrate(connection: Connection):
-    migrate_lms_user_and_edfi_student(connection)
-
-
-@pytest.fixture(scope="session")
-def mssql_connection(mssql_engine) -> Iterable[Connection]:
-    """
-    Fixture that sets up a connection to use
-    """
-    connection = mssql_engine.connect()
-    yield connection
-    connection.close()
+    delete_snapshot(config)
 
 
 @pytest.fixture(autouse=True)
-def test_mssql_db(mssql_connection: Connection, request) -> Connection:
+def test_db_config(mssql_db_config: ServerConfig, request) -> ServerConfig:
     """
-    Fixture that takes the set-up connection and wraps in a transaction. Transaction
-    will be rolled-back automatically after each test.
-
-    Returns both a plain transaction-wrapped Connection and a monkey-patched
-    MssqlLmsOperations that uses that Connection. They may be used interchangeably.
+    Fixture that takes the wrapped engine and passes it along, while
+    providing a finalizer hook to rollback via snapshotting after each test.
     """
-    # Wrap connection in transaction
-    transaction: Transaction = mssql_connection.begin()
 
-    _migrate(mssql_connection)
+    # Rollback via snapshotting in finalizer when test is done
+    def finalizer():
+        restore_snapshot(mssql_db_config)
 
-    # Rollback transaction in finalizer when test is done
-    request.addfinalizer(lambda: transaction.rollback())
+    request.addfinalizer(finalizer)
 
-    return mssql_connection
+    return mssql_db_config

@@ -10,7 +10,11 @@ from edfi_lms_harmonizer.exceptions_reports import (
     create_exception_reports,
     print_summary,
 )
-from edfi_lms_harmonizer.harmonizer import harmonize_users, harmonize_sections, harmonize_assignments
+from edfi_lms_harmonizer.harmonizer import (
+    harmonize_users,
+    harmonize_sections,
+    harmonize_assignments,
+)
 
 
 logger = logging.getLogger(__name__)

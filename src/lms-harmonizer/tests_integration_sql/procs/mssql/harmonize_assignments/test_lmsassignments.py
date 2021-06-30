@@ -3,176 +3,186 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from sqlalchemy.engine.base import Connection
-from tests_integration_sql.mssql_helper import (
+from tests_integration_sql.mssql_loader import (
     insert_lms_assignment,
-    script_sql,
     insert_lms_section,
     insert_edfi_section,
     insert_descriptor,
     insert_lmsx_sourcesystem_descriptor,
-    insert_lmsx_assignmentcategory_descriptor
+    insert_lmsx_assignmentcategory_descriptor,
 )
+from tests_integration_sql.mssql_connection import MSSqlConnection, query
+from tests_integration_sql.server_config import ServerConfig
+from tests_integration_sql.orchestrator import run_harmonizer
+
 
 SOURCE_SYSTEM = "Test_LMS"
-DESCRIPTOR_NAMESPACE = "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/" + SOURCE_SYSTEM
 
-PROC_SQL_DEFINITION = script_sql("1080-lms-assignment.sql")
-PROC_EXEC_STATEMENT = "EXEC lms.harmonize_assignment;"
+DESCRIPTOR_NAMESPACE = (
+    "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/" + SOURCE_SYSTEM
+)
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_run_successfully(test_mssql_db: Connection):
-        # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
-
+    def it_should_run_successfully(test_db_config: ServerConfig):
         # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+        run_harmonizer(test_db_config)
         # assert - no errors
 
 
 def describe_when_lms_and_ods_tables_have_no_section_matches():
-    def it_should_run_successfully(test_mssql_db: Connection):
+    def it_should_run_successfully(test_db_config: ServerConfig):
         section_id_1 = "sis_id_1"
         section_id_2 = "sis_id_2"
+
         # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
-        insert_lms_section(test_mssql_db, section_id_1, SOURCE_SYSTEM)
-        insert_lms_section(test_mssql_db, section_id_2, SOURCE_SYSTEM)
-        insert_edfi_section(test_mssql_db, "not_matching_sis_id_1")
-        insert_edfi_section(test_mssql_db, "not_matching_sis_id_2")
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            insert_lms_section(connection, section_id_1, SOURCE_SYSTEM)
+            insert_lms_section(connection, section_id_2, SOURCE_SYSTEM)
+            insert_edfi_section(connection, "not_matching_sis_id_1")
+            insert_edfi_section(connection, "not_matching_sis_id_2")
 
         # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+        run_harmonizer(test_db_config)
 
         # assert
-        LMSSection = test_mssql_db.execute(
-            "SELECT AssignmentIdentifier from [lmsx].[Assignment]"
-        ).fetchall()
-        assert len(LMSSection) == 0
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSSection = query(
+                connection,
+                "SELECT AssignmentIdentifier from [lmsx].[Assignment]",
+            )
+
+            assert len(LMSSection) == 0
 
 
 def describe_when_there_are_assignments_to_insert():
     SIS_SECTION_ID = "sis_section_id"
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = 'test_category'
+    ASSIGNMENT_CATEGORY = "test_category"
 
-    def it_should_run_successfully(test_mssql_db: Connection):
+    def it_should_run_successfully(test_db_config: ServerConfig):
         # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
-        insert_descriptor(test_mssql_db, DESCRIPTOR_NAMESPACE, ASSIGNMENT_CATEGORY)
-        insert_lmsx_assignmentcategory_descriptor(test_mssql_db, 1)
+            insert_descriptor(connection, DESCRIPTOR_NAMESPACE, ASSIGNMENT_CATEGORY)
+            insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
-        insert_descriptor(test_mssql_db, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
-        insert_lmsx_sourcesystem_descriptor(test_mssql_db, 2)
+            insert_descriptor(connection, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
+            insert_lmsx_sourcesystem_descriptor(connection, 2)
 
-        insert_lms_section(test_mssql_db, SIS_SECTION_ID, SOURCE_SYSTEM)
-        insert_edfi_section(test_mssql_db, SIS_SECTION_ID)
-        test_mssql_db.execute(
-            """UPDATE LMS.LMSSECTION SET
-                EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
+            insert_edfi_section(connection, SIS_SECTION_ID)
+            connection.execute(
+                """UPDATE LMS.LMSSECTION SET
+                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
             )
 
-        insert_lms_assignment(
-            test_mssql_db,
-            ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
-            SOURCE_SYSTEM,
-            1,
-            ASSIGNMENT_CATEGORY
+            insert_lms_assignment(
+                connection,
+                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+                SOURCE_SYSTEM,
+                1,
+                ASSIGNMENT_CATEGORY,
             )
 
         # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+        run_harmonizer(test_db_config)
 
         # assert
-        LMSAssignment = test_mssql_db.execute(
-            "SELECT * from [lmsx].[Assignment]"
-        ).fetchall()
-        assert len(LMSAssignment) == 1
-        assert int(LMSAssignment[0]["AssignmentIdentifier"]) == 1  # It is using the identity field from lms.Assignment
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignment = query(connection, "SELECT * from [lmsx].[Assignment]")
+            assert len(LMSAssignment) == 1
+            assert (
+                int(LMSAssignment[0]["AssignmentIdentifier"]) == 1
+            )  # It is using the identity field from lms.Assignment
 
 
 def describe_when_there_are_assignments_to_update():
     SIS_SECTION_ID = "sis_section_id"
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = 'test_category'
+    ASSIGNMENT_CATEGORY = "test_category"
 
-    def it_should_update_existing_assignments(test_mssql_db: Connection):
+    def it_should_update_existing_assignments(test_db_config: ServerConfig):
         # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            insert_descriptor(connection, DESCRIPTOR_NAMESPACE, ASSIGNMENT_CATEGORY)
+            insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
-        insert_descriptor(test_mssql_db, DESCRIPTOR_NAMESPACE, ASSIGNMENT_CATEGORY)
-        insert_lmsx_assignmentcategory_descriptor(test_mssql_db, 1)
+            insert_descriptor(connection, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
+            insert_lmsx_sourcesystem_descriptor(connection, 2)
 
-        insert_descriptor(test_mssql_db, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
-        insert_lmsx_sourcesystem_descriptor(test_mssql_db, 2)
-
-        insert_lms_section(test_mssql_db, SIS_SECTION_ID, SOURCE_SYSTEM)
-        insert_edfi_section(test_mssql_db, SIS_SECTION_ID)
-        test_mssql_db.execute(
-            """UPDATE LMS.LMSSECTION SET
-                EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
+            insert_edfi_section(connection, SIS_SECTION_ID)
+            connection.execute(
+                """UPDATE LMS.LMSSECTION SET
+                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
             )
 
-        insert_lms_assignment(
-            test_mssql_db,
-            ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
-            SOURCE_SYSTEM,
-            1,
-            ASSIGNMENT_CATEGORY
+            insert_lms_assignment(
+                connection,
+                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+                SOURCE_SYSTEM,
+                1,
+                ASSIGNMENT_CATEGORY,
             )
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
-        test_mssql_db.execute("UPDATE LMS.ASSIGNMENT SET TITLE = 'AN UPDATED TITLE', LastModifiedDate = GETDATE()")
+
+        run_harmonizer(test_db_config)
+
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            connection.execute(
+                "UPDATE LMS.ASSIGNMENT SET TITLE = 'AN UPDATED TITLE', LastModifiedDate = GETDATE()"
+            )
 
         # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+        run_harmonizer(test_db_config)
 
         # assert
-        LMSAssignment = test_mssql_db.execute(
-            "SELECT Title from [lmsx].[Assignment]"
-        ).fetchall()
-        assert len(LMSAssignment) == 1
-        assert LMSAssignment[0]["Title"] == 'AN UPDATED TITLE'
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignment = query(connection, "SELECT Title from [lmsx].[Assignment]")
+            assert len(LMSAssignment) == 1
+            assert LMSAssignment[0]["Title"] == "AN UPDATED TITLE"
 
 
 def describe_when_there_are_assignments_to_delete():
     SIS_SECTION_ID = "sis_section_id"
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = 'test_category'
+    ASSIGNMENT_CATEGORY = "test_category"
 
-    def it_should_update_existing_assignments(test_mssql_db: Connection):
+    def it_should_update_existing_assignments(test_db_config: ServerConfig):
         # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            insert_descriptor(connection, DESCRIPTOR_NAMESPACE, ASSIGNMENT_CATEGORY)
+            insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
-        insert_descriptor(test_mssql_db, DESCRIPTOR_NAMESPACE, ASSIGNMENT_CATEGORY)
-        insert_lmsx_assignmentcategory_descriptor(test_mssql_db, 1)
+            insert_descriptor(connection, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
+            insert_lmsx_sourcesystem_descriptor(connection, 2)
 
-        insert_descriptor(test_mssql_db, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
-        insert_lmsx_sourcesystem_descriptor(test_mssql_db, 2)
-
-        insert_lms_section(test_mssql_db, SIS_SECTION_ID, SOURCE_SYSTEM)
-        insert_edfi_section(test_mssql_db, SIS_SECTION_ID)
-        test_mssql_db.execute(
-            """UPDATE LMS.LMSSECTION SET
-                EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
+            insert_edfi_section(connection, SIS_SECTION_ID)
+            connection.execute(
+                """UPDATE LMS.LMSSECTION SET
+                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
             )
 
-        insert_lms_assignment(
-            test_mssql_db,
-            ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
-            SOURCE_SYSTEM,
-            1,
-            ASSIGNMENT_CATEGORY
+            insert_lms_assignment(
+                connection,
+                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+                SOURCE_SYSTEM,
+                1,
+                ASSIGNMENT_CATEGORY,
             )
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
-        test_mssql_db.execute("UPDATE LMS.ASSIGNMENT SET TITLE = 'AN UPDATED TITLE', LastModifiedDate = GETDATE(), DeletedAt = GETDATE()")
+
+        run_harmonizer(test_db_config)
+
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            connection.execute(
+                "UPDATE LMS.ASSIGNMENT SET TITLE = 'AN UPDATED TITLE', LastModifiedDate = GETDATE(), DeletedAt = GETDATE()"
+            )
 
         # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+        run_harmonizer(test_db_config)
 
         # assert
-        LMSAssignment = test_mssql_db.execute(
-            "SELECT Title from [lmsx].[Assignment]"
-        ).fetchall()
-        assert len(LMSAssignment) == 0
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignment = query(connection, "SELECT Title from [lmsx].[Assignment]")
+            assert len(LMSAssignment) == 0
