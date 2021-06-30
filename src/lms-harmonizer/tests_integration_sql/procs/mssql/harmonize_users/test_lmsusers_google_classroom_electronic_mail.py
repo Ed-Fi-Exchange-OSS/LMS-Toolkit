@@ -12,7 +12,7 @@ from tests_integration_sql.mssql_helper import (
     insert_lms_user_deleted,
 )
 
-SOURCE_SYSTEM = "Google Classroom"
+SOURCE_SYSTEM = "Google"
 PROC_SQL_DEFINITION = script_sql("1020-lms-user-google-classroom.sql")
 
 

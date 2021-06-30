@@ -15,19 +15,19 @@ from edfi_sql_adapter.sql_adapter import Adapter
 
 logger = getLogger(__name__)
 
-QUERY_FOR_SECTIONS = "SELECT * FROM edfilms.exceptions_LMSSection"
+QUERY_FOR_SECTIONS = "SELECT * FROM lmsx.exceptions_LMSSection"
 QUERY_FOR_SECTION_SUMMARY = """
 SELECT
     COUNT(1) as UnmatchedCount
 FROM
-    edfilms.exceptions_LMSSection
+    lmsx.exceptions_LMSSection
     """
-QUERY_FOR_USERS = "SELECT * FROM edfilms.exceptions_LMSUser"
+QUERY_FOR_USERS = "SELECT * FROM lmsx.exceptions_LMSUser"
 QUERY_FOR_USERS_SUMMARY = """
 SELECT
     COUNT(1) as UnmatchedCount
 FROM
-    edfilms.exceptions_LMSUser
+    lmsx.exceptions_LMSUser
     """
 SECTIONS = "sections"
 USERS = "users"

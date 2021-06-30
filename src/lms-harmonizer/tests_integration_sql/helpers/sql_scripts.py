@@ -13,9 +13,9 @@ IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'lms')
 EXEC sys.sp_executesql N'CREATE SCHEMA lms';
         """
 
-CREATE_SCHEMA_EDFILMS = """
-IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'edfilms')
-EXEC sys.sp_executesql N'CREATE SCHEMA edfilms';
+CREATE_SCHEMA_LMSX = """
+IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = N'LMSX')
+EXEC sys.sp_executesql N'CREATE SCHEMA LMSX';
         """
 
 CREATE_TABLE_LMS_USER = """
@@ -214,4 +214,83 @@ CREATE TABLE [edfi].[Section](
 ALTER TABLE [edfi].[Section] ADD  CONSTRAINT [Section_DF_CreateDate]  DEFAULT (getdate()) FOR [CreateDate];
 ALTER TABLE [edfi].[Section] ADD  CONSTRAINT [Section_DF_LastModifiedDate]  DEFAULT (getdate()) FOR [LastModifiedDate];
 ALTER TABLE [edfi].[Section] ADD  CONSTRAINT [Section_DF_Id]  DEFAULT (newid()) FOR [Id];
+"""
+
+CREATE_TABLE_LMS_ASSIGNMENT = """
+CREATE TABLE [lms].[Assignment](
+    [AssignmentIdentifier] [int] IDENTITY(1,1) NOT NULL,
+    [SourceSystemIdentifier] [nvarchar](255) NOT NULL,
+    [SourceSystem] [nvarchar](255) NOT NULL,
+    [LMSSectionIdentifier] [int] NOT NULL,
+    [Title] [nvarchar](255) NOT NULL,
+    [AssignmentCategory] [nvarchar](60) NOT NULL,
+    [AssignmentDescription] [nvarchar](1024) NULL,
+    [StartDateTime] [datetime2](7) NULL,
+    [EndDateTime] [datetime2](7) NULL,
+    [DueDateTime] [datetime2](7) NULL,
+    [MaxPoints] [int] NULL,
+    [SourceCreateDate] [datetime2](7) NULL,
+    [SourceLastModifiedDate] [datetime2](7) NULL,
+    [CreateDate] [datetime2](7) NOT NULL,
+    [LastModifiedDate] [datetime2](7) NOT NULL,
+    [DeletedAt] [datetime2](7) NULL
+);
+"""
+
+CREATE_TABLE_EDFI_DESCRIPTOR = """
+CREATE TABLE [edfi].[Descriptor](
+    [DescriptorId] [int] IDENTITY(1,1) NOT NULL,
+    [Namespace] [nvarchar](255) NOT NULL,
+    [CodeValue] [nvarchar](50) NOT NULL,
+    [ShortDescription] [nvarchar](75) NOT NULL,
+    [Description] [nvarchar](1024) NULL,
+    [PriorDescriptorId] [int] NULL,
+    [EffectiveBeginDate] [date] NULL,
+    [EffectiveEndDate] [date] NULL,
+    [CreateDate] [datetime2](7) NOT NULL,
+    [LastModifiedDate] [datetime2](7) NOT NULL,
+    [Id] [uniqueidentifier] NOT NULL,
+    [ChangeVersion] [bigint] NOT NULL);
+
+ALTER TABLE [edfi].[Descriptor] ADD  CONSTRAINT [Descriptor_DF_CreateDate]  DEFAULT (getdate()) FOR [CreateDate];
+ALTER TABLE [edfi].[Descriptor] ADD  CONSTRAINT [Descriptor_DF_LastModifiedDate]  DEFAULT (getdate()) FOR [LastModifiedDate];
+ALTER TABLE [edfi].[Descriptor] ADD  CONSTRAINT [Descriptor_DF_Id]  DEFAULT (newid()) FOR [Id];
+"""
+
+CREATE_TABLE_LMSX_SOURCESYSTEM_DESCRIPTOR = """
+CREATE TABLE [lmsx].[LMSSourceSystemDescriptor](
+    [LMSSourceSystemDescriptorId] [int] NOT NULL
+);
+"""
+
+CREATE_TABLE_LMSX_ASSIGNMENTCATEGORY_DESCRIPTOR = """
+CREATE TABLE [lmsx].[AssignmentCategoryDescriptor](
+    [AssignmentCategoryDescriptorId] [int] NOT NULL
+)
+"""
+
+CREATE_TABLE_LMSX_ASSIGNMENT = """
+CREATE TABLE [lmsx].[Assignment](
+    [AssignmentIdentifier] [nvarchar](255) NOT NULL,
+    [SchoolId] [int] NOT NULL,
+    [LMSSourceSystemDescriptorId] [int] NOT NULL,
+    [Title] [nvarchar](255) NOT NULL,
+    [AssignmentCategoryDescriptorId] [int] NOT NULL,
+    [AssignmentDescription] [nvarchar](1024) NULL,
+    [StartDateTime] [datetime2](7) NULL,
+    [EndDateTime] [datetime2](7) NULL,
+    [DueDateTime] [datetime2](7) NULL,
+    [MaxPoints] [int] NULL,
+    [SectionIdentifier] [nvarchar](255) NOT NULL,
+    [LocalCourseCode] [nvarchar](60) NOT NULL,
+    [SessionName] [nvarchar](60) NOT NULL,
+    [SchoolYear] [smallint] NOT NULL,
+    [Discriminator] [nvarchar](128) NULL,
+    [CreateDate] [datetime2](7) NOT NULL,
+    [LastModifiedDate] [datetime2](7) NOT NULL,
+    [Id] [uniqueidentifier] NOT NULL);
+
+ALTER TABLE [lmsx].[Assignment] ADD  CONSTRAINT [Assignment_DF_CreateDate]  DEFAULT (getdate()) FOR [CreateDate];
+ALTER TABLE [lmsx].[Assignment] ADD  CONSTRAINT [Assignment_DF_LastModifiedDate]  DEFAULT (getdate()) FOR [LastModifiedDate];
+ALTER TABLE [lmsx].[Assignment] ADD  CONSTRAINT [Assignment_DF_Id]  DEFAULT (newid()) FOR [Id];
 """
