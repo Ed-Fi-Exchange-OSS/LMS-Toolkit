@@ -3,7 +3,7 @@
 -- The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 -- See the LICENSE and NOTICES files in the project root for more information.
 
-CREATE OR ALTER PROCEDURE lms.harmonize_assignment AS
+ALTER   PROCEDURE [lms].[harmonize_assignment] AS
 BEGIN
 	-- This will be used to handle creates and updates from the same temp table
 	SELECT
@@ -100,6 +100,9 @@ BEGIN
 		LMSX.Assignment.AssignmentIdentifier = #ALL_ASSIGNMENTS.AssignmentIdentifier
 		AND
 			#ALL_ASSIGNMENTS.[ASSIGNMENT_LAST_MODIFIED_DATE] > LMSX.Assignment.LastModifiedDate
+
+	DELETE FROM LMSX.Assignment
+		WHERE LMSX.Assignment.AssignmentIdentifier IN (SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL)
 
 	DROP TABLE #ALL_ASSIGNMENTS
 
