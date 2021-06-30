@@ -7,7 +7,6 @@ from sqlalchemy.engine.base import Connection
 from tests_integration_sql.mssql_helper import (
     script_sql,
     insert_lms_section,
-    insert_lms_section_deleted,
     insert_edfi_section,
 )
 
