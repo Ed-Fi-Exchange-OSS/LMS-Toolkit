@@ -73,6 +73,10 @@ jobs:
         SRC_DIR: src/lms-harmonizer
         LOCK_FILE: src/lms-harmonizer/poetry.lock
     steps:
+      # Do first to give SQL Server time to start up
+      - name: Start Docker for SQL Server
+        run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=abcdefgh1!' -e 'MSSQL_PID=Developer' -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
+
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
 
@@ -102,22 +106,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Start Docker for SQL Server
-        run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=abcdefgh1!' -e 'MSSQL_PID=Developer' -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
-
-      - name: Add sqlcmd to local PATH
+      - name: Add sqlcmd to PATH
         run: echo "/opt/mssql-tools/bin" >> $GITHUB_PATH
-
-      - name: Sleep 10 seconds - server startup
-        run: sleep 10s
-        shell: bash
-
-      - name: Create integration database via sqlcmd in container
-        run: docker exec -t mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P abcdefgh1! -Q "CREATE DATABASE test_harmonizer_lms_toolkit"
-
-      - name: Create integration database locally
-        run: sqlcmd -S localhost,1433 -U sa -P abcdefgh1! -Q "DROP DATABASE IF EXISTS test_harmonizer_lms_toolkit; CREATE DATABASE test_harmonizer_lms_toolkit"
-
 
       - name: Run CI Integration Task
         run: python ./eng/build.py ci:integration-test ${{ env.PACKAGE_NAME }}

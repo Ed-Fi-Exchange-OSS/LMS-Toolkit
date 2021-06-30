@@ -12,7 +12,8 @@ from typing import List
 
 def _run(command: List[str]):
 
-    print(f"\033[95m{command}\033[0m")
+    command_as_string: str = " ".join(command)
+    print(f"\033[95m{command_as_string}\033[0m")
 
     # Some system configurations on Windows-based CI servers have trouble
     # finding poetry, others do not. Explicitly calling "cmd /c" seems to help,
@@ -63,7 +64,7 @@ def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
 
 
 def _execute_sql_against_master(config: ServerConfig, sql: str):
-    _run(["sqlcmd", *_sqlcmd_parameters_from(config), "-Q", f'"{sql}"'])
+    _run(["sqlcmd", *_sqlcmd_parameters_from(config), "-Q", sql])
 
 
 def _execute_sql_file_against_database(config: ServerConfig, filename: str):
@@ -87,14 +88,8 @@ def _edfi_script_path(script_name: str) -> str:
             "..",
             "..",
             "..",
-            "docs",
-            "metaed-project",
-            "MetaEdOutput",
-            "EdFi",
-            "Database",
-            "SQLServer",
-            "ODS",
-            "Structure",
+            "utils",
+            "ods-core-sql-5.2",
             script_name,
         )
     )
