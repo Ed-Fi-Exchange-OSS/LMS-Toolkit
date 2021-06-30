@@ -8,7 +8,7 @@ from unittest.mock import MagicMock
 
 from edfi_sql_adapter.sql_adapter import Adapter
 
-from edfi_lms_harmonizer.harmonizer import harmonize_users
+from edfi_lms_harmonizer.harmonizer import harmonize_users, harmonize_assignments
 
 
 def describe_when_harmonizing_users() -> None:
@@ -34,8 +34,8 @@ def describe_when_harmonizing_users() -> None:
         args = adapter.execute.call_args[0]
 
         found = False
-        for a in args[0]:
-            found = found or "harmonize_lmsuser_canvas" in a.sql
+        for call in args[0]:
+            found = found or "harmonize_lmsuser_canvas" in call.sql
 
         assert found
 
@@ -45,8 +45,8 @@ def describe_when_harmonizing_users() -> None:
         args = adapter.execute.call_args[0]
 
         found = False
-        for a in args[0]:
-            found = found or "harmonize_lmsuser_google_classroom" in a.sql
+        for call in args[0]:
+            found = found or "harmonize_lmsuser_google_classroom" in call.sql
 
         assert found
 
@@ -56,7 +56,36 @@ def describe_when_harmonizing_users() -> None:
         args = adapter.execute.call_args[0]
 
         found = False
-        for a in args[0]:
-            found = found or "harmonize_lmsuser_schoology" in a.sql
+        for call in args[0]:
+            found = found or "harmonize_lmsuser_schoology" in call.sql
+
+        assert found
+
+
+def describe_when_harmonizing_assignments() -> None:
+    @pytest.fixture
+    def fixture() -> MagicMock:
+        # Arrange
+        adapter = MagicMock(spec=Adapter)
+
+        # Act
+        harmonize_assignments(adapter)
+
+        # Prepare for assertions
+        return adapter
+
+    def it_makes_one_call_to_the_adapter(fixture) -> None:
+        adapter = fixture
+
+        assert adapter.execute.call_count == 1
+
+    def it_runs_assignments_harmonization(fixture) -> None:
+        adapter = fixture
+
+        args = adapter.execute.call_args[0]
+
+        found = False
+        for call in args[0]:
+            found = found or "harmonize_assignment" in call.sql
 
         assert found
