@@ -12,6 +12,11 @@ from .helpers.sql_scripts import (
     CREATE_TABLE_EDFI_STUDENT_ETC,
     CREATE_TABLE_EDFI_SECTION,
     CREATE_TABLE_LMS_SECTION,
+    CREATE_TABLE_LMS_ASSIGNMENT,
+    CREATE_TABLE_LMSX_ASSIGNMENT,
+    CREATE_TABLE_EDFI_DESCRIPTOR,
+    CREATE_TABLE_LMSX_ASSIGNMENTCATEGORY_DESCRIPTOR,
+    CREATE_TABLE_LMSX_SOURCESYSTEM_DESCRIPTOR
 )
 
 
@@ -33,8 +38,21 @@ def _create_section_tables(connection: Connection):
     connection.execute(CREATE_TABLE_LMS_SECTION)
 
 
+def _create_assignment_tables(connection: Connection):
+    connection.execute(CREATE_TABLE_LMS_ASSIGNMENT)
+    connection.execute(CREATE_TABLE_LMSX_ASSIGNMENT)
+
+
+def _create_descriptor_tables(connection: Connection):
+    connection.execute(CREATE_TABLE_EDFI_DESCRIPTOR)
+    connection.execute(CREATE_TABLE_LMSX_SOURCESYSTEM_DESCRIPTOR)
+    connection.execute(CREATE_TABLE_LMSX_ASSIGNMENTCATEGORY_DESCRIPTOR)
+
+
 # This is a copy/paste shortcut to initialize the test database with the proper structure
 def migrate_lms_user_and_edfi_student(connection: Connection):
     _create_schemas(connection)
     _create_user_tables(connection)
     _create_section_tables(connection)
+    _create_assignment_tables(connection)
+    _create_descriptor_tables(connection)

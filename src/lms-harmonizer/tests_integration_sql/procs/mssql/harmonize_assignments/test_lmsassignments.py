@@ -26,96 +26,96 @@ def describe_when_lms_and_ods_tables_are_both_empty():
         # assert - no errors
 
 
-def describe_when_lms_and_ods_tables_have_no_matches():
-    def it_should_run_successfully(test_mssql_db: Connection):
-        # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
-        insert_lms_section(test_mssql_db, "sis_id_1", SOURCE_SYSTEM)
-        insert_lms_section(test_mssql_db, "sis_id_2", SOURCE_SYSTEM)
-        insert_edfi_section(test_mssql_db, "not_matching_sis_id_1")
-        insert_edfi_section(test_mssql_db, "not_matching_sis_id_2")
+# def describe_when_lms_and_ods_tables_have_no_matches():
+#     def it_should_run_successfully(test_mssql_db: Connection):
+#         # arrange
+#         test_mssql_db.execute(PROC_SQL_DEFINITION)
+#         insert_lms_section(test_mssql_db, "sis_id_1", SOURCE_SYSTEM)
+#         insert_lms_section(test_mssql_db, "sis_id_2", SOURCE_SYSTEM)
+#         insert_edfi_section(test_mssql_db, "not_matching_sis_id_1")
+#         insert_edfi_section(test_mssql_db, "not_matching_sis_id_2")
 
-        # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+#         # act
+#         test_mssql_db.execute(PROC_EXEC_STATEMENT)
 
-        # assert
-        LMSSection = test_mssql_db.execute(
-            "SELECT EdFiSectionId from lms.LMSSection"
-        ).fetchall()
-        assert len(LMSSection) == 2
-        assert LMSSection[0]["EdFiSectionId"] is None
-        assert LMSSection[1]["EdFiSectionId"] is None
-
-
-def describe_when_lms_and_ods_tables_have_a_match():
-    SIS_ID = "sis_id"
-    SECTION_ID = "10000000-0000-0000-0000-000000000000"
-
-    def it_should_run_successfully(test_mssql_db: Connection):
-        # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
-        insert_lms_section(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
-        insert_edfi_section(test_mssql_db, SIS_ID, SECTION_ID)
-
-        # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
-
-        # assert
-        LMSSection = test_mssql_db.execute(
-            "SELECT EdFiSectionId from lms.LMSSection"
-        ).fetchall()
-        assert len(LMSSection) == 1
-        assert LMSSection[0]["EdFiSectionId"] == SECTION_ID
+#         # assert
+#         LMSSection = test_mssql_db.execute(
+#             "SELECT EdFiSectionId from lms.LMSSection"
+#         ).fetchall()
+#         assert len(LMSSection) == 2
+#         assert LMSSection[0]["EdFiSectionId"] is None
+#         assert LMSSection[1]["EdFiSectionId"] is None
 
 
-def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
-    SECTION_ID = "10000000-0000-0000-0000-000000000000"
-    SIS_ID = "sis_id"
+# def describe_when_lms_and_ods_tables_have_a_match():
+#     SIS_ID = "sis_id"
+#     SECTION_ID = "10000000-0000-0000-0000-000000000000"
 
-    def it_should_ignore_the_deleted_record(test_mssql_db: Connection):
-        # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
-        insert_lms_section_deleted(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
-        insert_edfi_section(test_mssql_db, SIS_ID, SECTION_ID)
+#     def it_should_run_successfully(test_mssql_db: Connection):
+#         # arrange
+#         test_mssql_db.execute(PROC_SQL_DEFINITION)
+#         insert_lms_section(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
+#         insert_edfi_section(test_mssql_db, SIS_ID, SECTION_ID)
 
-        # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+#         # act
+#         test_mssql_db.execute(PROC_EXEC_STATEMENT)
 
-        # assert
-        LMSSection = test_mssql_db.execute(
-            "SELECT EdFiSectionId from lms.LMSSection"
-        ).fetchall()
-        assert len(LMSSection) == 1
-        assert LMSSection[0]["EdFiSectionId"] is None
+#         # assert
+#         LMSSection = test_mssql_db.execute(
+#             "SELECT EdFiSectionId from lms.LMSSection"
+#         ).fetchall()
+#         assert len(LMSSection) == 1
+#         assert LMSSection[0]["EdFiSectionId"] == SECTION_ID
 
 
-def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
-    SECTION_ID = "10000000-0000-0000-0000-000000000000"
-    SIS_ID = "sis_id"
-    NOT_MATCHING_SIS_ID = "not_matching_sis_id"
+# def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
+#     SECTION_ID = "10000000-0000-0000-0000-000000000000"
+#     SIS_ID = "sis_id"
 
-    def it_should_run_successfully(test_mssql_db: Connection):
-        # arrange
-        test_mssql_db.execute(PROC_SQL_DEFINITION)
-        insert_lms_section(test_mssql_db, SIS_ID, SOURCE_SYSTEM)  # Matching section
-        insert_edfi_section(test_mssql_db, SIS_ID, SECTION_ID)  # Matching section
+#     def it_should_ignore_the_deleted_record(test_mssql_db: Connection):
+#         # arrange
+#         test_mssql_db.execute(PROC_SQL_DEFINITION)
+#         insert_lms_section_deleted(test_mssql_db, SIS_ID, SOURCE_SYSTEM)
+#         insert_edfi_section(test_mssql_db, SIS_ID, SECTION_ID)
 
-        insert_lms_section(
-            test_mssql_db, NOT_MATCHING_SIS_ID, SOURCE_SYSTEM
-        )  # Not matching section
-        insert_edfi_section(
-            test_mssql_db, "also_not_matching_sis_id"
-        )  # Not matching section
+#         # act
+#         test_mssql_db.execute(PROC_EXEC_STATEMENT)
 
-        # act
-        test_mssql_db.execute(PROC_EXEC_STATEMENT)
+#         # assert
+#         LMSSection = test_mssql_db.execute(
+#             "SELECT EdFiSectionId from lms.LMSSection"
+#         ).fetchall()
+#         assert len(LMSSection) == 1
+#         assert LMSSection[0]["EdFiSectionId"] is None
 
-        # assert
-        LMSSection = test_mssql_db.execute(
-            "SELECT EdFiSectionId, SISSectionIdentifier from lms.LMSSection"
-        ).fetchall()
-        assert len(LMSSection) == 2
-        assert LMSSection[0]["SISSectionIdentifier"] == SIS_ID
-        assert LMSSection[0]["EdFiSectionId"] == SECTION_ID
-        assert LMSSection[1]["SISSectionIdentifier"] == NOT_MATCHING_SIS_ID
-        assert LMSSection[1]["EdFiSectionId"] is None
+
+# def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
+#     SECTION_ID = "10000000-0000-0000-0000-000000000000"
+#     SIS_ID = "sis_id"
+#     NOT_MATCHING_SIS_ID = "not_matching_sis_id"
+
+#     def it_should_run_successfully(test_mssql_db: Connection):
+#         # arrange
+#         test_mssql_db.execute(PROC_SQL_DEFINITION)
+#         insert_lms_section(test_mssql_db, SIS_ID, SOURCE_SYSTEM)  # Matching section
+#         insert_edfi_section(test_mssql_db, SIS_ID, SECTION_ID)  # Matching section
+
+#         insert_lms_section(
+#             test_mssql_db, NOT_MATCHING_SIS_ID, SOURCE_SYSTEM
+#         )  # Not matching section
+#         insert_edfi_section(
+#             test_mssql_db, "also_not_matching_sis_id"
+#         )  # Not matching section
+
+#         # act
+#         test_mssql_db.execute(PROC_EXEC_STATEMENT)
+
+#         # assert
+#         LMSSection = test_mssql_db.execute(
+#             "SELECT EdFiSectionId, SISSectionIdentifier from lms.LMSSection"
+#         ).fetchall()
+#         assert len(LMSSection) == 2
+#         assert LMSSection[0]["SISSectionIdentifier"] == SIS_ID
+#         assert LMSSection[0]["EdFiSectionId"] == SECTION_ID
+#         assert LMSSection[1]["SISSectionIdentifier"] == NOT_MATCHING_SIS_ID
+#         assert LMSSection[1]["EdFiSectionId"] is None
