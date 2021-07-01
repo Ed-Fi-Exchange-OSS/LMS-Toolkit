@@ -95,7 +95,8 @@ BEGIN
 		LMSX.Assignment.[StartDateTime] = #ALL_ASSIGNMENTS.StartDateTime,
 		LMSX.Assignment.[EndDateTime] = #ALL_ASSIGNMENTS.EndDateTime,
 		LMSX.Assignment.[DueDateTime] = #ALL_ASSIGNMENTS.DueDateTime,
-		LMSX.Assignment.[MaxPoints] = #ALL_ASSIGNMENTS.MaxPoints
+		LMSX.Assignment.[MaxPoints] = #ALL_ASSIGNMENTS.MaxPoints,
+		LMSX.Assignment.[LastModifiedDate] = GETDATE()
 	FROM
 		#ALL_ASSIGNMENTS
 	WHERE
