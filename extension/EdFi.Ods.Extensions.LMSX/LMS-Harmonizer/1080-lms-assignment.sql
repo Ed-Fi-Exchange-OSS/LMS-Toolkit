@@ -7,7 +7,7 @@ CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment] AS
 BEGIN
     SET NOCOUNT ON;
 
-	-- This will be used to handle creates and updates from the same temp table
+	-- Load temporal table
 	SELECT
 		lmsAssignment.AssignmentIdentifier [AssignmentIdentifier],
 		sourceSystemDescriptor.DescriptorId [LMSSourceSystemDescriptorId],
@@ -48,6 +48,7 @@ BEGIN
 			ON assignmentCatDescriptor.DescriptorId = AssignmentCategoryDescriptor.AssignmentCategoryDescriptorId
 
 
+	-- Insert new records
 	INSERT INTO lmsx.[Assignment]
 		([AssignmentIdentifier]
 		,[LMSSourceSystemDescriptorId]
@@ -87,6 +88,8 @@ BEGIN
 		AND
 			[ASSIGNMENT_DELETED] IS NULL
 
+
+	-- Update existing records
 	UPDATE LMSX.Assignment
 	SET
 		LMSX.Assignment.[Title] = #ALL_ASSIGNMENTS.Title,
@@ -104,6 +107,13 @@ BEGIN
 		AND
 			#ALL_ASSIGNMENTS.[ASSIGNMENT_LAST_MODIFIED_DATE] > LMSX.Assignment.LastModifiedDate
 
+
+	-- Delete submissions linked to the assignment that is being deleted
+	DELETE FROM LMSX.AssignmentSubmission
+		WHERE LMSX.AssignmentSubmission.AssignmentIdentifier IN (SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL)
+
+
+	-- Delete assignments when needed
 	DELETE FROM LMSX.Assignment
 		WHERE LMSX.Assignment.AssignmentIdentifier IN (SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL)
 
