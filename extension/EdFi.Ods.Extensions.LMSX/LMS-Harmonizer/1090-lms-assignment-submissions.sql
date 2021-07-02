@@ -6,18 +6,17 @@
 CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment_submissions] AS
 BEGIN
     SET NOCOUNT ON;
-	select * from edfi.Descriptor edfides
-	inner join lmsx.SubmissionStatusDescriptor lmsdes on edfides.DescriptorId = lmsdes.SubmissionStatusDescriptorId
 
+	-- Load temporal table
 	SELECT
-		lmsSubmission.AssignmentSubmissionIdentifier, --[AssignmentSubmissionIdentifier],
-		lmsUser.EdFiStudentId, --[StudentUSI],
-		lmsxAssignment.AssignmentIdentifier, --[AssignmentIdentifier],
-		lmsxAssignment.SchoolId, --[SchoolId],
-		submissionStatusDescriptor.DescriptorId, --[SubmissionStatusDescriptorId],
-		lmsSubmission.SubmissionDateTime, --[SubmissionDateTime],
-		lmsSubmission.EarnedPoints, --[EarnedPoints],
-		lmsSubmission.Grade, --[Grade],
+		lmsSubmission.AssignmentSubmissionIdentifier,
+		lmsUser.EdFiStudentId,
+		lmsxAssignment.AssignmentIdentifier,
+		lmsxAssignment.SchoolId,
+		submissionStatusDescriptor.DescriptorId,
+		lmsSubmission.SubmissionDateTime,
+		lmsSubmission.EarnedPoints,
+		lmsSubmission.Grade,
 		lmsSubmission.CreateDate,
 		lmsSubmission.LastModifiedDate,
 		lmsSubmission.DeletedAt
@@ -33,7 +32,7 @@ BEGIN
 		INNER JOIN LMSX.SubmissionStatusDescriptor lmsxSubmissionStatus
 			ON submissionStatusDescriptor.DescriptorId = lmsxSubmissionStatus.SubmissionStatusDescriptorId
 
-
+	-- Insert new records
 	INSERT INTO LMSX.AssignmentSubmission(
 		[AssignmentSubmissionIdentifier],
 		[StudentUSI],
@@ -45,13 +44,13 @@ BEGIN
 		[Grade]
 	)
 	SELECT
-		AssignmentSubmissionIdentifier, --[AssignmentSubmissionIdentifier],
-		EdFiStudentId, --[StudentUSI],
-		AssignmentIdentifier, --[AssignmentIdentifier],
-		SchoolId, --[SchoolId],
-		DescriptorId, --[SubmissionStatusDescriptorId],
-		SubmissionDateTime, --[SubmissionDateTime],
-		EarnedPoints, --[EarnedPoints],
+		AssignmentSubmissionIdentifier,
+		EdFiStudentId,
+		AssignmentIdentifier,
+		SchoolId,
+		DescriptorId,
+		SubmissionDateTime,
+		EarnedPoints,
 		Grade,
 		CreateDate,
 		LastModifiedDate,
@@ -62,6 +61,27 @@ BEGIN
 			(SELECT AssignmentSubmission.AssignmentSubmissionIdentifier FROM LMSX.AssignmentSubmission)
 		AND #ALL_SUBMISSIONS.DeletedAt IS NULL
 
+
+	-- Update existing records
+	UPDATE LMSX.AssignmentSubmission SET
+		LMSX.AssignmentSubmission.SubmissionStatusDescriptorId = #ALL_SUBMISSIONS.DescriptorId,
+		LMSX.AssignmentSubmission.SubmissionDateTime = #ALL_SUBMISSIONS.SubmissionDateTime,
+		LMSX.AssignmentSubmission.EarnedPoints = #ALL_SUBMISSIONS.EarnedPoints,
+		LMSX.AssignmentSubmission.Grade = #ALL_SUBMISSIONS.Grade,
+		LMSX.AssignmentSubmission.LastModifiedDate = GETDATE()
+	FROM #ALL_SUBMISSIONS
+	WHERE #ALL_SUBMISSIONS.AssignmentSubmissionIdentifier = LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier
+	AND #ALL_SUBMISSIONS.LastModifiedDate > LMSX.AssignmentSubmission.LastModifiedDate
+	AND #ALL_SUBMISSIONS.DeletedAt IS NULL
+
+
+	-- delete records if needed
+	DELETE FROM LMSX.AssignmentSubmission
+	WHERE LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier IN
+		(SELECT LMSSUBMISSION.AssignmentSubmissionIdentifier FROM LMS.AssignmentSubmission LMSSUBMISSION WHERE LMSSUBMISSION.DeletedAt IS NOT NULL)
+
+
 	DROP TABLE #ALL_SUBMISSIONS
+
 
 END;
