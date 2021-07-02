@@ -20,10 +20,10 @@ def describe_when_lms_and_ods_tables_have_no_matches():
     def it_should_run_successfully(test_db_config: ServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            insert_lms_user(connection, "sis_id_1", SOURCE_SYSTEM)
-            insert_lms_user(connection, "sis_id_2", SOURCE_SYSTEM)
-            insert_edfi_student(connection, "not_matching_sis_id_1")
-            insert_edfi_student(connection, "not_matching_sis_id_2")
+            insert_lms_user(connection, "sis_id_1", "e1@e.com", SOURCE_SYSTEM)
+            insert_lms_user(connection, "sis_id_2", "e2@e.com", SOURCE_SYSTEM)
+            insert_edfi_student(connection, "not_matching_unique_id_1")
+            insert_edfi_student(connection, "not_matching_unique_id_2")
 
         # act
         run_harmonizer(test_db_config)
@@ -39,12 +39,13 @@ def describe_when_lms_and_ods_tables_have_no_matches():
 def describe_when_lms_and_ods_tables_have_a_match():
     STUDENT_ID = "10000000-0000-0000-0000-000000000000"
     SIS_ID = "sis_id"
+    UNIQUE_ID = f"{SIS_ID}1"
 
     def it_should_run_successfully(test_db_config: ServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            insert_lms_user(connection, SIS_ID, SOURCE_SYSTEM)
-            insert_edfi_student(connection, SIS_ID, STUDENT_ID)
+            insert_lms_user(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
+            insert_edfi_student(connection, UNIQUE_ID, STUDENT_ID)
 
         # act
         run_harmonizer(test_db_config)
@@ -59,12 +60,13 @@ def describe_when_lms_and_ods_tables_have_a_match():
 def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
     STUDENT_ID = "10000000-0000-0000-0000-000000000000"
     SIS_ID = "sis_id"
+    UNIQUE_ID = f"{SIS_ID}1"
 
     def it_should_ignore_the_deleted_record(test_db_config: ServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            insert_lms_user_deleted(connection, SIS_ID, SOURCE_SYSTEM)
-            insert_edfi_student(connection, SIS_ID, STUDENT_ID)
+            insert_lms_user_deleted(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
+            insert_edfi_student(connection, UNIQUE_ID, STUDENT_ID)
 
         # act
         run_harmonizer(test_db_config)
@@ -79,16 +81,17 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
 def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
     STUDENT_ID = "10000000-0000-0000-0000-000000000000"
     SIS_ID = "sis_id"
+    UNIQUE_ID = f"{SIS_ID}1"
     NOT_MATCHING_SIS_ID = "not_matching_sis_id"
 
     def it_should_run_successfully(test_db_config: ServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            insert_lms_user(connection, SIS_ID, SOURCE_SYSTEM)
-            insert_edfi_student(connection, SIS_ID, STUDENT_ID)
+            insert_lms_user(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
+            insert_edfi_student(connection, UNIQUE_ID, STUDENT_ID)
 
-            insert_lms_user(connection, NOT_MATCHING_SIS_ID, SOURCE_SYSTEM)
-            insert_edfi_student(connection, "also_not_matching_sis_id")
+            insert_lms_user(connection, NOT_MATCHING_SIS_ID, "e1@e.com", SOURCE_SYSTEM)
+            insert_edfi_student(connection, "also_not_matching_unique_id")
 
         # act
         run_harmonizer(test_db_config)
@@ -96,10 +99,11 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSUser = query(
-                connection, "SELECT EdFiStudentId, SISUserIdentifier from lms.LMSUser"
+                connection,
+                "SELECT EdFiStudentId, SourceSystemIdentifier from lms.LMSUser",
             )
             assert len(LMSUser) == 2
-            assert LMSUser[0]["SISUserIdentifier"] == SIS_ID
+            assert LMSUser[0]["SourceSystemIdentifier"] == SIS_ID
             assert LMSUser[0]["EdFiStudentId"] == STUDENT_ID
-            assert LMSUser[1]["SISUserIdentifier"] == NOT_MATCHING_SIS_ID
+            assert LMSUser[1]["SourceSystemIdentifier"] == NOT_MATCHING_SIS_ID
             assert LMSUser[1]["EdFiStudentId"] is None

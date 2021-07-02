@@ -7,35 +7,8 @@ CREATE OR ALTER PROCEDURE lms.harmonize_lmsuser_google_classroom AS
 BEGIN
     SET NOCOUNT ON;
 
--- Update based on any EdFi Student IdentificationCode matching with a LMS SISUserIdentifier
-    UPDATE 
-        lms.LMSUser
-    SET
-        EdFiStudentId = selectcodes.Id
-    FROM
-        (
-            SELECT
-                codes.IdentificationCode, s.Id
-            FROM
-                edfi.Student s
-            OUTER APPLY (
-                SELECT
-                    IdentificationCode  
-                FROM
-                    edfi.StudentEducationOrganizationAssociationStudentIdentificationCode sic
-                WHERE
-                    s.StudentUsi = sic.StudentUsi
-            ) AS codes
-        ) AS selectcodes
-    WHERE
-        SISUserIdentifier = selectcodes.IdentificationCode
-    AND
-        EdFiStudentId is NULL
-	AND
-        DeletedAt IS NULL;
-        
 -- Update based on any EdFi Student Electronic Mail matching with a LMS SISUserIdentifier
-    UPDATE 
+    UPDATE
         lms.LMSUser
     SET
         EdFiStudentId = selectemails.Id
@@ -47,7 +20,7 @@ BEGIN
                 edfi.Student s
             OUTER APPLY (
                 SELECT
-                    ElectronicMailAddress  
+                    ElectronicMailAddress
                 FROM
                     edfi.StudentEducationOrganizationAssociationElectronicMail sem
                 WHERE
@@ -55,10 +28,10 @@ BEGIN
             ) AS emails
         ) AS selectemails
     WHERE
-        SISUserIdentifier = selectemails.ElectronicMailAddress
+        EmailAddress = selectemails.ElectronicMailAddress
     AND
         EdFiStudentId is NULL
 	AND
         DeletedAt IS NULL;
-   
+
 END;
