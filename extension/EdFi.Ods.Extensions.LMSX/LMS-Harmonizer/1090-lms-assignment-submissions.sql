@@ -10,7 +10,7 @@ BEGIN
 	-- Load temporal table
 	SELECT
 		lmsSubmission.AssignmentSubmissionIdentifier,
-		lmsUser.EdFiStudentId,
+		EDFISTUDENT.StudentUSI,
 		lmsxAssignment.AssignmentIdentifier,
 		lmsxAssignment.SchoolId,
 		submissionStatusDescriptor.DescriptorId,
@@ -28,6 +28,8 @@ BEGIN
 		ON lmsUser.LMSUserIdentifier = lmsSubmission.LMSUserIdentifier
 	INNER JOIN EDFI.Descriptor submissionStatusDescriptor
 		ON submissionStatusDescriptor.CodeValue = lmsSubmission.SubmissionStatus
+	INNER JOIN EDFI.Student EDFISTUDENT
+		ON EDFISTUDENT.Id = lmsUser.EdFiStudentId
 
 		INNER JOIN LMSX.SubmissionStatusDescriptor lmsxSubmissionStatus
 			ON submissionStatusDescriptor.DescriptorId = lmsxSubmissionStatus.SubmissionStatusDescriptorId
@@ -47,7 +49,7 @@ BEGIN
 	)
 	SELECT
 		AssignmentSubmissionIdentifier,
-		EdFiStudentId,
+		StudentUSI,
 		AssignmentIdentifier,
 		SchoolId,
 		DescriptorId,
