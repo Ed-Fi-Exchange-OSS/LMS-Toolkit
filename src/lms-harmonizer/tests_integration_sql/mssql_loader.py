@@ -6,42 +6,8 @@
 from pyodbc import Connection
 
 
-def insert_lms_user(connection: Connection, sis_identifier: str, source_system: str):
-    connection.execute(
-        f"""
-    INSERT INTO [lms].[LMSUser]
-           ([SourceSystemIdentifier]
-           ,[SourceSystem]
-           ,[UserRole]
-           ,[SISUserIdentifier]
-           ,[LocalUserIdentifier]
-           ,[Name]
-           ,[EmailAddress]
-           ,[SourceCreateDate]
-           ,[SourceLastModifiedDate]
-           ,[CreateDate]
-           ,[LastModifiedDate]
-           ,[DeletedAt])
-     VALUES
-           (N'{sis_identifier}'
-           ,N'{source_system}'
-           ,N'student'
-           ,N'{sis_identifier}'
-           ,N'{sis_identifier}'
-           ,N'{sis_identifier}'
-           ,N'{sis_identifier}'
-           ,NULL
-           ,NULL
-           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
-           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
-           ,NULL
-           )
-"""
-    )
-
-
-def insert_lms_user_deleted(
-    connection: Connection, sis_identifier: str, source_system: str
+def insert_lms_user(
+    connection: Connection, sis_identifier: str, email_address: str, source_system: str
 ):
     connection.execute(
         f"""
@@ -62,10 +28,46 @@ def insert_lms_user_deleted(
            (N'{sis_identifier}'
            ,N'{source_system}'
            ,N'student'
-           ,N'{sis_identifier}'
-           ,N'{sis_identifier}'
-           ,N'{sis_identifier}'
-           ,N'{sis_identifier}'
+           ,N'{sis_identifier}1'
+           ,N'{sis_identifier}2'
+           ,N'{sis_identifier}3'
+           ,N'{email_address}'
+           ,NULL
+           ,NULL
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           ,NULL
+           )
+"""
+    )
+
+
+def insert_lms_user_deleted(
+    connection: Connection, sis_identifier: str, email_address: str, source_system: str
+):
+    connection.execute(
+        f"""
+    INSERT INTO [lms].[LMSUser]
+           ([SourceSystemIdentifier]
+           ,[SourceSystem]
+           ,[UserRole]
+           ,[SISUserIdentifier]
+           ,[LocalUserIdentifier]
+           ,[Name]
+           ,[EmailAddress]
+           ,[SourceCreateDate]
+           ,[SourceLastModifiedDate]
+           ,[CreateDate]
+           ,[LastModifiedDate]
+           ,[DeletedAt])
+     VALUES
+           (N'{sis_identifier}'
+           ,N'{source_system}'
+           ,N'student'
+           ,N'{sis_identifier}1'
+           ,N'{sis_identifier}2'
+           ,N'{sis_identifier}3'
+           ,N'{email_address}'
            ,NULL
            ,NULL
            ,CAST(N'2021-01-01 00:00:00' AS DateTime)
@@ -182,32 +184,6 @@ INSERT INTO [edfi].[Student]
            );
 
 SET IDENTITY_INSERT edfi.Student OFF;
-"""
-    )
-
-
-def insert_edfi_student_identification_code(
-    connection: Connection,
-    student_usi: int,
-    identification_code: str,
-):
-    connection.execute(
-        f"""
-INSERT INTO [edfi].[StudentEducationOrganizationAssociationStudentIdentificationCode]
-           ([AssigningOrganizationIdentificationCode]
-           ,[EducationOrganizationId]
-           ,[StudentIdentificationSystemDescriptorId]
-           ,[StudentUSI]
-           ,[IdentificationCode]
-           ,[CreateDate])
-     VALUES
-           (N'{identification_code}'
-           ,1
-           ,2
-           ,{student_usi}
-           ,N'{identification_code}'
-           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
-           )
 """
     )
 
