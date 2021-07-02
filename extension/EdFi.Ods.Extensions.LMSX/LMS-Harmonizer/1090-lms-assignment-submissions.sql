@@ -41,7 +41,9 @@ BEGIN
 		[SubmissionStatusDescriptorId],
 		[SubmissionDateTime],
 		[EarnedPoints],
-		[Grade]
+		[Grade],
+		[CreateDate],
+		[LastModifiedDate]
 	)
 	SELECT
 		AssignmentSubmissionIdentifier,
@@ -53,8 +55,7 @@ BEGIN
 		EarnedPoints,
 		Grade,
 		CreateDate,
-		LastModifiedDate,
-		DeletedAt
+		LastModifiedDate
 	FROM #ALL_SUBMISSIONS
 	WHERE
 		#ALL_SUBMISSIONS.AssignmentSubmissionIdentifier NOT IN
