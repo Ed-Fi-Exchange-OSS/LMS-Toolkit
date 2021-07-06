@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from tests_integration_sql.mssql_loader import (
+    insert_edfi_student,
     insert_lms_assignment,
     insert_lms_section,
     insert_edfi_section,
@@ -12,7 +13,7 @@ from tests_integration_sql.mssql_loader import (
     insert_lmsx_assignmentcategory_descriptor,
     insert_lms_assignment_submissions,
     insert_lms_user,
-    insert_lmsx_assignmentsubmissionstatus_descriptor
+    insert_lmsx_assignmentsubmissionstatus_descriptor,
 )
 from tests_integration_sql.mssql_connection import MSSqlConnection, query
 from tests_integration_sql.server_config import ServerConfig
@@ -56,7 +57,11 @@ def describe_when_there_are_assignment_submissions_to_insert():
             insert_descriptor(connection, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
             insert_lmsx_sourcesystem_descriptor(connection, 2)
 
-            insert_descriptor(connection, SUBMISSION_STATUS_DESCRIPTOR_NAMESPACE, ASSIGNMENT_SUBMISSION_STATUS)
+            insert_descriptor(
+                connection,
+                SUBMISSION_STATUS_DESCRIPTOR_NAMESPACE,
+                ASSIGNMENT_SUBMISSION_STATUS,
+            )
             insert_lmsx_assignmentsubmissionstatus_descriptor(connection, 3)
 
             insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
@@ -74,10 +79,11 @@ def describe_when_there_are_assignment_submissions_to_insert():
                 ASSIGNMENT_CATEGORY,
             )
 
-            insert_lms_user(
-                connection,
-                USER_SIS_ID,
-                SOURCE_SYSTEM
+            insert_lms_user(connection, USER_SIS_ID, SOURCE_SYSTEM)
+            insert_edfi_student(connection, USER_SIS_ID)
+            connection.execute(
+                """UPDATE LMS.LMSUSER SET
+                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
             )
 
             insert_lms_assignment_submissions(
@@ -87,7 +93,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
                 1,
                 ASSIGNMENT_SUBMISSION_STATUS,
                 SOURCE_SYSTEM,
-                False
+                False,
             )
 
         # act
@@ -95,7 +101,9 @@ def describe_when_there_are_assignment_submissions_to_insert():
 
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignmentSubmission = query(connection, "SELECT * from [lmsx].[AssignmentSubmission]")
+            LMSAssignmentSubmission = query(
+                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+            )
 
             assert len(LMSAssignmentSubmission) == 1
             assert (
