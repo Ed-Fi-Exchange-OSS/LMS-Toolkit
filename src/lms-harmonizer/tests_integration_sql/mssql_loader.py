@@ -416,3 +416,63 @@ INSERT INTO [lms].[Assignment]
      )
 """
     )
+
+
+def insert_lms_assignment_submissions(
+    connection: Connection,
+    source_system_identifier: str,
+    lms_assignment_identifier: int,
+    lms_user_identifier: int,
+    submission_status: str,
+    source_system: str = "Test_LMS",
+    isDeleted: bool = False,
+):
+    # it is not necessary to have a different title and description since
+    # both should be updated when required
+    connection.execute(
+        f"""
+INSERT INTO [lms].[AssignmentSubmission]
+    (
+        [SourceSystemIdentifier]
+        ,[SourceSystem]
+        ,[AssignmentIdentifier]
+        ,[LMSUserIdentifier]
+        ,[SubmissionStatus]
+        ,[SubmissionDateTime]
+        ,[EarnedPoints]
+        ,[Grade]
+        ,[SourceCreateDate]
+        ,[SourceLastModifiedDate]
+        ,[CreateDate]
+        ,[LastModifiedDate]
+        ,[DeletedAt]
+    )
+VALUES
+    (
+        N'{source_system_identifier}',
+        N'{source_system}',
+        {lms_assignment_identifier},
+        {lms_user_identifier},
+        N'{submission_status}',
+        GETDATE(),
+        0,
+        N'A',
+        GETDATE(),
+        GETDATE(),
+        GETDATE(),
+        GETDATE(),
+        {'GETDATE()' if isDeleted else 'NULL'}
+    )
+
+"""
+    )
+
+
+def insert_lmsx_assignmentsubmissionstatus_descriptor(connection: Connection, id: int):
+    connection.execute(
+        f"""
+INSERT INTO [lmsx].[SubmissionStatusDescriptor]
+    (SubmissionStatusDescriptorId)
+     VALUES ( {str(id)} )
+"""
+    )
