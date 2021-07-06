@@ -3,9 +3,9 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Dict, Optional
+from typing import Dict
 from datetime import datetime
-from pandas import DataFrame, to_numeric
+from pandas import DataFrame
 from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 
@@ -68,13 +68,10 @@ def coursework_to_assignments_dfs(
                 "dueTime.minutes",
             ]
         ]
-        filled_df: Optional[DataFrame] = due_date_df.fillna("0")
-        if filled_df is None:
-            raise ValueError  # fillna will never return None in this usage
-        coursework_df["DueDateTime"] = filled_df.apply(
-            lambda date_element: datetime(
-                *to_numeric(date_element, downcast="integer")
-            ),
+        coursework_df["DueDateTime"] = due_date_df.apply(
+            lambda date_element: ""
+            if date_element.isnull().any()
+            else datetime(*date_element.astype(float).astype(int)),
             axis=1,
         )
     else:

@@ -78,4 +78,16 @@
 		<Description>Student chose to "unsubmit" the assignment.</Description>
 		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
 	</SubmissionStatusDescriptor>
+    <SubmissionStatusDescriptor>
+		<CodeValue>LATE</CodeValue>
+		<ShortDescription>Late</ShortDescription>
+		<Description>Whether the submission was made after the applicable due date.</Description>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
+	</SubmissionStatusDescriptor>
+    <SubmissionStatusDescriptor>
+		<CodeValue>MISSING</CodeValue>
+		<ShortDescription>Missing</ShortDescription>
+		<Description>Whether the submission is missing, which generally means past-due and not yet submitted.</Description>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Google</Namespace>
+	</SubmissionStatusDescriptor>
 </InterchangeDescriptors>
