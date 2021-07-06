@@ -7,7 +7,7 @@ CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment_submissions] AS
 BEGIN
     SET NOCOUNT ON;
 
-	-- Load temporal table
+	-- Load temporary table
 	SELECT
 		lmsSubmission.AssignmentSubmissionIdentifier,
 		EDFISTUDENT.StudentUSI,
@@ -34,7 +34,7 @@ BEGIN
 		INNER JOIN LMSX.SubmissionStatusDescriptor lmsxSubmissionStatus
 			ON submissionStatusDescriptor.DescriptorId = lmsxSubmissionStatus.SubmissionStatusDescriptorId
 
-	-- Insert new records
+
 	INSERT INTO LMSX.AssignmentSubmission(
 		[AssignmentSubmissionIdentifier],
 		[StudentUSI],
@@ -65,7 +65,6 @@ BEGIN
 		AND #ALL_SUBMISSIONS.DeletedAt IS NULL
 
 
-	-- Update existing records
 	UPDATE LMSX.AssignmentSubmission SET
 		LMSX.AssignmentSubmission.SubmissionStatusDescriptorId = #ALL_SUBMISSIONS.DescriptorId,
 		LMSX.AssignmentSubmission.SubmissionDateTime = #ALL_SUBMISSIONS.SubmissionDateTime,
@@ -78,7 +77,6 @@ BEGIN
 	AND #ALL_SUBMISSIONS.DeletedAt IS NULL
 
 
-	-- delete records if needed
 	DELETE FROM LMSX.AssignmentSubmission
 	WHERE LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier IN
 		(SELECT LMSSUBMISSION.AssignmentSubmissionIdentifier FROM LMS.AssignmentSubmission LMSSUBMISSION WHERE LMSSUBMISSION.DeletedAt IS NOT NULL)
