@@ -25,11 +25,10 @@ SOURCE_SYSTEM = "Test_LMS"
 DESCRIPTOR_NAMESPACE = (
     "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/" + SOURCE_SYSTEM
 )
-
-
 SUBMISSION_STATUS_DESCRIPTOR_NAMESPACE = (
     "uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/" + SOURCE_SYSTEM
 )
+USER_TEST_EMAIL = "test@email.email"
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
@@ -79,7 +78,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
                 ASSIGNMENT_CATEGORY,
             )
 
-            insert_lms_user(connection, USER_SIS_ID, SOURCE_SYSTEM)
+            insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, SOURCE_SYSTEM)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
                 """UPDATE LMS.LMSUSER SET
@@ -151,7 +150,7 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
                 ASSIGNMENT_CATEGORY,
             )
 
-            insert_lms_user(connection, USER_SIS_ID, SOURCE_SYSTEM)
+            insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, SOURCE_SYSTEM)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
                 """UPDATE LMS.LMSUSER SET
@@ -220,7 +219,7 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
                 ASSIGNMENT_CATEGORY,
             )
 
-            insert_lms_user(connection, USER_SIS_ID, SOURCE_SYSTEM)
+            insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, SOURCE_SYSTEM)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
                 """UPDATE LMS.LMSUSER SET
