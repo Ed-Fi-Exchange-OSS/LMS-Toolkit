@@ -7,7 +7,7 @@ CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment_submissions] AS
 BEGIN
     SET NOCOUNT ON;
 
-	-- Load temporary table
+
 	SELECT
 		lmsSubmission.AssignmentSubmissionIdentifier,
 		EDFISTUDENT.StudentUSI,
@@ -27,12 +27,12 @@ BEGIN
 	INNER JOIN LMS.LMSUser lmsUser
 		ON lmsUser.LMSUserIdentifier = lmsSubmission.LMSUserIdentifier
 	INNER JOIN EDFI.Descriptor submissionStatusDescriptor
-		ON submissionStatusDescriptor.CodeValue = lmsSubmission.SubmissionStatus
-	INNER JOIN EDFI.Student EDFISTUDENT
-		ON EDFISTUDENT.Id = lmsUser.EdFiStudentId
-
+		ON submissionStatusDescriptor.ShortDescription = lmsSubmission.SubmissionStatus
+		AND submissionStatusDescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + lmsSubmission.SourceSystem
 		INNER JOIN LMSX.SubmissionStatusDescriptor lmsxSubmissionStatus
 			ON submissionStatusDescriptor.DescriptorId = lmsxSubmissionStatus.SubmissionStatusDescriptorId
+	INNER JOIN EDFI.Student EDFISTUDENT
+		ON EDFISTUDENT.Id = lmsUser.EdFiStudentId
 
 
 	INSERT INTO LMSX.AssignmentSubmission(
@@ -61,7 +61,9 @@ BEGIN
 	FROM #ALL_SUBMISSIONS
 	WHERE
 		#ALL_SUBMISSIONS.AssignmentSubmissionIdentifier NOT IN
-			(SELECT AssignmentSubmission.AssignmentSubmissionIdentifier FROM LMSX.AssignmentSubmission)
+			(SELECT DISTINCT AssignmentSubmission.AssignmentSubmissionIdentifier FROM LMSX.AssignmentSubmission)
+		AND #ALL_SUBMISSIONS.StudentUSI NOT IN
+            (SELECT DISTINCT StudentUSI FROM LMSX.AssignmentSubmission)
 		AND #ALL_SUBMISSIONS.DeletedAt IS NULL
 
 

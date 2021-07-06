@@ -26,6 +26,11 @@ DESCRIPTOR_NAMESPACE = (
 )
 
 
+SUBMISSION_STATUS_DESCRIPTOR_NAMESPACE = (
+    "uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/" + SOURCE_SYSTEM
+)
+
+
 def describe_when_lms_and_ods_tables_are_both_empty():
     def it_should_run_successfully(test_db_config: ServerConfig):
         # act
@@ -51,7 +56,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
             insert_descriptor(connection, DESCRIPTOR_NAMESPACE, SOURCE_SYSTEM)
             insert_lmsx_sourcesystem_descriptor(connection, 2)
 
-            insert_descriptor(connection, ASSIGNMENT_SUBMISSION_STATUS, SOURCE_SYSTEM)
+            insert_descriptor(connection, SUBMISSION_STATUS_DESCRIPTOR_NAMESPACE, ASSIGNMENT_SUBMISSION_STATUS)
             insert_lmsx_assignmentsubmissionstatus_descriptor(connection, 3)
 
             insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
@@ -91,6 +96,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSAssignmentSubmission = query(connection, "SELECT * from [lmsx].[AssignmentSubmission]")
+
             assert len(LMSAssignmentSubmission) == 1
             assert (
                 int(LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"]) == 1
