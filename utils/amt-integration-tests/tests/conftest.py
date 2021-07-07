@@ -11,7 +11,7 @@ import pytest
 from sqlalchemy import create_engine, engine
 
 from .ServerConfig import ServerConfig
-from .helpers import drop_database, install_database, install_analytics_middle_tier
+from .db_prep import drop_database, install_database, install_analytics_middle_tier
 
 
 def pytest_addoption(parser: Parser) -> None:

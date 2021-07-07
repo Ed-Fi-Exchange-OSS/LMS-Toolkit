@@ -20,7 +20,7 @@ class ServerConfig:
         port = self.port or "1433"
 
         if self.useintegratedsecurity:
-            return f"mssql+pyodbc://{self.server},{port}/{self.db_name}?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
+            return f"mssql+pyodbc://{self.server},{port}/{self.db_name}?driver=ODBC+Driver+17+for+SQL+Server&Trusted_Connection=yes"
         else:
             return f"mssql+pyodbc://{self.username}:{self.password}@{self.server},{port}/{self.db_name}?driver=ODBC+Driver+17+for+SQL+Server"
 
