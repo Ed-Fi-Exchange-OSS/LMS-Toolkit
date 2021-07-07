@@ -11,7 +11,7 @@ import pytest
 from sqlalchemy import create_engine, engine
 
 from .ServerConfig import ServerConfig
-from .db_prep import drop_database, install_database, install_analytics_middle_tier
+from .db_prep import drop_database, install_ds32_database, install_analytics_middle_tier, install_lmsx_extension
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -71,10 +71,9 @@ def _server_config_from(request) -> ServerConfig:
 def mssql_fixture(request) -> Iterator[engine.base.Engine]:
     config = _server_config_from(request)
 
-    if not config.skip_teardown:
-        drop_database(config)
-
-    install_database(config)
+    drop_database(config)
+    install_ds32_database(config)
+    install_lmsx_extension(config)
     install_analytics_middle_tier(config)
 
     yield create_engine(config.get_pyodbc_connection_string())
