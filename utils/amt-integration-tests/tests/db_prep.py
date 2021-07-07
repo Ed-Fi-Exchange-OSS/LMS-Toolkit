@@ -10,22 +10,6 @@ from typing import List
 from .ServerConfig import ServerConfig
 
 
-def test_path(directory: str, additional_message: str = "") -> None:
-    """
-    Tests that a directory path exists, throwing an error if not.
-
-    Parameters
-    ----------
-    directory: str
-        The path to test.
-
-    additional_message: str
-        Optional message to append to the standard message.
-    """
-    if not os.path.exists(directory):
-        raise RuntimeError(f"Path `{directory}` does not exist. {additional_message}")
-
-
 def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
     login: List[str] = (
         ["-E"]
@@ -37,7 +21,7 @@ def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
 
 
 def _run_command(arg_list: List[str]) -> None:
-    run(arg_list, check=True)
+    run(arg_list, capture_output=True, check=True)
 
 
 def run_sqlcmd(config: ServerConfig, command: str) -> None:
