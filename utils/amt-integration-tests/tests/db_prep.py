@@ -5,7 +5,7 @@
 
 import os
 from subprocess import run
-from typing import List
+from typing import List, Optional
 
 from .ServerConfig import ServerConfig
 
@@ -17,15 +17,32 @@ def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
         else ["-U", config.username, "-P", config.password]
     )
 
-    return ["-S", f"{config.server},{config.port}", *login]
+    return ["-d", config.db_name, "-S", f"{config.server},{config.port}", *login]
 
 
 def _run_command(arg_list: List[str]) -> None:
+    print(f"\033[95m{arg_list}\033[0m")
     run(arg_list, capture_output=True, check=True)
 
 
-def run_sqlcmd(config: ServerConfig, command: str) -> None:
-    _run_command(["sqlcmd.exe", "-b", *_sqlcmd_parameters_from(config), "-Q", command])
+def _run_sqlcmd(config: ServerConfig, command: str, use_msdb: bool = False) -> None:
+
+    connection_params = _sqlcmd_parameters_from(config)
+
+    if use_msdb:
+        # In this situation, we need to connect to a system database instead of
+        # the real database: thus replace the real database with "msdb".
+        connection_params = [
+            p if p != config.db_name else "msdb" for p in connection_params
+        ]
+
+    _run_command(["sqlcmd.exe", "-b", *connection_params, "-Q", command])
+
+
+def _run_file_using_sqlcmd(config: ServerConfig, file_path: str) -> None:
+    _run_command(
+        ["sqlcmd.exe", "-b", *_sqlcmd_parameters_from(config), "-i", file_path]
+    )
 
 
 def drop_database(config: ServerConfig) -> None:
@@ -36,13 +53,17 @@ ALTER DATABASE {config.db_name} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 DROP DATABASE {config.db_name};
 END;
 """
-    run_sqlcmd(config, command)
+    _run_sqlcmd(config, command, use_msdb=True)
+
+
+def _get_parent_directory() -> str:
+    pwd = os.path.dirname(__file__)
+
+    return os.path.join(pwd, "..")
 
 
 def _get_amt_path() -> str:
-    pwd = os.path.dirname(__file__)
-
-    parent = os.path.join(pwd, "..")
+    parent = _get_parent_directory()
     amt_path = ""
 
     while os.path.exists(parent):
@@ -72,7 +93,7 @@ def _get_dacpac_path() -> str:
     )
 
 
-def install_database(config: ServerConfig) -> None:
+def install_ds32_database(config: ServerConfig) -> None:
     args = [
         "sqlpackage.exe",
         f"/SourceFile:{_get_dacpac_path()}",
@@ -88,6 +109,33 @@ def install_database(config: ServerConfig) -> None:
     _run_command(args)
 
 
+def install_lmsx_extension(config: ServerConfig) -> None:
+    parent = _get_parent_directory()
+    structure_path = os.path.join(
+        parent,
+        "..",
+        "..",
+        "extension",
+        "EdFi.Ods.Extensions.LMSX",
+        "Artifacts",
+        "MsSql",
+        "Structure",
+        "Ods",
+    )
+
+    files = sorted(
+        [
+            os.path.join(structure_path, f)
+            for f in os.listdir(structure_path)
+            # avoid getting directory names
+            if f.endswith(".sql")
+        ]
+    )
+
+    for script in files:
+        _run_file_using_sqlcmd(config, script)
+
+
 def install_analytics_middle_tier(config: ServerConfig) -> None:
     args = [
         "dotnet",
@@ -97,7 +145,7 @@ def install_analytics_middle_tier(config: ServerConfig) -> None:
         "--connectionString",
         config.get_dotnet_connection_string(),
         "--options",
-        "Engage"
+        "Engage",
     ]
 
     _run_command(args)
