@@ -420,8 +420,9 @@ INSERT INTO [lms].[Assignment]
 
 def insert_lms_assignment_submissions(
     connection: Connection,
+    lms_assignmen_identifier: int,
     source_system_identifier: str,
-    lms_assignment_identifier: int,
+    lms_assignment_source_identifier: int,
     lms_user_identifier: int,
     submission_status: str,
     source_system: str = "Test_LMS",
@@ -431,9 +432,12 @@ def insert_lms_assignment_submissions(
     # both should be updated when required
     connection.execute(
         f"""
+SET IDENTITY_INSERT lms.AssignmentSubmission ON;
+
 INSERT INTO [lms].[AssignmentSubmission]
     (
-        [SourceSystemIdentifier]
+        [AssignmentSubmissionIdentifier]
+        ,[SourceSystemIdentifier]
         ,[SourceSystem]
         ,[AssignmentIdentifier]
         ,[LMSUserIdentifier]
@@ -449,9 +453,10 @@ INSERT INTO [lms].[AssignmentSubmission]
     )
 VALUES
     (
+        {lms_assignmen_identifier},
         N'{source_system_identifier}',
         N'{source_system}',
-        {lms_assignment_identifier},
+        {lms_assignment_source_identifier},
         {lms_user_identifier},
         N'{submission_status}',
         GETDATE(),
@@ -462,7 +467,9 @@ VALUES
         GETDATE(),
         GETDATE(),
         {'GETDATE()' if isDeleted else 'NULL'}
-    )
+    );
+
+SET IDENTITY_INSERT lms.AssignmentSubmission OFF;
 
 """
     )

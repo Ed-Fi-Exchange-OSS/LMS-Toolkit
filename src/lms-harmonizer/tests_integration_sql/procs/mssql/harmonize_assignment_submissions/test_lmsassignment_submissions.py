@@ -45,6 +45,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
     ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
     USER_SIS_ID = "test_sis_id"
     SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
     def it_should_insert_the_submissions_successfully(test_db_config: ServerConfig):
         # arrange
@@ -87,6 +88,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
 
             insert_lms_assignment_submissions(
                 connection,
+                SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
                 1,
                 1,
@@ -106,7 +108,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
 
             assert len(LMSAssignmentSubmission) == 1
             assert (
-                int(LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"]) == 1
+                int(LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"]) == SUBMISSION_TEST_LMS_IDENTIFIER
             )
 
 
@@ -117,8 +119,9 @@ def describe_when_there_are_assignment_submissions_to_update():
     ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
     USER_SIS_ID = "test_sis_id"
     SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
-    def it_should_insert_the_submissions_successfully(test_db_config: ServerConfig):
+    def it_should_update_the_submissions_successfully(test_db_config: ServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
@@ -159,6 +162,7 @@ def describe_when_there_are_assignment_submissions_to_update():
 
             insert_lms_assignment_submissions(
                 connection,
+                SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
                 1,
                 1,
@@ -195,8 +199,9 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
     ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
     USER_SIS_ID = "test_sis_id"
     SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
-    def it_should_not_insert_the_submissions_successfully(test_db_config: ServerConfig):
+    def it_should_not_insert_the_submissions(test_db_config: ServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
@@ -237,6 +242,7 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
 
             insert_lms_assignment_submissions(
                 connection,
+                SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
                 1,
                 1,
@@ -264,8 +270,9 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
     ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
     USER_SIS_ID = "test_sis_id"
     SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
-    def it_should_insert_the_submissions_successfully(test_db_config: ServerConfig):
+    def it_should_not_insert_any_submissions(test_db_config: ServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
@@ -306,6 +313,7 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
 
             insert_lms_assignment_submissions(
                 connection,
+                SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
                 1,
                 1,
