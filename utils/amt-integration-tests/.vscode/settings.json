@@ -32,6 +32,13 @@
     ],
     "psi-header.lang-config": [
         {
+            "_": "Default rules for unknown languages",
+            "language": "*",
+            "begin": "",
+            "end": "",
+            "prefix": "# "
+        },
+        {
             "_": "Apply double slash-based comments",
             "language": "csharp",
             "begin": "",
