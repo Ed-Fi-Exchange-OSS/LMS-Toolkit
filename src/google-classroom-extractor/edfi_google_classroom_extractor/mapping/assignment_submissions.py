@@ -4,10 +4,63 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Dict, Tuple, Any
-from pandas import DataFrame
+from pandas import DataFrame, Series, isna
 from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
+# States returned by API
+CREATED_STATE = "CREATED"
+NEW_STATE = "NEW"
+RECLAIMED_STATE = "RECLAIMED_BY_STUDENT"
 TURNED_IN_STATE = "TURNED_IN"
+RETURNED_STATE = "RETURNED"
+
+# States derived from API "late" flag
+LATE_STATE = "LATE"
+MISSING_STATE = "MISSING"
+
+
+def derive_state(submission_row: Series) -> str:
+    """
+    Takes a Pandas row of API assign submission data and returns the submission
+    state for that row based on the API provided state and late flag.
+
+    Parameters
+    ----------
+    pandas_row: Any
+        is a row of assignment submission data
+
+    Returns
+    -------
+    str
+        Submission state for the row of data
+    """
+    api_state: str = submission_row["state"]
+    if "late" not in submission_row:
+        return api_state
+
+    if isna(submission_row["late"]):
+        return api_state
+
+    if isinstance(submission_row["late"], bool) and submission_row["late"] is False:
+        return api_state
+
+    if (
+        isinstance(submission_row["late"], str)
+        and submission_row["late"].lower() != "true"
+    ):
+        return api_state
+
+    if api_state == TURNED_IN_STATE:
+        return LATE_STATE
+
+    if (
+        api_state == CREATED_STATE
+        or api_state == NEW_STATE
+        or api_state == RECLAIMED_STATE
+    ):
+        return MISSING_STATE
+
+    return api_state
 
 
 def submissions_to_assignment_submissions_dfs(
@@ -65,6 +118,7 @@ def submissions_to_assignment_submissions_dfs(
         lambda row: row["updateTime"] if row["state"] == TURNED_IN_STATE else "",
         axis=1,
     )
+    submissions_df["SubmissionStatus"] = submissions_df.apply(derive_state, axis=1)
 
     assignment_submissions_df: DataFrame = submissions_df[
         [
@@ -77,7 +131,7 @@ def submissions_to_assignment_submissions_dfs(
             "courseId",
             "creationTime",
             "updateTime",
-            "state",
+            "SubmissionStatus",
             "CreateDate",
             "LastModifiedDate",
         ]
@@ -90,7 +144,6 @@ def submissions_to_assignment_submissions_dfs(
             "courseId": "SourceSystemSectionIdentifier",
             "creationTime": "SourceCreateDate",
             "updateTime": "SourceLastModifiedDate",
-            "state": "SubmissionStatus",
         }
     )
 

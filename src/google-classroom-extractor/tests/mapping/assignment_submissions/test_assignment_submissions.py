@@ -50,7 +50,7 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
                 "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
                 "submissionHistory": [SUBMISSION_HISTORY],
                 "CreateDate": [CREATE_DATE],
-                "LastModifiedDate": [LAST_MODIFIED_DATE]
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
             }
         )
 
@@ -74,7 +74,10 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         ]
         row_dict = submissions_df.to_dict(orient="records")[0]
 
-        assert row_dict["AssignmentSourceSystemIdentifier"] == f"{COURSE_ID}-{COURSEWORK_ID}"
+        assert (
+            row_dict["AssignmentSourceSystemIdentifier"]
+            == f"{COURSE_ID}-{COURSEWORK_ID}"
+        )
         assert row_dict["EarnedPoints"] == ASSIGNED_GRADE
         assert row_dict["Grade"] == ASSIGNED_GRADE
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
@@ -100,7 +103,7 @@ BOILERPLATE: Dict[str, str] = {
     "associatedWithDeveloper": ASSOCIATED_WITH_DEVELOPER,
     "submissionHistory": SUBMISSION_HISTORY,
     "CreateDate": CREATE_DATE,
-    "LastModifiedDate": LAST_MODIFIED_DATE
+    "LastModifiedDate": LAST_MODIFIED_DATE,
 }
 
 
