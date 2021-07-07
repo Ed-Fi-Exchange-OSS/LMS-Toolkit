@@ -71,7 +71,7 @@ def describe_when_a_submission_is_created_and_late_as_true_string():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_change_to_missing_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == MISSING_STATE
@@ -94,7 +94,7 @@ def describe_when_a_submission_is_created_and_late_as_false_string():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_stay_created_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == CREATED_STATE
@@ -117,7 +117,7 @@ def describe_when_a_submission_is_created_and_late_as_true_bool():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_change_to_missing_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == MISSING_STATE
@@ -140,7 +140,7 @@ def describe_when_a_submission_is_created_and_late_as_false_bool():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_stay_created_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == CREATED_STATE
@@ -162,7 +162,7 @@ def describe_when_a_submission_is_created_and_late_not_there():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_stay_created_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == CREATED_STATE
@@ -185,7 +185,7 @@ def describe_when_a_submission_is_created_and_late_is_none():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_stay_created_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == CREATED_STATE
@@ -208,7 +208,7 @@ def describe_when_a_submission_is_turned_in_and_late_is_true():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_change_to_late_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == LATE_STATE
@@ -231,7 +231,7 @@ def describe_when_a_submission_is_new_and_late_is_true():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_change_to_missing_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == MISSING_STATE
@@ -254,7 +254,7 @@ def describe_when_a_submission_is_reclaimed_and_late_is_true():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_change_to_missing_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == MISSING_STATE
@@ -277,7 +277,7 @@ def describe_when_a_submission_is_returned_and_late_is_true():
         # act
         return submissions_to_assignment_submissions_dfs(submissions_df)
 
-    def it_should_be_correct(assignment_submission_dict):
+    def it_should_stay_returned_state(assignment_submission_dict):
         submissions_df: DataFrame = list(assignment_submission_dict.values())[0]
         row_dict = submissions_df.to_dict(orient="records")[0]
         assert row_dict["SubmissionStatus"] == RETURNED_STATE

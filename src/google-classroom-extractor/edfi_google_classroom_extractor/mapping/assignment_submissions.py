@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Dict, Tuple, Any
-from pandas import DataFrame, isna
+from pandas import DataFrame, Series, isna
 from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 
 # States returned by API
@@ -19,7 +19,7 @@ LATE_STATE = "LATE"
 MISSING_STATE = "MISSING"
 
 
-def derive_state(submission_row: Any) -> str:
+def derive_state(submission_row: Series) -> str:
     """
     Takes a Pandas row of API assign submission data and returns the submission
     state for that row based on the API provided state and late flag.
