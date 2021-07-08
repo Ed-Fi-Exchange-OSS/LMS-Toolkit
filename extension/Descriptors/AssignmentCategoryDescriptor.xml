@@ -27,12 +27,6 @@
     <AssignmentCategoryDescriptor>
 		<CodeValue>COURSE_WORK_TYPE_UNSPECIFIED</CodeValue>
 		<ShortDescription>Unspecified</ShortDescription>
-		<Description>Course work type is not specified</Description>
-		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google Classroom</Namespace>
-	</AssignmentCategoryDescriptor>
-    <AssignmentCategoryDescriptor>
-		<CodeValue>COURSE_WORK_TYPE_UNSPECIFIED</CodeValue>
-		<ShortDescription>Unspecified</ShortDescription>
 		<Description>No work type specified. This is never returned.</Description>
 		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google Classroom</Namespace>
 	</AssignmentCategoryDescriptor>
