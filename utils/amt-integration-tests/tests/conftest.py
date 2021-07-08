@@ -13,7 +13,12 @@ from sqlalchemy import create_engine, engine
 from .data_helpers import load_lms_descriptors
 
 from .ServerConfig import ServerConfig
-from .db_prep import drop_database, install_ds32_database, install_analytics_middle_tier, install_lmsx_extension
+from .db_prep import (
+    drop_database,
+    install_ds32_database,
+    install_analytics_middle_tier,
+    install_lmsx_extension,
+)
 
 
 def pytest_addoption(parser: Parser) -> None:
@@ -53,7 +58,7 @@ def pytest_addoption(parser: Parser) -> None:
         type=bool,
         action="store",
         default=False,
-        help="Skip the teardown of the database. Potentially useful for debugging."
+        help="Skip the teardown of the database. Potentially useful for debugging.",
     )
 
 
@@ -65,7 +70,7 @@ def _server_config_from(request) -> ServerConfig:
         db_name=request.config.getoption("--dbname"),
         username=request.config.getoption("--username"),
         password=request.config.getoption("--password"),
-        skip_teardown=request.config.getoption("--skip-teardown")
+        skip_teardown=request.config.getoption("--skip-teardown"),
     )
 
 

@@ -19,7 +19,7 @@ from sqlalchemy import engine
 from ..assertion_helpers import assert_dataframe_equals_table
 
 
-@scenario('../features/grade_bands_table.feature', 'Checking for the Table')
+@scenario("../features/grade_bands_table.feature", "Checking for the Table")
 def test_checking_for_the_table():
     """Checking for the Table."""
 
@@ -32,7 +32,9 @@ def given_AMT_is_installed(mssql_fixture: engine.base.Engine):
 
 @when("I query the Grade Band Table", target_fixture="grade_band_df")
 def query_the_grade_band_table(mssql_fixture: engine.base.Engine) -> pd.DataFrame:
-    return pd.read_sql("select * from analytics.engage_GradeBands order by LowerBound", mssql_fixture)
+    return pd.read_sql(
+        "select * from analytics.engage_GradeBands order by LowerBound", mssql_fixture
+    )
 
 
 @then(parsers.parse("Grade Band has the following default records\n{table}"))
