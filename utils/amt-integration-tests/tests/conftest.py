@@ -10,6 +10,8 @@ from _pytest.config.argparsing import Parser
 import pytest
 from sqlalchemy import create_engine, engine
 
+from .data_helpers import load_lms_descriptors
+
 from .ServerConfig import ServerConfig
 from .db_prep import drop_database, install_ds32_database, install_analytics_middle_tier, install_lmsx_extension
 
@@ -76,7 +78,10 @@ def mssql_fixture(request) -> Iterator[engine.base.Engine]:
     install_lmsx_extension(config)
     install_analytics_middle_tier(config)
 
-    yield create_engine(config.get_pyodbc_connection_string())
+    engine = create_engine(config.get_pyodbc_connection_string())
+    load_lms_descriptors(engine)
+
+    yield engine
 
     if config.teardown_enabled():
         drop_database(config)
