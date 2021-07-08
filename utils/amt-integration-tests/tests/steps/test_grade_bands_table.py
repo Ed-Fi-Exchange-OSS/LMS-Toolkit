@@ -32,9 +32,13 @@ def given_AMT_is_installed(mssql_fixture: engine.base.Engine):
 
 @when("I query the Grade Band Table", target_fixture="grade_band_df")
 def query_the_grade_band_table(mssql_fixture: engine.base.Engine) -> pd.DataFrame:
+<<<<<<< HEAD
     return pd.read_sql(
         "select * from analytics_config.engage_GradeBands order by LowerBound", mssql_fixture
     )
+=======
+    return pd.read_sql("select * from analytics.engage_GradeBands order by LowerBound", mssql_fixture)
+>>>>>>> 601a8b6 (Re-arrange to have separate test files for each scenario, grouped by feature directory)
 
 
 @then(parsers.parse("Grade Band has the following default records\n{table}"))
