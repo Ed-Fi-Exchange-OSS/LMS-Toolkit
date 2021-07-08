@@ -15,12 +15,16 @@ from pytest_bdd import (
 import pandas as pd
 from sqlalchemy import engine
 
-from ...assertion_helpers import assert_dataframe_equals_table, assert_dataframe_has_columns
+from ...assertion_helpers import (
+    assert_dataframe_equals_table,
+    assert_dataframe_has_columns,
+)
 
 
-@scenario('../../features/assignmentdim_view.feature', 'Ensure the view exists')
+@scenario("../../features/assignmentdim_view.feature", "Ensure the view exists")
 def test_checking_for_the_view():
     """Checking for the Table."""
+
 
 # TODO: can this be reused from another module?
 @given("Analytics Middle Tier has been installed")
@@ -37,6 +41,7 @@ def query_the_grade_band_table(mssql_fixture: engine.base.Engine):
 @then(parsers.parse("it has these columns:\n{table}"))
 def it_has_columns(table: str, assignment_df: pd.DataFrame) -> None:
     assert_dataframe_has_columns(table, assignment_df)
+
 
 # @then(parsers.parse("Grade Band has the following default records\n{records}"))
 # def grade_band_has_records(records: str, grade_band_df: pd.DataFrame):

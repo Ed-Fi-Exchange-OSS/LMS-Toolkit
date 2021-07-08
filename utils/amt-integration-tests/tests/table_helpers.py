@@ -11,7 +11,7 @@ import pandas as pd
 def read_string_table_as_2d_list(table: str) -> Tuple[List[str], List[List[str]]]:
     rows = table.strip().split("\n")
     column_names = [c.strip() for c in rows[0].split("|") if c != ""]
-    data = [[v.strip() for v in r.split('|') if v != ""] for r in rows[1:]]
+    data = [[v.strip() for v in r.split("|") if v != ""] for r in rows[1:]]
 
     return column_names, data
 

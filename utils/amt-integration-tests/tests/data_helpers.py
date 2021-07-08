@@ -104,20 +104,25 @@ def load_session(
     with engine.connect() as connection:
         connection.execute(text(term_descriptor_sql))
 
-        sql = text(f"SELECT DescriptorId FROM edfi.Descriptor WHERE CodeValue = '{term_code_value}'")
+        sql = text(
+            f"SELECT DescriptorId FROM edfi.Descriptor WHERE CodeValue = '{term_code_value}'"
+        )
         result = connection.execute(sql, engine)
         for row in result:
             descriptor_id = row["DescriptorId"]
 
-    session = pd.DataFrame([{
-        "SchoolId": school_id,
-        "SchoolYear": school_year,
-        "SessionName": session_name,
-        "BeginDate": "2021-01-01",
-        "EndDate": "2021-08-03",
-        "TermDescriptorId": descriptor_id,
-        "TotalInstructionalDays": 1
-    }])
+    session = pd.DataFrame(
+        [
+            {
+                "SchoolId": school_id,
+                "SchoolYear": school_year,
+                "SessionName": session_name,
+                "BeginDate": "2021-01-01",
+                "EndDate": "2021-08-03",
+                "TermDescriptorId": descriptor_id,
+                "TotalInstructionalDays": 1,
+            }
+        ]
+    )
 
     session.to_sql("Session", engine, schema=SCHEMA_EDFI, **APPEND_OPTIONS)
-
