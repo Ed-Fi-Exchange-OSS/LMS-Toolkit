@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import os
-from subprocess import run
+from subprocess import run, PIPE
 from typing import List, Optional
 
 from .ServerConfig import ServerConfig
@@ -21,8 +21,12 @@ def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
 
 
 def _run_command(arg_list: List[str]) -> None:
-    print(f"\033[95m{arg_list}\033[0m")
-    run(arg_list, capture_output=True, check=True)
+    print(f"Command arguments: {arg_list}")
+    result = run(arg_list, stdout=PIPE, stderr=PIPE)
+
+    if result.returncode != 0 or result.stderr:
+        print(result.stdout)
+        raise Exception(result.stderr)
 
 
 def _run_sqlcmd(config: ServerConfig, command: str, use_msdb: bool = False) -> None:

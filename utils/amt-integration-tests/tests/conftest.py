@@ -78,5 +78,5 @@ def mssql_fixture(request) -> Iterator[engine.base.Engine]:
 
     yield create_engine(config.get_pyodbc_connection_string())
 
-    if not config.skip_teardown:
+    if config.teardown_enabled():
         drop_database(config)
