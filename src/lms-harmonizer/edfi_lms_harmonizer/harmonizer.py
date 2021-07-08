@@ -59,3 +59,13 @@ def harmonize_assignments(adapter: Adapter) -> None:
     ]
 
     adapter.execute(statements)
+
+
+@catch_exceptions
+def harmonize_assignment_submissions(adapter: Adapter) -> None:
+
+    statements = [
+        Statement("EXEC lms.harmonize_assignment_submissions;", "Harmonizing LMS Assignment Submissions."),
+    ]
+
+    adapter.execute(statements)
