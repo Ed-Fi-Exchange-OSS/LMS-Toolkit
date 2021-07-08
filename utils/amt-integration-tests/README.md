@@ -55,7 +55,14 @@ name `test_analytics_middle_tier_engage`.
 ## Pytest-BDD
 
 All tests are written first as Gherkin-based feature files, which are then
-implemented in pytest using pytest-bdd. Recommended reading:
+implemented in pytest using pytest-bdd.
+
+:exclamation: please note that some examples show the "Given ... When ... Then"
+statements separated by a single line break. In the current version of the tooling
+this will fail, perhaps because this repo uses LF instead of CRLF. Thus you must
+have two line breaks between these statements.
+
+Recommended reading:
 
 * [Pytest-BDD Manual](https://pytest-bdd.readthedocs.io/en/latest/)
 * [Python Testing 101: Pytest-BDD](https://automationpanda.com/2018/10/22/python-testing-101-pytest-bdd/)
