@@ -33,3 +33,6 @@ class ServerConfig:
             return f"{con_string};integrated security=SSPI"
         else:
             return f"{con_string};user id={self.username};password={self.password}"
+
+    def teardown_enabled(self) -> bool:
+        return self.skip_teardown is False
