@@ -31,25 +31,23 @@ Feature: AssignmentDim View
     Scenario: Ignores discussions
         Given Analytics Middle Tier has been installed
 
+          # TODO: Loading descriptors is now done once for the entire session so
+          # that we don't have re-insertion attempts. Let's discuss the value of
+          # having given statements like the one above and, possibly, the one below,
+          # which explain the conditions but don't actually do anything.
+
+        # And the default LMS descriptors have been loaded
+
           And there is a school with id 54
 
           And the school year is 2021
 
           And school 54 has a session called "Fall" in year 2021
 
-         When I query for assignments with identifier "ignore-discussion"
-
-         Then there should be 0 records
-
-          # TODO: This is now done once for the entire session so that we
-          # don't have re-insertion attempts. # Let's discuss the value of having
-          # given statements like the one above or, possibly, the one below,
-          # that explain the conditions but don't actually do anything.
-
-        # And the default LMS descriptors have been loaded
-
-
-
+            # TODO: think about making some parts of these records more
+            # unique to the scenario, because of the brittleness of
+            # these tests that will be assuming there are unique
+            # records just for the given test.
 
         #   And there is a section
         #       | LocalCourseCode   | abc    |
@@ -64,6 +62,9 @@ Feature: AssignmentDim View
         #       | SchoolId       | 54                   |
         #       | SchoolYear     | 2021                 |
 
+            # In the following, note the very last row, establishing
+            # that this is a _discussion_ category of Assignment,
+            # rather than a _assignment_ category of Assignment.
         #   And there is one Assignment
         #       | AssignmentIdentifier | ignore-discussion |
         #       | SchoolId             | 54                |
@@ -77,4 +78,13 @@ Feature: AssignmentDim View
         #       | SectionIdentifier    | qwerty            |
         #       | LastModifiedDate     | 2021-07-07 09:01  |
         #       | AssignmentCategory   | discussion        |
+
+         When I query for assignments with identifier "ignore-discussion"
+
+         Then there should be 0 records
+
+
+
+
+
 
