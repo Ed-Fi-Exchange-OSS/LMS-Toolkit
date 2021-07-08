@@ -15,10 +15,10 @@ from pytest_bdd import (
 import pandas as pd
 from sqlalchemy import engine
 
-from .assertion_helpers import assert_dataframe_equals_table, assert_dataframe_has_columns
+from ..assertion_helpers import assert_dataframe_equals_table, assert_dataframe_has_columns
 
 
-@scenario('assignmentdim_view.feature', 'Ensuring the view exists')
+@scenario('../features/assignmentdim_view.feature', 'Ensuring the view exists')
 def test_checking_for_the_view():
     """Checking for the Table."""
 
