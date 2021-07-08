@@ -52,6 +52,14 @@ name `test_analytics_middle_tier_engage`.
 | --username | (none) | Database username when not using integrated security |
 | --password | (none) | Database user password, when not using integrated security |
 
+## Pytest-BDD
+
+All tests are written first as Gherkin-based feature files, which are then
+implemented in pytest using pytest-bdd. Recommended reading:
+
+* [Pytest-BDD Manual](https://pytest-bdd.readthedocs.io/en/latest/)
+* [Python Testing 101: Pytest-BDD](https://automationpanda.com/2018/10/22/python-testing-101-pytest-bdd/)
+
 ## Future Considerations
 
 * Downloading AMT via a package or release, instead of relying on a clone.
