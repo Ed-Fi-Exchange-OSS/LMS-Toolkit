@@ -25,5 +25,3 @@ Feature: AssignmentDim View
               | SectionKey       |
               | GradingPeriodKey |
               | LastModifiedDate |
-
-
