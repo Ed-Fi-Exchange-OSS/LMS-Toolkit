@@ -120,6 +120,7 @@ def describe_when_there_are_assignment_submissions_to_update():
     USER_SIS_ID = "test_sis_id"
     SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
     SUBMISSION_TEST_LMS_IDENTIFIER = 99
+    SUBMISSION_GRADE = '85'
 
     def it_should_update_the_submissions_successfully(test_db_config: ServerConfig):
         # arrange
@@ -174,9 +175,9 @@ def describe_when_there_are_assignment_submissions_to_update():
         run_harmonizer(test_db_config)
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             connection.execute(
-                """
+                F"""
                 UPDATE LMS.ASSIGNMENTSUBMISSION SET
-                    GRADE=N'99',
+                    GRADE=N'{SUBMISSION_GRADE}',
                     LASTMODIFIEDDATE=GETDATE()"""
             )  # In the first insert it is set to 0
 
@@ -189,7 +190,7 @@ def describe_when_there_are_assignment_submissions_to_update():
                 connection, "SELECT * from [lmsx].[AssignmentSubmission]"
             )
 
-            assert LMSAssignmentSubmission[0]["Grade"] == "99"
+            assert LMSAssignmentSubmission[0]["Grade"] == SUBMISSION_GRADE
 
 
 def describe_when_there_are_assignment_submissions_for_deleted_assignments():
