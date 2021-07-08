@@ -18,7 +18,7 @@ from sqlalchemy import engine
 from ..assertion_helpers import assert_dataframe_equals_table, assert_dataframe_has_columns
 
 
-@scenario('../features/assignmentdim_view.feature', 'Ensuring the view exists')
+@scenario('../features/assignmentdim_view.feature', 'Ensure the view exists')
 def test_checking_for_the_view():
     """Checking for the Table."""
 
