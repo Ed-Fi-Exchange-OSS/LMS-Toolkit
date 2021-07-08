@@ -44,7 +44,6 @@ def test_assignment_dim_happy_path() -> None:
 def test_assignment_dim_ingore_discussions() -> None:
     pass
 
-
 @given("Analytics Middle Tier has been installed")
 def given_AMT_is_installed(mssql_fixture: engine.base.Engine):
     # AMT installation is handled in the fixture setup
