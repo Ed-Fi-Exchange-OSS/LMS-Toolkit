@@ -16,10 +16,10 @@ import pandas as pd
 from sqlalchemy import engine
 
 
-from .assertion_helpers import assert_dataframe_equals_table
+from ..assertion_helpers import assert_dataframe_equals_table
 
 
-@scenario('grade_bands_table.feature', 'Checking for the Table')
+@scenario('../features/grade_bands_table.feature', 'Checking for the Table')
 def test_checking_for_the_table():
     """Checking for the Table."""
 
