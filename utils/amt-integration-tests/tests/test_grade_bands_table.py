@@ -35,6 +35,6 @@ def query_the_grade_band_table(mssql_fixture: engine.base.Engine):
     return pd.read_sql("select * from analytics.engage_GradeBands order by LowerBound", mssql_fixture)
 
 
-@then(parsers.parse("Grade Band has the following default records\n{records}"))
-def grade_band_has_records(records: str, grade_band_df: pd.DataFrame):
-    assert_dataframe_equals_table(records, grade_band_df)
+@then(parsers.parse("Grade Band has the following default records\n{table}"))
+def grade_band_has_records(table: str, grade_band_df: pd.DataFrame):
+    assert_dataframe_equals_table(table, grade_band_df)
