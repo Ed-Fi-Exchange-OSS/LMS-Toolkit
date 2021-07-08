@@ -4,9 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 Feature: AssignmentDim View
-    Test to confirm the output of the AssignmentsDim View
+    As a data analyst,
+    I want to denormalize LMS Assignment data,
+    so that I can build reports on student engagement.
 
-    Scenario: Ensuring the view exists
+    Scenario: Ensure the view exists
         Given Analytics Middle Tier has been installed
 
          When I query the AssignmentsDim view

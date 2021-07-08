@@ -4,7 +4,9 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 Feature: Grade Bands
-    The Grade Bands table
+    As a data analyst,
+    I want to use a set of pre-defined grade bands to group data,
+    so that I can report on broad grade trends.
 
     Scenario: Checking for the Table
         Given Analytics Middle Tier has been installed
