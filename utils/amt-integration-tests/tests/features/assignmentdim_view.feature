@@ -49,12 +49,20 @@ Feature: AssignmentDim View
             # these tests that will be assuming there are unique
             # records just for the given test.
 
-        #   And there is a section
-        #       | LocalCourseCode   | abc         |
-        #       | SchoolId          | 53          |
-        #       | Schoolyear        | 1053        |
-        #       | SectionIdentifier | si-1053     |
-        #       | SessionName       | Summer-1053 |
+        # And there is a course offering
+        # TODO: this is a requirement for section, which I overlooked
+        # need to find the minimal columns and build up the insert
+        # for this.
+
+        # I wonder if we should prep the database with just one school, school year, session, etc?
+        # instead of inserting new values every time.
+
+          And there is a section
+              | LocalCourseCode   | abc-1053    |
+              | SchoolId          | 53          |
+              | Schoolyear        | 1053        |
+              | SectionIdentifier | si-1053     |
+              | SessionName       | Summer-1053 |
 
         #   And there is a grading period
         #       | Descriptor     | First summer session 1053 |
@@ -104,12 +112,12 @@ Feature: AssignmentDim View
             # these tests that will be assuming there are unique
             # records just for the given test.
 
-        #   And there is a section
-        #       | LocalCourseCode   | abc         |
-        #       | SchoolId          | 54          |
-        #       | Schoolyear        | 1054        |
-        #       | SectionIdentifier | si-1054     |
-        #       | SessionName       | Summer-1054 |
+          And there is a section
+              | LocalCourseCode   | abc-1054    |
+              | SchoolId          | 54          |
+              | Schoolyear        | 1054        |
+              | SectionIdentifier | si-1054     |
+              | SessionName       | Summer-1054 |
 
         #   And there is a grading period
         #       | Descriptor     | First summer session 1054 |
