@@ -13,25 +13,17 @@ from pytest_bdd import (
     when,
 )
 import pandas as pd
-from sqlalchemy import engine
+from sqlalchemy import engine, text
 
 from ..assertion_helpers import (
-    assert_dataframe_has_one_row_matching,
+    assert_dataframe_equals_table,
     assert_dataframe_has_columns,
 )
-from ..data_helpers import (
-    load_assignment,
-    load_grading_period,
-    load_school,
-    load_school_year,
-    load_session,
-    load_section,
-    populate_session_grading_period,
-)
+from ..data_helpers import load_school, load_school_year, load_session
 
 
 @scenario("../features/assignmentdim_view.feature", "Ensure the view exists")
-def test_assignment_dim_view_exists() -> None:
+def test_assignment_dim_path_exists() -> None:
     pass
 
 
@@ -43,6 +35,7 @@ def test_assignment_dim_happy_path() -> None:
 @scenario("../features/assignmentdim_view.feature", "Ignores discussions")
 def test_assignment_dim_ingore_discussions() -> None:
     pass
+
 
 @given("Analytics Middle Tier has been installed")
 def given_AMT_is_installed(mssql_fixture: engine.base.Engine):
@@ -74,32 +67,6 @@ def given_session(
     load_session(mssql_fixture, school_id, session_name, school_year)
 
 
-@given(parsers.parse("there is a section\n{section_table}"))
-def given_section(mssql_fixture: engine.base.Engine, section_table: str) -> None:
-    load_section(mssql_fixture, section_table)
-
-
-@given(parsers.parse("there is a grading period\n{grading_period_table}"))
-def given_grading_period(
-    mssql_fixture: engine.base.Engine, grading_period_table: str
-) -> None:
-    load_grading_period(mssql_fixture, grading_period_table)
-
-
-@given(parsers.parse("there is one Assignment\n{assignment_table}"))
-def given_assignment(
-    mssql_fixture: engine.base.Engine, assignment_table: str
-) -> None:
-    load_assignment(mssql_fixture, assignment_table)
-
-
-@given("edfi.SessionGradingPeriod table is populated")
-def given_session_grading_period_is_populated(
-    mssql_fixture: engine.base.Engine
-) -> None:
-    populate_session_grading_period(mssql_fixture)
-
-
 @when(
     parsers.parse('I query for assignments with identifier "{identifier}"'),
     target_fixture="assignment_df",
@@ -108,22 +75,17 @@ def when_query_for_assignment(
     mssql_fixture: engine.base.Engine, identifier: str
 ) -> pd.DataFrame:
 
-    SELECT_FROM_ASSIGNMENT = (
-        "SELECT * FROM analytics.engage_AssignmentDim WHERE AssignmentKey = ?"
+    SELECT_FROM_ASSIGNMENT = text(
+        "SELECT * FROM analytics.engage_AssignmentDim WHERE AssignmentKey = '?'"
     )
     return pd.read_sql(SELECT_FROM_ASSIGNMENT, mssql_fixture, params=[identifier])
 
 
 @then(parsers.parse("there should be {expected} records"))
-def then_number_of_records(assignment_df, expected) -> None:
+def then_zero_records(assignment_df, expected) -> None:
     assert assignment_df.shape[0] == int(expected)
 
 
 @then(parsers.parse("it has these columns:\n{table}"))
 def it_has_columns(table: str, assignment_df: pd.DataFrame) -> None:
     assert_dataframe_has_columns(table, assignment_df)
-
-
-@then(parsers.parse("the AssignmentDim record should have these values:\n{table}"))
-def it_has_values(table: str, assignment_df: pd.DataFrame) -> None:
-    assert_dataframe_has_one_row_matching(table, assignment_df)
