@@ -78,13 +78,15 @@ def _server_config_from(request) -> ServerConfig:
 def mssql_fixture(request) -> Iterator[engine.base.Engine]:
     config = _server_config_from(request)
 
+    # Warning - do not change the order of operations below
     drop_database(config)
     install_ds32_database(config)
     install_lmsx_extension(config)
-    install_analytics_middle_tier(config)
 
     engine = create_engine(config.get_pyodbc_connection_string())
     load_lms_descriptors(engine)
+
+    install_analytics_middle_tier(config)
 
     yield engine
 
