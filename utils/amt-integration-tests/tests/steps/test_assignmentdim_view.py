@@ -19,7 +19,7 @@ from ..assertion_helpers import (
     assert_dataframe_equals_table,
     assert_dataframe_has_columns,
 )
-from ..data_helpers import load_school, load_school_year, load_session
+from ..data_helpers import load_school, load_school_year, load_session, load_section
 
 
 @scenario("../features/assignmentdim_view.feature", "Ensure the view exists")
@@ -65,6 +65,15 @@ def given_session(
     school_year: str,
 ) -> None:
     load_session(mssql_fixture, school_id, session_name, school_year)
+
+
+@given(
+    parsers.parse(
+        "there is a section\n{section_table}"
+    )
+)
+def given_section(mssql_fixture: engine.base.Engine, section_table: str) -> None:
+    load_section(mssql_fixture, section_table)
 
 
 @when(
