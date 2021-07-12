@@ -15,15 +15,25 @@ from pytest_bdd import (
 import pandas as pd
 from sqlalchemy import engine, text
 
-from ...assertion_helpers import (
+from ..assertion_helpers import (
     assert_dataframe_equals_table,
     assert_dataframe_has_columns,
 )
-from ...data_helpers import load_school, load_school_year, load_session
+from ..data_helpers import load_school, load_school_year, load_session
 
 
-@scenario("../../features/assignmentdim_view.feature", "Ignores discussions")
-def test_ignore_discussions() -> None:
+@scenario("../features/assignmentdim_view.feature", "Ensure the view exists")
+def test_assignment_dim_path_exists() -> None:
+    pass
+
+
+@scenario("../features/assignmentdim_view.feature", "Happy Path")
+def test_assignment_dim_happy_path() -> None:
+    pass
+
+
+@scenario("../features/assignmentdim_view.feature", "Ignores discussions")
+def test_assignment_dim_ingore_discussions() -> None:
     pass
 
 
@@ -66,11 +76,16 @@ def when_query_for_assignment(
 ) -> pd.DataFrame:
 
     SELECT_FROM_ASSIGNMENT = text(
-        "SELECT * FROM lmsx.Assignment WHERE AssignmentIdentifier = '?'"
+        "SELECT * FROM analytics.engage_AssignmentDim WHERE AssignmentKey = '?'"
     )
     return pd.read_sql(SELECT_FROM_ASSIGNMENT, mssql_fixture, params=[identifier])
 
 
-@then("there should be 0 records")
-def then_zero_records(assignment_df) -> None:
-    assert assignment_df.shape[0] == 0
+@then(parsers.parse("there should be {expected} records"))
+def then_zero_records(assignment_df, expected) -> None:
+    assert assignment_df.shape[0] == int(expected)
+
+
+@then(parsers.parse("it has these columns:\n{table}"))
+def it_has_columns(table: str, assignment_df: pd.DataFrame) -> None:
+    assert_dataframe_has_columns(table, assignment_df)
