@@ -24,7 +24,8 @@ def read_string_table_as_dataframe(table: str) -> pd.DataFrame:
 
 
 def read_keyvalue_pairs_as_dict(kv_pairs: str) -> Dict[str, str]:
-    _, data = read_string_table_as_2d_list(kv_pairs)
+    rows = kv_pairs.strip().split("\n")
+    data = [[v.strip() for v in r.split("|") if v != ""] for r in rows]
 
     kv_d: Dict[str, str] = {}
 
@@ -32,3 +33,8 @@ def read_keyvalue_pairs_as_dict(kv_pairs: str) -> Dict[str, str]:
         kv_d[kv[0]] = kv[1]
 
     return kv_d
+
+
+def read_keyvalue_pairs_as_dataframe(kv_pairs: str) -> pd.DataFrame:
+    kv_d = read_keyvalue_pairs_as_dict(kv_pairs)
+    return pd.DataFrame([kv_d])
