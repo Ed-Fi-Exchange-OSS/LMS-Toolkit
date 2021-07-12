@@ -8,6 +8,9 @@ import os
 import pandas as pd
 from sqlalchemy import engine, text
 
+from .table_helpers import read_keyvalue_pairs_as_dataframe
+
+
 DESCRIPTOR_SQL = """
 INSERT INTO edfi.Descriptor (CodeValue, ShortDescription, Description, Namespace)
     VALUES ('<cv>', '<sd>', '<d>', '<n>');
@@ -126,3 +129,15 @@ def load_session(
     )
 
     session.to_sql("Session", engine, schema=SCHEMA_EDFI, **APPEND_OPTIONS)
+
+
+def load_section(engine: engine.base.Engine, section_table: str) -> None:
+    section_df = read_keyvalue_pairs_as_dataframe(section_table)
+
+    print("-------------------------")
+    print(section_table)
+    print("-------------------------")
+    print(section_df)
+    print("-------------------------")
+
+    section_df.to_sql("Section", engine, schema=SCHEMA_EDFI, **APPEND_OPTIONS)
