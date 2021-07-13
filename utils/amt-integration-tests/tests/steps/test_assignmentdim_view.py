@@ -13,13 +13,19 @@ from pytest_bdd import (
     when,
 )
 import pandas as pd
-from sqlalchemy import engine, text
+from sqlalchemy import engine
 
 from ..assertion_helpers import (
     assert_dataframe_has_one_row_matching,
     assert_dataframe_has_columns,
 )
-from ..data_helpers import load_school, load_school_year, load_session, load_section
+from ..data_helpers import (
+    load_grading_period,
+    load_school,
+    load_school_year,
+    load_session,
+    load_section,
+)
 
 
 @scenario("../features/assignmentdim_view.feature", "Ensure the view exists")
@@ -67,13 +73,16 @@ def given_session(
     load_session(mssql_fixture, school_id, session_name, school_year)
 
 
-@given(
-    parsers.parse(
-        "there is a section\n{section_table}"
-    )
-)
+@given(parsers.parse("there is a section\n{section_table}"))
 def given_section(mssql_fixture: engine.base.Engine, section_table: str) -> None:
     load_section(mssql_fixture, section_table)
+
+
+@given(parsers.parse("there is a grading period\n{grading_period_table}"))
+def given_grading_period(
+    mssql_fixture: engine.base.Engine, grading_period_table: str
+) -> None:
+    load_grading_period(mssql_fixture, grading_period_table)
 
 
 @when(
