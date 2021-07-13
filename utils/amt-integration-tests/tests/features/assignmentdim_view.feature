@@ -64,6 +64,7 @@ Feature: AssignmentDim View
         #       | PeriodSequence | 3                         |
         #       | SchoolId       | 53                        |
         #       | SchoolYear     | 1053                      |
+        #       | BeginDate      | 1053-07-01 01:23:45       |
 
             # In the following, note the very last row, establishing
             # that this is a _discussion_ category of Assignment,
@@ -84,7 +85,22 @@ Feature: AssignmentDim View
 
          When I query for assignments with identifier "assigndim-happy-path"
 
-         Then there should be 1 records
+        #  Then there should be 1 records
+
+          Then the AssignmentDim record should have these values:
+              | AssignmentKey    | assigndim-happy-path                 |
+              | SchoolKey        | 53                                   |
+              | SourceSystem     | Schoology                            |
+              | Title            | A discussion for 1053                |
+              | Description      | The description                      |
+              | StartDateKey     | 1053-07-08                           |
+              | EndDateKey       | 1053-07-09                           |
+              | DueDateKey       | 1053-07-09                           |
+              | MaxPoints        | 99                                   |
+              | SectionKey       | 53-abc-1053-1053-si-1503-Summer-1053 |
+              | GradingPeriodKey | r"[0-9]+-53-1053-07-01"              |
+              | LastModifiedDate | r"\d{4}-\d{2}-\d{2}"                 |
+
 
     Scenario: Ignores discussions
         Given Analytics Middle Tier has been installed
