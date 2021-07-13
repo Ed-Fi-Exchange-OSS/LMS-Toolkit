@@ -59,12 +59,12 @@ Feature: AssignmentDim View
               | SectionIdentifier | si-1053     |
               | SessionName       | Summer-1053 |
 
-        #   And there is a grading period
-        #       | Descriptor     | First summer session 1053 |
-        #       | PeriodSequence | 3                         |
-        #       | SchoolId       | 53                        |
-        #       | SchoolYear     | 1053                      |
-        #       | BeginDate      | 1053-07-01 01:23:45       |
+          And there is a grading period
+              | Descriptor     | First summer session 1053 |
+              | PeriodSequence | 3                         |
+              | SchoolId       | 53                        |
+              | SchoolYear     | 1053                      |
+              | BeginDate      | 1053-07-01 01:23:45       |
 
             # In the following, note the very last row, establishing
             # that this is a _discussion_ category of Assignment,
@@ -130,11 +130,11 @@ Feature: AssignmentDim View
               | SectionIdentifier | si-1054     |
               | SessionName       | Summer-1054 |
 
-        #   And there is a grading period
-        #       | Descriptor     | First summer session 1054 |
-        #       | PeriodSequence | 3                         |
-        #       | SchoolId       | 54                        |
-        #       | SchoolYear     | 1054                      |
+          And there is a grading period
+              | Descriptor     | First summer session 1054 |
+              | PeriodSequence | 3                         |
+              | SchoolId       | 54                        |
+              | SchoolYear     | 1054                      |
 
             # In the following, note the very last row, establishing
             # that this is a _discussion_ category of Assignment,
