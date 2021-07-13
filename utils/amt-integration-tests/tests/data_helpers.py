@@ -27,6 +27,10 @@ def _get_value(row: pd.Series, column: str) -> str:
     return row[column].replace("'", "''")
 
 
+def _get_edfi_options(engine: engine.base.Engine) -> dict:
+    return {"con": engine, "schema": SCHEMA_EDFI, **APPEND_OPTIONS}
+
+
 def _prepare_descriptor_sql(row: pd.Series, schema: str, table: str) -> str:
     return (
         DESCRIPTOR_SQL.replace("<cv>", _get_value(row, "CodeValue"))
@@ -66,10 +70,10 @@ APPEND_OPTIONS = {"if_exists": "append", "index": False}
 
 def load_school(engine: engine.base.Engine, id: str) -> None:
     ed_org = pd.DataFrame([{"EducationOrganizationId": id, "NameOfInstitution": id}])
-    ed_org.to_sql("EducationOrganization", engine, schema="edfi", **APPEND_OPTIONS)
+    ed_org.to_sql("EducationOrganization", **_get_edfi_options(engine))
 
     school = pd.DataFrame([{"schoolid": id}])
-    school.to_sql("School", engine, schema="edfi", **APPEND_OPTIONS)
+    school.to_sql("School", **_get_edfi_options(engine))
 
 
 def load_school_year(engine: engine.base.Engine, school_year: str) -> None:
@@ -83,7 +87,7 @@ def load_school_year(engine: engine.base.Engine, school_year: str) -> None:
         ]
     )
     school_year_type = school_year_type.astype({"SchoolYear": int})
-    school_year_type.to_sql("SchoolYearType", engine, schema="edfi", **APPEND_OPTIONS)
+    school_year_type.to_sql("SchoolYearType", **_get_edfi_options(engine))
 
 
 def load_session(
@@ -128,16 +132,32 @@ def load_session(
         ]
     )
 
-    session.to_sql("Session", engine, schema=SCHEMA_EDFI, **APPEND_OPTIONS)
+    session.to_sql("Session", **_get_edfi_options(engine))
 
 
 def load_section(engine: engine.base.Engine, section_table: str) -> None:
     section_df = read_keyvalue_pairs_as_dataframe(section_table)
 
-    print("-------------------------")
-    print(section_table)
-    print("-------------------------")
-    print(section_df)
-    print("-------------------------")
+    # Before we can have a section, we must have a Course and then a Course
+    # Offering.
+    course_df = section_df[["LocalCourseCode", "SchoolId"]].copy()
+    course_df.rename(
+        columns={
+            "LocalCourseCode": "CourseCode",
+            "SchoolId": "EducationOrganizationId",
+        },
+        inplace=True,
+    )
 
-    section_df.to_sql("Section", engine, schema=SCHEMA_EDFI, **APPEND_OPTIONS)
+    course_df["CourseTitle"] = course_df["CourseCode"]
+    course_df["NumberOfParts"] = 1
+    course_df.to_sql("Course", **_get_edfi_options(engine))
+
+    offering_df = section_df[
+        ["LocalCourseCode", "SchoolId", "SchoolYear", "SessionName"]
+    ].copy()
+    offering_df["CourseCode"] = offering_df["LocalCourseCode"]
+    offering_df["EducationOrganizationId"] = offering_df["SchoolId"]
+    offering_df.to_sql("CourseOffering", **_get_edfi_options(engine))
+
+    section_df.to_sql("Section", **_get_edfi_options(engine))
