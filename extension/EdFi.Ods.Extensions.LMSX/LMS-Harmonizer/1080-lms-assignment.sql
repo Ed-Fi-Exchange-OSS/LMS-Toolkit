@@ -7,7 +7,8 @@ CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment] AS
 BEGIN
     SET NOCOUNT ON;
 
-	-- This will be used to handle creates and updates from the same temp table
+
+	-- Load temporary table
 	SELECT
 		lmsAssignment.AssignmentIdentifier [AssignmentIdentifier],
 		sourceSystemDescriptor.DescriptorId [LMSSourceSystemDescriptorId],
@@ -87,6 +88,7 @@ BEGIN
 		AND
 			[ASSIGNMENT_DELETED] IS NULL
 
+
 	UPDATE LMSX.Assignment
 	SET
 		LMSX.Assignment.[Title] = #ALL_ASSIGNMENTS.Title,
@@ -95,13 +97,19 @@ BEGIN
 		LMSX.Assignment.[StartDateTime] = #ALL_ASSIGNMENTS.StartDateTime,
 		LMSX.Assignment.[EndDateTime] = #ALL_ASSIGNMENTS.EndDateTime,
 		LMSX.Assignment.[DueDateTime] = #ALL_ASSIGNMENTS.DueDateTime,
-		LMSX.Assignment.[MaxPoints] = #ALL_ASSIGNMENTS.MaxPoints
+		LMSX.Assignment.[MaxPoints] = #ALL_ASSIGNMENTS.MaxPoints,
+		LMSX.Assignment.[LastModifiedDate] = GETDATE()
 	FROM
 		#ALL_ASSIGNMENTS
 	WHERE
 		LMSX.Assignment.AssignmentIdentifier = #ALL_ASSIGNMENTS.AssignmentIdentifier
 		AND
 			#ALL_ASSIGNMENTS.[ASSIGNMENT_LAST_MODIFIED_DATE] > LMSX.Assignment.LastModifiedDate
+
+
+	DELETE FROM LMSX.AssignmentSubmission
+		WHERE LMSX.AssignmentSubmission.AssignmentIdentifier IN (SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL)
+
 
 	DELETE FROM LMSX.Assignment
 		WHERE LMSX.Assignment.AssignmentIdentifier IN (SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL)
