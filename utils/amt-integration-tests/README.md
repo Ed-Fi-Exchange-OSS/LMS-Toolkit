@@ -52,15 +52,21 @@ name `test_analytics_middle_tier_engage`.
 | --username | (none) | Database username when not using integrated security |
 | --password | (none) | Database user password, when not using integrated security |
 
-## Pytest-BDD
+## Testing  Framework
 
 All tests are written first as Gherkin-based feature files, which are then
-implemented in pytest using pytest-bdd.
+implemented in pytest using pytest-bdd. While testing a single property at a
+time is typically a best practice, some tests use collect multiple errors before
+reporting on them, for example in comparing two objects value-by-value. This
+fits well with the BDD strategy of showing a single table of results instead
+breaking down an object into a bunch of individual values in Gherkin, which
+would be more difficult to read.
 
-:exclamation: please note that some examples show the "Given ... When ... Then"
-statements separated by a single line break. In the current version of the tooling
-this will fail, perhaps because this repo uses LF instead of CRLF. Thus you must
-have two line breaks between these statements.
+:exclamation: please note that some examples in external documentation show the
+"Given ... When ... Then" statements separated by a single line break. In the
+current version of the tooling fails in our repository, perhaps because this
+repo uses LF instead of CRLF. Thus you must have two line breaks between these
+statements.
 
 Recommended reading:
 
