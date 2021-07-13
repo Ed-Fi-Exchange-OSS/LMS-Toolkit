@@ -16,7 +16,7 @@ import pandas as pd
 from sqlalchemy import engine, text
 
 from ..assertion_helpers import (
-    assert_dataframe_equals_table,
+    assert_dataframe_has_one_row_matching,
     assert_dataframe_has_columns,
 )
 from ..data_helpers import load_school, load_school_year, load_session, load_section
@@ -84,8 +84,8 @@ def when_query_for_assignment(
     mssql_fixture: engine.base.Engine, identifier: str
 ) -> pd.DataFrame:
 
-    SELECT_FROM_ASSIGNMENT = text(
-        "SELECT * FROM analytics.engage_AssignmentDim WHERE AssignmentKey = '?'"
+    SELECT_FROM_ASSIGNMENT = (
+        "SELECT * FROM analytics.engage_AssignmentDim WHERE AssignmentKey = ?"
     )
     return pd.read_sql(SELECT_FROM_ASSIGNMENT, mssql_fixture, params=[identifier])
 
@@ -98,3 +98,8 @@ def then_zero_records(assignment_df, expected) -> None:
 @then(parsers.parse("it has these columns:\n{table}"))
 def it_has_columns(table: str, assignment_df: pd.DataFrame) -> None:
     assert_dataframe_has_columns(table, assignment_df)
+
+
+@then(parsers.parse("the AssignmentDim record should have these values:\n{table}"))
+def it_has_values(table: str, assignment_df: pd.DataFrame) -> None:
+    assert_dataframe_has_one_row_matching(table, assignment_df)

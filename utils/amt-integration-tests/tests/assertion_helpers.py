@@ -4,10 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 
+import re
+
 import pandas as pd
 
-
-from .table_helpers import read_string_table_as_2d_list, read_string_table_as_dataframe
+from .table_helpers import read_keyvalue_pairs_as_dict, read_string_table_as_2d_list, read_string_table_as_dataframe
 
 
 def assert_dataframe_equals_table(table: str, actual: pd.DataFrame) -> None:
@@ -31,3 +32,27 @@ def assert_dataframe_has_columns(columns: str, actual: pd.DataFrame) -> None:
     msg = f"Expected: {e}\nActual: {a}"
 
     assert e == a, msg
+
+
+# Note that this uses delayed assert so that we can collect all assertion errors
+# before reporting.
+def assert_dataframe_has_one_row_matching(table: str, actual: pd.DataFrame) -> None:
+    assert actual.shape[0] > 0, "Unable to analyze because there are no rows"
+
+    row = read_keyvalue_pairs_as_dict(table)
+
+    errors = []
+    for column, value in row.items():
+        test = str(actual[column].iloc[0])
+
+        if value.startswith("r"):
+            # This is assumes a format of r"expression" thus leading to
+            # re.compile("expression").
+            r = re.compile(value[2:-1])
+            if not r.match(test):
+                errors.append(f"{column}: expected `{value}`, actual `{test}`")
+        else:
+            if test != value:
+                errors.append(f"{column}: expected `{value}`, actual `{test}`")
+
+    assert len(errors) == 0, "\n".join(errors)
