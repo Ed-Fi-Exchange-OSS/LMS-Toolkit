@@ -1,5 +1,5 @@
 {
-    "python.analysis.extraPaths": ["./change_to_module_name", "./tests"],
+    "python.analysis.extraPaths": ["./tests"],
     "python.analysis.typeCheckingMode": "basic",
     "python.languageServer": "Pylance",
     "python.linting.pylintEnabled": false,
@@ -10,7 +10,6 @@
     ],
     "python.formatting.provider": "black",
     "python.venvPath": ".venv/bin/python",
-    "python.dataScience.jupyterServerURI": "local",
     "files.associations": {
         "*.metaed": "csharp"
     },
