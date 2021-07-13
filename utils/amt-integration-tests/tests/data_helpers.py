@@ -50,7 +50,7 @@ def _read_and_load_descriptors(
     file_path = os.path.join(
         "..", "..", "extension", "Descriptors", f"{descriptor}.xml"
     )
-    df = pd.read_xml(file_path)
+    df = pd.read_xml(file_path)  # type: ignore
 
     with engine.connect() as connection:
         for _, row in df.iterrows():
@@ -161,3 +161,9 @@ def load_section(engine: engine.base.Engine, section_table: str) -> None:
     offering_df.to_sql("CourseOffering", **_get_edfi_options(engine))
 
     section_df.to_sql("Section", **_get_edfi_options(engine))
+
+
+def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -> None:
+    grading_periods_df = read_keyvalue_pairs_as_dataframe(grading_period_table)
+
+    grading_periods_df.to_sql("GradingPeriod", **_get_edfi_options(engine))
