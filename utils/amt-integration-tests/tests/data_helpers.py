@@ -306,6 +306,16 @@ def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -
     )
     grading_periods_df["GradingPeriodDescriptorId"] = descriptor_id
 
+    GradingPeriod = "Section"
+    descriptor = grading_periods_df["Descriptor"].iloc[0]
+
+    if GradingPeriod not in already_loaded.keys():
+        already_loaded[GradingPeriod] = []
+
+    if descriptor in already_loaded[GradingPeriod]:
+        # This school has already been loaded, no more action required
+        return
+
     grading_periods_df.to_sql("GradingPeriod", **_get_edfi_options(engine))
 
 
