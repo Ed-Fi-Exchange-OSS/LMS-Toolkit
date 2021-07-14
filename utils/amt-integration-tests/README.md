@@ -62,12 +62,6 @@ fits well with the BDD strategy of showing a single table of results instead
 breaking down an object into a bunch of individual values in Gherkin, which
 would be more difficult to read.
 
-:exclamation: please note that some examples in external documentation show the
-"Given ... When ... Then" statements separated by a single line break. In the
-current version of the tooling fails in our repository, perhaps because this
-repo uses LF instead of CRLF. Thus you must have two line breaks between these
-statements.
-
 Recommended reading:
 
 * [Pytest-BDD Manual](https://pytest-bdd.readthedocs.io/en/latest/)
