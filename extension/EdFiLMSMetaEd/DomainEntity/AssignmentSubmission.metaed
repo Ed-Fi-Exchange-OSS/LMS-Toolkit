@@ -15,6 +15,7 @@ Domain Entity AssignmentSubmission
     domain entity Assignment
         documentation "A reference to the Assignment"
         is required
+        merge Assignment.Namespace with Namespace
     descriptor SubmissionStatus
         documentation "The status of the submission in relation to the late acceptance policy."
         is required
@@ -28,3 +29,6 @@ Domain Entity AssignmentSubmission
     shared string Grade
         documentation "The grade received for the submission."
         is optional
+    shared string EdFi.URI named Namespace
+        documentation "Namespace for the AssignmentSubmission."
+        is part of identity
