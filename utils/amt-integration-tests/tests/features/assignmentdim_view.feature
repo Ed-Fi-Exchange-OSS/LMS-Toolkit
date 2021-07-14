@@ -8,8 +8,10 @@ Feature: AssignmentDim View
     I want to denormalize LMS Assignment data,
     so that I can build reports on student engagement.
 
-    Scenario: Ensure the view exists
+    Background:
         Given Analytics Middle Tier has been installed
+
+    Scenario: Ensure the view exists
         When I query for assignments with identifier "this-row-doesnt-exist"
         Then it has these columns:
             | Columns          |
@@ -27,26 +29,9 @@ Feature: AssignmentDim View
             | LastModifiedDate |
 
     Scenario: Happy Path
-        Given Analytics Middle Tier has been installed
-
-          # TODO: Loading descriptors is now done once for the entire session so
-          # that we don't have re-insertion attempts. Let's discuss the value of
-          # having given statements like the one above and, possibly, the one below,
-          # which explain the conditions but don't actually do anything.
-
-        # And the default LMS descriptors have been loaded
-
-        And there is a school with id 53
+        Given there is a school with id 53
         And the school year is 1053
         And school 53 has a session called "Summer-1053" in year 1053
-            # TODO: think about making some parts of these records more
-            # unique to the scenario, because of the brittleness of
-            # these tests that will be assuming there are unique
-            # records just for the given test.
-
-        # I wonder if we should prep the database with just one school, school year, session, etc?
-        # instead of inserting new values every time.
-
         And there is a section
             | LocalCourseCode   | abc-1053    |
             | SchoolId          | 53          |
@@ -59,10 +44,6 @@ Feature: AssignmentDim View
             | SchoolId       | 53                        |
             | SchoolYear     | 1053                      |
             | BeginDate      | 1053-07-01 01:23:45       |
-
-            # In the following, note the very last row, establishing
-            # that this is a _discussion_ category of Assignment,
-            # rather than a _assignment_ category of Assignment.
         #   And there is one Assignment
         #       | AssignmentIdentifier | assigndim-happy-path  |
         #       | SchoolId             | 53                    |
@@ -76,7 +57,6 @@ Feature: AssignmentDim View
         #       | SectionIdentifier    | si-1053               |
         #       | LastModifiedDate     | 1053-07-07 09:01      |
         #       | AssignmentCategory   | discussion            |
-
         When I query for assignments with identifier "assigndim-happy-path"
         Then there should be 1 records
         Then the AssignmentDim record should have these values:
@@ -95,24 +75,9 @@ Feature: AssignmentDim View
 
 
     Scenario: Ignores discussions
-        Given Analytics Middle Tier has been installed
-
-          # TODO: Loading descriptors is now done once for the entire session so
-          # that we don't have re-insertion attempts. Let's discuss the value of
-          # having given statements like the one above and, possibly, the one below,
-          # which explain the conditions but don't actually do anything.
-
-        # And the default LMS descriptors have been loaded
-
-        And there is a school with id 54
+        Given there is a school with id 54
         And the school year is 1054
         And school 54 has a session called "Summer-1054" in year 1054
-
-            # TODO: think about making some parts of these records more
-            # unique to the scenario, because of the brittleness of
-            # these tests that will be assuming there are unique
-            # records just for the given test.
-
         And there is a section
             | LocalCourseCode   | abc-1054    |
             | SchoolId          | 54          |
@@ -124,10 +89,6 @@ Feature: AssignmentDim View
             | PeriodSequence | 3                         |
             | SchoolId       | 54                        |
             | SchoolYear     | 1054                      |
-
-            # In the following, note the very last row, establishing
-            # that this is a _discussion_ category of Assignment,
-            # rather than a _assignment_ category of Assignment.
         #   And there is one Assignment
         #       | AssignmentIdentifier | assigndim-happy-path  |
         #       | SchoolId             | 54                    |
@@ -141,6 +102,5 @@ Feature: AssignmentDim View
         #       | SectionIdentifier    | si-1054               |
         #       | LastModifiedDate     | 1054-07-07 09:01      |
         #       | AssignmentCategory   | discussion            |
-
         When I query for assignments with identifier "ignore-discussion"
         Then there should be 0 records
