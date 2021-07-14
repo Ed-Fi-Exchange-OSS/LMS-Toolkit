@@ -10,6 +10,22 @@ Feature: AssignmentDim View
 
     Background:
         Given Analytics Middle Tier has been installed
+        And there is a school with id 53
+        And the school year is 1053
+        And school 53 has a session called "Summer-1053" in year 1053
+        And there is a section
+            | LocalCourseCode   | abc-1053    |
+            | SchoolId          | 53          |
+            | SchoolYear        | 1053        |
+            | SectionIdentifier | si-1053     |
+            | SessionName       | Summer-1053 |
+        And there is a grading period
+            | Descriptor     | First summer session 1053 |
+            | PeriodSequence | 3                         |
+            | SchoolId       | 53                        |
+            | SchoolYear     | 1053                      |
+            | BeginDate      | 1053-07-01 01:23:45       |
+
 
     Scenario: Ensure the view exists
         When I query for assignments with identifier "this-row-doesnt-exist"
@@ -29,37 +45,22 @@ Feature: AssignmentDim View
             | LastModifiedDate |
 
     Scenario: Happy Path
-        Given there is a school with id 53
-        And the school year is 1053
-        And school 53 has a session called "Summer-1053" in year 1053
-        And there is a section
-            | LocalCourseCode   | abc-1053    |
-            | SchoolId          | 53          |
-            | SchoolYear        | 1053        |
-            | SectionIdentifier | si-1053     |
-            | SessionName       | Summer-1053 |
-        And there is a grading period
-            | Descriptor     | First summer session 1053 |
-            | PeriodSequence | 3                         |
-            | SchoolId       | 53                        |
-            | SchoolYear     | 1053                      |
-            | BeginDate      | 1053-07-01 01:23:45       |
-        #   And there is one Assignment
-        #       | AssignmentIdentifier | assigndim-happy-path  |
-        #       | SchoolId             | 53                    |
-        #       | SourceSystem         | Schoology             |
-        #       | Title                | A discussion for 1053 |
-        #       | Description          | The description       |
-        #       | StartDateTime        | 1053-07-08 09:00      |
-        #       | EndDateTime          | 1053-07-09 10:00      |
-        #       | DueDateTime          | 1053-07-09 10:11      |
-        #       | MaxPoints            | 99                    |
-        #       | SectionIdentifier    | si-1053               |
-        #       | LastModifiedDate     | 1053-07-07 09:01      |
-        #       | AssignmentCategory   | discussion            |
+        Given there is one Assignment
+            | AssignmentIdentifier | assigndim-happy-path  |
+            | SchoolId             | 53                    |
+            | SourceSystem         | Schoology             |
+            | Title                | A discussion for 1053 |
+            | Description          | The description       |
+            | StartDateTime        | 1053-07-08 09:00      |
+            | EndDateTime          | 1053-07-09 10:00      |
+            | DueDateTime          | 1053-07-09 10:11      |
+            | MaxPoints            | 99                    |
+            | SectionIdentifier    | si-1053               |
+            | LastModifiedDate     | 1053-07-07 09:01      |
+            | AssignmentCategory   | Assignment            |
         When I query for assignments with identifier "assigndim-happy-path"
         Then there should be 1 records
-        Then the AssignmentDim record should have these values:
+        And the AssignmentDim record should have these values:
             | AssignmentKey    | assigndim-happy-path                 |
             | SchoolKey        | 53                                   |
             | SourceSystem     | Schoology                            |
@@ -75,32 +76,18 @@ Feature: AssignmentDim View
 
 
     Scenario: Ignores discussions
-        Given there is a school with id 54
-        And the school year is 1054
-        And school 54 has a session called "Summer-1054" in year 1054
-        And there is a section
-            | LocalCourseCode   | abc-1054    |
-            | SchoolId          | 54          |
-            | SchoolYear        | 1054        |
-            | SectionIdentifier | si-1054     |
-            | SessionName       | Summer-1054 |
-        And there is a grading period
-            | Descriptor     | First summer session 1054 |
-            | PeriodSequence | 3                         |
-            | SchoolId       | 54                        |
-            | SchoolYear     | 1054                      |
-        #   And there is one Assignment
-        #       | AssignmentIdentifier | assigndim-happy-path  |
-        #       | SchoolId             | 54                    |
-        #       | SourceSystem         | Schoology             |
-        #       | Title                | A discussion for 1054 |
-        #       | Description          | The description       |
-        #       | StartDateTime        | 1054-07-08 09:00      |
-        #       | EndDateTime          | 1054-07-09 10:00      |
-        #       | DueDateTime          | 1054-07-09 10:11      |
-        #       | MaxPoints            | 99                    |
-        #       | SectionIdentifier    | si-1054               |
-        #       | LastModifiedDate     | 1054-07-07 09:01      |
-        #       | AssignmentCategory   | discussion            |
+        Given there is one Assignment
+            | AssignmentIdentifier | ignore-discussion     |
+            | SchoolId             | 53                    |
+            | SourceSystem         | Schoology             |
+            | Title                | A discussion for 1053 |
+            | Description          | The description       |
+            | StartDateTime        | 1053-07-08 09:00      |
+            | EndDateTime          | 1053-07-09 10:00      |
+            | DueDateTime          | 1053-07-09 10:11      |
+            | MaxPoints            | 99                    |
+            | SectionIdentifier    | si-1053               |
+            | LastModifiedDate     | 1053-07-07 09:01      |
+            | AssignmentCategory   | discussion            |
         When I query for assignments with identifier "ignore-discussion"
         Then there should be 0 records

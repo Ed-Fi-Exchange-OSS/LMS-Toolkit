@@ -20,6 +20,11 @@ INSERT INTO <schema>.<tbl> (<tbl>Id) VALUES (@id);
 
 SCHEMA_LMSX = "lmsx"
 SCHEMA_EDFI = "edfi"
+APPEND_OPTIONS = {"if_exists": "append", "index": False}
+
+# This static variable helps us keep track of what has already been uploaded so
+# that we can avoid re-uploading, and thus encountering a duplicate key error.
+already_loaded = {}
 
 
 def _get_value(row: pd.Series, column: str) -> str:
@@ -65,18 +70,35 @@ def load_lms_descriptors(engine: engine.base.Engine) -> None:
     _read_and_load_descriptors(engine, "SubmissionType")
 
 
-APPEND_OPTIONS = {"if_exists": "append", "index": False}
-
-
 def load_school(engine: engine.base.Engine, id: str) -> None:
+    SCHOOLID = "SchoolId"
+
+    if SCHOOLID not in already_loaded.keys():
+        already_loaded[SCHOOLID] = []
+
+    if id in already_loaded[SCHOOLID]:
+        # This school has already been loaded, no more action required
+        return
+
     ed_org = pd.DataFrame([{"EducationOrganizationId": id, "NameOfInstitution": id}])
     ed_org.to_sql("EducationOrganization", **_get_edfi_options(engine))
 
-    school = pd.DataFrame([{"schoolid": id}])
+    school = pd.DataFrame([{SCHOOLID: id}])
     school.to_sql("School", **_get_edfi_options(engine))
+
+    already_loaded[SCHOOLID].append(id)
 
 
 def load_school_year(engine: engine.base.Engine, school_year: str) -> None:
+    SCHOOLYEAR = "SchoolYear"
+
+    if SCHOOLYEAR not in already_loaded.keys():
+        already_loaded[SCHOOLYEAR] = []
+
+    if school_year in already_loaded[SCHOOLYEAR]:
+        # This school has already been loaded, no more action required
+        return
+
     school_year_type = pd.DataFrame(
         [
             {
@@ -89,10 +111,23 @@ def load_school_year(engine: engine.base.Engine, school_year: str) -> None:
     school_year_type = school_year_type.astype({"SchoolYear": int})
     school_year_type.to_sql("SchoolYearType", **_get_edfi_options(engine))
 
+    already_loaded[SCHOOLYEAR].append(school_year)
+
+
+counter = {"here": 0}
+
 
 def load_session(
     engine: engine.base.Engine, school_id: str, session_name: str, school_year: str
 ) -> None:
+    SESSION = "Session"
+
+    if SESSION not in already_loaded.keys():
+        already_loaded[SESSION] = []
+
+    if session_name in already_loaded[SESSION]:
+        # This school has already been loaded, no more action required
+        return
 
     # We need to have a term descriptor before we can insert a school year
     term_code_value = f"TERM:{session_name}"
@@ -134,9 +169,21 @@ def load_session(
 
     session.to_sql("Session", **_get_edfi_options(engine))
 
+    already_loaded[SESSION].append(session_name)
+
 
 def load_section(engine: engine.base.Engine, section_table: str) -> None:
     section_df = read_keyvalue_pairs_as_dataframe(section_table)
+
+    SECTION = "Section"
+    section_identifier = section_df["SectionIdentifier"].iloc[0]
+
+    if SECTION not in already_loaded.keys():
+        already_loaded[SECTION] = []
+
+    if section_identifier in already_loaded[SECTION]:
+        # This school has already been loaded, no more action required
+        return
 
     # Before we can have a section, we must have a Course and then a Course
     # Offering.
@@ -162,8 +209,22 @@ def load_section(engine: engine.base.Engine, section_table: str) -> None:
 
     section_df.to_sql("Section", **_get_edfi_options(engine))
 
+    already_loaded[SECTION].append(section_identifier)
+
 
 def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -> None:
     grading_periods_df = read_keyvalue_pairs_as_dataframe(grading_period_table)
 
+    GradingPeriod = "Section"
+    descriptor = grading_periods_df["Descriptor"].iloc[0]
+
+    if GradingPeriod not in already_loaded.keys():
+        already_loaded[GradingPeriod] = []
+
+    if descriptor in already_loaded[GradingPeriod]:
+        # This school has already been loaded, no more action required
+        return
+
     grading_periods_df.to_sql("GradingPeriod", **_get_edfi_options(engine))
+
+    already_loaded[GradingPeriod].append(descriptor)
