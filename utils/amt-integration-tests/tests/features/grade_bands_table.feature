@@ -10,10 +10,8 @@ Feature: Grade Bands
 
     Scenario: Checking for the Table
         Given Analytics Middle Tier has been installed
-
-         When I query the Grade Band Table
-
-         Then Grade Band has the following default records
+        When I query the Grade Band Table
+        Then Grade Band has the following default records
               | BandName      | LowerBound | UpperBound |
               | Less than 50% | 0          | 50         |
               | 50% to 65%    | 50         | 65         |
