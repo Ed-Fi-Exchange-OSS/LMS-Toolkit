@@ -29,7 +29,7 @@ from ..data_helpers import (
 
 
 @scenario("../features/assignmentdim_view.feature", "Ensure the view exists")
-def test_assignment_dim_path_exists() -> None:
+def test_assignment_dim_view_exists() -> None:
     pass
 
 
