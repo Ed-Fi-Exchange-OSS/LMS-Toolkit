@@ -20,11 +20,15 @@ Feature: AssignmentDim View
             | SectionIdentifier | si-1053     |
             | SessionName       | Summer-1053 |
         And there is a grading period
-            | Descriptor     | First summer session 1053 |
-            | PeriodSequence | 3                         |
-            | SchoolId       | 53                        |
-            | SchoolYear     | 1053                      |
-            | BeginDate      | 1053-07-01 01:23:45       |
+            | Descriptor             | First summer session 1053 |
+            | PeriodSequence         | 3                         |
+            | SchoolId               | 53                        |
+            | SchoolYear             | 1053                      |
+            | TotalInstructionalDays | 1053                      |
+            | BeginDate              | 1053-07-01 01:23:45       |
+            | EndDate                | 1053-07-01 01:23:45       |
+
+
 
 
     Scenario: Ensure the view exists
