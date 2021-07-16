@@ -3,7 +3,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Course work as
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique string assigned to the assignment, based on the source system of record.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The identifier assigned to a school.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'SchoolId'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Namespace for the Assignment.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'Namespace'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The system code or name providing the assignment data.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'LMSSourceSystemDescriptorId'
 GO
@@ -29,6 +29,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The identifier
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The identifier for the school year.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'SchoolYear'
 GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The identifier assigned to a school.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'Assignment', @level2type=N'COLUMN', @level2name=N'SchoolId'
+GO
 
 -- Extended Properties [lmsx].[AssignmentCategoryDescriptor] --
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The category or type of assignment.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentCategoryDescriptor'
@@ -41,11 +43,11 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A user''s subm
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique numeric identifier assigned to the submission.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'AssignmentSubmissionIdentifier'
 GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Namespace for the AssignmentSubmission.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'Namespace'
+GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique alphanumeric code assigned to a student.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'StudentUSI'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique string assigned to the assignment, based on the source system of record.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
-GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The identifier assigned to a school.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SchoolId'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The status of the submission in relation to the late acceptance policy.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmission', @level2type=N'COLUMN', @level2name=N'SubmissionStatusDescriptorId'
 GO
@@ -61,7 +63,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type(s) of
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'A unique string assigned to the assignment, based on the source system of record.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType', @level2type=N'COLUMN', @level2name=N'AssignmentIdentifier'
 GO
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The identifier assigned to a school.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType', @level2type=N'COLUMN', @level2name=N'SchoolId'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Namespace for the Assignment.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType', @level2type=N'COLUMN', @level2name=N'Namespace'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'The type(s) of submissions available for the assignment.', @level0type=N'SCHEMA', @level0name=N'lmsx', @level1type=N'TABLE', @level1name=N'AssignmentSubmissionType', @level2type=N'COLUMN', @level2name=N'SubmissionTypeDescriptorId'
 GO

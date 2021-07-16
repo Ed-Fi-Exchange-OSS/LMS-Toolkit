@@ -1,7 +1,7 @@
 -- Table [lmsx].[Assignment] --
 CREATE TABLE [lmsx].[Assignment] (
     [AssignmentIdentifier] [NVARCHAR](255) NOT NULL,
-    [SchoolId] [INT] NOT NULL,
+    [Namespace] [NVARCHAR](255) NOT NULL,
     [LMSSourceSystemDescriptorId] [INT] NOT NULL,
     [Title] [NVARCHAR](255) NOT NULL,
     [AssignmentCategoryDescriptorId] [INT] NOT NULL,
@@ -11,16 +11,17 @@ CREATE TABLE [lmsx].[Assignment] (
     [DueDateTime] [DATETIME2](7) NULL,
     [MaxPoints] [INT] NULL,
     [SectionIdentifier] [NVARCHAR](255) NOT NULL,
-    [LocalCourseCode] [NVARCHAR](60) NOT NULL,
-    [SessionName] [NVARCHAR](60) NOT NULL,
-    [SchoolYear] [SMALLINT] NOT NULL,
+    [LocalCourseCode] [NVARCHAR](60) NULL,
+    [SessionName] [NVARCHAR](60) NULL,
+    [SchoolYear] [SMALLINT] NULL,
+    [SchoolId] [INT] NULL,
     [Discriminator] [NVARCHAR](128) NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     [LastModifiedDate] [DATETIME2] NOT NULL,
     [Id] [UNIQUEIDENTIFIER] NOT NULL,
     CONSTRAINT [Assignment_PK] PRIMARY KEY CLUSTERED (
         [AssignmentIdentifier] ASC,
-        [SchoolId] ASC
+        [Namespace] ASC
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -43,9 +44,9 @@ GO
 -- Table [lmsx].[AssignmentSubmission] --
 CREATE TABLE [lmsx].[AssignmentSubmission] (
     [AssignmentSubmissionIdentifier] [NVARCHAR](255) NOT NULL,
+    [Namespace] [NVARCHAR](255) NOT NULL,
     [StudentUSI] [INT] NOT NULL,
     [AssignmentIdentifier] [NVARCHAR](255) NOT NULL,
-    [SchoolId] [INT] NOT NULL,
     [SubmissionStatusDescriptorId] [INT] NOT NULL,
     [SubmissionDateTime] [DATETIME2](7) NOT NULL,
     [EarnedPoints] [INT] NULL,
@@ -56,6 +57,7 @@ CREATE TABLE [lmsx].[AssignmentSubmission] (
     [Id] [UNIQUEIDENTIFIER] NOT NULL,
     CONSTRAINT [AssignmentSubmission_PK] PRIMARY KEY CLUSTERED (
         [AssignmentSubmissionIdentifier] ASC,
+        [Namespace] ASC,
         [StudentUSI] ASC
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
@@ -70,12 +72,12 @@ GO
 -- Table [lmsx].[AssignmentSubmissionType] --
 CREATE TABLE [lmsx].[AssignmentSubmissionType] (
     [AssignmentIdentifier] [NVARCHAR](255) NOT NULL,
-    [SchoolId] [INT] NOT NULL,
+    [Namespace] [NVARCHAR](255) NOT NULL,
     [SubmissionTypeDescriptorId] [INT] NOT NULL,
     [CreateDate] [DATETIME2] NOT NULL,
     CONSTRAINT [AssignmentSubmissionType_PK] PRIMARY KEY CLUSTERED (
         [AssignmentIdentifier] ASC,
-        [SchoolId] ASC,
+        [Namespace] ASC,
         [SubmissionTypeDescriptorId] ASC
     ) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]

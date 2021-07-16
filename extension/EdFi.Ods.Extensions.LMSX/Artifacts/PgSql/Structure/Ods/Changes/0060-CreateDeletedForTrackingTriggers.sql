@@ -16,8 +16,8 @@ CREATE FUNCTION tracked_deletes_lmsx.AssignmentSubmission_TR_DelTrkg()
     RETURNS trigger AS
 $BODY$
 BEGIN
-    INSERT INTO tracked_deletes_lmsx.AssignmentSubmission(AssignmentSubmissionIdentifier, StudentUSI, Id, ChangeVersion)
-    VALUES (OLD.AssignmentSubmissionIdentifier, OLD.StudentUSI, OLD.Id, nextval('changes.ChangeVersionSequence'));
+    INSERT INTO tracked_deletes_lmsx.AssignmentSubmission(AssignmentSubmissionIdentifier, Namespace, StudentUSI, Id, ChangeVersion)
+    VALUES (OLD.AssignmentSubmissionIdentifier, OLD.Namespace, OLD.StudentUSI, OLD.Id, nextval('changes.ChangeVersionSequence'));
     RETURN NULL;
 END;
 $BODY$ LANGUAGE plpgsql;
@@ -29,8 +29,8 @@ CREATE FUNCTION tracked_deletes_lmsx.Assignment_TR_DelTrkg()
     RETURNS trigger AS
 $BODY$
 BEGIN
-    INSERT INTO tracked_deletes_lmsx.Assignment(AssignmentIdentifier, SchoolId, Id, ChangeVersion)
-    VALUES (OLD.AssignmentIdentifier, OLD.SchoolId, OLD.Id, nextval('changes.ChangeVersionSequence'));
+    INSERT INTO tracked_deletes_lmsx.Assignment(AssignmentIdentifier, Namespace, Id, ChangeVersion)
+    VALUES (OLD.AssignmentIdentifier, OLD.Namespace, OLD.Id, nextval('changes.ChangeVersionSequence'));
     RETURN NULL;
 END;
 $BODY$ LANGUAGE plpgsql;

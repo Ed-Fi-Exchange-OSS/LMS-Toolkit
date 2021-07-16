@@ -23,8 +23,8 @@ BEGIN
 
     SET NOCOUNT ON
 
-    INSERT INTO [tracked_deletes_lmsx].[AssignmentSubmission](AssignmentSubmissionIdentifier, StudentUSI, Id, ChangeVersion)
-    SELECT  AssignmentSubmissionIdentifier, StudentUSI, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
+    INSERT INTO [tracked_deletes_lmsx].[AssignmentSubmission](AssignmentSubmissionIdentifier, Namespace, StudentUSI, Id, ChangeVersion)
+    SELECT  AssignmentSubmissionIdentifier, Namespace, StudentUSI, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
     FROM    deleted d
 END
 GO
@@ -40,8 +40,8 @@ BEGIN
 
     SET NOCOUNT ON
 
-    INSERT INTO [tracked_deletes_lmsx].[Assignment](AssignmentIdentifier, SchoolId, Id, ChangeVersion)
-    SELECT  AssignmentIdentifier, SchoolId, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
+    INSERT INTO [tracked_deletes_lmsx].[Assignment](AssignmentIdentifier, Namespace, Id, ChangeVersion)
+    SELECT  AssignmentIdentifier, Namespace, Id, (NEXT VALUE FOR [changes].[ChangeVersionSequence])
     FROM    deleted d
 END
 GO

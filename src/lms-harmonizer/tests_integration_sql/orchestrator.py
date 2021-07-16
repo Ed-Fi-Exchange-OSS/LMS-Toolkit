@@ -132,8 +132,13 @@ def _load_lms_extension_scripts(config: ServerConfig):
 
 
 def _load_ordered_scripts(config: ServerConfig, script_path: str):
+    files_in_path: List[str] = [
+        f
+        for f in os.listdir(script_path)
+        if os.path.isfile(os.path.join(script_path, f))
+    ]
     scripts: List[str] = list(
-        map(lambda script: os.path.join(script_path, script), os.listdir(script_path))
+        map(lambda script: os.path.join(script_path, script), files_in_path)
     )
     for script in sorted(scripts):
         _execute_sql_file_against_database(config, script)

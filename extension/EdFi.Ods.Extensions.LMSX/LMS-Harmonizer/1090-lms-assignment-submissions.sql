@@ -3,7 +3,7 @@
 -- The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 -- See the LICENSE and NOTICES files in the project root for more information.
 
-CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment_submissions] AS
+CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment_submissions] @SourceSystem nvarchar(255), @Namespace nvarchar(255) AS
 BEGIN
     SET NOCOUNT ON;
 
@@ -12,7 +12,6 @@ BEGIN
 		lmsSubmission.AssignmentSubmissionIdentifier,
 		EDFISTUDENT.StudentUSI,
 		lmsxAssignment.AssignmentIdentifier,
-		lmsxAssignment.SchoolId,
 		submissionStatusDescriptor.DescriptorId,
 		lmsSubmission.SubmissionDateTime,
 		lmsSubmission.EarnedPoints,
@@ -29,31 +28,32 @@ BEGIN
 	INNER JOIN EDFI.Descriptor submissionStatusDescriptor
 		ON submissionStatusDescriptor.ShortDescription = lmsSubmission.SubmissionStatus
 		AND submissionStatusDescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + lmsSubmission.SourceSystem
-		INNER JOIN LMSX.SubmissionStatusDescriptor lmsxSubmissionStatus
-			ON submissionStatusDescriptor.DescriptorId = lmsxSubmissionStatus.SubmissionStatusDescriptorId
+    INNER JOIN LMSX.SubmissionStatusDescriptor lmsxSubmissionStatus
+        ON submissionStatusDescriptor.DescriptorId = lmsxSubmissionStatus.SubmissionStatusDescriptorId
 	INNER JOIN EDFI.Student EDFISTUDENT
 		ON EDFISTUDENT.Id = lmsUser.EdFiStudentId
+    WHERE lmsSubmission.SourceSystem = @SourceSystem
 
 
 	INSERT INTO LMSX.AssignmentSubmission(
 		[AssignmentSubmissionIdentifier],
 		[StudentUSI],
 		[AssignmentIdentifier],
-		[SchoolId],
+		[Namespace],
 		[SubmissionStatusDescriptorId],
 		[SubmissionDateTime],
 		[EarnedPoints],
 		[Grade]
 	)
 	SELECT
-		AssignmentSubmissionIdentifier,
-		StudentUSI,
-		AssignmentIdentifier,
-		SchoolId,
-		DescriptorId,
-		SubmissionDateTime,
-		EarnedPoints,
-		Grade
+		[AssignmentSubmissionIdentifier],
+		[StudentUSI],
+		[AssignmentIdentifier],
+		@Namespace,
+		[DescriptorId],
+		[SubmissionDateTime],
+		[EarnedPoints],
+		[Grade]
 	FROM #ALL_SUBMISSIONS
 	WHERE
 		#ALL_SUBMISSIONS.AssignmentSubmissionIdentifier NOT IN

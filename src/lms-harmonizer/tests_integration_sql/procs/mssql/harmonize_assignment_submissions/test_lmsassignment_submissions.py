@@ -20,7 +20,7 @@ from tests_integration_sql.server_config import ServerConfig
 from tests_integration_sql.orchestrator import run_harmonizer
 
 
-SOURCE_SYSTEM = "Test_LMS"
+SOURCE_SYSTEM = "Canvas"
 
 DESCRIPTOR_NAMESPACE = (
     "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/" + SOURCE_SYSTEM
@@ -108,7 +108,8 @@ def describe_when_there_are_assignment_submissions_to_insert():
 
             assert len(LMSAssignmentSubmission) == 1
             assert (
-                int(LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"]) == SUBMISSION_TEST_LMS_IDENTIFIER
+                int(LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"])
+                == SUBMISSION_TEST_LMS_IDENTIFIER
             )
 
 
@@ -120,7 +121,7 @@ def describe_when_there_are_assignment_submissions_to_update():
     USER_SIS_ID = "test_sis_id"
     SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
     SUBMISSION_TEST_LMS_IDENTIFIER = 99
-    SUBMISSION_GRADE = '85'
+    SUBMISSION_GRADE = "85"
 
     def it_should_update_the_submissions_successfully(test_db_config: ServerConfig):
         # arrange
@@ -175,7 +176,7 @@ def describe_when_there_are_assignment_submissions_to_update():
         run_harmonizer(test_db_config)
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             connection.execute(
-                F"""
+                f"""
                 UPDATE LMS.ASSIGNMENTSUBMISSION SET
                     GRADE=N'{SUBMISSION_GRADE}',
                     LASTMODIFIEDDATE=GETDATE()"""

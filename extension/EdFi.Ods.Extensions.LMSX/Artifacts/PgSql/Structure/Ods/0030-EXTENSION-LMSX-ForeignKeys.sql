@@ -12,13 +12,6 @@ REFERENCES lmsx.LMSSourceSystemDescriptor (LMSSourceSystemDescriptorId)
 CREATE INDEX FK_153cda_LMSSourceSystemDescriptor
 ON lmsx.Assignment (LMSSourceSystemDescriptorId ASC);
 
-ALTER TABLE lmsx.Assignment ADD CONSTRAINT FK_153cda_School FOREIGN KEY (SchoolId)
-REFERENCES edfi.School (SchoolId)
-;
-
-CREATE INDEX FK_153cda_School
-ON lmsx.Assignment (SchoolId ASC);
-
 ALTER TABLE lmsx.Assignment ADD CONSTRAINT FK_153cda_Section FOREIGN KEY (LocalCourseCode, SchoolId, SchoolYear, SectionIdentifier, SessionName)
 REFERENCES edfi.Section (LocalCourseCode, SchoolId, SchoolYear, SectionIdentifier, SessionName)
 ON UPDATE CASCADE
@@ -32,12 +25,12 @@ REFERENCES edfi.Descriptor (DescriptorId)
 ON DELETE CASCADE
 ;
 
-ALTER TABLE lmsx.AssignmentSubmission ADD CONSTRAINT FK_f12526_Assignment FOREIGN KEY (AssignmentIdentifier, SchoolId)
-REFERENCES lmsx.Assignment (AssignmentIdentifier, SchoolId)
+ALTER TABLE lmsx.AssignmentSubmission ADD CONSTRAINT FK_f12526_Assignment FOREIGN KEY (AssignmentIdentifier, Namespace)
+REFERENCES lmsx.Assignment (AssignmentIdentifier, Namespace)
 ;
 
 CREATE INDEX FK_f12526_Assignment
-ON lmsx.AssignmentSubmission (AssignmentIdentifier ASC, SchoolId ASC);
+ON lmsx.AssignmentSubmission (AssignmentIdentifier ASC, Namespace ASC);
 
 ALTER TABLE lmsx.AssignmentSubmission ADD CONSTRAINT FK_f12526_Student FOREIGN KEY (StudentUSI)
 REFERENCES edfi.Student (StudentUSI)
@@ -53,13 +46,13 @@ REFERENCES lmsx.SubmissionStatusDescriptor (SubmissionStatusDescriptorId)
 CREATE INDEX FK_f12526_SubmissionStatusDescriptor
 ON lmsx.AssignmentSubmission (SubmissionStatusDescriptorId ASC);
 
-ALTER TABLE lmsx.AssignmentSubmissionType ADD CONSTRAINT FK_6f15e4_Assignment FOREIGN KEY (AssignmentIdentifier, SchoolId)
-REFERENCES lmsx.Assignment (AssignmentIdentifier, SchoolId)
+ALTER TABLE lmsx.AssignmentSubmissionType ADD CONSTRAINT FK_6f15e4_Assignment FOREIGN KEY (AssignmentIdentifier, Namespace)
+REFERENCES lmsx.Assignment (AssignmentIdentifier, Namespace)
 ON DELETE CASCADE
 ;
 
 CREATE INDEX FK_6f15e4_Assignment
-ON lmsx.AssignmentSubmissionType (AssignmentIdentifier ASC, SchoolId ASC);
+ON lmsx.AssignmentSubmissionType (AssignmentIdentifier ASC, Namespace ASC);
 
 ALTER TABLE lmsx.AssignmentSubmissionType ADD CONSTRAINT FK_6f15e4_SubmissionTypeDescriptor FOREIGN KEY (SubmissionTypeDescriptorId)
 REFERENCES lmsx.SubmissionTypeDescriptor (SubmissionTypeDescriptorId)

@@ -1,7 +1,7 @@
 CREATE TABLE [tracked_deletes_lmsx].[Assignment]
 (
        AssignmentIdentifier [NVARCHAR](255) NOT NULL,
-       SchoolId [INT] NOT NULL,
+       Namespace [NVARCHAR](255) NOT NULL,
        Id uniqueidentifier NOT NULL,
        ChangeVersion bigint NOT NULL,
        CONSTRAINT PK_Assignment PRIMARY KEY CLUSTERED (ChangeVersion)
@@ -16,6 +16,7 @@ CREATE TABLE [tracked_deletes_lmsx].[AssignmentCategoryDescriptor]
 CREATE TABLE [tracked_deletes_lmsx].[AssignmentSubmission]
 (
        AssignmentSubmissionIdentifier [NVARCHAR](255) NOT NULL,
+       Namespace [NVARCHAR](255) NOT NULL,
        StudentUSI [INT] NOT NULL,
        Id uniqueidentifier NOT NULL,
        ChangeVersion bigint NOT NULL,

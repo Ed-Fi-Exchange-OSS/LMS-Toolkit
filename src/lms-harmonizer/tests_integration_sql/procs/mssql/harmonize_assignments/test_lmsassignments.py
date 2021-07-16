@@ -16,7 +16,7 @@ from tests_integration_sql.server_config import ServerConfig
 from tests_integration_sql.orchestrator import run_harmonizer
 
 
-SOURCE_SYSTEM = "Test_LMS"
+SOURCE_SYSTEM = "Canvas"
 
 DESCRIPTOR_NAMESPACE = (
     "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/" + SOURCE_SYSTEM

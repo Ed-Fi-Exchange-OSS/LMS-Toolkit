@@ -7,6 +7,7 @@ import logging
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from edfi_sql_adapter.sql_adapter import Adapter, Statement
+from edfi_lms_harmonizer.helpers.constants import SOURCE_SYSTEM, SOURCE_SYSTEM_NAMESPACE
 
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,18 @@ def harmonize_sections(adapter: Adapter) -> None:
 def harmonize_assignments(adapter: Adapter) -> None:
 
     statements = [
-        Statement("EXEC lms.harmonize_assignment;", "Harmonizing LMS Assignments."),
+        Statement(
+            f"EXEC lms.harmonize_assignment @Namespace = '{SOURCE_SYSTEM_NAMESPACE.CANVAS}', @SourceSystem = '{SOURCE_SYSTEM.CANVAS}';",
+            "Harmonizing Canvas LMS Assignments.",
+        ),
+        Statement(
+            f"EXEC lms.harmonize_assignment @Namespace = '{SOURCE_SYSTEM_NAMESPACE.GOOGLE}', @SourceSystem = '{SOURCE_SYSTEM.GOOGLE}';",
+            "Harmonizing Google Classroom LMS Assignments.",
+        ),
+        Statement(
+            f"EXEC lms.harmonize_assignment @Namespace = '{SOURCE_SYSTEM_NAMESPACE.SCHOOLOGY}', @SourceSystem = '{SOURCE_SYSTEM.SCHOOLOGY}';",
+            "Harmonizing Schoology LMS Assignments.",
+        ),
     ]
 
     adapter.execute(statements)
@@ -65,7 +77,18 @@ def harmonize_assignments(adapter: Adapter) -> None:
 def harmonize_assignment_submissions(adapter: Adapter) -> None:
 
     statements = [
-        Statement("EXEC lms.harmonize_assignment_submissions;", "Harmonizing LMS Assignment Submissions."),
+        Statement(
+            f"EXEC lms.harmonize_assignment_submissions @Namespace = '{SOURCE_SYSTEM_NAMESPACE.CANVAS}', @SourceSystem = '{SOURCE_SYSTEM.CANVAS}';",
+            "Harmonizing Canvas LMS Assignment Submissions.",
+        ),
+        Statement(
+            f"EXEC lms.harmonize_assignment_submissions @Namespace = '{SOURCE_SYSTEM_NAMESPACE.GOOGLE}', @SourceSystem = '{SOURCE_SYSTEM.GOOGLE}';",
+            "Harmonizing Google Classroom LMS Assignment Submissions.",
+        ),
+        Statement(
+            f"EXEC lms.harmonize_assignment_submissions @Namespace = '{SOURCE_SYSTEM_NAMESPACE.SCHOOLOGY}', @SourceSystem = '{SOURCE_SYSTEM.SCHOOLOGY}';",
+            "Harmonizing Schoology LMS Assignment Submissions.",
+        ),
     ]
 
     adapter.execute(statements)
