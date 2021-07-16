@@ -20,11 +20,13 @@ from ..assertion_helpers import (
     assert_dataframe_has_columns,
 )
 from ..data_helpers import (
+    load_assignment,
     load_grading_period,
     load_school,
     load_school_year,
     load_session,
     load_section,
+    populate_session_grading_period,
 )
 
 
@@ -85,6 +87,20 @@ def given_grading_period(
     load_grading_period(mssql_fixture, grading_period_table)
 
 
+@given(parsers.parse("there is one Assignment\n{assignment_table}"))
+def given_assignment(
+    mssql_fixture: engine.base.Engine, assignment_table: str
+) -> None:
+    load_assignment(mssql_fixture, assignment_table)
+
+
+@given("edfi.SessionGradingPeriod table is populated")
+def given_session_grading_period_is_populated(
+    mssql_fixture: engine.base.Engine
+) -> None:
+    populate_session_grading_period(mssql_fixture)
+
+
 @when(
     parsers.parse('I query for assignments with identifier "{identifier}"'),
     target_fixture="assignment_df",
@@ -100,7 +116,7 @@ def when_query_for_assignment(
 
 
 @then(parsers.parse("there should be {expected} records"))
-def then_zero_records(assignment_df, expected) -> None:
+def then_number_of_records(assignment_df, expected) -> None:
     assert assignment_df.shape[0] == int(expected)
 
 

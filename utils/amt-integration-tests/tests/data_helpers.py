@@ -306,6 +306,7 @@ def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -
     )
     grading_periods_df["GradingPeriodDescriptorId"] = descriptor_id
 
+    # Add descriptor for grading period
     if GRADING_PERIOD_DESCRIPTOR_KEY not in already_loaded.keys():
         already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY] = []
 
@@ -319,7 +320,7 @@ def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -
             }
         )
         descriptor_sql = _prepare_descriptor_sql(
-            descriptor, SCHEMA_EDFI, "TermDescriptor"
+            descriptor, SCHEMA_EDFI, "GradingPeriodDescriptor"
         )
 
         with engine.connect() as connection:
@@ -327,37 +328,30 @@ def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -
 
         already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY].append(grading_period_descriptor)
 
-    with engine.connect() as connection:
-        sql = text(
-            f"SELECT DescriptorId FROM edfi.Descriptor WHERE CodeValue = '{grading_period_descriptor}'"
-        )
-        result = connection.execute(sql, engine)
-        for row in result:
-            descriptor_id = row["DescriptorId"]
+    descriptor_id = _get_descriptor_id_by_codevalue_and_namespace(
+        engine, grading_period_descriptor, DESCRIPTOR_NAMESPACE
+    )
 
-        sql = text(
-            f"""SELECT GradingPeriodDescriptorId FROM edfi.GradingPeriodDescriptor
-            WHERE GradingPeriodDescriptorId = {descriptor_id}"""
-        )
+    grading_periods_df.rename(
+        columns={"Descriptor": "GradingPeriodDescriptorId"}, inplace=True
+    )
+    grading_periods_df["GradingPeriodDescriptorId"] = descriptor_id
 
-        result = connection.execute(sql, engine)
-        grading_period_descriptor_id = 0
-        for row in result:
-            grading_period_descriptor_id = row["GradingPeriodDescriptorId"]
+    grading_periods_df.to_sql("GradingPeriod", **_get_edfi_options(engine))
 
-        if grading_period_descriptor_id == 0:
-            connection.execute(
-                f"""
-            INSERT INTO edfi.[GradingPeriodDescriptor]([GradingPeriodDescriptorId])
-            VALUES ({descriptor_id})
-            """
-            )
 
-    if GRADING_PERIOD_KEY not in already_loaded.keys():
-        already_loaded[GRADING_PERIOD_KEY] = []
+def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
+    assignment_df = read_keyvalue_pairs_as_dataframe(assignment_table)
+    sourcesystem = str(assignment_df["SourceSystem"].iloc[0])
+    assignmentCategory = str(assignment_df["AssignmentCategory"].iloc[0])
 
-        grading_periods_df.rename(columns={"Descriptor": "GradingPeriodDescriptorId"}, inplace=True)
-        grading_periods_df["GradingPeriodDescriptorId"] = descriptor_id
+    sourcesystem_descriptor_id = _get_descriptor_id_by_codevalue(
+        engine, sourcesystem
+    )
+    assignment_df.rename(
+        columns={"SourceSystem": "LMSSourceSystemDescriptorId"}, inplace=True
+    )
+    assignment_df["LMSSourceSystemDescriptorId"] = sourcesystem_descriptor_id
 
 
 def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
