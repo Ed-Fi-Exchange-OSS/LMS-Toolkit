@@ -26,9 +26,8 @@ Feature: AssignmentDim View
             | SchoolYear             | 1053                      |
             | TotalInstructionalDays | 1053                      |
             | BeginDate              | 1053-07-01 01:23:45       |
-            | EndDate                | 1053-07-01 01:23:45       |
-
-
+            | EndDate                | 1053-07-29 01:23:45       |
+        And edfi.SessionGradingPeriod table is populated
 
 
     Scenario: Ensure the view exists
@@ -50,18 +49,21 @@ Feature: AssignmentDim View
 
     Scenario: Happy Path
         Given there is one Assignment
-            | AssignmentIdentifier | assigndim-happy-path  |
-            | SchoolId             | 53                    |
-            | SourceSystem         | Schoology             |
-            | Title                | A discussion for 1053 |
-            | Description          | The description       |
-            | StartDateTime        | 1053-07-08 09:00      |
-            | EndDateTime          | 1053-07-09 10:00      |
-            | DueDateTime          | 1053-07-09 10:11      |
-            | MaxPoints            | 99                    |
-            | SectionIdentifier    | si-1053               |
-            | LastModifiedDate     | 1053-07-07 09:01      |
-            | AssignmentCategory   | Assignment            |
+            | AssignmentIdentifier  | assigndim-happy-path  |
+            | SchoolId              | 53                    |
+            | SourceSystem          | Schoology             |
+            | Title                 | A discussion for 1053 |
+            | AssignmentDescription | The description       |
+            | StartDateTime         | 1053-07-08 09:00      |
+            | EndDateTime           | 1053-07-09 10:00      |
+            | DueDateTime           | 1053-07-09 10:11      |
+            | MaxPoints             | 99                    |
+            | SectionIdentifier     | si-1053               |
+            | LastModifiedDate      | 1053-07-07 09:01      |
+            | AssignmentCategory    | Assignment            |
+            | LocalCourseCode       | abc-1053              |
+            | SessionName           | Summer-1053           |
+            | SchoolYear            | 1053                  |
         When I query for assignments with identifier "assigndim-happy-path"
         Then there should be 1 records
         And the AssignmentDim record should have these values:
@@ -74,24 +76,27 @@ Feature: AssignmentDim View
             | EndDateKey       | 1053-07-09                           |
             | DueDateKey       | 1053-07-09                           |
             | MaxPoints        | 99                                   |
-            | SectionKey       | 53-abc-1053-1053-si-1503-Summer-1053 |
+            | SectionKey       | 53-abc-1053-1053-si-1053-Summer-1053 |
             | GradingPeriodKey | r"[0-9]+-53-1053-07-01"              |
             | LastModifiedDate | r"\d{4}-\d{2}-\d{2}"                 |
 
 
     Scenario: Ignores discussions
         Given there is one Assignment
-            | AssignmentIdentifier | ignore-discussion     |
-            | SchoolId             | 53                    |
-            | SourceSystem         | Schoology             |
-            | Title                | A discussion for 1053 |
-            | Description          | The description       |
-            | StartDateTime        | 1053-07-08 09:00      |
-            | EndDateTime          | 1053-07-09 10:00      |
-            | DueDateTime          | 1053-07-09 10:11      |
-            | MaxPoints            | 99                    |
-            | SectionIdentifier    | si-1053               |
-            | LastModifiedDate     | 1053-07-07 09:01      |
-            | AssignmentCategory   | discussion            |
+            | AssignmentIdentifier  | ignore-discussion     |
+            | SchoolId              | 53                    |
+            | SourceSystem          | Schoology             |
+            | Title                 | A discussion for 1053 |
+            | AssignmentDescription | The description       |
+            | StartDateTime         | 1053-07-08 09:00      |
+            | EndDateTime           | 1053-07-09 10:00      |
+            | DueDateTime           | 1053-07-09 10:11      |
+            | MaxPoints             | 99                    |
+            | SectionIdentifier     | si-1053               |
+            | LastModifiedDate      | 1053-07-07 09:01      |
+            | AssignmentCategory    | discussion            |
+            | LocalCourseCode       | abc-1053              |
+            | SessionName           | Summer-1053           |
+            | SchoolYear            | 1053                  |
         When I query for assignments with identifier "ignore-discussion"
         Then there should be 0 records
