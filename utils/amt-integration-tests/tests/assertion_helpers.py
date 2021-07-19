@@ -34,8 +34,9 @@ def assert_dataframe_has_columns(columns: str, actual: pd.DataFrame) -> None:
     assert e == a, msg
 
 
-# Note that this uses delayed assert so that we can collect all assertion errors
-# before reporting.
+# Note that this gathers multiple tests results before the assert occurs,
+# so that we can compare all expected columns at the same time
+# without one failure causing the rest of the tests to be skipped.
 def assert_dataframe_has_one_row_matching(table: str, actual: pd.DataFrame) -> None:
     assert actual.shape[0] > 0, "Unable to analyze because there are no rows"
 
