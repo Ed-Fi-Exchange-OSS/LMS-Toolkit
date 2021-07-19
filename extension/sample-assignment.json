@@ -1,8 +1,6 @@
 {
     "assignmentIdentifier": "ABCD9875654",
-    "schoolReference": {
-        "schoolId": 255901001
-    },
+    "namespace": "uri://canvas.com",
     "title": "Assignment 12354",
     "sectionReference": {
         "localCourseCode": "ALG-1",
