@@ -170,9 +170,6 @@ def load_school_year(engine: engine.base.Engine, school_year: str) -> None:
     already_loaded[SCHOOLYEAR].append(school_year)
 
 
-counter = {"here": 0}
-
-
 def load_session(
     engine: engine.base.Engine, school_id: str, session_name: str, school_year: str
 ) -> None:
