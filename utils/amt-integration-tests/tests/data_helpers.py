@@ -342,6 +342,17 @@ def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -
 
 def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
     assignment_df = read_keyvalue_pairs_as_dataframe(assignment_table)
+    assignment_identifier = assignment_df.iloc[0]["AssignmentIdentifier"]
+
+    ASSIGNMENT_KEY = "Assignment"
+    if ASSIGNMENT_KEY not in already_loaded.keys():
+        already_loaded[ASSIGNMENT_KEY] = []
+    else:
+        return
+
+    if assignment_identifier in already_loaded[ASSIGNMENT_KEY]:
+        return
+
     sourcesystem = str(assignment_df["SourceSystem"].iloc[0])
     assignmentCategory = str(assignment_df["AssignmentCategory"].iloc[0])
 
@@ -373,6 +384,8 @@ def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
 
     assignment_df.to_sql("Assignment", **_get_lmsx_options(engine))
 
+    already_loaded[ASSIGNMENT_KEY].append(assignment_identifier)
+
 
 def populate_session_grading_period(engine: engine.base.Engine):
     SESSION_GRADING_PERIOD_KEY = "session grading period"
@@ -382,3 +395,186 @@ def populate_session_grading_period(engine: engine.base.Engine):
     with engine.connect() as connection:
         connection.execute(POPULATE_SESSION_GRADING_PERIOD_SQL)
     already_loaded[SESSION_GRADING_PERIOD_KEY] = []
+
+
+def load_student(engine: engine.base.Engine, student_table: str) -> None:
+    student_df = read_keyvalue_pairs_as_dataframe(student_table)
+    unique_id = student_df.iloc[0]["StudentUniqueId"]
+
+    STUDENT_KEY = "Student"
+    if STUDENT_KEY not in already_loaded.keys():
+        already_loaded[STUDENT_KEY] = []
+    else:
+        return
+
+    if unique_id in already_loaded[STUDENT_KEY]:
+        return
+
+    student_df.to_sql("Student", **_get_edfi_options(engine))
+
+    already_loaded[STUDENT_KEY].append(unique_id)
+
+
+def _get_student_usi(engine: engine.base.Engine, student_unique_id: str) -> str:
+    student_df = pd.read_sql(
+        "SELECT StudentUSI FROM edfi.Student WHERE StudentUniqueId = ?",
+        engine,
+        params=[student_unique_id],
+    )
+    return str(student_df.iloc[0]["StudentUSI"])
+
+
+def load_student_association(
+    engine: engine.base.Engine, student_unique_id: str, school_id: str
+) -> None:
+
+    student_usi = _get_student_usi(engine, student_unique_id)
+
+    # Student enrollment requires a SexType descriptor - not nullable
+    SEX_TYPE_DESCRIPTOR = "Not identified"
+    SEX_TYPE_DESCRIPTOR_KEY = "Sex Type"
+    DESCRIPTOR_NAMESPACE = "uri://ed-fi.org/SexType"
+
+    if SEX_TYPE_DESCRIPTOR_KEY not in already_loaded.keys():
+        already_loaded[SEX_TYPE_DESCRIPTOR_KEY] = []
+
+    if SEX_TYPE_DESCRIPTOR not in already_loaded[SEX_TYPE_DESCRIPTOR_KEY]:
+        descriptor = pd.Series(
+            {
+                "CodeValue": SEX_TYPE_DESCRIPTOR,
+                "ShortDescription": SEX_TYPE_DESCRIPTOR,
+                "Description": SEX_TYPE_DESCRIPTOR,
+                "Namespace": DESCRIPTOR_NAMESPACE,
+            }
+        )
+        descriptor_sql = _prepare_descriptor_sql(
+            descriptor, SCHEMA_EDFI, "SexDescriptor"
+        )
+
+        with engine.connect() as connection:
+            connection.execute(text(descriptor_sql))
+
+        already_loaded[SEX_TYPE_DESCRIPTOR_KEY].append(SEX_TYPE_DESCRIPTOR)
+
+    descriptor_id = _get_descriptor_id_by_codevalue_and_namespace(
+        engine, SEX_TYPE_DESCRIPTOR, DESCRIPTOR_NAMESPACE
+    )
+
+    # Now we can enroll the student at the school
+    ENROLL_KEY = "Enrollment"
+    enroll_value = f"{school_id}{student_usi}"
+
+    if ENROLL_KEY not in already_loaded.keys():
+        already_loaded[ENROLL_KEY] = []
+
+    if enroll_value in already_loaded[ENROLL_KEY]:
+        return
+
+    enroll_df = pd.DataFrame(
+        [
+            {
+                "EducationOrganizationId": school_id,
+                "StudentUSI": student_usi,
+                "SexDescriptorId": descriptor_id,
+            }
+        ]
+    )
+
+    enroll_df.to_sql(
+        "StudentEducationOrganizationAssociation", **_get_edfi_options(engine)
+    )
+
+    already_loaded[ENROLL_KEY].append(enroll_value)
+
+
+def load_student_section_association(
+    engine: engine.base.Engine, student_unique_id: str, section_identifier
+) -> None:
+
+    student_usi = _get_student_usi(engine, student_unique_id)
+
+    SECTION_ENROLL_KEY = "Section enroll"
+    section_enroll_value = f"{student_usi}{section_identifier}"
+
+    if SECTION_ENROLL_KEY not in already_loaded.keys():
+        already_loaded[SECTION_ENROLL_KEY] = []
+
+    if section_enroll_value in already_loaded[SECTION_ENROLL_KEY]:
+        return
+
+    # need to requery for the full section natural key
+    SQL = """
+SELECT LocalCourseCode, SchoolId, SchoolYear, SectionIdentifier, SessionName
+FROM edfi.Section
+WHERE SectionIdentifier = ?
+"""
+
+    section_df = pd.read_sql(SQL, engine, params=[section_identifier])
+
+    section_association = section_df[
+        [
+            "LocalCourseCode",
+            "SchoolId",
+            "SchoolYear",
+            "SectionIdentifier",
+            "SessionName",
+        ]
+    ].copy()
+    section_association["StudentUsi"] = student_usi
+    section_association["BeginDate"] = "2021-07-20"
+
+    section_association.to_sql("StudentSectionAssociation", **_get_edfi_options(engine))
+
+    already_loaded[SECTION_ENROLL_KEY] = section_enroll_value
+
+
+def load_assignment_submission(
+    engine: engine.base.Engine,
+    student_unique_id: str,
+    assignment_identifier: str,
+    submission_table: str,
+) -> None:
+    submission_df = read_keyvalue_pairs_as_dataframe(submission_table)
+    identifier = submission_df.iloc[0]["AssignmentSubmissionIdentifier"]
+
+    SUBMISSION_KEY = "Submission"
+    if SUBMISSION_KEY not in already_loaded.keys():
+        already_loaded[SUBMISSION_KEY] = []
+    else:
+        return
+
+    if identifier in already_loaded[SUBMISSION_KEY]:
+        return
+
+    submission_df["StudentUSI"] = _get_student_usi(engine, student_unique_id)
+    submission_df["AssignmentIdentifier"] = assignment_identifier
+
+    # Look up the status descriptor
+    sql = """
+SELECT
+    sdesc.DescriptorId
+FROM
+    edfi.Descriptor sdesc
+CROSS JOIN
+    lmsx.Assignment
+INNER JOIN
+    edfi.Descriptor
+ON
+    Assignment.LMSSourceSystemDescriptorId = Descriptor.DescriptorId
+AND
+    Assignment.AssignmentIdentifier = ?
+AND
+    sdesc.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + Descriptor.CodeValue
+WHERE
+    sdesc.CodeValue = ?
+"""
+    code_value = str(submission_df.iloc[0]["SubmissionStatus"])
+    status_descriptor = pd.read_sql(
+        sql, engine, params=[assignment_identifier, code_value]
+    ).iloc[0]["DescriptorId"]
+    submission_df["SubmissionStatusDescriptorId"] = status_descriptor
+    submission_df.drop(columns=["SubmissionStatus"])
+
+    submission_df.to_sql("AssignmentSubmission", **_get_lmsx_options(engine))
+
+    already_loaded[SUBMISSION_KEY].append(identifier)

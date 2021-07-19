@@ -29,46 +29,58 @@ Feature: AssignmentSubmissionFact-C View
             | EndDate                | 1054-07-01 01:23:45       |
         # Assignment for Canvas
         And there is one Assignment
-            | AssignmentIdentifier | AssignmentSubmissionFact-C |
-            | SchoolId             | 54                         |
-            | SourceSystem         | Canvas                     |
-            | Title                | A discussion for 1054      |
-            | Description          | The description            |
-            | StartDateTime        | 1054-07-08 09:00           |
-            | EndDateTime          | 1054-07-09 10:00           |
-            | DueDateTime          | 1054-07-09 10:11           |
-            | MaxPoints            | 98                         |
-            | SectionIdentifier    | si-1054                    |
-            | LastModifiedDate     | 1054-07-07 09:01           |
-            | AssignmentCategory   | Assignment                 |
+            | AssignmentIdentifier  | AssignmentSubmissionFact-C |
+            | SchoolId              | 54                         |
+            | SourceSystem          | Canvas                     |
+            | Title                 | A discussion for 1054      |
+            | AssignmentDescription | The description            |
+            | StartDateTime         | 1054-07-08 09:00           |
+            | EndDateTime           | 1054-07-09 10:00           |
+            | DueDateTime           | 1054-07-09 10:11           |
+            | MaxPoints             | 98                         |
+            | SectionIdentifier     | si-1054                    |
+            | LastModifiedDate      | 1054-07-07 09:01           |
+            | AssignmentCategory    | Assignment                 |
+            | LocalCourseCode       | abc-1054                   |
+            | SessionName           | Summer-1054                |
+            | SchoolYear            | 1054                       |
+            | Namespace             | uri://canvas               |
         # Assignment for Schoology
         And there is one Assignment
-            | AssignmentIdentifier | AssignmentSubmissionFact-S |
-            | SchoolId             | 54                         |
-            | SourceSystem         | Schoology                  |
-            | Title                | A discussion for 1054      |
-            | Description          | The description            |
-            | StartDateTime        | 1054-07-08 09:00           |
-            | EndDateTime          | 1054-07-09 10:00           |
-            | DueDateTime          | 1054-07-09 10:11           |
-            | MaxPoints            | 98                         |
-            | SectionIdentifier    | si-1054                    |
-            | LastModifiedDate     | 1054-07-07 09:01           |
-            | AssignmentCategory   | Assignment                 |
+            | AssignmentIdentifier  | AssignmentSubmissionFact-S |
+            | SchoolId              | 54                         |
+            | SourceSystem          | Schoology                  |
+            | Title                 | A discussion for 1054      |
+            | AssignmentDescription | The description            |
+            | StartDateTime         | 1054-07-08 09:00           |
+            | EndDateTime           | 1054-07-09 10:00           |
+            | DueDateTime           | 1054-07-09 10:11           |
+            | MaxPoints             | 98                         |
+            | SectionIdentifier     | si-1054                    |
+            | LastModifiedDate      | 1054-07-07 09:01           |
+            | AssignmentCategory    | Assignment                 |
+            | LocalCourseCode       | abc-1054                   |
+            | SessionName           | Summer-1054                |
+            | SchoolYear            | 1054                       |
+            | Namespace             | uri://schoology            |
         # Assignment for Google Classroom
         And there is one Assignment
-            | AssignmentIdentifier | AssignmentSubmissionFact-G |
-            | SchoolId             | 54                         |
-            | SourceSystem         | Google                     |
-            | Title                | A discussion for 1054      |
-            | Description          | The description            |
-            | StartDateTime        | 1054-07-08 09:00           |
-            | EndDateTime          | 1054-07-09 10:00           |
-            | DueDateTime          | 1054-07-09 10:11           |
-            | MaxPoints            | 98                         |
-            | SectionIdentifier    | si-1054                    |
-            | LastModifiedDate     | 1054-07-07 09:01           |
-            | AssignmentCategory   | Assignment                 |
+            | AssignmentIdentifier  | AssignmentSubmissionFact-G |
+            | SchoolId              | 54                         |
+            | SourceSystem          | Google                     |
+            | Title                 | A discussion for 1054      |
+            | AssignmentDescription | The description            |
+            | StartDateTime         | 1054-07-08 09:00           |
+            | EndDateTime           | 1054-07-09 10:00           |
+            | DueDateTime           | 1054-07-09 10:11           |
+            | MaxPoints             | 98                         |
+            | SectionIdentifier     | si-1054                    |
+            | LastModifiedDate      | 1054-07-07 09:01           |
+            | AssignmentCategory    | Assignment                 |
+            | LocalCourseCode       | abc-1054                   |
+            | SessionName           | Summer-1054                |
+            | SchoolYear            | 1054                       |
+            | Namespace             | uri://google               |
         And there is a student
             | StudentUniqueId  | first-student |
             | FirstName        | Ebenezer      |
@@ -76,7 +88,8 @@ Feature: AssignmentSubmissionFact-C View
             | Birthdate        | 1843-12-19    |
             | LastModifiedDate | 1843-12-20    |
         And student "first-student" is enrolled at school 54
-        And student "first-student" is enrolled in section abc-1054
+        And student "first-student" is enrolled in section "si-1054"
+        And edfi.SessionGradingPeriod table is populated
 
 
     Scenario: Ensure the view exists
@@ -99,15 +112,15 @@ Feature: AssignmentSubmissionFact-C View
             | LastModifiedDate        |
 
     Scenario: On Time Happy Path (Canvas - on-time)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
             | AssignmentSubmissionIdentifier | on-time-happy-path-c       |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-C |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | on-time                    |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
             | Grade                          | A--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://canvas               |
         When I query for assignment submission "on-time-happy-path-c"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -128,15 +141,15 @@ Feature: AssignmentSubmissionFact-C View
 
 
     Scenario: On Time Happy Path (Canvas - graded)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
             | AssignmentSubmissionIdentifier | graded-happy-path-c        |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-C |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | graded                     |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
             | Grade                          | A--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://canvas               |
         When I query for assignment submission "graded-happy-path-c"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -156,15 +169,15 @@ Feature: AssignmentSubmissionFact-C View
             | LastModifiedDate        | 054-07-09 9:12:34                    |
 
     Scenario: Late Happy Path (Canvas)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
             | AssignmentSubmissionIdentifier | late-happy-path-c          |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-C |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | late                       |
             | SubmissionDateTime             | 2054-07-09 9:12:34         |
             | EarnedPoints                   | 80                         |
             | Grade                          | B--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://canvas               |
         When I query for assignment submission "late-happy-path-c"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -184,15 +197,15 @@ Feature: AssignmentSubmissionFact-C View
             | LastModifiedDate        | 054-07-09 9:12:34                    |
 
     Scenario: Missing or Past Due Happy Path (Canvas)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
             | AssignmentSubmissionIdentifier | pastdue-happy-path-c       |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-C |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | missing                    |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
             | Grade                          |                            |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://canvas               |
         When I query for assignment submission "pastdue-happy-path-c"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -214,15 +227,15 @@ Feature: AssignmentSubmissionFact-C View
 
 
     Scenario: On Time Happy Path (Schoology)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-s"
             | AssignmentSubmissionIdentifier | on-time-happy-path-s       |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-s |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | on-time                    |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
             | Grade                          | A--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://schoology            |
         When I query for assignment submission "on-time-happy-path-s"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -242,15 +255,15 @@ Feature: AssignmentSubmissionFact-C View
             | LastModifiedDate        | 054-07-09 9:12:34                    |
 
     Scenario: Late Happy Path (Schoology)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-s"
             | AssignmentSubmissionIdentifier | late-happy-path-s          |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-s |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | late                       |
             | SubmissionDateTime             | 2054-07-09 9:12:34         |
             | EarnedPoints                   | 80                         |
             | Grade                          | B--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://schoology            |
         When I query for assignment submission "late-happy-path-s"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -275,15 +288,15 @@ Feature: AssignmentSubmissionFact-C View
     # this test will never pass.
     #
     # Scenario: Missing or Past Due Happy Path (Schoology)
-    #     Given student "first-student" has an assignment submission
+    #    Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-s"
     #         | AssignmentSubmissionIdentifier | pastdue-happy-path-s       |
-    #         | AssignmentIdentifier           | AssignmentSubmissionFact-s |
     #         | SchoolId                       | 54                         |
     #         | SubmissionStatus               | missing                    |
     #         | SubmissionDateTime             |                            |
     #         | EarnedPoints                   |                            |
     #         | Grade                          |                            |
     #         | LastModifiedDate               | 1054-07-09 9:12:34         |
+    #         | Namespace                      | uri://schoology            |
     #     When I query for assignment submission "pastdue-happy-path-s"
     #     Then there should be 1 submission records
     #     And the submission record should have these values:
@@ -303,29 +316,29 @@ Feature: AssignmentSubmissionFact-C View
     #         | LastModifiedDate        | 054-07-09 9:12:34                    |
 
     Scenario: Do not report on Schoology drafts
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-s"
             | AssignmentSubmissionIdentifier | schoology-draft            |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-s |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | draft                      |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
             | Grade                          | A--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://schoology            |
         When I query for assignment submission "schoology-draft"
         Then there should be 0 submission records
 
 
     Scenario: On Time Happy Path (Google)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
             | AssignmentSubmissionIdentifier | on-time-happy-path-g       |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-g |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | turned_in                  |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
             | Grade                          | A--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://google               |
         When I query for assignment submission "on-time-happy-path-g"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -345,15 +358,15 @@ Feature: AssignmentSubmissionFact-C View
             | LastModifiedDate        | 054-07-09 9:12:34                    |
 
     Scenario: On Time Happy Path (Google - Returned)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
             | AssignmentSubmissionIdentifier | returned-happy-path-g      |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-g |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | returned                   |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
             | Grade                          | A--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://google               |
         When I query for assignment submission "on-time-happy-path-g"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -373,15 +386,15 @@ Feature: AssignmentSubmissionFact-C View
             | LastModifiedDate        | 054-07-09 9:12:34                    |
 
     Scenario: Late Happy Path (Google)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
             | AssignmentSubmissionIdentifier | late-happy-path-g          |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-g |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | late                       |
             | SubmissionDateTime             | 2054-07-09 9:12:34         |
             | EarnedPoints                   | 80                         |
             | Grade                          | B--                        |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://google               |
         When I query for assignment submission "late-happy-path-g"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -401,15 +414,15 @@ Feature: AssignmentSubmissionFact-C View
             | LastModifiedDate        | 054-07-09 9:12:34                    |
 
     Scenario: Missing or Past Due Happy Path (Google)
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
             | AssignmentSubmissionIdentifier | pastdue-happy-path-g       |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-g |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | missing                    |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
             | Grade                          |                            |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://google               |
         When I query for assignment submission "pastdue-happy-path-g"
         Then there should be 1 submission records
         And the submission record should have these values:
@@ -429,41 +442,41 @@ Feature: AssignmentSubmissionFact-C View
             | LastModifiedDate        | 054-07-09 9:12:34                    |
 
     Scenario: Do not report on Google New submissions
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
             | AssignmentSubmissionIdentifier | google-new                 |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-g |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | new                        |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
             | Grade                          |                            |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://google               |
         When I query for assignment submission "google-new"
         Then there should be 0 submission records
 
     Scenario: Do not report on Google Created submissions
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
             | AssignmentSubmissionIdentifier | google-created             |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-g |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | new                        |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
             | Grade                          |                            |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://google               |
         When I query for assignment submission "google-created"
         Then there should be 0 submission records
 
     Scenario: Do not report on Google Reclaimed submissions
-        Given student "first-student" has an assignment submission
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
             | AssignmentSubmissionIdentifier | google-reclaimed           |
-            | AssignmentIdentifier           | AssignmentSubmissionFact-g |
             | SchoolId                       | 54                         |
             | SubmissionStatus               | reclaimed_by_student       |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
             | Grade                          |                            |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://google               |
         When I query for assignment submission "google-reclaimed"
         Then there should be 0 submission records
 
