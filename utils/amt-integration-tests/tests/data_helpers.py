@@ -18,6 +18,21 @@ DECLARE @id int = @@identity;
 INSERT INTO <schema>.<tbl> (<tbl>Id) VALUES (@id);
 """
 
+POPULATE_SESSION_GRADING_PERIOD_SQL = """
+INSERT INTO edfi.SessionGradingPeriod
+    (GradingPeriodDescriptorId, PeriodSequence, SchoolId, SchoolYear, SessionName)
+SELECT
+    gradingperiod.GradingPeriodDescriptorId,
+    gradingperiod.PeriodSequence,
+    gradingperiod.SchoolId,
+    gradingperiod.SchoolYear,
+    SessionName
+FROM edfi.Session session
+INNER JOIN edfi.GradingPeriod gradingperiod
+    ON session.SchoolYear = gradingperiod.SchoolYear
+    AND gradingperiod.SchoolId = session.SchoolId
+"""
+
 SCHEMA_LMSX = "lmsx"
 SCHEMA_EDFI = "edfi"
 APPEND_OPTIONS = {"if_exists": "append", "index": False}
@@ -40,9 +55,12 @@ def _get_lmsx_options(engine: engine.base.Engine) -> dict:
     return {"con": engine, "schema": SCHEMA_LMSX, **APPEND_OPTIONS}
 
 
-def _get_descriptor_id_by_codevalue_and_namespace(
-    engine: engine.base.Engine, codevalue: str, namespace: str
+def __get_descriptor_id(
+    engine: engine.base.Engine, codevalue: str = None, namespace: str = None
 ) -> int:
+    assert (
+        codevalue is not None or namespace is not None
+    ), "At least one of the parameters (codevalue or namespace) is required"
     descriptor_id = 0
     with engine.connect() as connection:
         sql = text(
@@ -57,21 +75,14 @@ def _get_descriptor_id_by_codevalue_and_namespace(
     return descriptor_id
 
 
-def _get_descriptor_id_by_codevalue(
-    engine: engine.base.Engine, codevalue: str
+def _get_descriptor_id_by_codevalue_and_namespace(
+    engine: engine.base.Engine, codevalue: str, namespace: str
 ) -> int:
-    descriptor_id = 0
-    with engine.connect() as connection:
-        sql = text(
-            f"""
-                SELECT top 1 DescriptorId FROM edfi.Descriptor
-                WHERE CodeValue = '{codevalue}'"""
-        )
-        result = connection.execute(sql, engine)
-        for row in result:
-            descriptor_id = row["DescriptorId"]
+    return __get_descriptor_id(engine, codevalue, namespace)
 
-    return descriptor_id
+
+def _get_descriptor_id_by_codevalue(engine: engine.base.Engine, codevalue: str) -> int:
+    return __get_descriptor_id(engine, codevalue)
 
 
 def _prepare_descriptor_sql(row: pd.Series, schema: str, table: str) -> str:
@@ -299,9 +310,7 @@ def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
     sourcesystem = str(assignment_df["SourceSystem"].iloc[0])
     assignmentCategory = str(assignment_df["AssignmentCategory"].iloc[0])
 
-    sourcesystem_descriptor_id = _get_descriptor_id_by_codevalue(
-        engine, sourcesystem
-    )
+    sourcesystem_descriptor_id = _get_descriptor_id_by_codevalue(engine, sourcesystem)
     assignment_df.rename(
         columns={"SourceSystem": "LMSSourceSystemDescriptorId"}, inplace=True
     )
@@ -324,18 +333,5 @@ def populate_session_grading_period(engine: engine.base.Engine):
         return
 
     with engine.connect() as connection:
-        connection.execute("""
-            insert into edfi.SessionGradingPeriod
-            (GradingPeriodDescriptorId, PeriodSequence, SchoolId, SchoolYear, SessionName)
-            select
-                gradingperiod.GradingPeriodDescriptorId,
-                gradingperiod.PeriodSequence,
-                gradingperiod.SchoolId,
-                gradingperiod.SchoolYear,
-                SessionName
-            from edfi.Session session
-            inner join edfi.GradingPeriod gradingperiod
-            on session.SchoolYear = gradingperiod.SchoolYear
-            and gradingperiod.SchoolId = session.SchoolId
-        """)
+        connection.execute(POPULATE_SESSION_GRADING_PERIOD_SQL)
     already_loaded[SESSION_GRADING_PERIOD_KEY] = []
