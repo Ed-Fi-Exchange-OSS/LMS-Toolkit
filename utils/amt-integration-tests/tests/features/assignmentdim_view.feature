@@ -98,5 +98,59 @@ Feature: AssignmentDim View
             | LocalCourseCode       | abc-1053              |
             | SessionName           | Summer-1053           |
             | SchoolYear            | 1053                  |
+        And there is one Assignment
+            | AssignmentIdentifier  | ignore-2                                |
+            | SchoolId              | 53                                      |
+            | SourceSystem          | Schoology                               |
+            | Title                 | A COURSE_WORK_TYPE_UNSPECIFIED for 1053 |
+            | AssignmentDescription | The description                         |
+            | StartDateTime         | 1053-07-08 09:00                        |
+            | EndDateTime           | 1053-07-09 10:00                        |
+            | DueDateTime           | 1053-07-09 10:11                        |
+            | MaxPoints             | 99                                      |
+            | SectionIdentifier     | si-1053                                 |
+            | LastModifiedDate      | 1053-07-07 09:01                        |
+            | AssignmentCategory    | COURSE_WORK_TYPE_UNSPECIFIED            |
+            | LocalCourseCode       | abc-1053                                |
+            | SessionName           | Summer-1053                             |
+            | SchoolYear            | 1053                                    |
+        And there is one Assignment
+            | AssignmentIdentifier  | ignore-3                |
+            | SchoolId              | 53                      |
+            | SourceSystem          | Schoology               |
+            | Title                 | A discussion for 1053   |
+            | AssignmentDescription | The description         |
+            | StartDateTime         | 1053-07-08 09:00        |
+            | EndDateTime           | 1053-07-09 10:00        |
+            | DueDateTime           | 1053-07-09 10:11        |
+            | MaxPoints             | 99                      |
+            | SectionIdentifier     | si-1053                 |
+            | LastModifiedDate      | 1053-07-07 09:01        |
+            | AssignmentCategory    | SHORT_ANSWER_QUESTION   |
+            | LocalCourseCode       | abc-1053                |
+            | SessionName           | Summer-1053             |
+            | SchoolYear            | 1053                    |
+        And there is one Assignment
+            | AssignmentIdentifier  | ignore-4                 |
+            | SchoolId              | 53                       |
+            | SourceSystem          | Schoology                |
+            | Title                 | A discussion for 1053    |
+            | AssignmentDescription | The description          |
+            | StartDateTime         | 1053-07-08 09:00         |
+            | EndDateTime           | 1053-07-09 10:00         |
+            | DueDateTime           | 1053-07-09 10:11         |
+            | MaxPoints             | 99                       |
+            | SectionIdentifier     | si-1053                  |
+            | LastModifiedDate      | 1053-07-07 09:01         |
+            | AssignmentCategory    | MULTIPLE_CHOICE_QUESTION |
+            | LocalCourseCode       | abc-1053                 |
+            | SessionName           | Summer-1053              |
+            | SchoolYear            | 1053                     |
         When I query for assignments with identifier "ignore-discussion"
+        Then there should be 0 records
+        When I query for assignments with identifier "ignore-2"
+        Then there should be 0 records
+        When I query for assignments with identifier "ignore-3"
+        Then there should be 0 records
+        When I query for assignments with identifier "ignore-4"
         Then there should be 0 records
