@@ -18,6 +18,8 @@ DECLARE @id int = @@identity;
 INSERT INTO <schema>.<tbl> (<tbl>Id) VALUES (@id);
 """
 
+# If it was a production script we would probably want to add a WHERE clause for not inserting duplicated
+# records, for testing purposes we can assume this table is not populated when running the script.
 POPULATE_SESSION_GRADING_PERIOD_SQL = """
 INSERT INTO edfi.SessionGradingPeriod
     (GradingPeriodDescriptorId, PeriodSequence, SchoolId, SchoolYear, SessionName)
