@@ -50,6 +50,7 @@ Feature: AssignmentDim View
     Scenario: Happy Path
         Given there is one Assignment
             | AssignmentIdentifier  | assigndim-happy-path  |
+            | Namespace             | test-namespace        |
             | SchoolId              | 53                    |
             | SourceSystem          | Schoology             |
             | Title                 | A discussion for 1053 |
@@ -84,6 +85,7 @@ Feature: AssignmentDim View
     Scenario: Ignores discussions
         Given there is one Assignment
             | AssignmentIdentifier  | ignore-discussion     |
+            | Namespace             | test-namespace        |
             | SchoolId              | 53                    |
             | SourceSystem          | Schoology             |
             | Title                 | A discussion for 1053 |
@@ -100,6 +102,7 @@ Feature: AssignmentDim View
             | SchoolYear            | 1053                  |
         And there is one Assignment
             | AssignmentIdentifier  | ignore-2                                |
+            | Namespace             | test-namespace                          |
             | SchoolId              | 53                                      |
             | SourceSystem          | Schoology                               |
             | Title                 | A COURSE_WORK_TYPE_UNSPECIFIED for 1053 |
@@ -116,6 +119,7 @@ Feature: AssignmentDim View
             | SchoolYear            | 1053                                    |
         And there is one Assignment
             | AssignmentIdentifier  | ignore-3                |
+            | Namespace             | test-namespace          |
             | SchoolId              | 53                      |
             | SourceSystem          | Schoology               |
             | Title                 | A discussion for 1053   |
@@ -132,6 +136,7 @@ Feature: AssignmentDim View
             | SchoolYear            | 1053                    |
         And there is one Assignment
             | AssignmentIdentifier  | ignore-4                 |
+            | Namespace             | test-namespace           |
             | SchoolId              | 53                       |
             | SourceSystem          | Schoology                |
             | Title                 | A discussion for 1053    |
