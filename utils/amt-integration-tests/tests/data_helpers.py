@@ -345,9 +345,7 @@ def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
     sourcesystem = str(assignment_df["SourceSystem"].iloc[0])
     assignmentCategory = str(assignment_df["AssignmentCategory"].iloc[0])
 
-    sourcesystem_descriptor_id = _get_descriptor_id_by_codevalue(
-        engine, sourcesystem
-    )
+    sourcesystem_descriptor_id = _get_descriptor_id_by_codevalue(engine, sourcesystem)
     assignment_df.rename(
         columns={"SourceSystem": "LMSSourceSystemDescriptorId"}, inplace=True
     )
