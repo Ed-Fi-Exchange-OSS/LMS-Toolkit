@@ -4,3 +4,15 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 LOG_LEVELS = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+
+
+class SOURCE_SYSTEM:
+    GOOGLE = "Google"
+    SCHOOLOGY = "Schoology"
+    CANVAS = "Canvas"
+
+
+class SOURCE_SYSTEM_NAMESPACE:
+    GOOGLE = "uri://google.com/classroom"
+    SCHOOLOGY = "uri://schoology.com"
+    CANVAS = "uri://instructure.com/canvas"

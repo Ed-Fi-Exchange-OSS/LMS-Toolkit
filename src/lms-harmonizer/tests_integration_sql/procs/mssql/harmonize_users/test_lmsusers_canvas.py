@@ -106,7 +106,8 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSUser = query(
-                connection, "SELECT EdFiStudentId, SourceSystemIdentifier from lms.LMSUser"
+                connection,
+                "SELECT EdFiStudentId, SourceSystemIdentifier from lms.LMSUser",
             )
             assert len(LMSUser) == 2
             assert LMSUser[0]["SourceSystemIdentifier"] == SIS_ID

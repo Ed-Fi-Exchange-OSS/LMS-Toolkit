@@ -14,14 +14,6 @@ CREATE NONCLUSTERED INDEX [FK_Assignment_LMSSourceSystemDescriptor]
 ON [lmsx].[Assignment] ([LMSSourceSystemDescriptorId] ASC)
 GO
 
-ALTER TABLE [lmsx].[Assignment] WITH CHECK ADD CONSTRAINT [FK_Assignment_School] FOREIGN KEY ([SchoolId])
-REFERENCES [edfi].[School] ([SchoolId])
-GO
-
-CREATE NONCLUSTERED INDEX [FK_Assignment_School]
-ON [lmsx].[Assignment] ([SchoolId] ASC)
-GO
-
 ALTER TABLE [lmsx].[Assignment] WITH CHECK ADD CONSTRAINT [FK_Assignment_Section] FOREIGN KEY ([LocalCourseCode], [SchoolId], [SchoolYear], [SectionIdentifier], [SessionName])
 REFERENCES [edfi].[Section] ([LocalCourseCode], [SchoolId], [SchoolYear], [SectionIdentifier], [SessionName])
 ON UPDATE CASCADE
@@ -36,12 +28,12 @@ REFERENCES [edfi].[Descriptor] ([DescriptorId])
 ON DELETE CASCADE
 GO
 
-ALTER TABLE [lmsx].[AssignmentSubmission] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmission_Assignment] FOREIGN KEY ([AssignmentIdentifier], [SchoolId])
-REFERENCES [lmsx].[Assignment] ([AssignmentIdentifier], [SchoolId])
+ALTER TABLE [lmsx].[AssignmentSubmission] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmission_Assignment] FOREIGN KEY ([AssignmentIdentifier], [Namespace])
+REFERENCES [lmsx].[Assignment] ([AssignmentIdentifier], [Namespace])
 GO
 
 CREATE NONCLUSTERED INDEX [FK_AssignmentSubmission_Assignment]
-ON [lmsx].[AssignmentSubmission] ([AssignmentIdentifier] ASC, [SchoolId] ASC)
+ON [lmsx].[AssignmentSubmission] ([AssignmentIdentifier] ASC, [Namespace] ASC)
 GO
 
 ALTER TABLE [lmsx].[AssignmentSubmission] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmission_Student] FOREIGN KEY ([StudentUSI])
@@ -60,13 +52,13 @@ CREATE NONCLUSTERED INDEX [FK_AssignmentSubmission_SubmissionStatusDescriptor]
 ON [lmsx].[AssignmentSubmission] ([SubmissionStatusDescriptorId] ASC)
 GO
 
-ALTER TABLE [lmsx].[AssignmentSubmissionType] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmissionType_Assignment] FOREIGN KEY ([AssignmentIdentifier], [SchoolId])
-REFERENCES [lmsx].[Assignment] ([AssignmentIdentifier], [SchoolId])
+ALTER TABLE [lmsx].[AssignmentSubmissionType] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmissionType_Assignment] FOREIGN KEY ([AssignmentIdentifier], [Namespace])
+REFERENCES [lmsx].[Assignment] ([AssignmentIdentifier], [Namespace])
 ON DELETE CASCADE
 GO
 
 CREATE NONCLUSTERED INDEX [FK_AssignmentSubmissionType_Assignment]
-ON [lmsx].[AssignmentSubmissionType] ([AssignmentIdentifier] ASC, [SchoolId] ASC)
+ON [lmsx].[AssignmentSubmissionType] ([AssignmentIdentifier] ASC, [Namespace] ASC)
 GO
 
 ALTER TABLE [lmsx].[AssignmentSubmissionType] WITH CHECK ADD CONSTRAINT [FK_AssignmentSubmissionType_SubmissionTypeDescriptor] FOREIGN KEY ([SubmissionTypeDescriptorId])

@@ -355,7 +355,7 @@ def insert_lmsx_assignment(
 INSERT INTO [lmsx].[Assignment]
     (
         AssignmentIdentifier,
-        SchoolId,
+        Namespace,
         LMSSourceSystemDescriptorId,
         Title,
         AssignmentCategoryDescriptorId,
@@ -367,7 +367,7 @@ INSERT INTO [lmsx].[Assignment]
     )
      VALUES (
         N'{assignment_identifier}',
-        {school_id},
+        N'Namespace',
         {source_system_descriptor_id},
         N'{title_and_description}',
         {assignment_category_descriptor_id},

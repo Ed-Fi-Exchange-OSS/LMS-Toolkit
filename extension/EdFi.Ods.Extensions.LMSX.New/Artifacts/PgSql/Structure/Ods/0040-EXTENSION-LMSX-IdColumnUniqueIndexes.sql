@@ -1,4 +1,0 @@
-CREATE UNIQUE INDEX IF NOT EXISTS UX_153cda_Id ON lmsx.Assignment(Id);
-
-CREATE UNIQUE INDEX IF NOT EXISTS UX_f12526_Id ON lmsx.AssignmentSubmission(Id);
-

@@ -1,8 +1,10 @@
 {
     "assignmentSubmissionIdentifier": "ABCD9875654-604822",
+    "namespace": "uri://schoology.com",
     "assignmentReference": {
       "assignmentIdentifier": "ABCD9875654",
-      "schoolId": 255901001
+      "schoolId": 255901001,
+      "namespace": "uri://schoology.com"
     },
     "studentReference": {
       "studentUniqueId": "604822"

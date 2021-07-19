@@ -226,6 +226,23 @@
           }
         },
         {
+          "propertyName": "Namespace",
+          "propertyType": {
+            "dbType": "String",
+            "maxLength": 255,
+            "precision": 0,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "Namespace for the Assignment.",
+          "isIdentifying": true,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "Namespace",
+            "postgreSql": "Namespace"
+          }
+        },
+        {
           "propertyName": "StartDateTime",
           "propertyType": {
             "dbType": "DateTime2",
@@ -265,7 +282,7 @@
           "identifierName": "Assignment_PK",
           "identifyingPropertyNames": [
             "AssignmentIdentifier",
-            "SchoolId"
+            "Namespace"
           ],
           "isPrimary": true,
           "isUpdatable": false,
@@ -426,6 +443,23 @@
           }
         },
         {
+          "propertyName": "Namespace",
+          "propertyType": {
+            "dbType": "String",
+            "maxLength": 255,
+            "precision": 0,
+            "scale": 0,
+            "isNullable": false
+          },
+          "description": "Namespace for the AssignmentSubmission.",
+          "isIdentifying": true,
+          "isServerAssigned": false,
+          "columnNames": {
+            "sqlServer": "Namespace",
+            "postgreSql": "Namespace"
+          }
+        },
+        {
           "propertyName": "SubmissionDateTime",
           "propertyType": {
             "dbType": "DateTime2",
@@ -448,6 +482,7 @@
           "identifierName": "AssignmentSubmission_PK",
           "identifyingPropertyNames": [
             "AssignmentSubmissionIdentifier",
+            "Namespace",
             "StudentUSI"
           ],
           "isPrimary": true,
@@ -504,7 +539,7 @@
           "identifierName": "AssignmentSubmissionType_PK",
           "identifyingPropertyNames": [
             "AssignmentIdentifier",
-            "SchoolId",
+            "Namespace",
             "SubmissionTypeDescriptorId"
           ],
           "isPrimary": true,
@@ -722,66 +757,6 @@
     {
       "fullName": {
         "schema": "lmsx",
-        "name": "FK_Assignment_School"
-      },
-      "cardinality": "OneToZeroOrMore",
-      "primaryEntityFullName": {
-        "schema": "edfi",
-        "name": "School"
-      },
-      "primaryEntityProperties": [
-        {
-          "propertyName": "SchoolId",
-          "propertyType": {
-            "dbType": "Int32",
-            "maxLength": 0,
-            "precision": 10,
-            "scale": 0,
-            "isNullable": false
-          },
-          "description": "The identifier assigned to a school.",
-          "isIdentifying": true,
-          "isServerAssigned": false,
-          "columnNames": {
-            "sqlServer": "SchoolId",
-            "postgreSql": "SchoolId"
-          }
-        }
-      ],
-      "secondaryEntityFullName": {
-        "schema": "lmsx",
-        "name": "Assignment"
-      },
-      "secondaryEntityProperties": [
-        {
-          "propertyName": "SchoolId",
-          "propertyType": {
-            "dbType": "Int32",
-            "maxLength": 0,
-            "precision": 10,
-            "scale": 0,
-            "isNullable": false
-          },
-          "description": "The identifier assigned to a school.",
-          "isIdentifying": true,
-          "isServerAssigned": false,
-          "columnNames": {
-            "sqlServer": "SchoolId",
-            "postgreSql": "SchoolId"
-          }
-        }
-      ],
-      "isIdentifying": true,
-      "isRequired": true,
-      "constraintNames": {
-        "sqlServer": "FK_Assignment_School",
-        "postgreSql": "FK_153cda_School"
-      },
-      "potentiallyLogical": false
-    },
-    {
-      "fullName": {
-        "schema": "lmsx",
         "name": "FK_Assignment_Section"
       },
       "cardinality": "OneToZeroOrMore",
@@ -888,7 +863,7 @@
             "maxLength": 60,
             "precision": 0,
             "scale": 0,
-            "isNullable": false
+            "isNullable": true
           },
           "description": "The local code assigned by the School that identifies the course offering provided for the instruction of students.",
           "isIdentifying": false,
@@ -905,7 +880,7 @@
             "maxLength": 0,
             "precision": 10,
             "scale": 0,
-            "isNullable": false
+            "isNullable": true
           },
           "description": "The identifier assigned to a school.",
           "isIdentifying": false,
@@ -922,7 +897,7 @@
             "maxLength": 0,
             "precision": 5,
             "scale": 0,
-            "isNullable": false
+            "isNullable": true
           },
           "description": "The identifier for the school year.",
           "isIdentifying": false,
@@ -956,7 +931,7 @@
             "maxLength": 60,
             "precision": 0,
             "scale": 0,
-            "isNullable": false
+            "isNullable": true
           },
           "description": "The identifier for the calendar for the academic session (e.g., 2010/11, 2011 Summer).",
           "isIdentifying": false,
@@ -968,7 +943,7 @@
         }
       ],
       "isIdentifying": false,
-      "isRequired": true,
+      "isRequired": false,
       "constraintNames": {
         "sqlServer": "FK_Assignment_Section",
         "postgreSql": "FK_153cda_Section"
@@ -1064,20 +1039,20 @@
           }
         },
         {
-          "propertyName": "SchoolId",
+          "propertyName": "Namespace",
           "propertyType": {
-            "dbType": "Int32",
-            "maxLength": 0,
-            "precision": 10,
+            "dbType": "String",
+            "maxLength": 255,
+            "precision": 0,
             "scale": 0,
             "isNullable": false
           },
-          "description": "The identifier assigned to a school.",
+          "description": "Namespace for the Assignment.",
           "isIdentifying": false,
           "isServerAssigned": false,
           "columnNames": {
-            "sqlServer": "SchoolId",
-            "postgreSql": "SchoolId"
+            "sqlServer": "Namespace",
+            "postgreSql": "Namespace"
           }
         }
       ],
@@ -1104,20 +1079,20 @@
           }
         },
         {
-          "propertyName": "SchoolId",
+          "propertyName": "Namespace",
           "propertyType": {
-            "dbType": "Int32",
-            "maxLength": 0,
-            "precision": 10,
+            "dbType": "String",
+            "maxLength": 255,
+            "precision": 0,
             "scale": 0,
             "isNullable": false
           },
-          "description": "The identifier assigned to a school.",
+          "description": "Namespace for the AssignmentSubmission.",
           "isIdentifying": false,
           "isServerAssigned": false,
           "columnNames": {
-            "sqlServer": "SchoolId",
-            "postgreSql": "SchoolId"
+            "sqlServer": "Namespace",
+            "postgreSql": "Namespace"
           }
         }
       ],
@@ -1278,20 +1253,20 @@
           }
         },
         {
-          "propertyName": "SchoolId",
+          "propertyName": "Namespace",
           "propertyType": {
-            "dbType": "Int32",
-            "maxLength": 0,
-            "precision": 10,
+            "dbType": "String",
+            "maxLength": 255,
+            "precision": 0,
             "scale": 0,
             "isNullable": false
           },
-          "description": "The identifier assigned to a school.",
+          "description": "Namespace for the Assignment.",
           "isIdentifying": true,
           "isServerAssigned": false,
           "columnNames": {
-            "sqlServer": "SchoolId",
-            "postgreSql": "SchoolId"
+            "sqlServer": "Namespace",
+            "postgreSql": "Namespace"
           }
         }
       ],
@@ -1318,20 +1293,20 @@
           }
         },
         {
-          "propertyName": "SchoolId",
+          "propertyName": "Namespace",
           "propertyType": {
-            "dbType": "Int32",
-            "maxLength": 0,
-            "precision": 10,
+            "dbType": "String",
+            "maxLength": 255,
+            "precision": 0,
             "scale": 0,
             "isNullable": false
           },
-          "description": "The identifier assigned to a school.",
+          "description": "Namespace for the Assignment.",
           "isIdentifying": true,
           "isServerAssigned": false,
           "columnNames": {
-            "sqlServer": "SchoolId",
-            "postgreSql": "SchoolId"
+            "sqlServer": "Namespace",
+            "postgreSql": "Namespace"
           }
         }
       ],

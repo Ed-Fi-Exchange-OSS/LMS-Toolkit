@@ -9,7 +9,6 @@ Note that all values have defaults, and one difference from the harmonizer is
 that integrated security is true by default. DB Username and DB Password
 are ignored when intergrated security is set to true.
 
-
 ## Examples
 
 1. Run integration tests with defaults:
@@ -17,6 +16,7 @@ are ignored when intergrated security is set to true.
    ```bash
    poetry run pytest tests_integration_sql
    ```
+
 1. Run integration tests with username/password security:
 
    ```bash
@@ -35,4 +35,4 @@ Supported parameters:
 | Use integrated security | `--useintegratedsecurity` | true |
 | DB Username | `--username` | localuser |
 | DB Password | `--password` | localpassword |
-
+| Skip the database teardown | `--skip-teardown True` | False |

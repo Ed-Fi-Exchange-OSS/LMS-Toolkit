@@ -3,7 +3,7 @@
 -- The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 -- See the LICENSE and NOTICES files in the project root for more information.
 
-CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment] AS
+CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment] @SourceSystem nvarchar(255), @Namespace nvarchar(255) AS
 BEGIN
     SET NOCOUNT ON;
 
@@ -23,7 +23,6 @@ BEGIN
 		edfiSection.LocalCourseCode [LocalCourseCode],
 		edfiSection.[SessionName] [SessionName],
 		edfiSection.[SchoolYear] [SchoolYear],
-		edfiSection.[SchoolId] [SchoolId],
 		lmsAssignment.LastModifiedDate [ASSIGNMENT_LAST_MODIFIED_DATE],
 		lmssection.DeletedAt [SECTION_DELETED],
 		lmsAssignment.DeletedAt [ASSIGNMENT_DELETED]
@@ -48,6 +47,7 @@ BEGIN
 		INNER JOIN lmsx.AssignmentCategoryDescriptor
 			ON assignmentCatDescriptor.DescriptorId = AssignmentCategoryDescriptor.AssignmentCategoryDescriptorId
 
+    WHERE lmsAssignment.SourceSystem = @SourceSystem
 
 	INSERT INTO lmsx.[Assignment]
 		([AssignmentIdentifier]
@@ -63,7 +63,7 @@ BEGIN
 		,[LocalCourseCode]
 		,[SessionName]
 		,[SchoolYear]
-		,[SchoolId])
+		,[Namespace])
 	select
 		[AssignmentIdentifier]
 		,[LMSSourceSystemDescriptorId]
@@ -78,7 +78,7 @@ BEGIN
 		,[LocalCourseCode]
 		,[SessionName]
 		,[SchoolYear]
-		,[SchoolId]
+		,@Namespace
 	from
 	#ALL_ASSIGNMENTS
 	WHERE

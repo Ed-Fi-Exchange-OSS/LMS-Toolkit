@@ -14,10 +14,20 @@ SELECT @systemDescriptorsResourceClaimId = ResourceClaimId
 FROM dbo.ResourceClaims
 WHERE ResourceName = 'systemDescriptors'
 
-DECLARE @relationshipBasedDataResourceClaimId INT
-SELECT @relationshipBasedDataResourceClaimId = ResourceClaimId
+-- Create parent resource claim for LMSX resources
+
+INSERT INTO dbo.ResourceClaims
+	(DisplayName, ResourceName, ClaimName, ParentResourceClaimId, Application_ApplicationId)
+VALUES
+	('lmsMetadata', 'lmsMetadata', 'http://ed-fi.org/ods/identity/claims/domains/lmsMetadata', NULL, @applicationId);
+
+DECLARE @lmsMetadataResourceClaimId INT
+SELECT @lmsMetadataResourceClaimId = ResourceClaimId
 FROM dbo.ResourceClaims
-WHERE ResourceName = 'relationshipBasedData'
+WHERE ResourceName = 'lmsMetadata'
+
+
+-- Create individual resource claims
 
 MERGE dbo.ResourceClaims as t
 USING (
@@ -26,14 +36,14 @@ USING (
 			'assignment',
 			'assignment',
 			'http://ed-fi.org/ods/identity/claims/lmsx/assignment',
-			@relationshipBasedDataResourceClaimId,
+			@lmsMetadataResourceClaimId,
 			@applicationId
 		),
 		(
 			'assignmentSubmission',
 			'assignmentSubmission',
 			'http://ed-fi.org/ods/identity/claims/lmsx/assignmentSubmission',
-			@relationshipBasedDataResourceClaimId,
+			@lmsMetadataResourceClaimId,
 			@applicationId
 		),
 		(
@@ -44,9 +54,9 @@ USING (
 			@ApplicationId
 		),
 		(
-			'lMSSourceSystemDescriptor',
-			'lMSSourceSystemDescriptor',
-			'http://ed-fi.org/ods/identity/claims/lmsx/lMSSourceSystemDescriptor',
+			'lmsSourceSystemDescriptor',
+			'lmsSourceSystemDescriptor',
+			'http://ed-fi.org/ods/identity/claims/lmsx/lmsSourceSystemDescriptor',
 			@systemDescriptorsResourceClaimId,
 			@ApplicationId
 		),
@@ -79,3 +89,55 @@ INSERT
 	(DisplayName, ResourceName, ClaimName, ParentResourceClaimId, Application_ApplicationId)
 VALUES
 	(s.DisplayName, s.ResourceName, s.ClaimName, s.ParentResourceClaimId, s.Application_ApplicationId);
+
+
+-- Set namespace-based authorization strategy for LMS resource claims
+
+DECLARE @AuthorizationStrategyId INT
+SELECT @AuthorizationStrategyId  = (SELECT AuthorizationStrategyId FROM [dbo].[AuthorizationStrategies] WHERE AuthorizationStrategyName = 'NamespaceBased');
+
+INSERT INTO [dbo].[ResourceClaimAuthorizationMetadatas]
+    ([Action_ActionId]
+    ,[AuthorizationStrategy_AuthorizationStrategyId]
+    ,[ResourceClaim_ResourceClaimId]
+    ,[ValidationRuleSetName])
+SELECT ac.ActionId, @AuthorizationStrategyId, ResourceClaimId, null
+FROM [dbo].[ResourceClaims]
+CROSS APPLY
+    (SELECT ActionId
+    FROM [dbo].[Actions]
+    WHERE ActionName IN ('Create', 'Read', 'Update', 'Delete')) AS ac
+WHERE ResourceName IN ('lmsMetadata');
+
+
+-- Create LMS Vendor claim set
+
+INSERT INTO dbo.ClaimSets
+	(ClaimSetName, Application_ApplicationId)
+VALUES
+	('LMS Vendor', @applicationId);
+
+
+--Add resource claims to LMS Vendor and Ed-Fi Sandbox claim sets
+
+INSERT INTO [dbo].[ClaimSetResourceClaims]
+SELECT [ActionId]
+    ,[ClaimSetId]
+    ,[ResourceClaimId]
+    ,NULL
+    ,NULL
+FROM Actions a
+    ,ClaimSets c
+    ,ResourceClaims r
+WHERE r.ResourceName IN ('lmsMetadata')
+    AND (
+        c.ClaimSetName = 'LMS Vendor'
+        OR c.ClaimSetName = 'Ed-Fi Sandbox'
+        )
+    AND NOT EXISTS (
+        SELECT 1
+        FROM ClaimSetResourceClaims
+        WHERE Action_ActionId = a.ActionId
+            AND ClaimSet_ClaimSetId = c.ClaimSetId
+            AND ResourceClaim_ResourceClaimId = r.ResourceClaimId
+        )
