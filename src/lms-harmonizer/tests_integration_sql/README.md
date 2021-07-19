@@ -35,3 +35,4 @@ Supported parameters:
 | Use integrated security | `--useintegratedsecurity` | true |
 | DB Username | `--username` | localuser |
 | DB Password | `--password` | localpassword |
+| Skip the database teardown | `--skip-teardown True` | False |

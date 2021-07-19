@@ -50,6 +50,13 @@ def pytest_addoption(parser):
         default="localpassword",
         help="Database user password, when not using integrated security",
     )
+    parser.addoption(
+        "--skip-teardown",
+        type=bool,
+        action="store",
+        default=False,
+        help="Skip the teardown of the database. Potentially useful for debugging.",
+    )
 
 
 def _server_config_from(request) -> ServerConfig:
@@ -60,6 +67,7 @@ def _server_config_from(request) -> ServerConfig:
         db_name=request.config.getoption("--dbname"),
         username=request.config.getoption("--username"),
         password=request.config.getoption("--password"),
+        skip_teardown=request.config.getoption("--skip-teardown")
     )
 
 
@@ -89,6 +97,7 @@ def test_db_config(mssql_db_config: ServerConfig, request) -> ServerConfig:
     def finalizer():
         restore_snapshot(mssql_db_config)
 
-    request.addfinalizer(finalizer)
+    if not mssql_db_config.skip_teardown:
+        request.addfinalizer(finalizer)
 
     return mssql_db_config

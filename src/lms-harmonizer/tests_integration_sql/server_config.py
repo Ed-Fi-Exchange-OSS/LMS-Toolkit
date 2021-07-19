@@ -13,3 +13,4 @@ class ServerConfig:
     db_name: str
     username: str
     password: str
+    skip_teardown: bool
