@@ -60,18 +60,23 @@ def __get_descriptor_id(
 ) -> int:
     assert (
         codevalue is not None or namespace is not None
-    ), "At least one of the parameters (codevalue or namespace) is required"
+    ), "At least one of the parameters(codevalue or namespace) must not be none"
+
     descriptor_id = 0
     with engine.connect() as connection:
         sql = text(
             f"""
-                SELECT DescriptorId FROM edfi.Descriptor
-                WHERE CodeValue = '{codevalue}' and namespace = '{namespace}'"""
+                SELECT TOP 1 DescriptorId FROM edfi.Descriptor
+                WHERE
+                {f"CodeValue = '{codevalue}'" if codevalue is not None else "" }
+                {"and" if codevalue is not None and namespace is not None else ""}
+                {f"namespace = '{namespace}'" if namespace is not None else "" }
+            """
         )
         result = connection.execute(sql, engine)
         for row in result:
             descriptor_id = row["DescriptorId"]
-
+    print(descriptor_id)
     return descriptor_id
 
 
