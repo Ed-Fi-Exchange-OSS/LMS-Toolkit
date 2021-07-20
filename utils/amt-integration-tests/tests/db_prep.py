@@ -5,7 +5,7 @@
 
 import os
 from subprocess import run, PIPE
-from typing import List, Optional
+from typing import List
 
 from .ServerConfig import ServerConfig
 

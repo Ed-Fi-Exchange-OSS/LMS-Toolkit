@@ -8,7 +8,11 @@ import re
 
 import pandas as pd
 
-from .table_helpers import read_keyvalue_pairs_as_dict, read_string_table_as_2d_list, read_string_table_as_dataframe
+from .table_helpers import (
+    read_keyvalue_pairs_as_dict,
+    read_string_table_as_2d_list,
+    read_string_table_as_dataframe,
+)
 
 
 def assert_dataframe_equals_table(table: str, actual: pd.DataFrame) -> None:
