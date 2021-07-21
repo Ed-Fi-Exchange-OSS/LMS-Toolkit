@@ -362,18 +362,6 @@ def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
     )
     assignment_df["LMSSourceSystemDescriptorId"] = sourcesystem_descriptor_id
 
-
-def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
-    assignment_df = read_keyvalue_pairs_as_dataframe(assignment_table)
-    sourcesystem = str(assignment_df["SourceSystem"].iloc[0])
-    assignmentCategory = str(assignment_df["AssignmentCategory"].iloc[0])
-
-    sourcesystem_descriptor_id = _get_descriptor_id_by_codevalue(engine, sourcesystem)
-    assignment_df.rename(
-        columns={"SourceSystem": "LMSSourceSystemDescriptorId"}, inplace=True
-    )
-    assignment_df["LMSSourceSystemDescriptorId"] = sourcesystem_descriptor_id
-
     assignmentcategory_descriptor_id = _get_descriptor_id_by_codevalue(
         engine, assignmentCategory
     )
