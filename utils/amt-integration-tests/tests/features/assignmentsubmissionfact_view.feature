@@ -114,7 +114,6 @@ Feature: AssignmentSubmissionFact-C View
     Scenario: On Time Happy Path (Canvas - on-time)
         Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
             | AssignmentSubmissionIdentifier | on-time-happy-path-c       |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | on-time                    |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
@@ -128,22 +127,21 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-C           |
-            | SubmissionDateKey       | 1054-07-09                           |
+            | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 91                                   |
+            | NumericGrade            | 92                                   |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
             | SubmittedOnTime         | 1                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
 
     Scenario: On Time Happy Path (Canvas - graded)
         Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
             | AssignmentSubmissionIdentifier | graded-happy-path-c        |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | graded                     |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
@@ -157,21 +155,20 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-C           |
-            | SubmissionDateKey       | 1054-07-09                           |
+            | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 91                                   |
+            | NumericGrade            | 92                                   |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
             | SubmittedOnTime         | 1                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: Late Happy Path (Canvas)
         Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
             | AssignmentSubmissionIdentifier | late-happy-path-c          |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | late                       |
             | SubmissionDateTime             | 2054-07-09 9:12:34         |
             | EarnedPoints                   | 80                         |
@@ -185,21 +182,20 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-C           |
-            | SubmissionDateKey       | 1054-07-09                           |
+            | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 80                                   |
             | NumericGrade            | 81                                   |
             | LetterGrade             | B--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
             | SubmittedOnTime         | 0                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: Missing or Past Due Happy Path (Canvas)
         Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
             | AssignmentSubmissionIdentifier | pastdue-happy-path-c       |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | missing                    |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
@@ -213,7 +209,7 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-C           |
             | SubmissionDateKey       |                                      |
             | EarnedPoints            |                                      |
@@ -222,14 +218,13 @@ Feature: AssignmentSubmissionFact-C View
             | IsPastDue               | 1                                    |
             | SubmittedLate           | 0                                    |
             | SubmittedOnTime         | 0                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
 
 
     Scenario: On Time Happy Path (Schoology)
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-s"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-S"
             | AssignmentSubmissionIdentifier | on-time-happy-path-s       |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | on-time                    |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
@@ -243,21 +238,20 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
-            | AssignmentKey           | AssignmentSubmissionFact-s           |
-            | SubmissionDateKey       | 1054-07-09                           |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-S           |
+            | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 91                                   |
+            | NumericGrade            | 92                                   |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
             | SubmittedOnTime         | 1                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: Late Happy Path (Schoology)
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-s"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-S"
             | AssignmentSubmissionIdentifier | late-happy-path-s          |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | late                       |
             | SubmissionDateTime             | 2054-07-09 9:12:34         |
             | EarnedPoints                   | 80                         |
@@ -271,16 +265,16 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
-            | AssignmentKey           | AssignmentSubmissionFact-s           |
-            | SubmissionDateKey       | 1054-07-09                           |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-S           |
+            | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 80                                   |
             | NumericGrade            | 81                                   |
             | LetterGrade             | B--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
             | SubmittedOnTime         | 0                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     #
     # TODO in LMS-354
@@ -288,9 +282,8 @@ Feature: AssignmentSubmissionFact-C View
     # this test will never pass.
     #
     # Scenario: Missing or Past Due Happy Path (Schoology)
-    #    Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-s"
+    #    Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-S"
     #         | AssignmentSubmissionIdentifier | pastdue-happy-path-s       |
-    #         | SchoolId                       | 54                         |
     #         | SubmissionStatus               | missing                    |
     #         | SubmissionDateTime             |                            |
     #         | EarnedPoints                   |                            |
@@ -304,7 +297,7 @@ Feature: AssignmentSubmissionFact-C View
     #         | StudentSchoolKey        | first-student-54                     |
     #         | SchoolKey               | 54                                   |
     #         | StudentKey              | first-student                        |
-    #         | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
+    #         | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
     #         | AssignmentKey           | AssignmentSubmissionFact-C           |
     #         | SubmissionDateKey       |                                      |
     #         | EarnedPoints            |                                      |
@@ -313,12 +306,11 @@ Feature: AssignmentSubmissionFact-C View
     #         | IsPastDue               | 1                                    |
     #         | SubmittedLate           | 0                                    |
     #         | SubmittedOnTime         | 0                                    |
-    #         | LastModifiedDate        | 054-07-09 9:12:34                    |
+    #         | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: Do not report on Schoology drafts
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-s"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-S"
             | AssignmentSubmissionIdentifier | schoology-draft            |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | draft                      |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
@@ -330,9 +322,8 @@ Feature: AssignmentSubmissionFact-C View
 
 
     Scenario: On Time Happy Path (Google)
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
             | AssignmentSubmissionIdentifier | on-time-happy-path-g       |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | turned_in                  |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
@@ -346,21 +337,20 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
-            | AssignmentKey           | AssignmentSubmissionFact-g           |
-            | SubmissionDateKey       | 1054-07-09                           |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-G           |
+            | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 91                                   |
+            | NumericGrade            | 92                                   |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
             | SubmittedOnTime         | 1                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: On Time Happy Path (Google - Returned)
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
             | AssignmentSubmissionIdentifier | returned-happy-path-g      |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | returned                   |
             | SubmissionDateTime             | 1054-07-09 9:12:34         |
             | EarnedPoints                   | 90                         |
@@ -374,21 +364,20 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
-            | AssignmentKey           | AssignmentSubmissionFact-g           |
-            | SubmissionDateKey       | 1054-07-09                           |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-G           |
+            | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 91                                   |
+            | NumericGrade            | 92                                   |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
             | SubmittedOnTime         | 1                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: Late Happy Path (Google)
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
             | AssignmentSubmissionIdentifier | late-happy-path-g          |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | late                       |
             | SubmissionDateTime             | 2054-07-09 9:12:34         |
             | EarnedPoints                   | 80                         |
@@ -402,8 +391,8 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
-            | AssignmentKey           | AssignmentSubmissionFact-g           |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-G           |
             | SubmissionDateKey       | 1054-07-09                           |
             | EarnedPoints            | 80                                   |
             | NumericGrade            | 81                                   |
@@ -411,12 +400,11 @@ Feature: AssignmentSubmissionFact-C View
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
             | SubmittedOnTime         | 0                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: Missing or Past Due Happy Path (Google)
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
             | AssignmentSubmissionIdentifier | pastdue-happy-path-g       |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | missing                    |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
@@ -430,8 +418,8 @@ Feature: AssignmentSubmissionFact-C View
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
-            | SectionKey              | 54-abc-1054-1054-si-1504-Summer-1054 |
-            | AssignmentKey           | AssignmentSubmissionFact-g           |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-G           |
             | SubmissionDateKey       |                                      |
             | EarnedPoints            |                                      |
             | NumericGrade            |                                      |
@@ -439,12 +427,11 @@ Feature: AssignmentSubmissionFact-C View
             | IsPastDue               | 1                                    |
             | SubmittedLate           | 0                                    |
             | SubmittedOnTime         | 0                                    |
-            | LastModifiedDate        | 054-07-09 9:12:34                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: Do not report on Google New submissions
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
             | AssignmentSubmissionIdentifier | google-new                 |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | new                        |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
@@ -455,9 +442,8 @@ Feature: AssignmentSubmissionFact-C View
         Then there should be 0 submission records
 
     Scenario: Do not report on Google Created submissions
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
             | AssignmentSubmissionIdentifier | google-created             |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | new                        |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
@@ -468,9 +454,8 @@ Feature: AssignmentSubmissionFact-C View
         Then there should be 0 submission records
 
     Scenario: Do not report on Google Reclaimed submissions
-        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-g"
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
             | AssignmentSubmissionIdentifier | google-reclaimed           |
-            | SchoolId                       | 54                         |
             | SubmissionStatus               | reclaimed_by_student       |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |

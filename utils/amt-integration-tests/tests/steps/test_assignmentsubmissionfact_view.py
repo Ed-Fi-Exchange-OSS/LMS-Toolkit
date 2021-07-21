@@ -245,16 +245,14 @@ def given_assignment_submission(
 
 
 @when(
-    parsers.parse(
-        'I query for assignment submission "{submission_identifier}"'
-    ),
+    parsers.parse('I query for assignment submission "{submission_identifier}"'),
     target_fixture="assignment_df",
 )
 def when_query_for_assignment(
     mssql_fixture: engine.base.Engine, submission_identifier: str
 ) -> pd.DataFrame:
 
-    SELECT_FROM_ASSIGNMENT = "SELECT * FROM analytics.engage_AssignmentSubmissionDim WHERE AssignmentSubmissionIdentifier = ?"
+    SELECT_FROM_ASSIGNMENT = "SELECT * FROM analytics.engage_AssignmentSubmissionFact WHERE AssignmentSubmissionKey = ?"
     return pd.read_sql(
         SELECT_FROM_ASSIGNMENT, mssql_fixture, params=[submission_identifier]
     )
