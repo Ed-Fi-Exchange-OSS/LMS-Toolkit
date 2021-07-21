@@ -82,7 +82,7 @@ def describe_when_requesting_latest_coursework():
         }}
         """
         resource = setup_fake_classroom_api(
-            f"courses/{COURSE_ID}/courseWork", response_json
+            [(f"courses/{COURSE_ID}/courseWork", response_json)]
         )
 
         # act

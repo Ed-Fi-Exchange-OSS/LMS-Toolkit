@@ -27,6 +27,7 @@ GUARDIANS_ENABLED = "15"
 CALENDAR_ID = "16"
 CREATE_DATE = "17"
 LAST_MODIFIED_DATE = "18"
+ALIAS = "19"
 
 
 def describe_when_a_single_coursework_with_unique_fields_is_mapped():
@@ -52,6 +53,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
                 "calendarId": [CALENDAR_ID],
                 "CreateDate": [CREATE_DATE],
                 "LastModifiedDate": [LAST_MODIFIED_DATE],
+                "alias": [ALIAS],
             }
         )
 
@@ -74,7 +76,7 @@ def describe_when_a_single_coursework_with_unique_fields_is_mapped():
         assert row_dict["SourceCreateDate"] == CREATION_TIME
         assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
-        assert row_dict["SISSectionIdentifier"] == ""
+        assert row_dict["SISSectionIdentifier"] == ALIAS
         assert row_dict["Term"] == ""
         assert row_dict["CreateDate"] == CREATE_DATE
         assert row_dict["LastModifiedDate"] == LAST_MODIFIED_DATE
