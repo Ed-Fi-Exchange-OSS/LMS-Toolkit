@@ -73,9 +73,9 @@ Feature: AssignmentDim View
             | SourceSystem     | Schoology                            |
             | Title            | A discussion for 1053                |
             | Description      | The description                      |
-            | StartDateKey     | 1053-07-08                           |
-            | EndDateKey       | 1053-07-09                           |
-            | DueDateKey       | 1053-07-09                           |
+            | StartDateKey     | 10530708                             |
+            | EndDateKey       | 10530709                             |
+            | DueDateKey       | 10530709                             |
             | MaxPoints        | 99                                   |
             | SectionKey       | 53-abc-1053-1053-si-1053-Summer-1053 |
             | GradingPeriodKey | r"[0-9]+-53-1053-07-01"              |
