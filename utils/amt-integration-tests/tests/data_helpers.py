@@ -78,7 +78,7 @@ def __get_descriptor_id(
         result = connection.execute(sql, engine)
         for row in result:
             descriptor_id = row["DescriptorId"]
-    print(descriptor_id)
+
     return descriptor_id
 
 
@@ -127,22 +127,22 @@ def load_lms_descriptors(engine: engine.base.Engine) -> None:
 
 
 def load_school(engine: engine.base.Engine, id: str) -> None:
-    SCHOOLID = "SchoolId"
+    SCHOOL_ID = "SchoolId"
 
-    if SCHOOLID not in already_loaded.keys():
-        already_loaded[SCHOOLID] = []
+    if SCHOOL_ID not in already_loaded.keys():
+        already_loaded[SCHOOL_ID] = []
 
-    if id in already_loaded[SCHOOLID]:
+    if id in already_loaded[SCHOOL_ID]:
         # This school has already been loaded, no more action required
         return
 
     ed_org = pd.DataFrame([{"EducationOrganizationId": id, "NameOfInstitution": id}])
     ed_org.to_sql("EducationOrganization", **_get_edfi_options(engine))
 
-    school = pd.DataFrame([{SCHOOLID: id}])
+    school = pd.DataFrame([{SCHOOL_ID: id}])
     school.to_sql("School", **_get_edfi_options(engine))
 
-    already_loaded[SCHOOLID].append(id)
+    already_loaded[SCHOOL_ID].append(id)
 
 
 def load_school_year(engine: engine.base.Engine, school_year: str) -> None:
@@ -270,65 +270,45 @@ def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -
     grading_periods_df = read_keyvalue_pairs_as_dataframe(grading_period_table)
     grading_period_descriptor = str(grading_periods_df["Descriptor"].iloc[0])
 
+    # Add descriptor for grading period
+    if GRADING_PERIOD_DESCRIPTOR_KEY not in already_loaded.keys():
+        already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY] = []
+
+    if grading_period_descriptor not in already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY]:
+        descriptor = pd.Series(
+            {
+                "CodeValue": grading_period_descriptor,
+                "ShortDescription": grading_period_descriptor,
+                "Description": grading_period_descriptor,
+                "Namespace": "uri://ed-fi.org/Descriptor",
+            }
+        )
+        descriptor_sql = _prepare_descriptor_sql(
+            descriptor, SCHEMA_EDFI, "GradingPeriodDescriptor"
+        )
+
+        with engine.connect() as connection:
+            connection.execute(text(descriptor_sql))
+
+        already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY].append(grading_period_descriptor)
+
+    descriptor_id = _get_descriptor_id_by_codevalue_and_namespace(
+        engine, grading_period_descriptor, DESCRIPTOR_NAMESPACE
+    )
+
+    # Now add the grading period
     if GRADING_PERIOD_KEY not in already_loaded.keys():
         already_loaded[GRADING_PERIOD_KEY] = []
 
-    # Add descriptor for grading period
-    if GRADING_PERIOD_DESCRIPTOR_KEY not in already_loaded.keys():
-        already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY] = []
-
-    if grading_period_descriptor not in already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY]:
-        descriptor = pd.Series(
-            {
-                "CodeValue": grading_period_descriptor,
-                "ShortDescription": grading_period_descriptor,
-                "Description": grading_period_descriptor,
-                "Namespace": "uri://ed-fi.org/Descriptor",
-            }
-        )
-        descriptor_sql = _prepare_descriptor_sql(
-            descriptor, SCHEMA_EDFI, "GradingPeriodDescriptor"
-        )
-
-        with engine.connect() as connection:
-            connection.execute(text(descriptor_sql))
-
-        already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY].append(grading_period_descriptor)
-
-    descriptor_id = _get_descriptor_id_by_codevalue_and_namespace(
-        engine, grading_period_descriptor, DESCRIPTOR_NAMESPACE
+    grading_period_value = (
+        str(grading_periods_df["PeriodSequence"].iloc[0])
+        + str(grading_periods_df["Descriptor"].iloc[0])
+        + str(grading_periods_df["SchoolId"].iloc[0])
+        + str(grading_periods_df["SchoolYear"].iloc[0])
     )
 
-    grading_periods_df.rename(
-        columns={"Descriptor": "GradingPeriodDescriptorId"}, inplace=True
-    )
-    grading_periods_df["GradingPeriodDescriptorId"] = descriptor_id
-
-    # Add descriptor for grading period
-    if GRADING_PERIOD_DESCRIPTOR_KEY not in already_loaded.keys():
-        already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY] = []
-
-    if grading_period_descriptor not in already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY]:
-        descriptor = pd.Series(
-            {
-                "CodeValue": grading_period_descriptor,
-                "ShortDescription": grading_period_descriptor,
-                "Description": grading_period_descriptor,
-                "Namespace": "uri://ed-fi.org/Descriptor",
-            }
-        )
-        descriptor_sql = _prepare_descriptor_sql(
-            descriptor, SCHEMA_EDFI, "GradingPeriodDescriptor"
-        )
-
-        with engine.connect() as connection:
-            connection.execute(text(descriptor_sql))
-
-        already_loaded[GRADING_PERIOD_DESCRIPTOR_KEY].append(grading_period_descriptor)
-
-    descriptor_id = _get_descriptor_id_by_codevalue_and_namespace(
-        engine, grading_period_descriptor, DESCRIPTOR_NAMESPACE
-    )
+    if grading_period_value in already_loaded[GRADING_PERIOD_KEY]:
+        return
 
     grading_periods_df.rename(
         columns={"Descriptor": "GradingPeriodDescriptorId"}, inplace=True
@@ -337,16 +317,12 @@ def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -
 
     grading_periods_df.to_sql("GradingPeriod", **_get_edfi_options(engine))
 
+    already_loaded[GRADING_PERIOD_KEY].append(grading_period_value)
+
 
 def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
     assignment_df = read_keyvalue_pairs_as_dataframe(assignment_table)
     assignment_identifier = assignment_df.iloc[0]["AssignmentIdentifier"]
-
-    print("")
-    print("----------------------------")
-    print("AssignmentIdentifier:", assignment_identifier)
-    print("----------------------------")
-    print("")
 
     ASSIGNMENT_KEY = "Assignment"
     if ASSIGNMENT_KEY not in already_loaded.keys():

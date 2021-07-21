@@ -178,15 +178,15 @@ Feature: AssignmentSubmissionFact-C View
         When I query for assignment submission "late-happy-path-c"
         Then there should be 1 submission records
         And the submission record should have these values:
-            | AssignmentSubmissionKey | on-time-happy-path-c                 |
+            | AssignmentSubmissionKey | late-happy-path-c                    |
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
             | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-C           |
-            | SubmissionDateKey       | 10540709                             |
+            | SubmissionDateKey       | 20540709                             |
             | EarnedPoints            | 80                                   |
-            | NumericGrade            | 81                                   |
+            | NumericGrade            | 82                                   |
             | LetterGrade             | B--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
@@ -261,15 +261,15 @@ Feature: AssignmentSubmissionFact-C View
         When I query for assignment submission "late-happy-path-s"
         Then there should be 1 submission records
         And the submission record should have these values:
-            | AssignmentSubmissionKey | on-time-happy-path-s                 |
+            | AssignmentSubmissionKey | late-happy-path-s                    |
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
             | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-S           |
-            | SubmissionDateKey       | 10540709                             |
+            | SubmissionDateKey       | 20540709                             |
             | EarnedPoints            | 80                                   |
-            | NumericGrade            | 81                                   |
+            | NumericGrade            | 82                                   |
             | LetterGrade             | B--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
@@ -387,15 +387,15 @@ Feature: AssignmentSubmissionFact-C View
         When I query for assignment submission "late-happy-path-g"
         Then there should be 1 submission records
         And the submission record should have these values:
-            | AssignmentSubmissionKey | on-time-happy-path-g                 |
+            | AssignmentSubmissionKey | late-happy-path-g                    |
             | StudentSchoolKey        | first-student-54                     |
             | SchoolKey               | 54                                   |
             | StudentKey              | first-student                        |
             | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-G           |
-            | SubmissionDateKey       | 1054-07-09                           |
+            | SubmissionDateKey       | 20540709                             |
             | EarnedPoints            | 80                                   |
-            | NumericGrade            | 81                                   |
+            | NumericGrade            | 82                                   |
             | LetterGrade             | B--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
