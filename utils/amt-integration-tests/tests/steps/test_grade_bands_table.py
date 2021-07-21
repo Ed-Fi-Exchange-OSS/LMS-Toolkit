@@ -33,7 +33,7 @@ def given_AMT_is_installed(mssql_fixture: engine.base.Engine):
 @when("I query the Grade Band Table", target_fixture="grade_band_df")
 def query_the_grade_band_table(mssql_fixture: engine.base.Engine) -> pd.DataFrame:
     return pd.read_sql(
-        "select * from analytics.engage_GradeBands order by LowerBound", mssql_fixture
+        "select * from analytics_config.engage_GradeBands order by LowerBound", mssql_fixture
     )
 
 
