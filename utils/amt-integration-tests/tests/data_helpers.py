@@ -272,8 +272,6 @@ def load_grading_period(engine: engine.base.Engine, grading_period_table: str) -
 
     if GRADING_PERIOD_KEY not in already_loaded.keys():
         already_loaded[GRADING_PERIOD_KEY] = []
-    else:
-        return
 
     # Add descriptor for grading period
     if GRADING_PERIOD_DESCRIPTOR_KEY not in already_loaded.keys():
@@ -344,11 +342,15 @@ def load_assignment(engine: engine.base.Engine, assignment_table: str) -> None:
     assignment_df = read_keyvalue_pairs_as_dataframe(assignment_table)
     assignment_identifier = assignment_df.iloc[0]["AssignmentIdentifier"]
 
+    print("")
+    print("----------------------------")
+    print("AssignmentIdentifier:", assignment_identifier)
+    print("----------------------------")
+    print("")
+
     ASSIGNMENT_KEY = "Assignment"
     if ASSIGNMENT_KEY not in already_loaded.keys():
         already_loaded[ASSIGNMENT_KEY] = []
-    else:
-        return
 
     if assignment_identifier in already_loaded[ASSIGNMENT_KEY]:
         return
@@ -382,7 +384,8 @@ def populate_session_grading_period(engine: engine.base.Engine):
 
     with engine.connect() as connection:
         connection.execute(POPULATE_SESSION_GRADING_PERIOD_SQL)
-    already_loaded[SESSION_GRADING_PERIOD_KEY] = []
+
+    already_loaded[SESSION_GRADING_PERIOD_KEY] = "loaded"
 
 
 def load_student(engine: engine.base.Engine, student_table: str) -> None:
@@ -392,8 +395,6 @@ def load_student(engine: engine.base.Engine, student_table: str) -> None:
     STUDENT_KEY = "Student"
     if STUDENT_KEY not in already_loaded.keys():
         already_loaded[STUDENT_KEY] = []
-    else:
-        return
 
     if unique_id in already_loaded[STUDENT_KEY]:
         return
@@ -528,8 +529,6 @@ def load_assignment_submission(
     SUBMISSION_KEY = "Submission"
     if SUBMISSION_KEY not in already_loaded.keys():
         already_loaded[SUBMISSION_KEY] = []
-    else:
-        return
 
     if identifier in already_loaded[SUBMISSION_KEY]:
         return
@@ -561,7 +560,7 @@ WHERE
         sql, engine, params=[assignment_identifier, code_value]
     ).iloc[0]["DescriptorId"]
     submission_df["SubmissionStatusDescriptorId"] = status_descriptor
-    submission_df.drop(columns=["SubmissionStatus"])
+    submission_df.drop(columns=["SubmissionStatus"], inplace=True)
 
     submission_df.to_sql("AssignmentSubmission", **_get_lmsx_options(engine))
 
