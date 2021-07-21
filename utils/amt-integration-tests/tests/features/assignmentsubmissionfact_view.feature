@@ -93,7 +93,7 @@ Feature: AssignmentSubmissionFact-C View
 
 
     Scenario: Ensure the view exists
-        When I query for assignments submissions for student 1234 at school 54
+        When I query for assignment submission "view exists even if submission does not exist"
         Then it has these columns:
             | Columns                 |
             | AssignmentSubmissionKey |

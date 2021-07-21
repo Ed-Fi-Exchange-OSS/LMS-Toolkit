@@ -230,9 +230,7 @@ def given_student_section_enrollment(
 
 @given(
     parsers.parse(
-        """
-student "{student_unique_id}" has submission for assignment "{assignment_identifier}"\n{submission_table}
-"""
+        'student "{student_unique_id}" has a submission for assignment "{assignment_identifier}"\n{submission_table}'
     )
 )
 def given_assignment_submission(
@@ -248,17 +246,17 @@ def given_assignment_submission(
 
 @when(
     parsers.parse(
-        "I query for assignments submissions for student {student_key} at school {school_key}"
+        'I query for assignment submission "{submission_identifier}"'
     ),
     target_fixture="assignment_df",
 )
 def when_query_for_assignment(
-    mssql_fixture: engine.base.Engine, student_key: str, school_key: str
+    mssql_fixture: engine.base.Engine, submission_identifier: str
 ) -> pd.DataFrame:
 
-    SELECT_FROM_ASSIGNMENT = "SELECT * FROM analytics.engage_AssignmentSubmissionDim WHERE StudentKey = ? AND SchoolKey = ?"
+    SELECT_FROM_ASSIGNMENT = "SELECT * FROM analytics.engage_AssignmentSubmissionDim WHERE AssignmentSubmissionIdentifier = ?"
     return pd.read_sql(
-        SELECT_FROM_ASSIGNMENT, mssql_fixture, params=[student_key, school_key]
+        SELECT_FROM_ASSIGNMENT, mssql_fixture, params=[submission_identifier]
     )
 
 
