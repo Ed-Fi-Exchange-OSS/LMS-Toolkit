@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import List, Dict, Optional, cast
+from typing import List, Dict, cast
 from pandas import DataFrame, Series, json_normalize
 import sqlalchemy
 from googleapiclient.discovery import Resource
@@ -16,13 +16,12 @@ from edfi_lms_extractor_lib.api.resource_sync import (
 
 
 COURSES_RESOURCE_NAME = "Courses"
+EDFI_LMS_PREFIX = "EdFiLMS."
 
 logger = logging.getLogger(__name__)
 
 
-def request_course_aliases(
-    resource: Optional[Resource], course_id: str
-) -> List[Dict[str, str]]:
+def request_course_aliases(resource: Resource, course_id: str) -> List[Dict[str, str]]:
     """
     Fetch CourseAlias API data for the given course id
 
@@ -39,10 +38,6 @@ def request_course_aliases(
         a list of Google Classroom CourseAliases for the given course id,
             see https://developers.google.com/classroom/reference/rest/v1/courses.aliases
     """
-
-    if resource is None:
-        return []
-
     return call_api(
         cast(ResourceType, resource).courses().aliases().list,
         {"courseId": course_id},
@@ -81,7 +76,7 @@ def _alias_names_for_scope(aliases: List[str], scope: str) -> List[str]:
 def _find_first_with_edfilms_prefix(alias_names: List[str]) -> str:
     """
     Returns the first alias name in the list prefixed with the
-    Ed-Fi LMS indicator, or an empty string if none are found.
+    Ed-Fi LMS indicator, with the prefix removed, or an empty string if none are found.
 
     Parameters
     ----------
@@ -92,10 +87,14 @@ def _find_first_with_edfilms_prefix(alias_names: List[str]) -> str:
     -------
     str
         The first alias name in the list prefixed with the
-        Ed-Fi LMS indicator, or an empty string if none are found.
+        Ed-Fi LMS indicator, with the prefix removed, or an empty string if none are found.
     """
     return next(
-        (alias_name for alias_name in alias_names if alias_name.startswith("EdFiLMS")),
+        (
+            alias_name.removeprefix(EDFI_LMS_PREFIX)  # type: ignore
+            for alias_name in alias_names
+            if alias_name.startswith(EDFI_LMS_PREFIX)
+        ),
         "",
     )
 
@@ -107,8 +106,7 @@ def _select_alias(aliases: List[str]) -> str:
     Parameters
     ----------
     aliases: List[str]
-        a list of course alias strings from the API, including the "d:" (domain scope)
-        or "p:" (project scope) prefix
+        a list of course alias strings from the API, including the "d:" (domain scope) prefix
 
     Returns
     -------
@@ -125,17 +123,11 @@ def _select_alias(aliases: List[str]) -> str:
     Else if there is exactly one alias:
     SISSectionIdentifier = alias
 
-    Else if there is a domain alias prefixed with "EdFiLMS":
-    SISSectionIdentifier = first domain alias prefixed with "EdFiLMS"
-
-    Else if there is a project alias prefixed with "EdFiLMS":
-    SISSectionIdentifier = first project alias prefixed with "EdFiLMS"
+    Else if there is a domain alias prefixed with "EdFiLMS.":
+    SISSectionIdentifier = first domain alias prefixed with "EdFiLMS.", prefix excluded
 
     Else if there are domain aliases:
     SISSectionIdentifier = first domain alias
-
-    Else if there are project aliases:
-    SISSectionIdentifier = first project alias
 
     Else:
     SISSectionIdentifier = ""
@@ -146,7 +138,7 @@ def _select_alias(aliases: List[str]) -> str:
     if len(aliases) == 1:
         try:
             _, alias_name = aliases[0].split(":")
-            return alias_name
+            return alias_name.removeprefix(EDFI_LMS_PREFIX)  # type: ignore
         except ValueError:
             return ""
 
@@ -155,21 +147,13 @@ def _select_alias(aliases: List[str]) -> str:
     if edfilms_domain_alias != "":
         return edfilms_domain_alias
 
-    project_alias_names: List[str] = _alias_names_for_scope(aliases, "p")
-    edfilms_project_alias = _find_first_with_edfilms_prefix(project_alias_names)
-    if edfilms_project_alias != "":
-        return edfilms_project_alias
-
     if len(domain_alias_names) > 0:
         return domain_alias_names[0]
-
-    if len(project_alias_names) > 0:
-        return project_alias_names[0]
 
     return ""
 
 
-def _derive_alias(resource: Optional[Resource], row: Series) -> str:
+def _derive_alias(resource: Resource, row: Series) -> str:
     """
     Derives a single alias for a course dataframe row, from a fetch of CourseAliases
 
@@ -192,7 +176,7 @@ def _derive_alias(resource: Optional[Resource], row: Series) -> str:
     return _select_alias(alias_strings)
 
 
-def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
+def request_courses(resource: Resource) -> List[Dict[str, str]]:
     """
     Fetch Course API data for all courses and return a list of course data
 
@@ -207,10 +191,6 @@ def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
         a list of Google Classroom Course resources,
             see https://developers.google.com/classroom/reference/rest/v1/courses
     """
-
-    if resource is None:
-        return []
-
     return call_api(
         cast(ResourceType, resource).courses().list,
         {},
@@ -218,7 +198,7 @@ def request_courses(resource: Optional[Resource]) -> List[Dict[str, str]]:
     )
 
 
-def request_latest_courses_as_df(resource: Optional[Resource]) -> DataFrame:
+def request_latest_courses_as_df(resource: Resource) -> DataFrame:
     """
     Fetch Course API data for all courses and return a Courses API DataFrame
 
@@ -264,7 +244,7 @@ def request_latest_courses_as_df(resource: Optional[Resource]) -> DataFrame:
 
 
 def request_all_courses_as_df(
-    resource: Optional[Resource], sync_db: sqlalchemy.engine.base.Engine
+    resource: Resource, sync_db: sqlalchemy.engine.base.Engine
 ) -> DataFrame:
     """
     Fetch Course API data for all courses and return a Courses API DataFrame

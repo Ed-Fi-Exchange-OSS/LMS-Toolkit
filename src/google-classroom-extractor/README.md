@@ -177,6 +177,22 @@ for more information."`
 The application will exit with status code `1` if there were any log messages at
 the ERROR or CRITICAL level, otherwise it will exit with status code `0`.
 
+
+## Course Aliases and SIS Section Identifiers
+
+Course Aliases in Google Classroom are expected to be used to provide a mapping
+from a Google Classroom Course to a SIS section using a SIS section identifer.
+To enable this behavior, create a domain-scoped Course Alias in Google Classroom
+for each Course with the prefix "EdFiLMS." followed by the SIS section identifier.
+For example, the domain-scoped Course Alias "d:EdFiLMS.ALG-123" would be used for
+SIS section identifier "ALG-123". Only the first Course Alias found with the
+"EdFiLMS." prefix will be used.
+
+See
+[course.aliases](https://developers.google.com/classroom/reference/rest/v1/courses.aliases)
+for more information on Course Aliases.
+
+
 ## Developer Operations
 
 1. Style check: `poetry run flake8`

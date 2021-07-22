@@ -6,7 +6,10 @@
 import pytest
 import pook
 from pandas.core.frame import DataFrame
-from edfi_google_classroom_extractor.api.courses import request_latest_courses_as_df
+from edfi_google_classroom_extractor.api.courses import (
+    request_latest_courses_as_df,
+    EDFI_LMS_PREFIX,
+)
 from tests.api.api_helper import setup_fake_classroom_api
 
 # unique value for each column in fixture
@@ -137,6 +140,126 @@ def describe_when_requesting_courses_with_single_alias_without_scope_prefix():
         assert row_dict["alias"] == ""
 
 
+def describe_when_requesting_courses_with_mutliple_alias_without_scope_prefix():
+    ALIASES = """
+    {"alias": "unexpected_form1"},
+    {"alias": "unexpected_form2"},
+    {"alias": "unexpected_form3"}
+    """
+
+    @pytest.fixture
+    def courses_df() -> DataFrame:
+        # arrange
+        pook.activate()
+        aliases_response_json = f"""
+        {{
+          "aliases": [{ALIASES}]
+        }}
+        """
+        resource = setup_fake_classroom_api(
+            [
+                ("courses", COURSES_RESPONSE_JSON),
+                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
+            ]
+        )
+
+        # act
+        return request_latest_courses_as_df(resource)
+
+    def it_should_ignore_aliases_without_scope_prefix(courses_df):
+        row_dict = courses_df.to_dict(orient="records")[0]
+        assert row_dict["alias"] == ""
+
+
+def describe_when_requesting_courses_with_single_malformed_alias():
+    ALIASES = """
+    {"alias": "d:"}
+    """
+
+    @pytest.fixture
+    def courses_df() -> DataFrame:
+        # arrange
+        pook.activate()
+        aliases_response_json = f"""
+        {{
+          "aliases": [{ALIASES}]
+        }}
+        """
+        resource = setup_fake_classroom_api(
+            [
+                ("courses", COURSES_RESPONSE_JSON),
+                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
+            ]
+        )
+
+        # act
+        return request_latest_courses_as_df(resource)
+
+    def it_should_ignore_malformed_alias(courses_df):
+        row_dict = courses_df.to_dict(orient="records")[0]
+        assert row_dict["alias"] == ""
+
+
+def describe_when_requesting_courses_with_multiple_malformed_aliases():
+    ALIASES = """
+    {"alias": "d:"},
+    {"alias": "d:"}
+    """
+
+    @pytest.fixture
+    def courses_df() -> DataFrame:
+        # arrange
+        pook.activate()
+        aliases_response_json = f"""
+        {{
+          "aliases": [{ALIASES}]
+        }}
+        """
+        resource = setup_fake_classroom_api(
+            [
+                ("courses", COURSES_RESPONSE_JSON),
+                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
+            ]
+        )
+
+        # act
+        return request_latest_courses_as_df(resource)
+
+    def it_should_ignore_malformed_aliases(courses_df):
+        row_dict = courses_df.to_dict(orient="records")[0]
+        assert row_dict["alias"] == ""
+
+
+def describe_when_requesting_courses_with_aliases_with_unknown_scopes():
+    ALIASES = """
+    {"alias": "q:unknown_scope1"},
+    {"alias": "r:unknown_scope2"}
+    """
+
+    @pytest.fixture
+    def courses_df() -> DataFrame:
+        # arrange
+        pook.activate()
+        aliases_response_json = f"""
+        {{
+          "aliases": [{ALIASES}]
+        }}
+        """
+        resource = setup_fake_classroom_api(
+            [
+                ("courses", COURSES_RESPONSE_JSON),
+                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
+            ]
+        )
+
+        # act
+        return request_latest_courses_as_df(resource)
+
+    def it_should_ignore_malformed_aliases(courses_df):
+        row_dict = courses_df.to_dict(orient="records")[0]
+        assert row_dict["alias"] == ""
+
+
 def describe_when_requesting_courses_with_single_alias_with_domain_prefix():
     ALIASES = """
     {"alias": "d:domain_alias"}
@@ -162,65 +285,6 @@ def describe_when_requesting_courses_with_single_alias_with_domain_prefix():
         return request_latest_courses_as_df(resource)
 
     def it_should_map_to_alias_name(courses_df):
-        row_dict = courses_df.to_dict(orient="records")[0]
-        assert row_dict["alias"] == "domain_alias"
-
-
-def describe_when_requesting_courses_with_single_alias_with_project_prefix():
-    ALIASES = """
-    {"alias": "p:course_alias"}
-    """
-
-    @pytest.fixture
-    def courses_df() -> DataFrame:
-        # arrange
-        pook.activate()
-        aliases_response_json = f"""
-        {{
-          "aliases": [{ALIASES}]
-        }}
-        """
-        resource = setup_fake_classroom_api(
-            [
-                ("courses", COURSES_RESPONSE_JSON),
-                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
-            ]
-        )
-
-        # act
-        return request_latest_courses_as_df(resource)
-
-    def it_should_map_to_alias_name(courses_df):
-        row_dict = courses_df.to_dict(orient="records")[0]
-        assert row_dict["alias"] == "course_alias"
-
-
-def describe_when_requesting_courses_with_both_single_project_and_domain_prefix():
-    ALIASES = """
-    {"alias": "p:project_alias"},
-    {"alias": "d:domain_alias"}
-    """
-
-    @pytest.fixture
-    def courses_df() -> DataFrame:
-        # arrange
-        pook.activate()
-        aliases_response_json = f"""
-        {{
-          "aliases": [{ALIASES}]
-        }}
-        """
-        resource = setup_fake_classroom_api(
-            [
-                ("courses", COURSES_RESPONSE_JSON),
-                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
-            ]
-        )
-
-        # act
-        return request_latest_courses_as_df(resource)
-
-    def it_should_map_to_domain_alias(courses_df):
         row_dict = courses_df.to_dict(orient="records")[0]
         assert row_dict["alias"] == "domain_alias"
 
@@ -256,75 +320,12 @@ def describe_when_requesting_courses_with_multiple_domain_prefixes():
         assert row_dict["alias"] == "domain_alias1"
 
 
-def describe_when_requesting_courses_with_multiple_project_prefixes():
-    ALIASES = """
-    {"alias": "p:project_alias1"},
-    {"alias": "p:project_alias2"},
-    {"alias": "p:project_alias3"}
-    """
-
-    @pytest.fixture
-    def courses_df() -> DataFrame:
-        # arrange
-        pook.activate()
-        aliases_response_json = f"""
-        {{
-          "aliases": [{ALIASES}]
-        }}
-        """
-        resource = setup_fake_classroom_api(
-            [
-                ("courses", COURSES_RESPONSE_JSON),
-                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
-            ]
-        )
-
-        # act
-        return request_latest_courses_as_df(resource)
-
-    def it_should_map_to_the_first_project_alias(courses_df):
-        row_dict = courses_df.to_dict(orient="records")[0]
-        assert row_dict["alias"] == "project_alias1"
-
-
-def describe_when_requesting_courses_with_both_domain_and_project_prefixes():
-    ALIASES = """
-    {"alias": "p:project_alias1"},
-    {"alias": "d:domain_alias1"},
-    {"alias": "p:project_alias2"},
-    {"alias": "d:domain_alias2"}
-    """
-
-    @pytest.fixture
-    def courses_df() -> DataFrame:
-        # arrange
-        pook.activate()
-        aliases_response_json = f"""
-        {{
-          "aliases": [{ALIASES}]
-        }}
-        """
-        resource = setup_fake_classroom_api(
-            [
-                ("courses", COURSES_RESPONSE_JSON),
-                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
-            ]
-        )
-
-        # act
-        return request_latest_courses_as_df(resource)
-
-    def it_should_map_to_the_first_domain_alias(courses_df):
-        row_dict = courses_df.to_dict(orient="records")[0]
-        assert row_dict["alias"] == "domain_alias1"
-
-
 def describe_when_requesting_courses_with_multiple_domain_prefixes_and_some_marked_edfilms():
-    ALIASES = """
-    {"alias": "d:domain_alias1"},
-    {"alias": "d:EdFiLMS_domain_alias2"},
-    {"alias": "d:EdFiLMS_domain_alias3"},
-    {"alias": "d:domain_alias4"}
+    ALIASES = f"""
+    {{"alias": "d:domain_alias1"}},
+    {{"alias": "d:{EDFI_LMS_PREFIX}domain_alias2"}},
+    {{"alias": "d:{EDFI_LMS_PREFIX}domain_alias3"}},
+    {{"alias": "d:domain_alias4"}}
     """
 
     @pytest.fixture
@@ -348,71 +349,4 @@ def describe_when_requesting_courses_with_multiple_domain_prefixes_and_some_mark
 
     def it_should_map_to_first_edfi_domain_alias(courses_df):
         row_dict = courses_df.to_dict(orient="records")[0]
-        assert row_dict["alias"] == "EdFiLMS_domain_alias2"
-
-
-def describe_when_requesting_courses_with_multiple_project_prefixes_and_some_marked_edfilms():
-    ALIASES = """
-    {"alias": "p:project_alias1"},
-    {"alias": "p:EdFiLMS_project_alias2"},
-    {"alias": "p:EdFiLMS_project_alias3"},
-    {"alias": "p:project_alias4"}
-    """
-
-    @pytest.fixture
-    def courses_df() -> DataFrame:
-        # arrange
-        pook.activate()
-        aliases_response_json = f"""
-        {{
-          "aliases": [{ALIASES}]
-        }}
-        """
-        resource = setup_fake_classroom_api(
-            [
-                ("courses", COURSES_RESPONSE_JSON),
-                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
-            ]
-        )
-
-        # act
-        return request_latest_courses_as_df(resource)
-
-    def it_should_map_to_first_edfi_project_alias(courses_df):
-        row_dict = courses_df.to_dict(orient="records")[0]
-        assert row_dict["alias"] == "EdFiLMS_project_alias2"
-
-
-def describe_when_requesting_courses_with_a_mix_of_domain_and_project_prefixes_and_some_marked_edfilms():
-    ALIASES = """
-    {"alias": "p:project_alias1"},
-    {"alias": "p:EdFiLMS_project_alias2"},
-    {"alias": "p:EdFiLMS_project_alias3"},
-    {"alias": "d:domain_alias1"},
-    {"alias": "d:EdFiLMS_domain_alias2"},
-    {"alias": "d:EdFiLMS_domain_alias3"},
-    {"alias": "p:project_alias4"}
-    """
-
-    @pytest.fixture
-    def courses_df() -> DataFrame:
-        # arrange
-        pook.activate()
-        aliases_response_json = f"""
-        {{
-          "aliases": [{ALIASES}]
-        }}
-        """
-        resource = setup_fake_classroom_api(
-            [
-                ("courses", COURSES_RESPONSE_JSON),
-                (f"courses/{COURSE_ID}/aliases", aliases_response_json),
-            ]
-        )
-
-        # act
-        return request_latest_courses_as_df(resource)
-
-    def it_should_map_to_first_edfi_domain_alias(courses_df):
-        row_dict = courses_df.to_dict(orient="records")[0]
-        assert row_dict["alias"] == "EdFiLMS_domain_alias2"
+        assert row_dict["alias"] == "domain_alias2"
