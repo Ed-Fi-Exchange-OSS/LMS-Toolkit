@@ -28,24 +28,24 @@
 		<CodeValue>COURSE_WORK_TYPE_UNSPECIFIED</CodeValue>
 		<ShortDescription>Unspecified</ShortDescription>
 		<Description>No work type specified. This is never returned.</Description>
-		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google Classroom</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google</Namespace>
 	</AssignmentCategoryDescriptor>
     <AssignmentCategoryDescriptor>
 		<CodeValue>Assignment</CodeValue>
 		<ShortDescription>Assignment</ShortDescription>
 		<Description>An assignment.</Description>
-		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google Classroom</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google</Namespace>
 	</AssignmentCategoryDescriptor>
     <AssignmentCategoryDescriptor>
 		<CodeValue>SHORT_ANSWER_QUESTION</CodeValue>
 		<ShortDescription>Short answer question</ShortDescription>
 		<Description>A short answer question.</Description>
-		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google Classroom</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google</Namespace>
 	</AssignmentCategoryDescriptor>
     <AssignmentCategoryDescriptor>
 		<CodeValue>MULTIPLE_CHOICE_QUESTION</CodeValue>
 		<ShortDescription>Multiple choice question</ShortDescription>
 		<Description>A multiple-choice question.</Description>
-		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google Classroom</Namespace>
+		<Namespace>uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Google</Namespace>
 	</AssignmentCategoryDescriptor>
 </InterchangeDescriptors>
