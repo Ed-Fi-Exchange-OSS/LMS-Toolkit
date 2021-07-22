@@ -73,7 +73,7 @@ def describe_when_requesting_latest_submissions():
         }}
         """
         resource = setup_fake_classroom_api(
-            f"courses/{COURSE_ID}/courseWork/-/studentSubmissions", response_json
+            [(f"courses/{COURSE_ID}/courseWork/-/studentSubmissions", response_json)]
         )
 
         # act

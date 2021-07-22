@@ -51,6 +51,7 @@ def courses_to_sections_df(courses_df: DataFrame) -> Tuple[DataFrame, List[str]]
             "name",
             "creationTime",
             "updateTime",
+            "alias",
             "CreateDate",
             "LastModifiedDate",
         ]
@@ -63,11 +64,11 @@ def courses_to_sections_df(courses_df: DataFrame) -> Tuple[DataFrame, List[str]]
             "name": "Title",
             "creationTime": "SourceCreateDate",
             "updateTime": "SourceLastModifiedDate",
+            "alias": "SISSectionIdentifier",
         }
     )
 
     result["SourceSystem"] = SOURCE_SYSTEM
-    result["SISSectionIdentifier"] = ""  # No SIS id available from API
     result["Term"] = ""  # No term available from API
 
     return (result, result["SourceSystemIdentifier"].astype("string").tolist())

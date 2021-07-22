@@ -44,7 +44,7 @@ def describe_when_requesting_latest_students():
         }}
         """
         resource = setup_fake_classroom_api(
-            f"courses/{COURSE_ID}/students", response_json
+            [(f"courses/{COURSE_ID}/students", response_json)]
         )
 
         # act
