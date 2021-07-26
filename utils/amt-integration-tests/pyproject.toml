@@ -17,6 +17,7 @@ pytest-bdd = "^4.1.0"
 lxml = "^4.6.3"
 
 [tool.poetry.dev-dependencies]
+ConfigArgParse = "^1.5.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
