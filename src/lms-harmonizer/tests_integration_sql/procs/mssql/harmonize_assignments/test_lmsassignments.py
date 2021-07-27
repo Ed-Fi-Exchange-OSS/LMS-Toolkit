@@ -143,7 +143,6 @@ def describe_when_there_are_assignments_to_insert():
         ), "It should map the Namespace"
 
 
-
 def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system():
     SIS_SECTION_ID = "sis_section_id"
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
