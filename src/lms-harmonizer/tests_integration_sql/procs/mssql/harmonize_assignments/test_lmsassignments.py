@@ -98,11 +98,50 @@ def describe_when_there_are_assignments_to_insert():
 
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignment = query(connection, "SELECT * from [lmsx].[Assignment]")
-            assert len(LMSAssignment) == 1
-            assert (
-                int(LMSAssignment[0]["AssignmentIdentifier"]) == 1
-            )  # It is using the identity field from lms.Assignment
+            result = query(connection, "SELECT * from [lmsx].[Assignment]")
+
+        assert len(result) == 1, "There should be one result."
+
+        LMSAssignment = result[0]
+
+        # TODO: consider looking up the correct expected value in the Descriptor table.
+        # For nowjust validate that _something_ was set
+        assert (
+            int(LMSAssignment["AssignmentIdentifier"]) == 1
+        ), "It should map the assignment identifier"
+
+        assert (
+            LMSAssignment["LMSSourceSystemDescriptorId"] is not None
+        ), "It should map the SourceSystem descriptor"
+
+        assert (
+            LMSAssignment["AssignmentCategoryDescriptorId"] is not None
+        ), "It should map the assignment category descriptor"
+
+        assert (
+            LMSAssignment["SectionIdentifier"] is not None
+        ), "It should map the section identifier"
+
+        assert (
+            LMSAssignment["LocalCourseCode"] is not None
+        ), "It should map the local course code"
+
+        assert (
+            LMSAssignment["SessionName"] is not None
+        ), "It should map the SessionName"
+
+        assert (
+            LMSAssignment["SchoolYear"] is not None
+        ), "It should map the SchoolYear"
+
+        assert (
+            LMSAssignment["SchoolId"] is not None
+        ), "It should map the SchoolId"
+
+        assert (
+            LMSAssignment["Namespace"] is not None
+        ), "It should map the Namespace"
+
 
 
 def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system():
@@ -116,12 +155,16 @@ def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system(
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
             insert_descriptor(
-                connection, descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM), ASSIGNMENT_CATEGORY
+                connection,
+                descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM),
+                ASSIGNMENT_CATEGORY,
             )
             insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
             insert_descriptor(
-                connection, descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM), UNKNOWN_SOURCE_SYSTEM
+                connection,
+                descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM),
+                UNKNOWN_SOURCE_SYSTEM,
             )
             insert_lmsx_sourcesystem_descriptor(connection, 2)
 
