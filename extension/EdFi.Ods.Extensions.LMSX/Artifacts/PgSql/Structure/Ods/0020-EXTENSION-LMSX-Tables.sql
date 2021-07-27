@@ -38,7 +38,7 @@ CREATE TABLE lmsx.AssignmentSubmission (
     StudentUSI INT NOT NULL,
     AssignmentIdentifier VARCHAR(255) NOT NULL,
     SubmissionStatusDescriptorId INT NOT NULL,
-    SubmissionDateTime TIMESTAMP NOT NULL,
+    SubmissionDateTime TIMESTAMP NULL,
     EarnedPoints INT NULL,
     Grade VARCHAR(20) NULL,
     Discriminator VARCHAR(128) NULL,

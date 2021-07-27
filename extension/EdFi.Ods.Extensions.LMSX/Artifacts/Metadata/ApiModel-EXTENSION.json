@@ -466,7 +466,7 @@
             "maxLength": 0,
             "precision": 0,
             "scale": 0,
-            "isNullable": false
+            "isNullable": true
           },
           "description": "The date and time of the assignment submission.",
           "isIdentifying": false,
