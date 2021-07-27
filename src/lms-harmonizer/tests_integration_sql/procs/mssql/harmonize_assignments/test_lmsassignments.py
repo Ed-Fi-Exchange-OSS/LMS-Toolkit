@@ -104,38 +104,37 @@ def describe_when_there_are_assignments_to_insert():
 
         LMSAssignment = result[0]
 
-        # TODO: consider looking up the correct expected value in the Descriptor table.
-        # For nowjust validate that _something_ was set
         assert (
             int(LMSAssignment["AssignmentIdentifier"]) == 1
         ), "It should map the assignment identifier"
 
+        # We know the id of the descriptors based in the order how they are inserted.
         assert (
-            LMSAssignment["LMSSourceSystemDescriptorId"] is not None
+            int(LMSAssignment["LMSSourceSystemDescriptorId"]) == 2
         ), "It should map the SourceSystem descriptor"
 
         assert (
-            LMSAssignment["AssignmentCategoryDescriptorId"] is not None
+            int(LMSAssignment["AssignmentCategoryDescriptorId"]) == 1
         ), "It should map the assignment category descriptor"
 
         assert (
-            LMSAssignment["SectionIdentifier"] is not None
+            LMSAssignment["SectionIdentifier"] == SIS_SECTION_ID
         ), "It should map the section identifier"
 
         assert (
-            LMSAssignment["LocalCourseCode"] is not None
+            LMSAssignment["LocalCourseCode"] == 'Local course code test'
         ), "It should map the local course code"
 
         assert (
-            LMSAssignment["SessionName"] is not None
+            LMSAssignment["SessionName"] == 'session name test'
         ), "It should map the SessionName"
 
         assert (
-            LMSAssignment["SchoolYear"] is not None
+            int(LMSAssignment["SchoolYear"]) == 1
         ), "It should map the SchoolYear"
 
         assert (
-            LMSAssignment["SchoolId"] is not None
+            int(LMSAssignment["SchoolId"]) == 1
         ), "It should map the SchoolId"
 
         assert (
