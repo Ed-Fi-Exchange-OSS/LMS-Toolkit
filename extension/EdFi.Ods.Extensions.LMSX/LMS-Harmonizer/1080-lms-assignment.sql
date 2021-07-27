@@ -23,6 +23,7 @@ BEGIN
 		edfiSection.LocalCourseCode [LocalCourseCode],
 		edfiSection.[SessionName] [SessionName],
 		edfiSection.[SchoolYear] [SchoolYear],
+		edfiSection.SchoolId,
 		lmsAssignment.LastModifiedDate [ASSIGNMENT_LAST_MODIFIED_DATE],
 		lmssection.DeletedAt [SECTION_DELETED],
 		lmsAssignment.DeletedAt [ASSIGNMENT_DELETED]
@@ -63,6 +64,7 @@ BEGIN
 		,[LocalCourseCode]
 		,[SessionName]
 		,[SchoolYear]
+		,[SchoolId]
 		,[Namespace])
 	select
 		[AssignmentIdentifier]
@@ -78,6 +80,7 @@ BEGIN
 		,[LocalCourseCode]
 		,[SessionName]
 		,[SchoolYear]
+		,[SchoolId]
 		,@Namespace
 	from
 	#ALL_ASSIGNMENTS
