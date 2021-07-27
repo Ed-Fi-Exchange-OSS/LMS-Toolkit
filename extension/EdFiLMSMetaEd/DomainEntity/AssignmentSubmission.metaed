@@ -21,7 +21,7 @@ Domain Entity AssignmentSubmission
         is required
     datetime SubmissionDateTime
         documentation "The date and time of the assignment submission."
-        is required
+        is optional
     shared integer Points
         documentation "The points earned for the submission."
         is optional

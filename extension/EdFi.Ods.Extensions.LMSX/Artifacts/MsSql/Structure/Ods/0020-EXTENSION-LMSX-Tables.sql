@@ -48,7 +48,7 @@ CREATE TABLE [lmsx].[AssignmentSubmission] (
     [StudentUSI] [INT] NOT NULL,
     [AssignmentIdentifier] [NVARCHAR](255) NOT NULL,
     [SubmissionStatusDescriptorId] [INT] NOT NULL,
-    [SubmissionDateTime] [DATETIME2](7) NOT NULL,
+    [SubmissionDateTime] [DATETIME2](7) NULL,
     [EarnedPoints] [INT] NULL,
     [Grade] [NVARCHAR](20) NULL,
     [Discriminator] [NVARCHAR](128) NULL,

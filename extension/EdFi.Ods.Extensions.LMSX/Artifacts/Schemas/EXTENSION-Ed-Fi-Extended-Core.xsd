@@ -128,7 +128,7 @@
               </xs:appinfo>
             </xs:annotation>
           </xs:element>
-          <xs:element name="SubmissionDateTime" type="xs:dateTime">
+          <xs:element name="SubmissionDateTime" type="xs:dateTime" minOccurs="0">
             <xs:annotation>
               <xs:documentation>The date and time of the assignment submission.</xs:documentation>
             </xs:annotation>
