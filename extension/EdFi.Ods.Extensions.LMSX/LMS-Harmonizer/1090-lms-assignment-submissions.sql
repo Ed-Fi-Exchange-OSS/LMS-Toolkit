@@ -20,9 +20,16 @@ BEGIN
 		lmsSubmission.LastModifiedDate,
 		lmsSubmission.DeletedAt
 	INTO #ALL_SUBMISSIONS
-	FROM LMS.AssignmentSubmission lmsSubmission
-	INNER JOIN LMSX.Assignment lmsxAssignment
-		ON lmsSubmission.AssignmentIdentifier = lmsxAssignment.AssignmentIdentifier
+	FROM 
+		lms.AssignmentSubmission as lmsSubmission
+	INNER JOIN
+		lms.Assignment as lmsAssignment
+	ON
+		lmsSubmission.AssignmentIdentifier = lmsAssignment.AssignmentIdentifier
+	INNER JOIN
+		lmsx.Assignment as lmsxAssignment
+	ON 
+		lmsAssignment.SourceSystemIdentifier = lmsxAssignment.AssignmentIdentifier
 	INNER JOIN LMS.LMSUser lmsUser
 		ON lmsUser.LMSUserIdentifier = lmsSubmission.LMSUserIdentifier
 	INNER JOIN EDFI.Descriptor submissionStatusDescriptor

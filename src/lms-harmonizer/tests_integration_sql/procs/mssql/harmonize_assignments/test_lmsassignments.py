@@ -11,14 +11,22 @@ from tests_integration_sql.mssql_loader import (
     insert_descriptor,
     insert_lmsx_sourcesystem_descriptor,
     insert_lmsx_assignmentcategory_descriptor,
+    SCHOOL_YEAR,
+    SCHOOL_ID,
+    SESSION_NAME,
+    COURSE_CODE,
 )
 from tests_integration_sql.mssql_connection import MSSqlConnection, query
 from tests_integration_sql.server_config import ServerConfig
 from tests_integration_sql.orchestrator import run_harmonizer
-from edfi_lms_harmonizer.helpers.constants import SOURCE_SYSTEM
+from edfi_lms_harmonizer.helpers.constants import SOURCE_SYSTEM, SOURCE_SYSTEM_NAMESPACE
 
 
-SOURCE_SYSTEMS = [SOURCE_SYSTEM.CANVAS, SOURCE_SYSTEM.GOOGLE, SOURCE_SYSTEM.SCHOOLOGY]
+SOURCE_SYSTEMS = [
+    (SOURCE_SYSTEM.CANVAS, SOURCE_SYSTEM_NAMESPACE.CANVAS),
+    (SOURCE_SYSTEM.GOOGLE, SOURCE_SYSTEM_NAMESPACE.GOOGLE),
+    (SOURCE_SYSTEM.SCHOOLOGY, SOURCE_SYSTEM_NAMESPACE.SCHOOLOGY),
+]
 
 
 def descriptor_namespace_for(source_system: str) -> str:
@@ -33,8 +41,10 @@ def describe_when_lms_and_ods_tables_are_both_empty():
 
 
 def describe_when_lms_and_ods_tables_have_no_section_matches():
-    @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
-    def it_should_run_successfully(test_db_config: ServerConfig, source_system: str):
+    @pytest.mark.parametrize("source_system,source_namspace", SOURCE_SYSTEMS)
+    def it_should_run_successfully(
+        test_db_config: ServerConfig, source_system: str, source_namspace: str
+    ):
         section_id_1 = "sis_id_1"
         section_id_2 = "sis_id_2"
 
@@ -63,20 +73,25 @@ def describe_when_there_are_assignments_to_insert():
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
     ASSIGNMENT_CATEGORY = "test_category"
 
-    @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
-    def it_should_run_successfully(test_db_config: ServerConfig, source_system: str):
+    @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
+    def it_should_run_successfully(
+        test_db_config: ServerConfig, source_system: str, source_namespace: str
+    ):
+        descriptor_namespace = descriptor_namespace_for(source_system)
+        category_descriptor_id = 1
+        source_system_descriptor_id = 2
+        section_identifier = 1
+
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
-            insert_descriptor(
-                connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
+            insert_descriptor(connection, descriptor_namespace, ASSIGNMENT_CATEGORY)
+            insert_lmsx_assignmentcategory_descriptor(
+                connection, category_descriptor_id
             )
-            insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
-            insert_descriptor(
-                connection, descriptor_namespace_for(source_system), source_system
-            )
-            insert_lmsx_sourcesystem_descriptor(connection, 2)
+            insert_descriptor(connection, descriptor_namespace, source_system)
+            insert_lmsx_sourcesystem_descriptor(connection, source_system_descriptor_id)
 
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
@@ -89,7 +104,7 @@ def describe_when_there_are_assignments_to_insert():
                 connection,
                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
                 source_system,
-                1,
+                section_identifier,
                 ASSIGNMENT_CATEGORY,
             )
 
@@ -98,11 +113,48 @@ def describe_when_there_are_assignments_to_insert():
 
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignment = query(connection, "SELECT * from [lmsx].[Assignment]")
-            assert len(LMSAssignment) == 1
-            assert (
-                int(LMSAssignment[0]["AssignmentIdentifier"]) == 1
-            )  # It is using the identity field from lms.Assignment
+            result = query(connection, "SELECT * from [lmsx].[Assignment]")
+
+        assert len(result) == 1, "There should be one result."
+
+        LMSAssignment = result[0]
+
+        assert (
+            LMSAssignment["AssignmentIdentifier"] == ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER
+        ), "It should map the assignment identifier"
+
+        # We know the id of the descriptors based in the order how they are inserted.
+        assert (
+            int(LMSAssignment["LMSSourceSystemDescriptorId"])
+            == source_system_descriptor_id
+        ), "It should map the SourceSystem descriptor"
+
+        assert (
+            int(LMSAssignment["AssignmentCategoryDescriptorId"])
+            == category_descriptor_id
+        ), "It should map the assignment category descriptor"
+
+        assert (
+            LMSAssignment["SectionIdentifier"] == SIS_SECTION_ID
+        ), "It should map the section identifier"
+
+        assert (
+            LMSAssignment["LocalCourseCode"] == COURSE_CODE
+        ), "It should map the local course code"
+
+        assert (
+            LMSAssignment["SessionName"] == SESSION_NAME
+        ), "It should map the SessionName"
+
+        assert (
+            int(LMSAssignment["SchoolYear"]) == SCHOOL_YEAR
+        ), "It should map the SchoolYear"
+
+        assert int(LMSAssignment["SchoolId"]) == SCHOOL_ID, "It should map the SchoolId"
+
+        assert (
+            LMSAssignment["Namespace"] == source_namespace
+        ), "It should map the Namespace"
 
 
 def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system():
@@ -116,12 +168,16 @@ def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system(
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
             insert_descriptor(
-                connection, descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM), ASSIGNMENT_CATEGORY
+                connection,
+                descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM),
+                ASSIGNMENT_CATEGORY,
             )
             insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
             insert_descriptor(
-                connection, descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM), UNKNOWN_SOURCE_SYSTEM
+                connection,
+                descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM),
+                UNKNOWN_SOURCE_SYSTEM,
             )
             insert_lmsx_sourcesystem_descriptor(connection, 2)
 
@@ -154,9 +210,9 @@ def describe_when_there_are_assignments_to_update():
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
     ASSIGNMENT_CATEGORY = "test_category"
 
-    @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
+    @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
     def it_should_update_existing_assignments(
-        test_db_config: ServerConfig, source_system: str
+        test_db_config: ServerConfig, source_system: str, source_namespace: str
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -207,9 +263,9 @@ def describe_when_there_are_assignments_to_delete():
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
     ASSIGNMENT_CATEGORY = "test_category"
 
-    @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
+    @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
     def it_should_update_existing_assignments(
-        test_db_config: ServerConfig, source_system: str
+        test_db_config: ServerConfig, source_system: str, source_namespace: str
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:

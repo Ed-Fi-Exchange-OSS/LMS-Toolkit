@@ -7,25 +7,25 @@ CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment] @SourceSystem nvarchar(25
 BEGIN
     SET NOCOUNT ON;
 
-
 	-- Load temporary table
 	SELECT
-		lmsAssignment.AssignmentIdentifier [AssignmentIdentifier],
-		sourceSystemDescriptor.DescriptorId [LMSSourceSystemDescriptorId],
-		lmsAssignment.[Title] [Title],
-		assignmentCatDescriptor.DescriptorId [AssignmentCategoryDescriptorId],
-		lmsAssignment.[AssignmentDescription] [AssignmentDescription],
-		lmsAssignment.[StartDateTime] [StartDateTime],
-		lmsAssignment.[EndDateTime] [EndDateTime],
-		lmsAssignment.[DueDateTime] [DueDateTime],
-		lmsAssignment.[MaxPoints] [MaxPoints],
-		edfiSection.SectionIdentifier [SectionIdentifier],
-		edfiSection.LocalCourseCode [LocalCourseCode],
-		edfiSection.[SessionName] [SessionName],
-		edfiSection.[SchoolYear] [SchoolYear],
-		lmsAssignment.LastModifiedDate [ASSIGNMENT_LAST_MODIFIED_DATE],
-		lmssection.DeletedAt [SECTION_DELETED],
-		lmsAssignment.DeletedAt [ASSIGNMENT_DELETED]
+		lmsAssignment.SourceSystemIdentifier as AssignmentIdentifier,
+		sourceSystemDescriptor.DescriptorId as LMSSourceSystemDescriptorId,
+		lmsAssignment.Title,
+		assignmentCatDescriptor.DescriptorId as AssignmentCategoryDescriptorId,
+		lmsAssignment.AssignmentDescription,
+		lmsAssignment.StartDateTime,
+		lmsAssignment.EndDateTime,
+		lmsAssignment.DueDateTime,
+		lmsAssignment.MaxPoints,
+		edfiSection.SectionIdentifier,
+		edfiSection.LocalCourseCode,
+		edfiSection.SessionName,
+		edfiSection.SchoolYear,
+		edfiSection.SchoolId,
+		lmsAssignment.LastModifiedDate as ASSIGNMENT_LAST_MODIFIED_DATE,
+		lmssection.DeletedAt as SECTION_DELETED,
+		lmsAssignment.DeletedAt as ASSIGNMENT_DELETED
 	INTO #ALL_ASSIGNMENTS
  	FROM lms.Assignment lmsAssignment
 		INNER JOIN lms.LMSSection lmssection
@@ -38,11 +38,11 @@ BEGIN
 			ON sourceSystemDescriptor.CodeValue = lmsAssignment.SourceSystem
 
 		INNER JOIN lmsx.LMSSourceSystemDescriptor
-		ON sourceSystemDescriptor.DescriptorId  = LMSSourceSystemDescriptor.LMSSourceSystemDescriptorId
+		    ON sourceSystemDescriptor.DescriptorId  = LMSSourceSystemDescriptor.LMSSourceSystemDescriptorId
 
 		INNER JOIN edfi.Descriptor assignmentCatDescriptor
 			ON assignmentCatDescriptor.CodeValue = lmsAssignment.AssignmentCategory
-			AND assignmentCatDescriptor.Namespace = 'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + lmsAssignment.SourceSystem
+			AND assignmentCatDescriptor.Namespace = 'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + @SourceSystem
 
 		INNER JOIN lmsx.AssignmentCategoryDescriptor
 			ON assignmentCatDescriptor.DescriptorId = AssignmentCategoryDescriptor.AssignmentCategoryDescriptorId
@@ -63,8 +63,9 @@ BEGIN
 		,[LocalCourseCode]
 		,[SessionName]
 		,[SchoolYear]
+		,[SchoolId]
 		,[Namespace])
-	select
+	SELECT
 		[AssignmentIdentifier]
 		,[LMSSourceSystemDescriptorId]
 		,[Title]
@@ -78,11 +79,14 @@ BEGIN
 		,[LocalCourseCode]
 		,[SessionName]
 		,[SchoolYear]
+		,[SchoolId]
 		,@Namespace
-	from
+	FROM
 	#ALL_ASSIGNMENTS
 	WHERE
-		#ALL_ASSIGNMENTS.[AssignmentIdentifier] not in (select AssignmentIdentifier from lmsx.Assignment)
+		#ALL_ASSIGNMENTS.[AssignmentIdentifier] NOT IN (
+            SELECT AssignmentIdentifier FROM lmsx.Assignment
+        )
 		AND
 			[SECTION_DELETED] IS NULL
 		AND
@@ -108,11 +112,15 @@ BEGIN
 
 
 	DELETE FROM LMSX.AssignmentSubmission
-		WHERE LMSX.AssignmentSubmission.AssignmentIdentifier IN (SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL)
+		WHERE LMSX.AssignmentSubmission.AssignmentIdentifier IN (
+            SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL
+        )
 
 
 	DELETE FROM LMSX.Assignment
-		WHERE LMSX.Assignment.AssignmentIdentifier IN (SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL)
+		WHERE LMSX.Assignment.AssignmentIdentifier IN (
+            SELECT [AssignmentIdentifier] FROM #ALL_ASSIGNMENTS WHERE ASSIGNMENT_DELETED IS NOT NULL
+        )
 
 	DROP TABLE #ALL_ASSIGNMENTS
 

@@ -81,7 +81,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
                     EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
             )
 
-            insert_lms_assignment(
+            assignment_id = insert_lms_assignment(
                 connection,
                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
                 source_system,
@@ -100,7 +100,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
                 connection,
                 SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
-                1,
+                assignment_id,
                 1,
                 ASSIGNMENT_SUBMISSION_STATUS,
                 source_system,
@@ -165,7 +165,7 @@ def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_sou
                     EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
             )
 
-            insert_lms_assignment(
+            assignment_id = insert_lms_assignment(
                 connection,
                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
                 UNKNOWN_SOURCE_SYSTEM,
@@ -186,7 +186,7 @@ def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_sou
                 connection,
                 SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
-                1,
+                assignment_id,
                 1,
                 ASSIGNMENT_SUBMISSION_STATUS,
                 UNKNOWN_SOURCE_SYSTEM,
@@ -246,7 +246,7 @@ def describe_when_there_are_assignment_submissions_to_update():
                     EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
             )
 
-            insert_lms_assignment(
+            assignment_id = insert_lms_assignment(
                 connection,
                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
                 source_system,
@@ -265,7 +265,7 @@ def describe_when_there_are_assignment_submissions_to_update():
                 connection,
                 SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
-                1,
+                assignment_id,
                 1,
                 ASSIGNMENT_SUBMISSION_STATUS,
                 source_system,
@@ -333,7 +333,7 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
                     EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
             )
 
-            insert_lms_assignment(
+            assignment_id = insert_lms_assignment(
                 connection,
                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
                 source_system,
@@ -352,7 +352,7 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
                 connection,
                 SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
-                1,
+                assignment_id,
                 1,
                 ASSIGNMENT_SUBMISSION_STATUS,
                 source_system,
@@ -411,7 +411,7 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
                     EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
             )
 
-            insert_lms_assignment(
+            assignment_id = insert_lms_assignment(
                 connection,
                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
                 source_system,
@@ -430,7 +430,7 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
                 connection,
                 SUBMISSION_TEST_LMS_IDENTIFIER,
                 SUBMISSION_TEST_IDENTIFIER,
-                1,
+                assignment_id,
                 1,
                 ASSIGNMENT_SUBMISSION_STATUS,
                 source_system,

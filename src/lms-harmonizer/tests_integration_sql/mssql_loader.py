@@ -3,7 +3,16 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 # from os import path
+
 from pyodbc import Connection
+
+
+SCHOOL_ID = 149
+SCHOOL_YEAR = 153
+SESSION_NAME = "session name test"
+COURSE_CODE = "Local course code test"
+USER_ROLE = "student"
+GRADE = "A-"
 
 
 def insert_lms_user(
@@ -27,7 +36,7 @@ def insert_lms_user(
      VALUES
            (N'{sis_identifier}'
            ,N'{source_system}'
-           ,N'student'
+           ,N'{USER_ROLE}'
            ,N'{sis_identifier}1'
            ,N'{sis_identifier}2'
            ,N'{sis_identifier}3'
@@ -63,7 +72,7 @@ def insert_lms_user_deleted(
      VALUES
            (N'{sis_identifier}'
            ,N'{source_system}'
-           ,N'student'
+           ,N'{USER_ROLE}'
            ,N'{sis_identifier}1'
            ,N'{sis_identifier}2'
            ,N'{sis_identifier}3'
@@ -233,7 +242,7 @@ def insert_lms_section(connection: Connection, sis_identifier: str, source_syste
         (N'{sis_identifier}'
         ,N'{source_system}'
         ,N'{sis_identifier}'
-        ,N'test section'
+        ,N'section title'
         ,CAST(N'2021-01-01 00:00:00' AS DateTime)
         ,CAST(N'2021-01-01 00:00:00' AS DateTime)
         ,CAST(N'2021-01-01 00:00:00' AS DateTime)
@@ -287,10 +296,10 @@ INSERT INTO [edfi].[Section]
         {',[id]' if uid is not None else ''})
      VALUES
         (
-        N'Local course code test'
-        ,1
-        ,1
-        ,N'session name test'
+        N'{COURSE_CODE}'
+        ,{SCHOOL_ID}
+        ,{SCHOOL_YEAR}
+        ,N'{SESSION_NAME}'
         ,CAST(N'2021-01-01 00:00:00' AS DateTime2(7))
         ,N'{sis_id}'
         {f",CAST(N'{uid}' AS UNIQUEIDENTIFIER)" if uid is not None else ''}
@@ -341,11 +350,11 @@ INSERT INTO [lmsx].[AssignmentCategoryDescriptor]
 
 def insert_lmsx_assignment(
     connection: Connection,
+    assignment_id: int,
     assignment_identifier: str,
     source_system_descriptor_id: int,
     assignment_category_descriptor_id: int,
     section_identifier: str,
-    school_id: int = 1,
     title_and_description: str = "default title and description",
 ):
     # it is not necessary to have a different title and description since
@@ -375,7 +384,7 @@ INSERT INTO [lmsx].[Assignment]
         N'{section_identifier}',
         N'Local course code test',
         N'session name test',
-        1
+        {SCHOOL_YEAR}
      )
 """
     )
@@ -388,7 +397,7 @@ def insert_lms_assignment(
     section_identifier: int,
     assignment_category: str,
     title_and_description: str = "default title and description",
-):
+) -> int:
     # it is not necessary to have a different title and description since
     # both should be updated when required
     connection.execute(
@@ -416,13 +425,16 @@ INSERT INTO [lms].[Assignment]
      )
 """
     )
+    result = connection.execute("SELECT @@identity")
+
+    return int(result.fetchone()[0])
 
 
 def insert_lms_assignment_submissions(
     connection: Connection,
     lms_assignmen_identifier: int,
     source_system_identifier: str,
-    lms_assignment_source_identifier: int,
+    lms_assignment_id: int,
     lms_user_identifier: int,
     submission_status: str,
     source_system: str = "Test_LMS",
@@ -456,12 +468,12 @@ VALUES
         {lms_assignmen_identifier},
         N'{source_system_identifier}',
         N'{source_system}',
-        {lms_assignment_source_identifier},
+        {lms_assignment_id},
         {lms_user_identifier},
         N'{submission_status}',
         GETDATE(),
         0,
-        N'A',
+        N'{GRADE}',
         GETDATE(),
         GETDATE(),
         GETDATE(),
