@@ -20,7 +20,7 @@ BEGIN
 		lmsSubmission.LastModifiedDate,
 		lmsSubmission.DeletedAt
 	INTO #ALL_SUBMISSIONS
-	FROM 
+	FROM
 		lms.AssignmentSubmission as lmsSubmission
 	INNER JOIN
 		lms.Assignment as lmsAssignment
@@ -28,7 +28,7 @@ BEGIN
 		lmsSubmission.AssignmentIdentifier = lmsAssignment.AssignmentIdentifier
 	INNER JOIN
 		lmsx.Assignment as lmsxAssignment
-	ON 
+	ON
 		lmsAssignment.SourceSystemIdentifier = lmsxAssignment.AssignmentIdentifier
 	INNER JOIN LMS.LMSUser lmsUser
 		ON lmsUser.LMSUserIdentifier = lmsSubmission.LMSUserIdentifier
@@ -40,6 +40,37 @@ BEGIN
 	INNER JOIN EDFI.Student EDFISTUDENT
 		ON EDFISTUDENT.Id = lmsUser.EdFiStudentId
     WHERE lmsSubmission.SourceSystem = @SourceSystem
+
+	INSERT INTO #ALL_SUBMISSIONS
+	SELECT
+		CONVERT(NVARCHAR(255), edfisectionassociation.StudentUSI)
+			+ '&' + lmsxassignment.AssignmentIdentifier
+			+ '&' + edfisectionassociation.SectionIdentifier
+			+ '&' + CONVERT(NVARCHAR(255), GETDATE())
+		as AssignmentSubmissionIdentifier,
+		edfisectionassociation.StudentUSI,
+		lmsxassignment.AssignmentIdentifier,
+		submsisionstatusdescriptor.DescriptorId,
+		null as SubmissionDateTime,
+		0 as EarnedPoints,
+		'F' as Grade,
+		GETDATE() as CreateDate,
+		GETDATE() as LastModifiedDate,
+		NULL as DeletedAt
+	FROM edfi.StudentSectionAssociation edfisectionassociation
+	INNER JOIN lmsx.Assignment lmsxassignment
+		ON edfisectionassociation.SectionIdentifier = lmsxassignment.SectionIdentifier
+	LEFT JOIN lmsx.AssignmentSubmission lmsxsubmission
+		ON lmsxsubmission.AssignmentIdentifier = lmsxassignment.AssignmentIdentifier
+			AND lmsxsubmission.StudentUSI = edfisectionassociation.StudentUSI
+	INNER JOIN edfi.Descriptor sourcesystemdesc
+		ON sourcesystemdesc.DescriptorId = lmsxassignment.LMSSourceSystemDescriptorId
+	INNER JOIN edfi.Descriptor submsisionstatusdescriptor
+		ON submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + sourcesystemdesc.CodeValue
+		AND submsisionstatusdescriptor.CodeValue in ('missing', 'MISSING')
+	WHERE lmsxsubmission.StudentUSI IS NULL
+	AND lmsxassignment.DueDateTime < GETDATE()
+
 
 
 	INSERT INTO LMSX.AssignmentSubmission(
