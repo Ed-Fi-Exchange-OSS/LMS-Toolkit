@@ -43,23 +43,28 @@ BEGIN
 
 	INSERT INTO #ALL_SUBMISSIONS
 	SELECT
-		CONVERT(NVARCHAR(255), edfisectionassociation.StudentUSI)
-			+ '&' + lmsxassignment.AssignmentIdentifier
-			+ '&' + edfisectionassociation.SectionIdentifier
-			+ '&' + CONVERT(NVARCHAR(255), GETDATE())
-		as AssignmentSubmissionIdentifier,
+		edfisectionassociation.SectionIdentifier
+			+ '#' + lmsxassignment.AssignmentIdentifier
+			+ '#' + lmsstudent.SourceSystemIdentifier
+			as AssignmentSubmissionIdentifier,
+
 		edfisectionassociation.StudentUSI,
 		lmsxassignment.AssignmentIdentifier,
 		submsisionstatusdescriptor.DescriptorId,
-		null as SubmissionDateTime,
+		NULL as SubmissionDateTime,
 		0 as EarnedPoints,
 		'F' as Grade,
 		GETDATE() as CreateDate,
 		GETDATE() as LastModifiedDate,
-		NULL as DeletedAt
+		NULL AS DeletedAt
+
 	FROM edfi.StudentSectionAssociation edfisectionassociation
 	INNER JOIN lmsx.Assignment lmsxassignment
 		ON edfisectionassociation.SectionIdentifier = lmsxassignment.SectionIdentifier
+	INNER JOIN edfi.Student edfistudent
+		ON edfistudent.StudentUSI = edfisectionassociation.StudentUSI
+	INNER JOIN lms.LMSUser lmsstudent
+		ON lmsstudent.EdFiStudentId = edfistudent.Id
 	LEFT JOIN lmsx.AssignmentSubmission lmsxsubmission
 		ON lmsxsubmission.AssignmentIdentifier = lmsxassignment.AssignmentIdentifier
 			AND lmsxsubmission.StudentUSI = edfisectionassociation.StudentUSI
@@ -70,8 +75,6 @@ BEGIN
 		AND submsisionstatusdescriptor.CodeValue in ('missing', 'MISSING')
 	WHERE lmsxsubmission.StudentUSI IS NULL
 	AND lmsxassignment.DueDateTime < GETDATE()
-
-
 
 	INSERT INTO LMSX.AssignmentSubmission(
 		[AssignmentSubmissionIdentifier],
