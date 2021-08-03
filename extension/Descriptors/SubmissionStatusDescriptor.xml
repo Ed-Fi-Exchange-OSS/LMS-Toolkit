@@ -19,6 +19,12 @@
 		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
+		<CodeValue>missing</CodeValue>
+		<ShortDescription>Missing</ShortDescription>
+		<Description>Whether the submission is missing, which generally means past-due and not yet submitted.</Description>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology</Namespace>
+	</SubmissionStatusDescriptor>
+    <SubmissionStatusDescriptor>
 		<CodeValue>late</CodeValue>
 		<ShortDescription>Late</ShortDescription>
 		<Description>Whether the submission was made after the applicable due date.</Description>
