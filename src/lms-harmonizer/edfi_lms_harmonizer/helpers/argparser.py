@@ -29,18 +29,26 @@ class MainArguments:
     server: str
     db_name: str
     port: int
+    encrypt: bool = False
+    trust_certificates: bool = False
 
     def __post_init__(self) -> None:
         self.adapter: sql_adapter.Adapter
 
     def build_mssql_adapter(self, username: str, password: str) -> None:
         self.adapter = sql_adapter.create_mssql_adapter(
-            username, password, self.server, self.db_name, self.port
+            username,
+            password,
+            self.server,
+            self.db_name,
+            self.port,
+            self.encrypt,
+            self.trust_certificates,
         )
 
     def build_mssql_adapter_with_integrated_security(self) -> None:
         self.adapter = sql_adapter.create_mssql_adapter_with_integrated_security(
-            self.server, self.db_name, self.port
+            self.server, self.db_name, self.port, self.encrypt, self.trust_certificates
         )
 
     def get_adapter(self) -> sql_adapter.Adapter:
@@ -139,6 +147,25 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="EXCEPTIONs_REPORT_DIRECTORY",
     )
 
+    parser.add(  # type: ignore
+        "-n",
+        "--encrypt",
+        help="Encrypt the connection to the database.",
+        action="store_true",
+    )
+    parser.add(  # type: ignore
+        "-t",
+        "--trust-certificates",
+        help="When encrypting connections, trust the server certificate. Useful for localhost debuggin with a self-signed certificate. USE WITH CAUTION.",
+        action="store_true",
+    )
+
+    # This parameter doesn't work right when used from a .env file,
+    # so adding a manual override
+    # integrated_env_var = os.getenv("ENCRYPT")
+    # if integrated_env_var and integrated_env_var.lower() in ("true", "yes", "t", "y"):
+    #     user_name_required = False
+
     args_parsed = parser.parse_args(args_in)
     args_parsed.useintegratedsecurity = (
         args_parsed.useintegratedsecurity or not user_name_required
@@ -150,6 +177,8 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         args_parsed.server,
         args_parsed.dbname,
         args_parsed.port,
+        args_parsed.encrypt,
+        args_parsed.trust_certificates,
     )
 
     if args_parsed.useintegratedsecurity:
