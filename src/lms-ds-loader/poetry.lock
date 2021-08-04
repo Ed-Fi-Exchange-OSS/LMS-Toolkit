@@ -189,7 +189,7 @@ pandas = ">=1.1.4,<2.0.0"
 
 [[package]]
 name = "edfi-sql-adapter"
-version = "1.0.0a5"
+version = "1.0.0a6"
 description = "Lightweight wrapper to facilitate connections to SQL databases"
 category = "main"
 optional = false
@@ -768,7 +768,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "d7b50068980781ea9991a4a31018ef0e64676675b4957372b1743d6200399f48"
+content-hash = "ad2d79cf1330d80d91e96867745bb101178e79b854e04925a80b1a7da5271fb2"
 
 [metadata.files]
 appdirs = [
@@ -938,8 +938,8 @@ edfi-lms-file-utils = [
     {file = "edfi_lms_file_utils-1.0.0-py3-none-any.whl", hash = "sha256:c7d08720b93b2c99af6f6610b7a6c5afceafc6073cfb9c3e7224a4a37217e582"},
 ]
 edfi-sql-adapter = [
-    {file = "edfi-sql-adapter-1.0.0a5.tar.gz", hash = "sha256:e7d50d07a6b866fedb00aa4c42d4817d8e3f38fa9547a86215748260576bd1d0"},
-    {file = "edfi_sql_adapter-1.0.0a5-py3-none-any.whl", hash = "sha256:2c0d548037ca64688503cbc1322ec4f496f449e400acc26c7f075fe2d9426531"},
+    {file = "edfi-sql-adapter-1.0.0a6.tar.gz", hash = "sha256:b724f4ad80926114bb0d2108872f7330229f10bf402b730d713b416a65548dc9"},
+    {file = "edfi_sql_adapter-1.0.0a6-py3-none-any.whl", hash = "sha256:a24b91eb69a34d0dbac108891ac01a5396a029a3294d5b05c0c6397ee12a9667"},
 ]
 errorhandler = [
     {file = "errorhandler-2.0.1-py2.py3-none-any.whl", hash = "sha256:dc6c54f5d9a4599e744b57aac2f925cce873188e9b02cae7c0eb120ee08a893f"},

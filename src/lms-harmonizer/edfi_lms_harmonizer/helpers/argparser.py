@@ -35,20 +35,31 @@ class MainArguments:
     def __post_init__(self) -> None:
         self.adapter: sql_adapter.Adapter
 
+    def _get_sql_server_port(self) -> int:
+        return 1433 if not self.port or self.port == 0 else self.port
+
+    # For future use
+    # def _get_pgsql_server_port(self) -> int:
+    #     return 5432 if not self.port or self.port == 0 else self.port
+
     def build_mssql_adapter(self, username: str, password: str) -> None:
         self.adapter = sql_adapter.create_mssql_adapter(
             username,
             password,
             self.server,
             self.db_name,
-            self.port,
+            self._get_sql_server_port(),
             self.encrypt,
             self.trust_certificates,
         )
 
     def build_mssql_adapter_with_integrated_security(self) -> None:
         self.adapter = sql_adapter.create_mssql_adapter_with_integrated_security(
-            self.server, self.db_name, self.port, self.encrypt, self.trust_certificates
+            self.server,
+            self.db_name,
+            self._get_sql_server_port(),
+            self.encrypt,
+            self.trust_certificates,
         )
 
     def get_adapter(self) -> sql_adapter.Adapter:
