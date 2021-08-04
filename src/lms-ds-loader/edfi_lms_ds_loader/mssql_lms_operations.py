@@ -8,12 +8,11 @@ from typing import List, Set
 
 import pandas as pd
 from sqlalchemy.engine.result import ResultProxy as sa_Result
-from sqlalchemy.engine import Engine as sa_Engine
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import Session as sa_Session
 
 from edfi_lms_ds_loader.helpers.constants import Table
-from edfi_sql_adapter import sql_adapter
+from edfi_sql_adapter.sql_adapter import Adapter
 
 logger = logging.getLogger(__name__)
 
@@ -29,9 +28,9 @@ class MssqlLmsOperations:
         SQL Alchemy engine.
     """
 
-    db_adapter: sql_adapter
+    db_adapter: Adapter
 
-    def __init__(self, sql_adapter: sql_adapter) -> None:
+    def __init__(self, sql_adapter: Adapter) -> None:
         self.db_adapter = sql_adapter
 
     def _exec(self, statement: str) -> int:

@@ -7,7 +7,6 @@ import logging
 from os import path
 from typing import List
 
-from sqlalchemy.engine.base import Engine as sa_Engine
 from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
 

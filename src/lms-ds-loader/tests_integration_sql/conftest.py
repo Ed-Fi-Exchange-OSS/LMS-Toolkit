@@ -7,8 +7,7 @@ from typing import Iterable, Tuple
 import pytest
 from unittest.mock import MagicMock
 from pandas import DataFrame
-from sqlalchemy import create_engine
-from sqlalchemy.engine.base import Engine, Connection, Transaction
+from sqlalchemy.engine.base import Connection, Transaction
 
 from edfi_lms_ds_loader.migrator import migrate
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations

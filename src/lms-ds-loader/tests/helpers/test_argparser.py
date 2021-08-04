@@ -11,8 +11,6 @@ from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments, MainArgum
 from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
-from edfi_sql_adapter import sql_adapter
-
 
 PATH = "./lms_udm_files"
 SERVER = "localhost"
