@@ -41,6 +41,9 @@ BEGIN
 		ON EDFISTUDENT.Id = lmsUser.EdFiStudentId
     WHERE lmsSubmission.SourceSystem = @SourceSystem
 
+	-- Here we are building missing submissions when they are not present
+	-- We do this to standardize what is shown in the visualizations
+
 	INSERT INTO #ALL_SUBMISSIONS
 	SELECT
 		edfisectionassociation.SectionIdentifier
@@ -52,8 +55,8 @@ BEGIN
 		lmsxassignment.AssignmentIdentifier,
 		submsisionstatusdescriptor.DescriptorId,
 		NULL as SubmissionDateTime,
-		0 as EarnedPoints,
-		'F' as Grade,
+		NULL as EarnedPoints,
+		NULL as Grade,
 		GETDATE() as CreateDate,
 		GETDATE() as LastModifiedDate,
 		NULL AS DeletedAt
@@ -115,13 +118,10 @@ BEGIN
 	AND #ALL_SUBMISSIONS.LastModifiedDate > LMSX.AssignmentSubmission.LastModifiedDate
 	AND #ALL_SUBMISSIONS.DeletedAt IS NULL
 
-
 	DELETE FROM LMSX.AssignmentSubmission
 	WHERE LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier IN
 		(SELECT LMSSUBMISSION.AssignmentSubmissionIdentifier FROM LMS.AssignmentSubmission LMSSUBMISSION WHERE LMSSUBMISSION.DeletedAt IS NOT NULL)
 
-
 	DROP TABLE #ALL_SUBMISSIONS
-
 
 END;
