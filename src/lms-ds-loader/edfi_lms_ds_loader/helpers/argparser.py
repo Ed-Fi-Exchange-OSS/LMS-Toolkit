@@ -38,7 +38,7 @@ class MainArguments:
     db_name: str
     port: int
     encrypt: bool = False
-    trust_certificates: bool = False
+    trust_certificate: bool = False
 
     def __post_init__(self) -> None:
         self.db_adapter: Adapter
@@ -58,7 +58,7 @@ class MainArguments:
             self.db_name,
             self._get_sql_server_port(),
             self.encrypt,
-            self.trust_certificates,
+            self.trust_certificate,
         )
 
     def build_mssql_adapter_with_integrated_security(self) -> None:
@@ -67,7 +67,7 @@ class MainArguments:
             self.db_name,
             self._get_sql_server_port(),
             self.encrypt,
-            self.trust_certificates,
+            self.trust_certificate,
         )
 
     def get_adapter(self) -> Adapter:
@@ -149,8 +149,9 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     user_name_required = (
         USE_INTEGRATED not in args_in and USE_INTEGRATED_SHORT not in args_in
     )
-    # This parameter doesn't work right when used from a .env file,
-    # so adding a manual override
+
+    # Retrieve this value because we need it in order to determine
+    # if username and password are required
     integrated_env_var = os.getenv("USE_INTEGRATED_SECURITY")
     if integrated_env_var and integrated_env_var.lower() in ("true", "yes", "t", "y"):
         user_name_required = False
@@ -186,15 +187,20 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         "--encrypt",
         help="Encrypt the connection to the database.",
         action="store_true",
+        env_var="ENCRYPT_SQL_CONNECTION",
     )
     parser.add(  # type: ignore
         "-t",
-        "--trust-certificates",
+        "--trust-certificate",
         help="When encrypting connections, trust the server certificate. Useful for localhost debuggin with a self-signed certificate. USE WITH CAUTION.",
         action="store_true",
+        env_var="TRUST_SERVER_CERTIFICATE",
     )
 
     args_parsed = parser.parse_args(args_in)
+
+    # Need to add this back in because reading it manually earlier
+    # seems to cause it to be misread by the parser.
     args_parsed.useintegratedsecurity = (
         args_parsed.useintegratedsecurity or not user_name_required
     )
@@ -207,7 +213,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         args_parsed.dbname,
         args_parsed.port,
         args_parsed.encrypt,
-        args_parsed.trust_certificates,
+        args_parsed.trust_certificate,
     )
 
     if args_parsed.useintegratedsecurity:

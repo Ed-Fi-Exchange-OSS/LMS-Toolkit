@@ -158,7 +158,7 @@ def create_mssql_adapter(
     db_name: str,
     port: int = 1433,
     encrypt: bool = False,
-    trust_certificates: bool = False,
+    trust_certificate: bool = False,
 ) -> Adapter:
     """
     Creates a SQL Alchemy database engine for Microsoft SQL Server, using SQL
@@ -178,7 +178,7 @@ def create_mssql_adapter(
         SQL Server's TCP port. Defaults to 1433.
     encrypt: bool
         Encrypt database connections. Defaults to false.
-    trust_certificates: bool
+    trust_certificate: bool
         When encrypting the database connection, trust the server certificate.
         Helpful for localhost development. USE WITH CAUTION.
 
@@ -192,7 +192,7 @@ def create_mssql_adapter(
     if encrypt:
         url += "&Encrypt=yes"
 
-        if trust_certificates:
+        if trust_certificate:
             url += "&TrustServerCertificate=yes"
 
     return Adapter(sa_create_engine(url))
@@ -203,7 +203,7 @@ def create_mssql_adapter_with_integrated_security(
     db_name: str,
     port: int = 1433,
     encrypt: bool = False,
-    trust_certificates: bool = False,
+    trust_certificate: bool = False,
 ) -> Adapter:
     """
     Creates a SQL Alchemy database engine for Microsoft SQL Server, using
@@ -219,7 +219,7 @@ def create_mssql_adapter_with_integrated_security(
         SQL Server's TCP port. Defaults to 1433.
     encrypt: bool
         Encrypt database connections. Defaults to false.
-    trust_certificates: bool
+    trust_certificate: bool
         When encrypting the database connection, trust the server certificate.
         Helpful for localhost development. USE WITH CAUTION.
 
@@ -235,7 +235,7 @@ def create_mssql_adapter_with_integrated_security(
     if encrypt:
         url += "&Encrypt=yes"
 
-        if trust_certificates:
+        if trust_certificate:
             url += "&TrustServerCertificate=yes"
 
     return Adapter(sa_create_engine(url))

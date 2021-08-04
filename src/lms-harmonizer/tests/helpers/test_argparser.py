@@ -51,7 +51,7 @@ def _encrypt_args() -> List[str]:
 
 
 def _trust_certificate_args() -> List[str]:
-    return ["--trust-certificates"]
+    return ["--trust-certificate"]
 
 
 def _assert_no_messages(capsys) -> None:

@@ -57,7 +57,7 @@ def _encrypt_args() -> List[str]:
 
 
 def _trust_certificate_args() -> List[str]:
-    return ["--trust-certificates"]
+    return ["--trust-certificate"]
 
 
 def _assert_no_messages(capsys) -> None:
@@ -362,7 +362,7 @@ def describe_when_initializing_MainArguments() -> None:
         server = "somwehere"
         port = 2343
         encrypt = True
-        trust_certificates = True
+        trust_certificate = True
 
         a = MainArguments(
             csv_path,
@@ -372,7 +372,7 @@ def describe_when_initializing_MainArguments() -> None:
             db_name,
             port,
             encrypt,
-            trust_certificates,
+            trust_certificate,
         )
 
         assert a.csv_path == csv_path
@@ -382,7 +382,7 @@ def describe_when_initializing_MainArguments() -> None:
         assert a.port == port
         assert a.engine == engine
         assert a.encrypt == encrypt
-        assert a.trust_certificates == trust_certificates
+        assert a.trust_certificate == trust_certificate
         assert a.db_name == db_name
 
 
