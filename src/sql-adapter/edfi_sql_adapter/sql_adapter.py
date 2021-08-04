@@ -152,7 +152,13 @@ class Adapter:
 
 
 def create_mssql_adapter(
-    username: str, password: str, server: str, db_name: str, port: int = 1433
+    username: str,
+    password: str,
+    server: str,
+    db_name: str,
+    port: int = 1433,
+    encrypt: bool = False,
+    trust_certificates: bool = False,
 ) -> Adapter:
     """
     Creates a SQL Alchemy database engine for Microsoft SQL Server, using SQL
@@ -169,21 +175,35 @@ def create_mssql_adapter(
     db_name: str
         Database name.
     port: int
-        SQL Server's TCP port. Defaults to 1433
+        SQL Server's TCP port. Defaults to 1433.
+    encrypt: bool
+        Encrypt database connections. Defaults to false.
+    trust_certificates: bool
+        When encrypting the database connection, trust the server certificate.
+        Helpful for localhost development. USE WITH CAUTION.
 
     Returns
     -------
     An instance of Adapter
     """
-    return Adapter(
-        sa_create_engine(
-            f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
-        )
-    )
+
+    url = f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
+
+    if encrypt:
+        url += "&Encrypt=yes"
+
+        if trust_certificates:
+            url += "&TrustServerCertificate=yes"
+
+    return Adapter(sa_create_engine(url))
 
 
 def create_mssql_adapter_with_integrated_security(
-    server: str, db_name: str, port: int = 1433
+    server: str,
+    db_name: str,
+    port: int = 1433,
+    encrypt: bool = False,
+    trust_certificates: bool = False,
 ) -> Adapter:
     """
     Creates a SQL Alchemy database engine for Microsoft SQL Server, using
@@ -196,17 +216,29 @@ def create_mssql_adapter_with_integrated_security(
     db_name: str
         Database name.
     port: int
-        SQL Server's TCP port. Defaults to 1433
+        SQL Server's TCP port. Defaults to 1433.
+    encrypt: bool
+        Encrypt database connections. Defaults to false.
+    trust_certificates: bool
+        When encrypting the database connection, trust the server certificate.
+        Helpful for localhost development. USE WITH CAUTION.
 
     Returns
     -------
     An instance of Adapter
     """
-    return Adapter(
-        sa_create_engine(
-            f"mssql+pyodbc://{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
-        )
+
+    url = (
+        f"mssql+pyodbc://{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
     )
+
+    if encrypt:
+        url += "&Encrypt=yes"
+
+        if trust_certificates:
+            url += "&TrustServerCertificate=yes"
+
+    return Adapter(sa_create_engine(url))
 
 
 def create_postgresql_adapter(
