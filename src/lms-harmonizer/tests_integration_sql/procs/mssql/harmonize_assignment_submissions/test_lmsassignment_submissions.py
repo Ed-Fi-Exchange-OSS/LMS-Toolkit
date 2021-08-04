@@ -5,6 +5,7 @@
 
 import pytest
 from tests_integration_sql.mssql_loader import (
+    insert_edfi_section_association,
     insert_edfi_student,
     insert_lms_assignment,
     insert_lms_section,
@@ -118,8 +119,8 @@ def describe_when_there_are_assignment_submissions_to_insert():
 
             assert len(LMSAssignmentSubmission) == 1
             assert (
-                int(LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"])
-                == SUBMISSION_TEST_LMS_IDENTIFIER
+                LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"]
+                == SUBMISSION_TEST_IDENTIFIER
             )
 
 
@@ -439,6 +440,145 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
 
             run_harmonizer(test_db_config)
             connection.execute("update lms.assignment set deletedat = GETDATE()")
+
+        # act
+        run_harmonizer(test_db_config)
+
+        # assert
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignmentSubmission = query(
+                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+            )
+
+            assert len(LMSAssignmentSubmission) == 0
+
+
+def describe_when_there_are_past_assignments_without_submissions():
+    ASSIGNMENT_CATEGORY = "test_category"
+    SIS_SECTION_ID = "sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+    ASSIGNMENT_SUBMISSION_STATUS = "missing"  # the stored procedure looks for a descriptor with codevalue = missing
+    USER_SIS_ID = "test_sis_id"
+
+    @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
+    def it_should_create_missing_submissions_for_associated_students(
+            test_db_config: ServerConfig, source_system: str):
+        # arrange
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+
+            insert_descriptor(
+                connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
+            )
+            insert_lmsx_assignmentcategory_descriptor(connection, 1)
+
+            insert_descriptor(
+                connection, descriptor_namespace_for(source_system), source_system
+            )
+            insert_lmsx_sourcesystem_descriptor(connection, 2)
+
+            insert_descriptor(
+                connection,
+                submission_descriptor_namespace_for(source_system),
+                ASSIGNMENT_SUBMISSION_STATUS,
+            )
+            insert_lmsx_assignmentsubmissionstatus_descriptor(connection, 3)
+
+            insert_lms_section(connection, SIS_SECTION_ID, source_system)
+            insert_edfi_section(connection, SIS_SECTION_ID)
+            connection.execute(
+                """UPDATE LMS.LMSSECTION SET
+                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+            )
+
+            insert_lms_assignment(
+                connection,
+                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+                source_system,
+                1,
+                ASSIGNMENT_CATEGORY,
+                past_due_date=True
+            )
+
+            insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
+            insert_edfi_student(connection, USER_SIS_ID)
+            connection.execute(
+                """UPDATE LMS.LMSUSER SET
+                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+            )
+            insert_edfi_section_association(
+                connection,
+                SIS_SECTION_ID,
+                USER_SIS_ID
+            )
+
+        # act
+        run_harmonizer(test_db_config)
+
+        # assert
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignmentSubmission = query(
+                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+            )
+
+            assert len(LMSAssignmentSubmission) == 1
+
+
+def describe_when_there_are_future_assignments_without_submissions():
+    ASSIGNMENT_CATEGORY = "test_category"
+    SIS_SECTION_ID = "sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+    ASSIGNMENT_SUBMISSION_STATUS = "missing"  # the stored procedure looks for a descriptor with codevalue = missing
+    USER_SIS_ID = "test_sis_id"
+
+    @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
+    def it_should_not_create_missing_submissions_for_associated_students(
+            test_db_config: ServerConfig, source_system: str):
+        # arrange
+        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+
+            insert_descriptor(
+                connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
+            )
+            insert_lmsx_assignmentcategory_descriptor(connection, 1)
+
+            insert_descriptor(
+                connection, descriptor_namespace_for(source_system), source_system
+            )
+            insert_lmsx_sourcesystem_descriptor(connection, 2)
+
+            insert_descriptor(
+                connection,
+                submission_descriptor_namespace_for(source_system),
+                ASSIGNMENT_SUBMISSION_STATUS,
+            )
+            insert_lmsx_assignmentsubmissionstatus_descriptor(connection, 3)
+
+            insert_lms_section(connection, SIS_SECTION_ID, source_system)
+            insert_edfi_section(connection, SIS_SECTION_ID)
+            connection.execute(
+                """UPDATE LMS.LMSSECTION SET
+                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+            )
+
+            insert_lms_assignment(
+                connection,
+                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+                source_system,
+                1,
+                ASSIGNMENT_CATEGORY
+            )
+
+            insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
+            insert_edfi_student(connection, USER_SIS_ID)
+            connection.execute(
+                """UPDATE LMS.LMSUSER SET
+                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+            )
+            insert_edfi_section_association(
+                connection,
+                SIS_SECTION_ID,
+                USER_SIS_ID
+            )
 
         # act
         run_harmonizer(test_db_config)

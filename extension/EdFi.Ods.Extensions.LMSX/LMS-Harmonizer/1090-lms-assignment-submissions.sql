@@ -9,7 +9,8 @@ BEGIN
 
 
 	SELECT
-		lmsSubmission.AssignmentSubmissionIdentifier,
+		lmsSubmission.SourceSystemIdentifier,
+		lmsSubmission.AssignmentSubmissionIdentifier as AssignmentSubmissionIdentifier,
 		EDFISTUDENT.StudentUSI,
 		lmsxAssignment.AssignmentIdentifier,
 		submissionStatusDescriptor.DescriptorId,
@@ -43,14 +44,20 @@ BEGIN
 
 	-- Here we are building missing submissions when they are not present
 	-- We do this to standardize what is shown in the visualizations
+	ALTER TABLE
+		#ALL_SUBMISSIONS
+	ALTER COLUMN
+		AssignmentSubmissionIdentifier
+	int NULL;
+
 
 	INSERT INTO #ALL_SUBMISSIONS
 	SELECT
 		edfisectionassociation.SectionIdentifier
 			+ '#' + lmsxassignment.AssignmentIdentifier
 			+ '#' + lmsstudent.SourceSystemIdentifier
-			as AssignmentSubmissionIdentifier,
-
+			as SourceSystemIdentifier,
+		NULL as AssignmentSubmissionIdentifier,
 		edfisectionassociation.StudentUSI,
 		lmsxassignment.AssignmentIdentifier,
 		submsisionstatusdescriptor.DescriptorId,
@@ -80,7 +87,7 @@ BEGIN
 	AND lmsxassignment.DueDateTime < GETDATE()
 
 	INSERT INTO LMSX.AssignmentSubmission(
-		[AssignmentSubmissionIdentifier],
+		AssignmentSubmissionIdentifier,
 		[StudentUSI],
 		[AssignmentIdentifier],
 		[Namespace],
@@ -90,7 +97,7 @@ BEGIN
 		[Grade]
 	)
 	SELECT
-		[AssignmentSubmissionIdentifier],
+		SourceSystemIdentifier,
 		[StudentUSI],
 		[AssignmentIdentifier],
 		@Namespace,
@@ -100,7 +107,7 @@ BEGIN
 		[Grade]
 	FROM #ALL_SUBMISSIONS
 	WHERE
-		#ALL_SUBMISSIONS.AssignmentSubmissionIdentifier NOT IN
+		#ALL_SUBMISSIONS.SourceSystemIdentifier NOT IN
 			(SELECT DISTINCT AssignmentSubmission.AssignmentSubmissionIdentifier FROM LMSX.AssignmentSubmission)
 		AND #ALL_SUBMISSIONS.StudentUSI NOT IN
             (SELECT DISTINCT StudentUSI FROM LMSX.AssignmentSubmission)
@@ -114,13 +121,13 @@ BEGIN
 		LMSX.AssignmentSubmission.Grade = #ALL_SUBMISSIONS.Grade,
 		LMSX.AssignmentSubmission.LastModifiedDate = GETDATE()
 	FROM #ALL_SUBMISSIONS
-	WHERE #ALL_SUBMISSIONS.AssignmentSubmissionIdentifier = LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier
+	WHERE #ALL_SUBMISSIONS.SourceSystemIdentifier = LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier
 	AND #ALL_SUBMISSIONS.LastModifiedDate > LMSX.AssignmentSubmission.LastModifiedDate
 	AND #ALL_SUBMISSIONS.DeletedAt IS NULL
 
 	DELETE FROM LMSX.AssignmentSubmission
 	WHERE LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier IN
-		(SELECT LMSSUBMISSION.AssignmentSubmissionIdentifier FROM LMS.AssignmentSubmission LMSSUBMISSION WHERE LMSSUBMISSION.DeletedAt IS NOT NULL)
+		(SELECT LMSSUBMISSION.SourceSystemIdentifier FROM LMS.AssignmentSubmission LMSSUBMISSION WHERE LMSSUBMISSION.DeletedAt IS NOT NULL)
 
 	DROP TABLE #ALL_SUBMISSIONS
 
