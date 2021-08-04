@@ -13,11 +13,14 @@ from sqlalchemy.engine.base import Engine, Connection, Transaction
 from edfi_lms_ds_loader.migrator import migrate
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
 
+from edfi_sql_adapter.sql_adapter import Adapter, create_mssql_adapter_with_integrated_security
 
-def _new_mssql_engine() -> Engine:
-    return create_engine(
-        "mssql+pyodbc://localhost,1433/test_integration_lms_toolkit?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes",
-    )
+
+def _new_mssql_adapter() -> Adapter:
+    # TODO: create method for injecting these values, for test
+    return create_mssql_adapter_with_integrated_security(
+            "localhost", "test_integration_lms_toolkit", 1433, False, False
+        )
 
 
 @pytest.fixture(scope="session")
@@ -26,10 +29,10 @@ def mssql_connection() -> Iterable[Connection]:
     Fixture that sets up a connection to use, and migrate the tables.
     Assumes existence of local SQLServer DB named 'test_integration_lms_toolkit'
     """
-    engine = _new_mssql_engine()
-    migrate(engine)
+    adapter = _new_mssql_adapter()
+    migrate(adapter)
 
-    connection = engine.connect()
+    connection = adapter.engine.connect()
     yield connection
     connection.close()
 

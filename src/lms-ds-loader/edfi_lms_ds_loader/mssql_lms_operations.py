@@ -13,7 +13,7 @@ from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import Session as sa_Session
 
 from edfi_lms_ds_loader.helpers.constants import Table
-from edfi_lms_ds_loader.sql_adapter import execute_transaction
+from edfi_sql_adapter import sql_adapter
 
 logger = logging.getLogger(__name__)
 
@@ -29,10 +29,10 @@ class MssqlLmsOperations:
         SQL Alchemy engine.
     """
 
-    engine: sa_Engine
+    db_adapter: sql_adapter
 
-    def __init__(self, engine: sa_Engine) -> None:
-        self.engine = engine
+    def __init__(self, sql_adapter: sql_adapter) -> None:
+        self.db_adapter = sql_adapter
 
     def _exec(self, statement: str) -> int:
         """This is a wrapper function that will not be unit tested."""
@@ -43,7 +43,7 @@ class MssqlLmsOperations:
             result: sa_Result = session.execute(statement)
             return result
 
-        result = execute_transaction(self.engine, __callback)
+        result = self.db_adapter.execute_transaction(__callback)
 
         if result:
             return int(result.rowcount)
@@ -114,7 +114,7 @@ class MssqlLmsOperations:
 
         df.to_sql(
             f"stg_{table}",
-            self.engine,
+            self.db_adapter.engine,
             schema="lms",
             if_exists="append",
             index=False,
@@ -862,7 +862,7 @@ FROM
 WHERE
     ResourceName = '{resource_name}'
 """.strip()
-            result = pd.read_sql_query(query, self.engine)
+            result = pd.read_sql_query(query, self.db_adapter.engine)
             if "FullPath" in result:
                 return set(result["FullPath"])
             return set()

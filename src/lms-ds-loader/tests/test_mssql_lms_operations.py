@@ -11,6 +11,7 @@ import pandas as pd
 from sqlalchemy.exc import ProgrammingError
 
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_sql_adapter import sql_adapter
 
 
 def describe_when_truncating_staging_table() -> None:
@@ -92,16 +93,17 @@ def describe_when_inserting_into_staging() -> None:
             table = "aaa"
             staging_table = "stg_aaa"
             df = Mock(spec=pd.DataFrame)
-            engine_mock = Mock()
+            adapter_mock = Mock(spec=sql_adapter)
+            engine = adapter_mock.engine = Mock()
 
             # Act
-            MssqlLmsOperations(engine_mock).insert_into_staging(df, table)
+            MssqlLmsOperations(adapter_mock).insert_into_staging(df, table)
 
             # Assert
-            # engine_mock.assert_called()
+            # adapter_mock.assert_called()
             df.to_sql.assert_called_with(
                 staging_table,
-                engine_mock,
+                engine,
                 schema="lms",
                 if_exists="append",
                 index=False,

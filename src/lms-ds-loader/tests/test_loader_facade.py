@@ -21,7 +21,7 @@ def describe_when_uploading_extractor_files() -> None:
             # Arrange
             args_mock = MagicMock(spec=MainArguments)
             db_engine_mock = MagicMock()
-            args_mock.get_db_engine.return_value = db_engine_mock
+            args_mock.get_adapter.return_value = db_engine_mock
 
             args_mock.csv_path = "/some/path"
 
@@ -122,7 +122,7 @@ def describe_when_uploading_extractor_files() -> None:
             mocks = {
                 "migrate": migrator_mock,
                 "get_db_operations_adapter": db_adapter_mock,
-                "get_db_engine": db_engine_mock,
+                "get_adapter": db_engine_mock,
                 "upload_file": mock_upload_file,
                 "upload_assignments_file": mock_upload_assignments_file,
                 "upload_section_associations_file": mock_upload_section_associations_file,
@@ -211,7 +211,7 @@ def describe_when_uploading_extractor_files() -> None:
         def it_runs_migrations(mocker, fixture) -> None:
             mocks, _ = fixture
 
-            mocks["migrate"].assert_called_once_with(mocks["get_db_engine"])
+            mocks["migrate"].assert_called_once_with(mocks["get_adapter"])
 
         def it_uploads_users(mocker, fixture) -> None:
             mocks, dfs = fixture
@@ -278,7 +278,7 @@ def describe_when_uploading_extractor_files() -> None:
             # Arrange
             args_mock = MagicMock(spec=MainArguments)
             db_engine_mock = Mock()
-            args_mock.get_db_engine.return_value = db_engine_mock
+            args_mock.get_adapter.return_value = db_engine_mock
 
             args_mock.csv_path = "/some/path"
 
