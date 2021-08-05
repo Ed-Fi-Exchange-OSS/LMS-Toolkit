@@ -8,10 +8,18 @@ from edfi_lms_ds_loader.helpers.argparser import MainArguments
 
 
 def main_arguments(adapter: MssqlLmsOperations, csv_path: str) -> MainArguments:
-    args = MainArguments(csv_path=csv_path, engine="mssql", log_level="INFO")
-    args.set_connection_string_using_integrated_security(
-        "localhost", 1433, "test_integration_lms_toolkit"
+    args = MainArguments(
+        csv_path,
+        "mssql",
+        "INFO",
+        "localhost",
+        "test_integration_lms_toolkit",
+        1433,
+        False,
+        False,
     )
+    args.build_mssql_adapter_with_integrated_security()
+
     # monkey patch the test adapter
     args.get_db_operations_adapter = lambda: adapter  # type: ignore
     return args

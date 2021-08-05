@@ -46,6 +46,14 @@ def _exception_report_args() -> List[str]:
     return ["--exceptions-report-directory", REPORT_DIR]
 
 
+def _encrypt_args() -> List[str]:
+    return ["--encrypt"]
+
+
+def _trust_certificate_args() -> List[str]:
+    return ["--trust-certificate"]
+
+
 def _assert_no_messages(capsys) -> None:
     out, err = capsys.readouterr()
 
@@ -176,6 +184,39 @@ def describe_given_engine_mssql() -> None:
 
             # Only need to confirm that the adapter was created
             assert parsed.get_adapter() is not None
+
+    def describe_given_using_encryption_without_trusting_certificate() -> None:
+        def it_should_add_Encrypt_to_connection_string(capsys) -> None:
+            args = [
+                *_server_args(),
+                *_db_name_args(),
+                *_integrated_security_arg(),
+                *_encrypt_args(),
+            ]
+            parsed = parse_main_arguments(args)
+
+            _assert_no_messages(capsys)
+
+            url = str(parsed.get_adapter().engine.url)
+            assert "Encrypt=yes" in url
+            assert "TrustServerCertificate=yes" not in url
+
+    def describe_given_using_encryption_and_trusting_certificate() -> None:
+        def it_should_add_Encrypt_to_connection_string(capsys) -> None:
+            args = [
+                *_server_args(),
+                *_db_name_args(),
+                *_integrated_security_arg(),
+                *_encrypt_args(),
+                *_trust_certificate_args(),
+            ]
+            parsed = parse_main_arguments(args)
+
+            _assert_no_messages(capsys)
+
+            url = str(parsed.get_adapter().engine.url)
+            assert "Encrypt=yes" in url
+            assert "TrustServerCertificate=yes" in url
 
     @pytest.fixture
     def fixture(capsys) -> MainArguments:

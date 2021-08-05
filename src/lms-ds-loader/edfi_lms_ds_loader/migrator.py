@@ -7,11 +7,10 @@ import logging
 from os import path
 from typing import List
 
-from sqlalchemy.engine.base import Engine as sa_Engine
 from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
 
-from edfi_lms_ds_loader.sql_adapter import get_int, execute_statements
+from edfi_sql_adapter.sql_adapter import Adapter, Statement
 
 
 logger = logging.getLogger(__name__)
@@ -34,8 +33,8 @@ MIGRATION_SCRIPTS = [
 ]
 
 
-def _get_script_path(engine: sa_Engine, script_name: str) -> str:
-    script_dir = path.join(path.dirname(__file__), "scripts", engine.name)
+def _get_script_path(adapter: Adapter, script_name: str) -> str:
+    script_dir = path.join(path.dirname(__file__), "scripts", adapter.engine.name)
     return path.join(script_dir, script_name)
 
 
@@ -48,10 +47,10 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     return statements
 
 
-def _script_has_been_run(engine: sa_Engine, migration: str) -> bool:
+def _script_has_been_run(adapter: Adapter, migration: str) -> bool:
     try:
         statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
-        response = get_int(engine, statement)
+        response = adapter.get_int(statement)
 
         return bool(response == 1)
     except ProgrammingError as error:
@@ -69,62 +68,65 @@ def _script_has_been_run(engine: sa_Engine, migration: str) -> bool:
         raise
 
 
-def _record_migration_in_journal(engine: sa_Engine, migration: str) -> None:
-    statement = f"INSERT INTO lms.migrationjournal (script) values ('{migration}');"
+def _record_migration_in_journal(adapter: Adapter, migration: str) -> None:
+    statement = Statement(
+        f"INSERT INTO lms.migrationjournal (script) values ('{migration}');",
+        "Updating migration journal table"
+    )
 
-    execute_statements(engine, [statement])
+    adapter.execute([statement])
 
 
-def _lms_schema_exists(engine: sa_Engine) -> bool:
+def _lms_schema_exists(adapter: Adapter) -> bool:
     statement = """
 select case when exists (
     select 1 from INFORMATION_SCHEMA.SCHEMATA where schema_name = 'lms'
 ) then 1 else 0 end
 """.strip()
 
-    return get_int(engine, statement) == 1
+    return adapter.get_int(statement) == 1
 
 
-def _run_migration_script(engine: sa_Engine, migration: str) -> None:
+def _run_migration_script(adapter: Adapter, migration: str) -> None:
 
     logger.debug(f"Running migration {migration}...")
 
-    migration_script = _get_script_path(engine, f"{migration}.sql")
+    migration_script = _get_script_path(adapter, f"{migration}.sql")
 
     statements = _read_statements_from_file(migration_script)
-    execute_statements(engine, statements)
+    adapter.execute_script(statements)
 
-    _record_migration_in_journal(engine, migration)
+    _record_migration_in_journal(adapter, migration)
 
     logger.debug(f"Done with migration {migration}.")
 
 
-def migrate(engine: sa_Engine) -> None:
+def migrate(adapter: Adapter) -> None:
     """
     Runs database migration scripts for installing LMS table schema into the
     destination database.
 
     Parameters
     ----------
-    engine: sa_Engine
+    adapter: sql_adapter
         SQL Alchemy database engine object.
     """
     logger.info("Begin database auto-migration...")
 
-    if not _lms_schema_exists(engine):
-        _run_migration_script(engine, "0001_initialize_lms_database")
+    if not _lms_schema_exists(adapter):
+        _run_migration_script(adapter, "0001_initialize_lms_database")
 
     for migration in MIGRATION_SCRIPTS:
         # The following block of code does not belong in _run_migration_script
         # because it will throw an exception if the migration journal does not
         # exist, and therefore is not appropriate when initializing the LMS
         # database.
-        if _script_has_been_run(engine, migration):
+        if _script_has_been_run(adapter, migration):
             logger.debug(
                 f"Migration {migration} has already run and will not be re-run."
             )
             continue
 
-        _run_migration_script(engine, migration)
+        _run_migration_script(adapter, migration)
 
     logger.info("Done with database auto-migration.")

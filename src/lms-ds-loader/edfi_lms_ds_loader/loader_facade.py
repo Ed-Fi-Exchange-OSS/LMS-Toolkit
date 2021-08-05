@@ -241,20 +241,21 @@ def _load_system_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> No
 def run_loader(arguments: MainArguments) -> None:
     logger.info("Begin loading files into the LMS Data Store (DS)...")
 
-    migrator.migrate(arguments.get_db_engine())
+    db_adapter = arguments.get_adapter()
+    migrator.migrate(db_adapter)
 
     csv_path = arguments.csv_path
 
-    db_adapter = arguments.get_db_operations_adapter()
+    mssql_operations = arguments.get_db_operations_adapter()
 
-    _load_users(csv_path, db_adapter)
-    _load_sections(csv_path, db_adapter)
+    _load_users(csv_path, mssql_operations)
+    _load_sections(csv_path, mssql_operations)
     # Important: run this immediately after loading sections, before loading other section-related resources
-    _load_section_associations(csv_path, db_adapter)
-    _load_assignments(csv_path, db_adapter)
-    _load_assignment_submissions(csv_path, db_adapter)
-    _load_attendance_events(csv_path, db_adapter)
-    _load_section_activities(csv_path, db_adapter)
-    _load_system_activities(csv_path, db_adapter)
+    _load_section_associations(csv_path, mssql_operations)
+    _load_assignments(csv_path, mssql_operations)
+    _load_assignment_submissions(csv_path, mssql_operations)
+    _load_attendance_events(csv_path, mssql_operations)
+    _load_section_activities(csv_path, mssql_operations)
+    _load_system_activities(csv_path, mssql_operations)
 
     logger.info("Done loading files into the LMS Data Store.")

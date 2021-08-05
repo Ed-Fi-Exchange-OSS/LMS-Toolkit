@@ -5,14 +5,17 @@
 
 from dataclasses import dataclass
 import os
-from typing import List, Union
+from typing import List
 
 from configargparse import ArgParser  # type: ignore
-from sqlalchemy import create_engine as sa_create_engine
-from sqlalchemy.engine import Engine as sa_Engine
 
 from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
 from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_sql_adapter.sql_adapter import (
+    Adapter,
+    create_mssql_adapter_with_integrated_security,
+    create_mssql_adapter,
+)
 
 
 @dataclass
@@ -31,90 +34,55 @@ class MainArguments:
     csv_path: str
     engine: str
     log_level: str
+    server: str
+    db_name: str
+    port: int
+    encrypt: bool = False
+    trust_certificate: bool = False
 
-    @staticmethod
-    def _get_mssql_port(port: Union[int, None]) -> int:
-        if not port:
-            port = 1433
+    def __post_init__(self) -> None:
+        self.db_adapter: Adapter
 
-        return port
+    def _get_sql_server_port(self) -> int:
+        return 1433 if not self.port or self.port == 0 else self.port
 
-    @staticmethod
-    def _get_postgresql_port(port: Union[int, None]) -> int:
-        if not port:
-            port = 5432
+    # For future use
+    # def _get_pgsql_server_port(self) -> int:
+    #     return 5432 if not self.port or self.port == 0 else self.port
 
-        return port
+    def build_mssql_adapter(self, username: str, password: str) -> None:
+        self.db_adapter = create_mssql_adapter(
+            username,
+            password,
+            self.server,
+            self.db_name,
+            self._get_sql_server_port(),
+            self.encrypt,
+            self.trust_certificate,
+        )
 
-    def set_connection_string_using_integrated_security(
-        self, server: str, port: Union[int, None], db_name: str
-    ) -> None:
-        """
-        Creates a PyODBC connection string using integrated security.
+    def build_mssql_adapter_with_integrated_security(self) -> None:
+        self.db_adapter = create_mssql_adapter_with_integrated_security(
+            self.server,
+            self.db_name,
+            self._get_sql_server_port(),
+            self.encrypt,
+            self.trust_certificate,
+        )
 
-        Parameters
-        ----------
-        server : str
-            Database server name or IP address.
-        port : int or None
-            Database port number.
-        db_name : str
-            Database name.
-        """
-
-        if self.engine == DbEngine.MSSQL:
-            port = MainArguments._get_mssql_port(port)
-            self.connection_string = f"mssql+pyodbc://{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server?Trusted_Connection=yes"
-        else:
-            raise ValueError(
-                f"Invalid `engine` parameter value for integrated database security: {self.engine}"
+    def get_adapter(self) -> Adapter:
+        if self.engine != DbEngine.MSSQL:
+            raise NotImplementedError(
+                f"Support for '{self.engine}' has not yet been implemented."
             )
 
-    def set_connection_string(
-        self,
-        server: str,
-        port: Union[int, None],
-        db_name: str,
-        username: str,
-        password: str,
-    ) -> None:
-        """
-        Creates a PyODBC connection string using username and password.
+        if not hasattr(self, "db_adapter"):
+            raise RuntimeError("The SQL Adapter has not been initialized yet.")
 
-        Parameters
-        ----------
-        server : str
-            Database server name or IP address.
-        port : int or None
-            Database port number.
-        db_name : str
-            Database name.
-        username : str
-            Database user name.
-        password : str
-            Database password.
-        """
-
-        if self.engine == DbEngine.MSSQL:
-            port = MainArguments._get_mssql_port(port)
-            self.connection_string = f"mssql+pyodbc://{username}:{password}@{server},{port}/{db_name}?driver=ODBC+Driver+17+for+SQL+Server"
-        elif self.engine == DbEngine.POSTGRESQL:
-            port = MainArguments._get_postgresql_port(port)
-            self.connection_string = (
-                f"postgresql://{username}:{password}@{server}:{port}/{db_name}"
-            )
-        else:
-            raise ValueError(f"Invalid `engine` parameter value: {self.engine}")
+        return self.db_adapter
 
     def get_db_operations_adapter(self) -> MssqlLmsOperations:
-        return MssqlLmsOperations(self.get_db_engine())
-
-    def get_db_engine(self) -> sa_Engine:
-        if self.engine == DbEngine.MSSQL:
-            return sa_create_engine(self.connection_string)
-        raise NotImplementedError(
-            f"Support for '{self.engine}' has not yet been implemented."
-        )
+        return MssqlLmsOperations(self.get_adapter())
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -181,8 +149,9 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     user_name_required = (
         USE_INTEGRATED not in args_in and USE_INTEGRATED_SHORT not in args_in
     )
-    # This parameter doesn't work right when used from a .env file,
-    # so adding a manual override
+
+    # Retrieve this value because we need it in order to determine
+    # if username and password are required
     integrated_env_var = os.getenv("USE_INTEGRATED_SECURITY")
     if integrated_env_var and integrated_env_var.lower() in ("true", "yes", "t", "y"):
         user_name_required = False
@@ -213,24 +182,44 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         env_var="LOG_LEVEL",
     )
 
+    parser.add(  # type: ignore
+        "-n",
+        "--encrypt",
+        help="Encrypt the connection to the database.",
+        action="store_true",
+        env_var="ENCRYPT_SQL_CONNECTION",
+    )
+    parser.add(  # type: ignore
+        "-t",
+        "--trust-certificate",
+        help="When encrypting connections, trust the server certificate. Useful for localhost debuggin with a self-signed certificate. USE WITH CAUTION.",
+        action="store_true",
+        env_var="TRUST_SERVER_CERTIFICATE",
+    )
+
     args_parsed = parser.parse_args(args_in)
+
+    # Need to add this back in because reading it manually earlier
+    # seems to cause it to be misread by the parser.
     args_parsed.useintegratedsecurity = (
         args_parsed.useintegratedsecurity or not user_name_required
     )
 
     arguments = MainArguments(
-        args_parsed.csvpath, args_parsed.engine, args_parsed.log_level
+        args_parsed.csvpath,
+        args_parsed.engine,
+        args_parsed.log_level,
+        args_parsed.server,
+        args_parsed.dbname,
+        args_parsed.port,
+        args_parsed.encrypt,
+        args_parsed.trust_certificate,
     )
 
     if args_parsed.useintegratedsecurity:
-        arguments.set_connection_string_using_integrated_security(
-            args_parsed.server, args_parsed.port, args_parsed.dbname
-        )
+        arguments.build_mssql_adapter_with_integrated_security()
     else:
-        arguments.set_connection_string(
-            args_parsed.server,
-            args_parsed.port,
-            args_parsed.dbname,
+        arguments.build_mssql_adapter(
             args_parsed.username,
             args_parsed.password,
         )

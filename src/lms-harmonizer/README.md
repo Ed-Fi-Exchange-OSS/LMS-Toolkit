@@ -84,6 +84,8 @@ Supported parameters:
 | DB Password ** | no (no default) | `-p` or `--password` | DB_PASSWORD |
 | Use integrated security ** | no (default: false) | `-i` or `--useintegratedsecurity` | USE_INTEGRATED_SECURITY |
 | Log level* | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
+| Encrypt db connection | no (default: False) | `-n` or `--encrypt` | ENCRYPT_SQL_CONNECTION |
+| Trust db server certificate | no (default: False) | `-t` or `--trust-certificate` | TRUST_SERVER_CERTIFICATE |
 
 \* Valid values for the optional _log level_:
 
@@ -96,7 +98,6 @@ Supported parameters:
 \** If using integrated security, DB Username and password won't be required,
 otherwise they are required.
 
-
 ## Running the Tool
 
 For detailed help, execute `poetry run python edfi_lms_harmonizer -h`.
@@ -107,7 +108,6 @@ directory:
 ```bash
 poetry run python edfi_lms_harmonizer --server localhost --dbname lms_toolkit --useintegratedsecurity
 ```
-
 
 ## Developer Notes
 
@@ -145,4 +145,3 @@ specific language governing permissions and limitations under the License.
 See
 [NOTICES](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/blob/main/NOTICES.md)
 for additional copyright and license notifications.
-
