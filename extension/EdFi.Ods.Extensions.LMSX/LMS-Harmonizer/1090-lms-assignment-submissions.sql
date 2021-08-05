@@ -34,7 +34,7 @@ BEGIN
 	INNER JOIN LMS.LMSUser lmsUser
 		ON lmsUser.LMSUserIdentifier = lmsSubmission.LMSUserIdentifier
 	INNER JOIN EDFI.Descriptor submissionStatusDescriptor
-		ON submissionStatusDescriptor.ShortDescription = lmsSubmission.SubmissionStatus
+		ON submissionStatusDescriptor.CodeValue = lmsSubmission.SubmissionStatus
 		AND submissionStatusDescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + lmsSubmission.SourceSystem
     INNER JOIN LMSX.SubmissionStatusDescriptor lmsxSubmissionStatus
         ON submissionStatusDescriptor.DescriptorId = lmsxSubmissionStatus.SubmissionStatusDescriptorId
@@ -53,10 +53,12 @@ BEGIN
 
 	INSERT INTO #ALL_SUBMISSIONS
 	SELECT
-		edfisectionassociation.SectionIdentifier
-			+ '#' + lmsxassignment.AssignmentIdentifier
-			+ '#' + lmsstudent.SourceSystemIdentifier
-			as SourceSystemIdentifier,
+		FORMATMESSAGE(
+            '%s#%s#%s',
+            lmssection.SourceSystemIdentifier,
+            lmsxassignment.AssignmentIdentifier,
+            lmsstudent.SourceSystemIdentifier
+        ) as SourceSystemIdentifier,
 		NULL as AssignmentSubmissionIdentifier,
 		edfisectionassociation.StudentUSI,
 		lmsxassignment.AssignmentIdentifier,
@@ -75,15 +77,24 @@ BEGIN
 		ON edfistudent.StudentUSI = edfisectionassociation.StudentUSI
 	INNER JOIN lms.LMSUser lmsstudent
 		ON lmsstudent.EdFiStudentId = edfistudent.Id
-	LEFT JOIN lmsx.AssignmentSubmission lmsxsubmission
-		ON lmsxsubmission.AssignmentIdentifier = lmsxassignment.AssignmentIdentifier
-			AND lmsxsubmission.StudentUSI = edfisectionassociation.StudentUSI
-	INNER JOIN edfi.Descriptor sourcesystemdesc
-		ON sourcesystemdesc.DescriptorId = lmsxassignment.LMSSourceSystemDescriptorId
-	INNER JOIN edfi.Descriptor submsisionstatusdescriptor
-		ON submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + sourcesystemdesc.CodeValue
-		AND submsisionstatusdescriptor.CodeValue in ('missing', 'MISSING')
-	WHERE lmsxsubmission.StudentUSI IS NULL
+	INNER JOIN edfi.Section edfisection
+		ON edfisection.SectionIdentifier = lmsxassignment.SectionIdentifier
+	INNER JOIN lms.LMSSection lmssection
+		ON lmssection.EdFiSectionId = edfisection.Id
+	LEFT JOIN lms.AssignmentSubmission lmssubmission
+		ON lmssubmission.AssignmentIdentifier = lmsxassignment.AssignmentIdentifier
+			AND lmssubmission.LMSUserIdentifier = lmsstudent.LMSUserIdentifier
+	CROSS APPLY (
+        SELECT
+            submsisionstatusdescriptor.DescriptorId
+        FROM
+            edfi.Descriptor submsisionstatusdescriptor
+		WHERE
+            submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + @SourceSystem
+		AND
+            submsisionstatusdescriptor.CodeValue = 'missing'
+    ) as submsisionstatusdescriptor
+	WHERE lmssubmission.LMSUserIdentifier IS NULL
 	AND lmsxassignment.DueDateTime < GETDATE()
 
 	INSERT INTO LMSX.AssignmentSubmission(
