@@ -75,9 +75,6 @@ BEGIN
 			ON edfisection.SectionIdentifier = edfisectionassociation.SectionIdentifier
 		INNER JOIN lms.LMSSection lmssection
 			ON lmssection.EdFiSectionId = edfisection.Id
-		LEFT JOIN lms.AssignmentSubmission lmssubmission
-			ON lmssubmission.AssignmentIdentifier = lmsassignment.AssignmentIdentifier
-				AND lmssubmission.LMSUserIdentifier = lmsstudent.LMSUserIdentifier
 		CROSS APPLY (
 			SELECT
 				submsisionstatusdescriptor.DescriptorId
@@ -88,7 +85,10 @@ BEGIN
 			AND
 				submsisionstatusdescriptor.CodeValue = 'missing'
 		) as submsisionstatusdescriptor
-		WHERE lmssubmission.LMSUserIdentifier IS NULL
+		WHERE NOT EXISTS (
+			SELECT 1 FROM lms.AssignmentSubmission lmssubmission WHERE lmssubmission.AssignmentIdentifier = lmsassignment.AssignmentIdentifier
+				AND lmssubmission.LMSUserIdentifier = lmsstudent.LMSUserIdentifier
+		)
 		AND lmsxassignment.DueDateTime < GETDATE()
 		AND (edfisectionassociation.EndDate IS NULL OR enddate > lmsassignment.DueDateTime)
 	END
