@@ -43,7 +43,7 @@ BEGIN
 	IF @SourceSystem = 'Schoology'
 	BEGIN
 		INSERT INTO #ALL_SUBMISSIONS
-		SELECT
+		SELECT DISTINCT
 			FORMATMESSAGE(
 				'%s#%s#%s',
 				lmssection.SourceSystemIdentifier,
