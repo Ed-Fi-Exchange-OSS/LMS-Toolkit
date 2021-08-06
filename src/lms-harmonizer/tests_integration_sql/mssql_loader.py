@@ -390,6 +390,33 @@ INSERT INTO [lmsx].[Assignment]
     )
 
 
+def insert_edfi_section_association(
+        connection: Connection,
+        section_identifier: str,
+        studentId: str):
+    connection.execute(
+        f"""
+insert into edfi.StudentSectionAssociation (
+    BeginDate,
+    LocalCourseCode,
+    SchoolId,
+    SchoolYear,
+    SectionIdentifier,
+    SessionName,
+    StudentUSI)
+select top 1
+    GETDATE() BeginDate,
+    localcoursecode,
+    SchoolId,
+    schoolyear,
+    sectionidentifier,
+    sessionname,
+    (select top 1 studentUSI from edfi.student where StudentUniqueId = N'{studentId}') as StudentUSI
+from edfi.section
+WHERE SectionIdentifier = N'{section_identifier}'
+    """)
+
+
 def insert_lms_assignment(
     connection: Connection,
     source_system_identifier: str,
@@ -397,6 +424,7 @@ def insert_lms_assignment(
     section_identifier: int,
     assignment_category: str,
     title_and_description: str = "default title and description",
+    past_due_date: bool = False
 ) -> int:
     # it is not necessary to have a different title and description since
     # both should be updated when required
@@ -412,6 +440,7 @@ INSERT INTO [lms].[Assignment]
         AssignmentDescription,
         CreateDate,
         LastModifiedDate
+        { ",DueDateTime" if past_due_date else "" }
     )
      VALUES (
         N'{source_system_identifier}',
@@ -422,6 +451,7 @@ INSERT INTO [lms].[Assignment]
         N'{title_and_description}',
         GETDATE(),
         GETDATE()
+        { ",DATEADD(year, -1, GETDATE())" if past_due_date else "" }
      )
 """
     )

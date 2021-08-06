@@ -7,9 +7,8 @@ CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment_submissions] @SourceSystem
 BEGIN
     SET NOCOUNT ON;
 
-
 	SELECT
-		lmsSubmission.AssignmentSubmissionIdentifier,
+		lmsSubmission.SourceSystemIdentifier,
 		EDFISTUDENT.StudentUSI,
 		lmsxAssignment.AssignmentIdentifier,
 		submissionStatusDescriptor.DescriptorId,
@@ -20,7 +19,7 @@ BEGIN
 		lmsSubmission.LastModifiedDate,
 		lmsSubmission.DeletedAt
 	INTO #ALL_SUBMISSIONS
-	FROM 
+	FROM
 		lms.AssignmentSubmission as lmsSubmission
 	INNER JOIN
 		lms.Assignment as lmsAssignment
@@ -28,12 +27,12 @@ BEGIN
 		lmsSubmission.AssignmentIdentifier = lmsAssignment.AssignmentIdentifier
 	INNER JOIN
 		lmsx.Assignment as lmsxAssignment
-	ON 
+	ON
 		lmsAssignment.SourceSystemIdentifier = lmsxAssignment.AssignmentIdentifier
 	INNER JOIN LMS.LMSUser lmsUser
 		ON lmsUser.LMSUserIdentifier = lmsSubmission.LMSUserIdentifier
 	INNER JOIN EDFI.Descriptor submissionStatusDescriptor
-		ON submissionStatusDescriptor.ShortDescription = lmsSubmission.SubmissionStatus
+		ON submissionStatusDescriptor.CodeValue = lmsSubmission.SubmissionStatus
 		AND submissionStatusDescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + lmsSubmission.SourceSystem
     INNER JOIN LMSX.SubmissionStatusDescriptor lmsxSubmissionStatus
         ON submissionStatusDescriptor.DescriptorId = lmsxSubmissionStatus.SubmissionStatusDescriptorId
@@ -41,9 +40,61 @@ BEGIN
 		ON EDFISTUDENT.Id = lmsUser.EdFiStudentId
     WHERE lmsSubmission.SourceSystem = @SourceSystem
 
+	IF @SourceSystem = 'Schoology'
+	BEGIN
+		INSERT INTO #ALL_SUBMISSIONS
+		SELECT DISTINCT
+			FORMATMESSAGE(
+				'%s#%s#%s',
+				lmssection.SourceSystemIdentifier,
+				lmsxassignment.AssignmentIdentifier,
+				lmsstudent.SourceSystemIdentifier
+			) as SourceSystemIdentifier,
+			edfisectionassociation.StudentUSI,
+			lmsxassignment.AssignmentIdentifier,
+			submsisionstatusdescriptor.DescriptorId,
+			NULL as SubmissionDateTime,
+			NULL as EarnedPoints,
+			NULL as Grade,
+			GETDATE() as CreateDate,
+			GETDATE() as LastModifiedDate,
+			NULL AS DeletedAt
+
+		FROM edfi.StudentSectionAssociation edfisectionassociation
+		INNER JOIN lmsx.Assignment lmsxassignment
+			ON edfisectionassociation.SectionIdentifier = lmsxassignment.SectionIdentifier
+		INNER JOIN lms.Assignment lmsassignment
+			ON lmsassignment.SourceSystemIdentifier = lmsxassignment.AssignmentIdentifier
+		INNER JOIN edfi.Student edfistudent
+			ON edfistudent.StudentUSI = edfisectionassociation.StudentUSI
+		INNER JOIN lms.LMSUser lmsstudent
+			ON lmsstudent.EdFiStudentId = edfistudent.Id
+		INNER JOIN edfi.Section edfisection
+			-- The LMS Harmonizer requires that SectionIdentifier be unique, thus it is
+			-- safe in this scenario to ignore the other natural key elements in this join.
+			ON edfisection.SectionIdentifier = edfisectionassociation.SectionIdentifier
+		INNER JOIN lms.LMSSection lmssection
+			ON lmssection.EdFiSectionId = edfisection.Id
+		CROSS APPLY (
+			SELECT
+				submsisionstatusdescriptor.DescriptorId
+			FROM
+				edfi.Descriptor submsisionstatusdescriptor
+			WHERE
+				submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
+			AND
+				submsisionstatusdescriptor.CodeValue = 'missing'
+		) as submsisionstatusdescriptor
+		WHERE NOT EXISTS (
+			SELECT 1 FROM lms.AssignmentSubmission lmssubmission WHERE lmssubmission.AssignmentIdentifier = lmsassignment.AssignmentIdentifier
+				AND lmssubmission.LMSUserIdentifier = lmsstudent.LMSUserIdentifier
+		)
+		AND lmsxassignment.DueDateTime < GETDATE()
+		AND (edfisectionassociation.EndDate IS NULL OR enddate > lmsassignment.DueDateTime)
+	END
 
 	INSERT INTO LMSX.AssignmentSubmission(
-		[AssignmentSubmissionIdentifier],
+		AssignmentSubmissionIdentifier,
 		[StudentUSI],
 		[AssignmentIdentifier],
 		[Namespace],
@@ -53,21 +104,21 @@ BEGIN
 		[Grade]
 	)
 	SELECT
-		[AssignmentSubmissionIdentifier],
-		[StudentUSI],
-		[AssignmentIdentifier],
-		@Namespace,
-		[DescriptorId],
-		[SubmissionDateTime],
-		[EarnedPoints],
-		[Grade]
-	FROM #ALL_SUBMISSIONS
-	WHERE
-		#ALL_SUBMISSIONS.AssignmentSubmissionIdentifier NOT IN
-			(SELECT DISTINCT AssignmentSubmission.AssignmentSubmissionIdentifier FROM LMSX.AssignmentSubmission)
-		AND #ALL_SUBMISSIONS.StudentUSI NOT IN
-            (SELECT DISTINCT StudentUSI FROM LMSX.AssignmentSubmission)
-		AND #ALL_SUBMISSIONS.DeletedAt IS NULL
+        SourceSystemIdentifier,
+        StudentUSI,
+        AssignmentIdentifier,
+        @Namespace,
+        DescriptorId,
+        SubmissionDateTime,
+        EarnedPoints,
+        Grade
+    FROM #ALL_SUBMISSIONS
+    WHERE
+    NOT EXISTS (
+        SELECT 1 FROM LMSX.AssignmentSubmission WHERE AssignmentSubmissionIdentifier = #ALL_SUBMISSIONS.SourceSystemIdentifier
+    )
+    AND
+        #ALL_SUBMISSIONS.DeletedAt IS NULL
 
 
 	UPDATE LMSX.AssignmentSubmission SET
@@ -77,17 +128,14 @@ BEGIN
 		LMSX.AssignmentSubmission.Grade = #ALL_SUBMISSIONS.Grade,
 		LMSX.AssignmentSubmission.LastModifiedDate = GETDATE()
 	FROM #ALL_SUBMISSIONS
-	WHERE #ALL_SUBMISSIONS.AssignmentSubmissionIdentifier = LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier
+	WHERE #ALL_SUBMISSIONS.SourceSystemIdentifier = LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier
 	AND #ALL_SUBMISSIONS.LastModifiedDate > LMSX.AssignmentSubmission.LastModifiedDate
 	AND #ALL_SUBMISSIONS.DeletedAt IS NULL
 
-
 	DELETE FROM LMSX.AssignmentSubmission
 	WHERE LMSX.AssignmentSubmission.AssignmentSubmissionIdentifier IN
-		(SELECT LMSSUBMISSION.AssignmentSubmissionIdentifier FROM LMS.AssignmentSubmission LMSSUBMISSION WHERE LMSSUBMISSION.DeletedAt IS NOT NULL)
-
+		(SELECT LMSSUBMISSION.SourceSystemIdentifier FROM LMS.AssignmentSubmission LMSSUBMISSION WHERE LMSSUBMISSION.DeletedAt IS NOT NULL)
 
 	DROP TABLE #ALL_SUBMISSIONS
-
 
 END;
