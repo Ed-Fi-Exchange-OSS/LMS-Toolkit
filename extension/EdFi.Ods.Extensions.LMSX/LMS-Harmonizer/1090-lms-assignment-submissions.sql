@@ -9,7 +9,6 @@ BEGIN
 
 	SELECT
 		lmsSubmission.SourceSystemIdentifier,
-		lmsSubmission.AssignmentSubmissionIdentifier as AssignmentSubmissionIdentifier,
 		EDFISTUDENT.StudentUSI,
 		lmsxAssignment.AssignmentIdentifier,
 		submissionStatusDescriptor.DescriptorId,
@@ -41,14 +40,6 @@ BEGIN
 		ON EDFISTUDENT.Id = lmsUser.EdFiStudentId
     WHERE lmsSubmission.SourceSystem = @SourceSystem
 
-	-- Here we are building missing submissions when they are not present
-	-- We do this to standardize what is shown in the visualizations
-	ALTER TABLE
-		#ALL_SUBMISSIONS
-	ALTER COLUMN
-		AssignmentSubmissionIdentifier
-	int NULL;
-
 	IF @SourceSystem = 'Schoology'
 	BEGIN
 		INSERT INTO #ALL_SUBMISSIONS
@@ -59,7 +50,6 @@ BEGIN
 				lmsxassignment.AssignmentIdentifier,
 				lmsstudent.SourceSystemIdentifier
 			) as SourceSystemIdentifier,
-			NULL as AssignmentSubmissionIdentifier,
 			edfisectionassociation.StudentUSI,
 			lmsxassignment.AssignmentIdentifier,
 			submsisionstatusdescriptor.DescriptorId,
@@ -100,6 +90,7 @@ BEGIN
 		) as submsisionstatusdescriptor
 		WHERE lmssubmission.LMSUserIdentifier IS NULL
 		AND lmsxassignment.DueDateTime < GETDATE()
+		AND (edfisectionassociation.EndDate IS NULL OR enddate > lmsassignment.DueDateTime)
 	END
 
 	INSERT INTO LMSX.AssignmentSubmission(
@@ -113,21 +104,21 @@ BEGIN
 		[Grade]
 	)
 	SELECT
-		SourceSystemIdentifier,
-		[StudentUSI],
-		[AssignmentIdentifier],
-		@Namespace,
-		[DescriptorId],
-		[SubmissionDateTime],
-		[EarnedPoints],
-		[Grade]
-	FROM #ALL_SUBMISSIONS
-	WHERE
-		#ALL_SUBMISSIONS.SourceSystemIdentifier NOT IN
-			(SELECT DISTINCT AssignmentSubmission.AssignmentSubmissionIdentifier FROM LMSX.AssignmentSubmission)
-		AND #ALL_SUBMISSIONS.StudentUSI NOT IN
-            (SELECT DISTINCT StudentUSI FROM LMSX.AssignmentSubmission)
-		AND #ALL_SUBMISSIONS.DeletedAt IS NULL
+        SourceSystemIdentifier,
+        StudentUSI,
+        AssignmentIdentifier,
+        @Namespace,
+        DescriptorId,
+        SubmissionDateTime,
+        EarnedPoints,
+        Grade
+    FROM #ALL_SUBMISSIONS
+    WHERE
+    NOT EXISTS (
+        SELECT 1 FROM LMSX.AssignmentSubmission WHERE AssignmentSubmissionIdentifier = #ALL_SUBMISSIONS.SourceSystemIdentifier
+    )
+    AND
+        #ALL_SUBMISSIONS.DeletedAt IS NULL
 
 
 	UPDATE LMSX.AssignmentSubmission SET
