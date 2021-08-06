@@ -6,7 +6,10 @@
 CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment_submissions] @SourceSystem nvarchar(255), @Namespace nvarchar(255) AS
 BEGIN
     SET NOCOUNT ON;
-
+	IF @SourceSystem <> 'Schoology'
+	BEGIN
+		RETURN
+	END
 
 	SELECT
 		lmsSubmission.SourceSystemIdentifier,
@@ -73,6 +76,8 @@ BEGIN
 	FROM edfi.StudentSectionAssociation edfisectionassociation
 	INNER JOIN lmsx.Assignment lmsxassignment
 		ON edfisectionassociation.SectionIdentifier = lmsxassignment.SectionIdentifier
+	INNER JOIN lms.Assignment lmsassignment
+		ON lmsassignment.SourceSystemIdentifier = lmsxassignment.AssignmentIdentifier
 	INNER JOIN edfi.Student edfistudent
 		ON edfistudent.StudentUSI = edfisectionassociation.StudentUSI
 	INNER JOIN lms.LMSUser lmsstudent
@@ -82,7 +87,7 @@ BEGIN
 	INNER JOIN lms.LMSSection lmssection
 		ON lmssection.EdFiSectionId = edfisection.Id
 	LEFT JOIN lms.AssignmentSubmission lmssubmission
-		ON lmssubmission.AssignmentIdentifier = lmsxassignment.AssignmentIdentifier
+		ON lmssubmission.AssignmentIdentifier = lmsassignment.AssignmentIdentifier
 			AND lmssubmission.LMSUserIdentifier = lmsstudent.LMSUserIdentifier
 	CROSS APPLY (
         SELECT
@@ -90,7 +95,7 @@ BEGIN
         FROM
             edfi.Descriptor submsisionstatusdescriptor
 		WHERE
-            submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + @SourceSystem
+            submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + 'Schoology'
 		AND
             submsisionstatusdescriptor.CodeValue = 'missing'
     ) as submsisionstatusdescriptor
@@ -118,7 +123,7 @@ BEGIN
 		[Grade]
 	FROM #ALL_SUBMISSIONS
 	WHERE
-		#ALL_SUBMISSIONS.SourceSystemIdentifier NOT IN
+		#ALL_SUBMISSIONS.AssignmentSubmissionIdentifier NOT IN
 			(SELECT DISTINCT AssignmentSubmission.AssignmentSubmissionIdentifier FROM LMSX.AssignmentSubmission)
 		AND #ALL_SUBMISSIONS.StudentUSI NOT IN
             (SELECT DISTINCT StudentUSI FROM LMSX.AssignmentSubmission)
