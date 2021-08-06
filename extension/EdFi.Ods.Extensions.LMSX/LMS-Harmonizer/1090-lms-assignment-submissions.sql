@@ -5,12 +5,6 @@
 
 CREATE OR ALTER PROCEDURE [lms].[harmonize_assignment_submissions] @SourceSystem nvarchar(255), @Namespace nvarchar(255) AS
 BEGIN
-    SET NOCOUNT ON;
-	IF @SourceSystem <> 'Schoology'
-	BEGIN
-		RETURN
-	END
-
 	SELECT
 		lmsSubmission.SourceSystemIdentifier,
 		lmsSubmission.AssignmentSubmissionIdentifier as AssignmentSubmissionIdentifier,
@@ -53,7 +47,6 @@ BEGIN
 		AssignmentSubmissionIdentifier
 	int NULL;
 
-
 	INSERT INTO #ALL_SUBMISSIONS
 	SELECT
 		FORMATMESSAGE(
@@ -83,7 +76,7 @@ BEGIN
 	INNER JOIN lms.LMSUser lmsstudent
 		ON lmsstudent.EdFiStudentId = edfistudent.Id
 	INNER JOIN edfi.Section edfisection
-		ON edfisection.SectionIdentifier = lmsxassignment.SectionIdentifier
+		ON edfisection.SectionIdentifier = edfisectionassociation.SectionIdentifier
 	INNER JOIN lms.LMSSection lmssection
 		ON lmssection.EdFiSectionId = edfisection.Id
 	LEFT JOIN lms.AssignmentSubmission lmssubmission
@@ -101,6 +94,7 @@ BEGIN
     ) as submsisionstatusdescriptor
 	WHERE lmssubmission.LMSUserIdentifier IS NULL
 	AND lmsxassignment.DueDateTime < GETDATE()
+	AND @SourceSystem = 'Schoology'
 
 	INSERT INTO LMSX.AssignmentSubmission(
 		AssignmentSubmissionIdentifier,
@@ -123,7 +117,7 @@ BEGIN
 		[Grade]
 	FROM #ALL_SUBMISSIONS
 	WHERE
-		#ALL_SUBMISSIONS.AssignmentSubmissionIdentifier NOT IN
+		#ALL_SUBMISSIONS.SourceSystemIdentifier NOT IN
 			(SELECT DISTINCT AssignmentSubmission.AssignmentSubmissionIdentifier FROM LMSX.AssignmentSubmission)
 		AND #ALL_SUBMISSIONS.StudentUSI NOT IN
             (SELECT DISTINCT StudentUSI FROM LMSX.AssignmentSubmission)

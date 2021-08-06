@@ -519,8 +519,11 @@ def describe_when_there_are_past_assignments_without_submissions():
             LMSAssignmentSubmission = query(
                 connection, "SELECT * from [lmsx].[AssignmentSubmission]"
             )
-
-            assert len(LMSAssignmentSubmission) == 1
+            # We are only interested in creating missing submissions for Schoology
+            if (source_system == "Schoology"):
+                assert len(LMSAssignmentSubmission) == 1
+            else:
+                assert len(LMSAssignmentSubmission) == 0
 
 
 def describe_when_there_are_future_assignments_without_submissions():
