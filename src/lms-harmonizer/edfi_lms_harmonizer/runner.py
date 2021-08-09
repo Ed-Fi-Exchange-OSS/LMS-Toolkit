@@ -6,6 +6,7 @@
 import logging
 
 from edfi_lms_harmonizer.helpers.argparser import MainArguments
+from edfi_lms_harmonizer.helpers.descriptors_validation import validate_lms_descriptors
 from edfi_lms_harmonizer.exceptions_reports import (
     create_exception_reports,
     print_summary,
@@ -14,7 +15,7 @@ from edfi_lms_harmonizer.harmonizer import (
     harmonize_users,
     harmonize_sections,
     harmonize_assignments,
-    harmonize_assignment_submissions
+    harmonize_assignment_submissions,
 )
 
 
@@ -40,14 +41,22 @@ def run(arguments: MainArguments) -> None:
     adapter = arguments.get_adapter()
     exceptions_report_directory = arguments.exceptions_report_directory
 
-    harmonize_users(adapter)
-    harmonize_sections(adapter)
-    harmonize_assignments(adapter)
-    harmonize_assignment_submissions(adapter)
+    missing_descriptors = validate_lms_descriptors(adapter)
+    there_are_missing_descriptors = len(missing_descriptors) != 0
 
-    if exceptions_report_directory is not None:
-        create_exception_reports(adapter, exceptions_report_directory)
+    if there_are_missing_descriptors:
+        message = "The following descriptors must be loaded to the database before running this tool"
+        logger.error(message)
+        for missing_descriptor in missing_descriptors:
+            logger.error(missing_descriptor)
+    else:
+        harmonize_users(adapter)
+        harmonize_sections(adapter)
+        harmonize_assignments(adapter)
+        harmonize_assignment_submissions(adapter)
 
-    print_summary(adapter)
+        if exceptions_report_directory is not None:
+            create_exception_reports(adapter, exceptions_report_directory)
+        print_summary(adapter)
 
     logger.info("Finishing the Ed-Fi LMS Harmonizer")
