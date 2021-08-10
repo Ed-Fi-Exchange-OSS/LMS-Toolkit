@@ -38,7 +38,7 @@ class When_getting_the_summary_report(TestCase):
     ) -> None:
         # Arrange
         adapter = Mock(spec=Adapter)
-        adapter.get_int.side_effect = [1, 0]
+        adapter.get_int.side_effect = [1, 0, 0, 0]
 
         # Act
         with self.assertLogs() as log:
@@ -51,7 +51,7 @@ class When_getting_the_summary_report(TestCase):
     ) -> None:
         # Arrange
         adapter = Mock(spec=Adapter)
-        adapter.get_int.side_effect = [0, 1]
+        adapter.get_int.side_effect = [0, 1, 0, 0]
 
         # Act
         with self.assertLogs() as log:

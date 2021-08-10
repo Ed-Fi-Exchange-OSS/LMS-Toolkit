@@ -84,6 +84,10 @@ def print_summary(adapter: Adapter) -> None:
             f"There are {assignment_descriptors_count} missing descriptors for Assignment Category "
             f"and {submission_descriptors_count} missing descriptors for Submission Status"
         )
+    else:
+        logger.info(
+            "There are no missing descriptors for Assignment Category or Submission Status in the database."
+        )
 
 
 @catch_exceptions
@@ -96,8 +100,14 @@ def create_exception_reports(adapter: Adapter, output_directory: str) -> None:
     users = pd.read_sql(QUERY_FOR_USERS, adapter.engine)
     users.to_csv(_get_file_path(output_directory, USERS), index=False)
 
-    logger.info("Writing the Assignment Category and Submission Status missing descriptors report")
+    logger.info(
+        "Writing the Assignment Category and Submission Status missing descriptors report"
+    )
     assignment_cat = pd.read_sql(QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS, adapter.engine)
-    submission_status = pd.read_sql(QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS, adapter.engine)
+    submission_status = pd.read_sql(
+        QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS, adapter.engine
+    )
     descriptors_report = pd.concat([assignment_cat, submission_status], axis=1)
-    descriptors_report.to_csv(_get_file_path(output_directory, DESCRIPTORS), index=False)
+    descriptors_report.to_csv(
+        _get_file_path(output_directory, DESCRIPTORS), index=False
+    )
