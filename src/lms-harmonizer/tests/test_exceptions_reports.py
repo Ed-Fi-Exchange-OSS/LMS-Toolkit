@@ -77,7 +77,9 @@ def describe_when_writing_exception_reports() -> None:
         # Arrange
         df_users = pd.DataFrame([{"a": 1}])
         df_sections = pd.DataFrame([{"b": 2}])
-        pd.read_sql = Mock(side_effect=[df_sections, df_users])
+        df_assignments = pd.DataFrame([{"c": 2}])
+        df_submissions = pd.DataFrame([{"d": 2}])
+        pd.read_sql = Mock(side_effect=[df_sections, df_users, df_assignments, df_submissions])
 
         # Act
         exceptions_reports.create_exception_reports(Mock(), OUTPUT_DIR)
@@ -120,3 +122,22 @@ def describe_when_writing_exception_reports() -> None:
         with open(os.path.join(dir, files[0])) as f:
             contents = f.read()
             assert contents == "b\n2\n"
+
+    def it_should_create_the_descriptors_directory(given_there_are_exceptions, fs) -> None:
+        assert os.path.exists(os.path.join(OUTPUT_DIR, "descriptors"))
+
+    def it_should_have_created_a_descriptors_csv_file(
+        given_there_are_exceptions, fs
+    ) -> None:
+        files = os.listdir(os.path.join(OUTPUT_DIR, "descriptors"))
+        assert len(files) == 1
+
+    def it_should_have_written_the_descriptors_to_the_csv_file(
+        given_there_are_exceptions, fs
+    ) -> None:
+        dir = os.path.join(OUTPUT_DIR, "descriptors")
+        files = os.listdir(dir)
+
+        with open(os.path.join(dir, files[0])) as f:
+            contents = f.read()
+            assert contents == "c,d\n2,2\n"
