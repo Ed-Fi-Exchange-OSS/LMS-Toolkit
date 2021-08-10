@@ -31,6 +31,7 @@ FROM
     """
 SECTIONS = "sections"
 USERS = "users"
+DESCRIPTORS = "descriptors"
 QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS = "SELECT distinct AssignmentCategory FROM lmsx.missing_assignment_category_descriptors"
 QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY = """
 SELECT
@@ -94,3 +95,9 @@ def create_exception_reports(adapter: Adapter, output_directory: str) -> None:
     logger.info("Writing the Users exception report")
     users = pd.read_sql(QUERY_FOR_USERS, adapter.engine)
     users.to_csv(_get_file_path(output_directory, USERS), index=False)
+
+    logger.info("Writing the Assignment Category and Submission Status missing descriptors report")
+    assignment_cat = pd.read_sql(QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS, adapter.engine)
+    submission_status = pd.read_sql(QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS, adapter.engine)
+    descriptors_report = pd.concat([assignment_cat, submission_status], axis=1)
+    descriptors_report.to_csv(_get_file_path(output_directory, DESCRIPTORS), index=False)
