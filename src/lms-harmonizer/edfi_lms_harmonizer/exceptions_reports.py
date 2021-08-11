@@ -31,6 +31,33 @@ FROM
     """
 SECTIONS = "sections"
 USERS = "users"
+DESCRIPTORS = "descriptors"
+QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS = """
+SELECT
+    distinct AssignmentCategory as MissingValue,
+    'AssignmentCategoryDescriptor' as Descriptor,
+    'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + SourceSystem as Namespace
+FROM lmsx.missing_assignment_category_descriptors
+"""
+QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY = """
+SELECT
+    count(distinct AssignmentCategory)
+FROM
+    lmsx.missing_assignment_category_descriptors
+    """
+QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS = """
+SELECT
+    distinct SubmissionStatus as MissingValue,
+    'SubmissionStatusDescriptor' as Descriptor,
+    'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + SourceSystem as Namespace
+FROM lmsx.missing_assignment_submission_status_descriptors
+"""
+QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY = """
+SELECT
+    count(distinct SubmissionStatus)
+FROM
+    lmsx.missing_assignment_submission_status_descriptors
+    """
 
 
 def _get_file_path(output_directory: str, report_type: str) -> str:
@@ -49,6 +76,12 @@ def _get_file_path(output_directory: str, report_type: str) -> str:
 def print_summary(adapter: Adapter) -> None:
     sections_count = adapter.get_int(QUERY_FOR_SECTION_SUMMARY)
     users_count = adapter.get_int(QUERY_FOR_USERS_SUMMARY)
+    assignment_descriptors_count = adapter.get_int(
+        QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY
+    )
+    submission_descriptors_count = adapter.get_int(
+        QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY
+    )
 
     if sections_count > 0 or users_count > 0:
         logger.warning(
@@ -57,6 +90,16 @@ def print_summary(adapter: Adapter) -> None:
         )
     else:
         logger.info("There are no unmatched sections or users in the database.")
+
+    if assignment_descriptors_count > 0 or submission_descriptors_count > 0:
+        logger.warning(
+            f"There are {assignment_descriptors_count} missing descriptors for Assignment Category "
+            f"and {submission_descriptors_count} missing descriptors for Submission Status"
+        )
+    else:
+        logger.info(
+            "There are no missing descriptors for Assignment Category or Submission Status in the database."
+        )
 
 
 @catch_exceptions
@@ -68,3 +111,15 @@ def create_exception_reports(adapter: Adapter, output_directory: str) -> None:
     logger.info("Writing the Users exception report")
     users = pd.read_sql(QUERY_FOR_USERS, adapter.engine)
     users.to_csv(_get_file_path(output_directory, USERS), index=False)
+
+    logger.info(
+        "Writing the Assignment Category and Submission Status missing descriptors report"
+    )
+    assignment_cat = pd.read_sql(QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS, adapter.engine)
+    submission_status = pd.read_sql(
+        QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS, adapter.engine
+    )
+    descriptors_report = pd.concat([assignment_cat, submission_status])
+    descriptors_report.to_csv(
+        _get_file_path(output_directory, DESCRIPTORS), index=False
+    )
