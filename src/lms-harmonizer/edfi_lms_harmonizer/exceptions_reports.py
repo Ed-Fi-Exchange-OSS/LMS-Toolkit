@@ -35,14 +35,14 @@ DESCRIPTORS = "descriptors"
 QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS = "SELECT distinct AssignmentCategory FROM lmsx.missing_assignment_category_descriptors"
 QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY = """
 SELECT
-    COUNT(1) as UnmatchedCount
+	count(distinct AssignmentCategory)
 FROM
     lmsx.missing_assignment_category_descriptors
     """
 QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS = "SELECT distinct SubmissionStatus FROM lmsx.missing_assignment_submission_status_descriptors"
 QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY = """
 SELECT
-    COUNT(1) as UnmatchedCount
+	count(distinct SubmissionStatus)
 FROM
     lmsx.missing_assignment_submission_status_descriptors
     """
