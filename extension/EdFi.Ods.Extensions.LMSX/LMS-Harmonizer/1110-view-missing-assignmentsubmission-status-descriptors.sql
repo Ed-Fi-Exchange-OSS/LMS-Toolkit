@@ -8,5 +8,5 @@ CREATE VIEW lmsx.missing_assignment_submission_status_descriptors AS
     WHERE NOT EXISTS(
             SELECT 1 FROM edfi.Descriptor assignmentCatDescriptor WHERE
                 assignmentCatDescriptor.CodeValue = lmsAssignmentSubmission.SubmissionStatus
-                AND assignmentCatDescriptor.Namespace = 'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + lmsAssignmentSubmission.SourceSystem
+                AND assignmentCatDescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + lmsAssignmentSubmission.SourceSystem
         )
