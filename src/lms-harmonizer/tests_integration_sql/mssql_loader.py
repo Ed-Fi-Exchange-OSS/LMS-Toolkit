@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 # from os import path
 
-from pyodbc import Connection
+from pyodbc import Connection, Cursor
 
 
 SCHOOL_ID = 149
@@ -455,7 +455,7 @@ INSERT INTO [lms].[Assignment]
      )
 """
     )
-    result = connection.execute("SELECT @@identity")
+    result: Cursor = connection.execute("SELECT @@identity")
 
     return int(result.fetchone()[0])
 

@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-
+from edfi_lms_harmonizer.migrator import migrate
 from edfi_lms_harmonizer.helpers.argparser import MainArguments
 from edfi_lms_harmonizer.exceptions_reports import (
     create_exception_reports,
@@ -38,6 +38,8 @@ def run(arguments: MainArguments) -> None:
     logger.info("Starting the Ed-Fi LMS Harmonizer")
 
     adapter = arguments.get_adapter()
+    migrate(adapter)
+
     exceptions_report_directory = arguments.exceptions_report_directory
 
     harmonize_users(adapter)

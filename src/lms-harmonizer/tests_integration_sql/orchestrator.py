@@ -164,24 +164,6 @@ def _load_lms_migration_scripts(config: ServerConfig):
     _load_ordered_scripts(config, _lms_migration_script_path())
 
 
-def _harmonizer_script_path() -> str:
-    return os.path.normpath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "..",
-            "..",
-            "extension",
-            "EdFi.Ods.Extensions.LMSX",
-            "LMS-Harmonizer",
-        )
-    )
-
-
-def _load_harmonizer_scripts(config: ServerConfig):
-    _load_ordered_scripts(config, _harmonizer_script_path())
-
-
 def create_snapshot(config: ServerConfig):
     temp_filename: str = os.path.join(os.getcwd(), "temp_harmonizer_snapshot")
     _execute_sql_against_master(
@@ -219,4 +201,3 @@ def initialize_database(config: ServerConfig):
     _load_edfi_scripts(config)
     _load_lms_extension_scripts(config)
     _load_lms_migration_scripts(config)
-    _load_harmonizer_scripts(config)
