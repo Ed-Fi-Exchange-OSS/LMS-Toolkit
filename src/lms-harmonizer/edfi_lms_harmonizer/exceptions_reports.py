@@ -32,17 +32,29 @@ FROM
 SECTIONS = "sections"
 USERS = "users"
 DESCRIPTORS = "descriptors"
-QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS = "SELECT distinct AssignmentCategory FROM lmsx.missing_assignment_category_descriptors"
+QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS = """
+SELECT
+    distinct AssignmentCategory as MissingValue,
+    'AssignmentCategoryDescriptor' as Descriptor,
+    'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + SourceSystem as Namespace
+FROM lmsx.missing_assignment_category_descriptors
+"""
 QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY = """
 SELECT
-	count(distinct AssignmentCategory)
+    count(distinct AssignmentCategory)
 FROM
     lmsx.missing_assignment_category_descriptors
     """
-QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS = "SELECT distinct SubmissionStatus FROM lmsx.missing_assignment_submission_status_descriptors"
+QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS = """
+SELECT
+    distinct SubmissionStatus as MissingValue,
+    'SubmissionStatusDescriptor' as Descriptor,
+    'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + SourceSystem as Namespace
+FROM lmsx.missing_assignment_submission_status_descriptors
+"""
 QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY = """
 SELECT
-	count(distinct SubmissionStatus)
+    count(distinct SubmissionStatus)
 FROM
     lmsx.missing_assignment_submission_status_descriptors
     """
@@ -107,7 +119,7 @@ def create_exception_reports(adapter: Adapter, output_directory: str) -> None:
     submission_status = pd.read_sql(
         QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS, adapter.engine
     )
-    descriptors_report = pd.concat([assignment_cat, submission_status], axis=1)
+    descriptors_report = pd.concat([assignment_cat, submission_status])
     descriptors_report.to_csv(
         _get_file_path(output_directory, DESCRIPTORS), index=False
     )

@@ -140,4 +140,4 @@ def describe_when_writing_exception_reports() -> None:
 
         with open(os.path.join(dir, files[0])) as f:
             contents = f.read()
-            assert contents == "c,d\n2,2\n"
+            assert contents == "c,d\n2.0,\n,2.0\n"
