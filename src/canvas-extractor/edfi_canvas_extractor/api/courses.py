@@ -2,16 +2,16 @@
 # Licensed to the Ed-Fi Alliance under one or more agreements.
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
+
 import logging
 from typing import List
 
 from pandas import DataFrame
 import sqlalchemy
 from opnieuw import retry
-
 from canvasapi import Canvas
-from canvasapi.account import Account
 from canvasapi.course import Course
+
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
@@ -42,18 +42,11 @@ def request_courses(canvas: Canvas, start_date: str, end_date: str) -> List[Cour
     """
     logger.info("Pulling course data")
 
-    results: List = []
-
-    accounts: List[Account] = canvas.get_accounts()
-    for account in accounts:
-        courses: List[Course] = account.get_courses(
-            state=["available", "completed"],
-            starts_before=end_date,
-            ends_after=start_date,
-        )
-        results.extend(courses)
-
-    return results
+    return canvas.get_courses(
+        state=["available", "completed"],
+        starts_before=end_date,
+        ends_after=start_date,
+    )
 
 
 def courses_synced_as_df(
