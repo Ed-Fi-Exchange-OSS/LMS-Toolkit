@@ -409,6 +409,11 @@ def sync_to_db_without_cleanup(
         Series(identity_columns).isin(resource_df.columns).all()
     ), "Identity columns missing from dataframe"
 
+    # In certain cases we can end up with duplicate records, for example
+    # in Canvas when a course belongs to a sub-account. De-duplicate the
+    # DataFrame based on the identity_columns
+    resource_df.drop_duplicates(subset=identity_columns, inplace=True)
+
     _create_sync_table_from_resource_df(
         resource_df, identity_columns, resource_name, sync_db
     )
