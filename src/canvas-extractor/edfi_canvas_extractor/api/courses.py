@@ -10,6 +10,7 @@ from pandas import DataFrame
 import sqlalchemy
 from opnieuw import retry
 from canvasapi import Canvas
+from canvasapi.paginated_list import PaginatedList
 from canvasapi.course import Course
 
 from edfi_lms_extractor_lib.api.resource_sync import (
@@ -26,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 @retry(**RETRY_CONFIG)  # type: ignore
-def request_courses(canvas: Canvas, start_date: str, end_date: str) -> List[Course]:
+def request_courses(canvas: Canvas, start_date: str, end_date: str) -> PaginatedList:
     """
     Fetch Course API data for all courses
 

@@ -59,6 +59,7 @@ def _get_courses(
     (courses, courses_df) = extract_courses(
         canvas, arguments.start_date, arguments.end_date, sync_db
     )
+
     results_store["courses"] = (courses, courses_df)
 
 
@@ -183,7 +184,7 @@ def run(arguments: MainArguments) -> None:
     succeeded = _get_courses(
         arguments, get_canvas_api(arguments.base_url, arguments.access_token), sync_db
     )
-    if not succeeded:
+    if not succeeded or results_store["courses"][1].empty:
         _break_execution("Courses")
 
     succeeded = _get_sections(arguments, sync_db)

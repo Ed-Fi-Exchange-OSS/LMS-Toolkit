@@ -63,7 +63,15 @@ def extract_courses(
     Tuple[List[Course], DataFrame]
         A tuple with the list of Canvas Course objects and the udm_courses dataframe.
     """
-    courses: List[Course] = coursesApi.request_courses(canvas, start_date, end_date)
+    courses = coursesApi.request_courses(canvas, start_date, end_date)
+
+    if not any(courses):
+        logger.warning(
+            "No courses found. If you have Canvas sub-accounts, you may want to check that your "
+            "user token was generated after assigning your user to all sub-accounts as an administrator."
+        )
+        return (courses, DataFrame())
+
     courses_df: DataFrame = coursesApi.courses_synced_as_df(courses, sync_db)
 
     return (courses, courses_df)
