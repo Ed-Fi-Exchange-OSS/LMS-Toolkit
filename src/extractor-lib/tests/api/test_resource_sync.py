@@ -116,8 +116,14 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
             "Courses", test_db_fixture, if_exists="append", index=False, chunksize=1000
         )
 
+        # Duplicating a course to verify that duplicates will not be inserted
+        dupe = courses_sync_df.iloc[0].copy()
+        courses_sync_df = courses_sync_df.append(dupe)
+
         # act
-        sync_to_db_without_cleanup(courses_sync_df, IDENTITY_COLUMNS, "Courses", test_db_fixture)
+        sync_to_db_without_cleanup(
+            courses_sync_df, IDENTITY_COLUMNS, "Courses", test_db_fixture
+        )
 
         return test_db_fixture
 
