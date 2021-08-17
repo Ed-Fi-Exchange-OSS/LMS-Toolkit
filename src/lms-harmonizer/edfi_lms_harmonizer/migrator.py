@@ -31,6 +31,8 @@ MIGRATION_SCRIPTS = [
     "0011_harmonize_assignment_submissions",
     "0012_view_missing_assignment_category_descriptors",
     "0013_view_missing_assignmentsubmission_status_descriptors",
+    "0014_view_missing_assignment_submissions",
+    "0015_view_missing_assignments",
 ]
 
 

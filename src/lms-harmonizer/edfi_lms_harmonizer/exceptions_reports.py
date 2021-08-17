@@ -11,53 +11,24 @@ import pandas as pd
 
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from edfi_sql_adapter.sql_adapter import Adapter
+from edfi_lms_harmonizer.sql_for_exceptions_report import (
+    QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS,
+    QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY,
+    QUERY_FOR_MISSING_ASSIGNMENTS,
+    QUERY_FOR_MISSING_ASSIGNMENT_SUBMISSIONS,
+    QUERY_FOR_SECTION_SUMMARY,
+    QUERY_FOR_SECTIONS,
+    QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS,
+    QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY,
+    QUERY_FOR_USERS,
+    QUERY_FOR_USERS_SUMMARY
+)
 
-
-logger = getLogger(__name__)
-
-QUERY_FOR_SECTIONS = "SELECT * FROM lmsx.exceptions_LMSSection"
-QUERY_FOR_SECTION_SUMMARY = """
-SELECT
-    COUNT(1) as UnmatchedCount
-FROM
-    lmsx.exceptions_LMSSection
-    """
-QUERY_FOR_USERS = "SELECT * FROM lmsx.exceptions_LMSUser"
-QUERY_FOR_USERS_SUMMARY = """
-SELECT
-    COUNT(1) as UnmatchedCount
-FROM
-    lmsx.exceptions_LMSUser
-    """
 SECTIONS = "sections"
 USERS = "users"
 DESCRIPTORS = "descriptors"
-QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS = """
-SELECT
-    distinct AssignmentCategory as MissingValue,
-    'AssignmentCategoryDescriptor' as Descriptor,
-    'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + SourceSystem as Namespace
-FROM lmsx.missing_assignment_category_descriptors
-"""
-QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY = """
-SELECT
-    count(distinct AssignmentCategory)
-FROM
-    lmsx.missing_assignment_category_descriptors
-    """
-QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS = """
-SELECT
-    distinct SubmissionStatus as MissingValue,
-    'SubmissionStatusDescriptor' as Descriptor,
-    'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + SourceSystem as Namespace
-FROM lmsx.missing_assignment_submission_status_descriptors
-"""
-QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY = """
-SELECT
-    count(distinct SubmissionStatus)
-FROM
-    lmsx.missing_assignment_submission_status_descriptors
-    """
+
+logger = getLogger(__name__)
 
 
 def _get_file_path(output_directory: str, report_type: str) -> str:
@@ -72,17 +43,9 @@ def _get_file_path(output_directory: str, report_type: str) -> str:
     return file_path
 
 
-@catch_exceptions
-def print_summary(adapter: Adapter) -> None:
-    sections_count = adapter.get_int(QUERY_FOR_SECTION_SUMMARY)
+def _print_summary_for_sections_and_users(adapter: Adapter) -> None:
     users_count = adapter.get_int(QUERY_FOR_USERS_SUMMARY)
-    assignment_descriptors_count = adapter.get_int(
-        QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY
-    )
-    submission_descriptors_count = adapter.get_int(
-        QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY
-    )
-
+    sections_count = adapter.get_int(QUERY_FOR_SECTION_SUMMARY)
     if sections_count > 0 or users_count > 0:
         logger.warning(
             f"There are {sections_count} unmatched sections and {users_count} "
@@ -91,6 +54,14 @@ def print_summary(adapter: Adapter) -> None:
     else:
         logger.info("There are no unmatched sections or users in the database.")
 
+
+def _print_summary_for_descriptors(adapter: Adapter) -> None:
+    assignment_descriptors_count = adapter.get_int(
+        QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY
+    )
+    submission_descriptors_count = adapter.get_int(
+        QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY
+    )
     if assignment_descriptors_count > 0 or submission_descriptors_count > 0:
         logger.warning(
             f"There are {assignment_descriptors_count} missing descriptors for Assignment Category "
@@ -100,6 +71,31 @@ def print_summary(adapter: Adapter) -> None:
         logger.info(
             "There are no missing descriptors for Assignment Category or Submission Status in the database."
         )
+
+
+def _print_summary_for_assignments_and_submissions(adapter: Adapter) -> None:
+    assignments_count = adapter.get_int(
+        QUERY_FOR_MISSING_ASSIGNMENTS
+    )
+    submissions_count = adapter.get_int(
+        QUERY_FOR_MISSING_ASSIGNMENT_SUBMISSIONS
+    )
+    if assignments_count > 0 or submissions_count > 0:
+        logger.warning(
+            f"There are {assignments_count} unmatched Assignments and"
+            f" {submissions_count} unmatched Submissions"
+        )
+    else:
+        logger.info(
+            "There are no missing descriptors for Assignment Category or Submission Status in the database."
+        )
+
+
+@catch_exceptions
+def print_summary(adapter: Adapter) -> None:
+    _print_summary_for_sections_and_users(adapter)
+    _print_summary_for_assignments_and_submissions(adapter)
+    _print_summary_for_descriptors(adapter)
 
 
 @catch_exceptions
