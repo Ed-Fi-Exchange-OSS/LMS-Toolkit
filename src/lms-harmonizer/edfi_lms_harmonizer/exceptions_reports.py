@@ -44,8 +44,8 @@ def _get_file_path(output_directory: str, report_type: str) -> str:
 
 
 def _print_summary_for_sections_and_users(adapter: Adapter) -> None:
-    sections_count = adapter.get_int(QUERY_FOR_SECTION_SUMMARY)
     users_count = adapter.get_int(QUERY_FOR_USERS_SUMMARY)
+    sections_count = adapter.get_int(QUERY_FOR_SECTION_SUMMARY)
     if sections_count > 0 or users_count > 0:
         logger.warning(
             f"There are {sections_count} unmatched sections and {users_count} "
@@ -53,24 +53,6 @@ def _print_summary_for_sections_and_users(adapter: Adapter) -> None:
         )
     else:
         logger.info("There are no unmatched sections or users in the database.")
-
-
-def _print_summary_for_descriptors(adapter: Adapter) -> None:
-    assignment_descriptors_count = adapter.get_int(
-        QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY
-    )
-    submission_descriptors_count = adapter.get_int(
-        QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY
-    )
-    if assignment_descriptors_count > 0 or submission_descriptors_count > 0:
-        logger.warning(
-            f"There are {assignment_descriptors_count} missing descriptors for Assignment Category "
-            f"and {submission_descriptors_count} missing descriptors for Submission Status"
-        )
-    else:
-        logger.info(
-            "There are no missing descriptors for Assignment Category or Submission Status in the database."
-        )
 
 
 def _print_summary_for_assignments_and_submissions(adapter: Adapter) -> None:
@@ -84,6 +66,24 @@ def _print_summary_for_assignments_and_submissions(adapter: Adapter) -> None:
         logger.warning(
             f"There are {assignments_count} unmatched Assignments and"
             f" {submissions_count} unmatched Submissions"
+        )
+    else:
+        logger.info(
+            "There are no missing descriptors for Assignment Category or Submission Status in the database."
+        )
+
+
+def _print_summary_for_descriptors(adapter: Adapter) -> None:
+    assignment_descriptors_count = adapter.get_int(
+        QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY
+    )
+    submission_descriptors_count = adapter.get_int(
+        QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY
+    )
+    if assignment_descriptors_count > 0 or submission_descriptors_count > 0:
+        logger.warning(
+            f"There are {assignment_descriptors_count} missing descriptors for Assignment Category "
+            f"and {submission_descriptors_count} missing descriptors for Submission Status"
         )
     else:
         logger.info(
