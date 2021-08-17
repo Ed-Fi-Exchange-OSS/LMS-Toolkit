@@ -44,8 +44,8 @@ def _get_file_path(output_directory: str, report_type: str) -> str:
 
 
 def _print_summary_for_sections_and_users(adapter: Adapter) -> None:
-    users_count = adapter.get_int(QUERY_FOR_USERS_SUMMARY)
     sections_count = adapter.get_int(QUERY_FOR_SECTION_SUMMARY)
+    users_count = adapter.get_int(QUERY_FOR_USERS_SUMMARY)
     if sections_count > 0 or users_count > 0:
         logger.warning(
             f"There are {sections_count} unmatched sections and {users_count} "
