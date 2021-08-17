@@ -113,6 +113,46 @@ class When_getting_the_summary_report(TestCase):
 
         assert "There are 0 unmatched Assignments and 1 unmatched Submissions" in str(log.output)
 
+    def test_given_there_is_one_unmatched_assignment_type_descriptor_then_it_should_report_a_warning(
+        self,
+    ) -> None:
+        # Arrange
+        adapter = Mock(spec=Adapter)
+        adapter.get_int.side_effect = [
+            0,  # output for users
+            0,  # output for sections
+            0,  # output for assignments
+            0,  # output for submissions
+            1,  # output for assignment type descriptor
+            0  # output for submission status descriptor
+        ]
+
+        # Act
+        with self.assertLogs() as log:
+            exceptions_reports.print_summary(adapter)
+
+        assert "There are 1 missing descriptors for Assignment Category and 0 missing descriptors for Submission Status" in str(log.output)
+
+    def test_given_there_is_one_unmatched_submission_status_descriptor_then_it_should_report_a_warning(
+        self,
+    ) -> None:
+        # Arrange
+        adapter = Mock(spec=Adapter)
+        adapter.get_int.side_effect = [
+            0,  # output for users
+            0,  # output for sections
+            0,  # output for assignments
+            0,  # output for submissions
+            0,  # output for assignment type descriptor
+            1  # output for submission status descriptor
+        ]
+
+        # Act
+        with self.assertLogs() as log:
+            exceptions_reports.print_summary(adapter)
+
+        assert "There are 0 missing descriptors for Assignment Category and 1 missing descriptors for Submission Status" in str(log.output)
+
 
 @pytest.fixture
 def init_fs(fs):
