@@ -69,7 +69,7 @@ def _print_summary_for_assignments_and_submissions(adapter: Adapter) -> None:
         )
     else:
         logger.info(
-            "There are no missing descriptors for Assignment Category or Submission Status in the database."
+            "There are no unmatched Assignments or Assignment submissions in the database."
         )
 
 
