@@ -14,8 +14,8 @@ from edfi_sql_adapter.sql_adapter import Adapter
 from edfi_lms_harmonizer.sql_for_exceptions_report import (
     QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS,
     QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY,
-    QUERY_FOR_MISSING_ASSIGNMENTS,
-    QUERY_FOR_MISSING_ASSIGNMENT_SUBMISSIONS,
+    QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS,
+    QUERY_FOR_ASSIGNMENT_EXCEPTIONS,
     QUERY_FOR_SECTION_SUMMARY,
     QUERY_FOR_SECTIONS,
     QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS,
@@ -52,15 +52,15 @@ def _print_summary_for_sections_and_users(adapter: Adapter) -> None:
             f"unmatched users in the database."
         )
     else:
-        logger.info("There are no unmatched sections or users in the database.")
+        logger.debug("There are no unmatched sections or users in the database.")
 
 
 def _print_summary_for_assignments_and_submissions(adapter: Adapter) -> None:
     assignments_count = adapter.get_int(
-        QUERY_FOR_MISSING_ASSIGNMENTS
+        QUERY_FOR_ASSIGNMENT_EXCEPTIONS
     )
     submissions_count = adapter.get_int(
-        QUERY_FOR_MISSING_ASSIGNMENT_SUBMISSIONS
+        QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS
     )
     if assignments_count > 0 or submissions_count > 0:
         logger.warning(
@@ -68,7 +68,7 @@ def _print_summary_for_assignments_and_submissions(adapter: Adapter) -> None:
             f" {submissions_count} unmatched Submissions"
         )
     else:
-        logger.info(
+        logger.debug(
             "There are no unmatched Assignments or Assignment submissions in the database."
         )
 
@@ -86,7 +86,7 @@ def _print_summary_for_descriptors(adapter: Adapter) -> None:
             f"and {submission_descriptors_count} missing descriptors for Submission Status"
         )
     else:
-        logger.info(
+        logger.debug(
             "There are no missing descriptors for Assignment Category or Submission Status in the database."
         )
 

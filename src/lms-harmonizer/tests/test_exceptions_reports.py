@@ -20,7 +20,7 @@ class When_getting_the_summary_report(TestCase):
     # case, the log messages are the entire point and therefore they should be
     # unit tested. Not using pytest-describe here because we need the log
     # context manager in regular pytest.
-    def test_given_there_are_no_exceptions_then_it_should_only_log_to_info(
+    def test_given_there_are_no_exceptions_then_it_should_log_it_to_debug(
         self,
     ) -> None:
         # Arrange
@@ -28,7 +28,7 @@ class When_getting_the_summary_report(TestCase):
         adapter.get_int.return_value = 0
 
         # Act
-        with self.assertLogs(level="INFO") as log:
+        with self.assertLogs(level="DEBUG") as log:
             exceptions_reports.print_summary(adapter)
 
         assert "There are no unmatched" in str(log.output)

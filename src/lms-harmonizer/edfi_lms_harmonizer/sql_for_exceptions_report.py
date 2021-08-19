@@ -51,16 +51,16 @@ FROM
     lmsx.missing_assignment_submission_status_descriptors
     """
 
-QUERY_FOR_MISSING_ASSIGNMENTS = """
+QUERY_FOR_ASSIGNMENT_EXCEPTIONS = """
 SELECT
     count(*)
 FROM
-    lmsx.missing_assignments
+    lmsx.assignments_exceptions
     """
 
-QUERY_FOR_MISSING_ASSIGNMENT_SUBMISSIONS = """
+QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS = """
 SELECT
     count(*)
 FROM
-    lmsx.missing_assignment_submissions
+    lmsx.assignment_submissions_exceptions
     """
