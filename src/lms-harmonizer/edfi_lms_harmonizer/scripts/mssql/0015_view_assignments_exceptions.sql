@@ -11,4 +11,4 @@ CREATE VIEW lmsx.assignments_exceptions AS
 			WHERE lmsxassignment.AssignmentIdentifier = lmsAssignment.SourceSystemIdentifier
 			AND Descriptor.CodeValue = lmsAssignment.SourceSystem
 		)
-		AND lmsAssignment.DeletedAt IS NOT NULL
+		AND lmsAssignment.DeletedAt IS NULL
