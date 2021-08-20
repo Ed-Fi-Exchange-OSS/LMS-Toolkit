@@ -4,8 +4,11 @@
 -- See the LICENSE and NOTICES files in the project root for more information.
 
 CREATE VIEW lmsx.assignments_exceptions AS
-    SELECT * FROM LMS.Assignment lmsAssignment
+    SELECT lmsAssignment.* FROM LMS.Assignment lmsAssignment
 	WHERE NOT EXISTS(
 			SELECT 1 FROM lmsx.Assignment lmsxassignment
-			where lmsxassignment.AssignmentIdentifier = lmsAssignment.SourceSystemIdentifier
+			INNER JOIN edfi.Descriptor on lmsxassignment.LMSSourceSystemDescriptorId = Descriptor.DescriptorId
+			WHERE lmsxassignment.AssignmentIdentifier = lmsAssignment.SourceSystemIdentifier
+			AND Descriptor.CodeValue = lmsAssignment.SourceSystem
 		)
+		AND lmsAssignment.DeletedAt IS NULL
