@@ -52,7 +52,11 @@ BEGIN
 			) as SourceSystemIdentifier,
 			edfisectionassociation.StudentUSI,
 			lmsxassignment.AssignmentIdentifier,
-			submsisionstatusdescriptor.DescriptorId,
+			CASE WHEN lmsxassignment.DueDateTime < GETDATE() THEN
+				latesubmsisionstatusdescriptor.DescriptorId
+			ELSE
+				upcomingsubmsisionstatusdescriptor.DescriptorId
+			END,
 			NULL as SubmissionDateTime,
 			NULL as EarnedPoints,
 			NULL as Grade,
@@ -84,7 +88,17 @@ BEGIN
 				submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
 			AND
 				submsisionstatusdescriptor.CodeValue = 'missing'
-		) as submsisionstatusdescriptor
+		) as latesubmsisionstatusdescriptor
+		CROSS APPLY (
+			SELECT
+				submsisionstatusdescriptor.DescriptorId
+			FROM
+				edfi.Descriptor submsisionstatusdescriptor
+			WHERE
+				submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
+			AND
+				submsisionstatusdescriptor.CodeValue = 'UpcomingSubmission'
+		) as upcomingsubmsisionstatusdescriptor
 		WHERE NOT EXISTS (
 			SELECT 1 FROM lms.AssignmentSubmission lmssubmission WHERE lmssubmission.AssignmentIdentifier = lmsassignment.AssignmentIdentifier
 				AND lmssubmission.LMSUserIdentifier = lmsstudent.LMSUserIdentifier
