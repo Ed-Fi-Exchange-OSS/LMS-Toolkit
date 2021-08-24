@@ -97,7 +97,7 @@ BEGIN
 			WHERE
 				submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
 			AND
-				submsisionstatusdescriptor.CodeValue = 'UpcomingSubmission'
+				submsisionstatusdescriptor.CodeValue = 'Upcoming'
 		) as upcomingsubmissionstatusdescriptor
 		WHERE NOT EXISTS (
 			SELECT 1 FROM lms.AssignmentSubmission lmssubmission WHERE lmssubmission.AssignmentIdentifier = lmsassignment.AssignmentIdentifier
