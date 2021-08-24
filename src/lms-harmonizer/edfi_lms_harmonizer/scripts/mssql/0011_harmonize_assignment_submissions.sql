@@ -103,7 +103,7 @@ BEGIN
 			SELECT 1 FROM lms.AssignmentSubmission lmssubmission WHERE lmssubmission.AssignmentIdentifier = lmsassignment.AssignmentIdentifier
 				AND lmssubmission.LMSUserIdentifier = lmsstudent.LMSUserIdentifier
 		)
-		AND (edfisectionassociation.EndDate IS NULL OR enddate > lmsassignment.DueDateTime)
+		AND (edfisectionassociation.EndDate IS NULL OR edfisectionassociation.EndDate > lmsassignment.DueDateTime)
 	END
 
 	INSERT INTO LMSX.AssignmentSubmission(
