@@ -527,7 +527,7 @@ def describe_when_there_are_past_assignments_without_submissions():
             LMSAssignmentSubmission = query(
                 connection, "SELECT * from [lmsx].[AssignmentSubmission]"
             )
-            # For now, we are only interested in creating missing submissions for Schoology
+            # We are only interested in creating missing submissions for Schoology
             if (source_system == "Schoology"):
                 assert len(LMSAssignmentSubmission) == 1
             else:
@@ -538,11 +538,12 @@ def describe_when_there_are_future_assignments_without_submissions():
     ASSIGNMENT_CATEGORY = "test_category"
     SIS_SECTION_ID = "sis_section_id"
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_SUBMISSION_STATUS = "missing"  # the stored procedure looks for a descriptor with codevalue = missing
+    ASSIGNMENT_SUBMISSION_STATUS_MISSING = "missing"  # the stored procedure looks for a descriptor with codevalue = missing
+    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
     USER_SIS_ID = "test_sis_id"
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
-    def it_should_not_create_missing_submissions_for_associated_students(
+    def it_should_create_missing_submissions_for_associated_students(
             test_db_config: ServerConfig, source_system: str):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -560,9 +561,16 @@ def describe_when_there_are_future_assignments_without_submissions():
             insert_descriptor(
                 connection,
                 submission_descriptor_namespace_for(source_system),
-                ASSIGNMENT_SUBMISSION_STATUS,
+                ASSIGNMENT_SUBMISSION_STATUS_MISSING,
             )
             insert_lmsx_assignmentsubmissionstatus_descriptor(connection, 3)
+
+            insert_descriptor(
+                connection,
+                submission_descriptor_namespace_for(source_system),
+                ASSIGNMENT_SUBMISSION_STATUS_UPCOMING,
+            )
+            insert_lmsx_assignmentsubmissionstatus_descriptor(connection, 4)
 
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
@@ -599,5 +607,8 @@ def describe_when_there_are_future_assignments_without_submissions():
             LMSAssignmentSubmission = query(
                 connection, "SELECT * from [lmsx].[AssignmentSubmission]"
             )
-
-            assert len(LMSAssignmentSubmission) == 0
+            # We are only creating records for Schoology
+            if (source_system == "Schoology"):
+                assert len(LMSAssignmentSubmission) == 1
+            else:
+                assert len(LMSAssignmentSubmission) == 0
