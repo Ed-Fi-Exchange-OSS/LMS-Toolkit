@@ -226,7 +226,8 @@ def extract_enrollments(
         local_enrollments: List[Enrollment] = list(
             enrollmentsApi.request_enrollments_for_section(section)
         )
-        if len(list(local_enrollments)) < 1:
+        filtered_enrollments = [enrollment for enrollment in local_enrollments if enrollment.enrollment_state == "active"]
+        if len(list(filtered_enrollments)) < 1:
             logger.info(
                 "Skipping enrollments for section id %s - No data returned by API",
                 section.id,
@@ -238,7 +239,7 @@ def extract_enrollments(
         enrollments_df = section_associationsMap.map_to_udm_section_associations(
             enrollments_df
         )
-        enrollments = enrollments + local_enrollments
+        enrollments = enrollments + filtered_enrollments
         udm_enrollments[str(section.id)] = enrollments_df
 
     return (enrollments, udm_enrollments)

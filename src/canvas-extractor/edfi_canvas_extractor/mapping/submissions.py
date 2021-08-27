@@ -25,6 +25,8 @@ def _get_status(row: pd.Series):
         return "missing"
     if row["graded_at"] is not None:
         return "graded"
+    if row["submitted_at"] is None:
+        return "upcoming"
     return "on-time"
 
 
