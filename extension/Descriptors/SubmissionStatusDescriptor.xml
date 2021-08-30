@@ -55,6 +55,12 @@
 		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas</Namespace>
 	</SubmissionStatusDescriptor>
     <SubmissionStatusDescriptor>
+		<CodeValue>Upcoming</CodeValue>
+		<ShortDescription>Upcoming</ShortDescription>
+		<Description>The submission has not been sent but there's still time to do so.</Description>
+		<Namespace>uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas</Namespace>
+	</SubmissionStatusDescriptor>
+    <SubmissionStatusDescriptor>
 		<CodeValue>SUBMISSION_STATE_UNSPECIFIED</CodeValue>
 		<ShortDescription>Unspecified</ShortDescription>
 		<Description>No state specified. This should never be returned.</Description>
