@@ -131,7 +131,7 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-C           |
             | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 92                                   |
+            | NumericGrade            | 91.84                                 |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
@@ -159,7 +159,7 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-C           |
             | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 92                                   |
+            | NumericGrade            | 91.84                                |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
@@ -186,7 +186,7 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-C           |
             | SubmissionDateKey       | 20540709                             |
             | EarnedPoints            | 80                                   |
-            | NumericGrade            | 82                                   |
+            | NumericGrade            | 81.63                                |
             | LetterGrade             | B--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
@@ -212,8 +212,8 @@ Feature: AssignmentSubmissionFact-C View
             | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-C           |
             | SubmissionDateKey       |                                      |
-            | EarnedPoints            |                                      |
-            | NumericGrade            |                                      |
+            | EarnedPoints            | 0                                    |
+            | NumericGrade            | 0.0                                  |
             | LetterGrade             |                                      |
             | IsPastDue               | 1                                    |
             | SubmittedLate           | 0                                    |
@@ -242,7 +242,7 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-S           |
             | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 92                                   |
+            | NumericGrade            | 91.84                                |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
@@ -269,44 +269,39 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-S           |
             | SubmissionDateKey       | 20540709                             |
             | EarnedPoints            | 80                                   |
-            | NumericGrade            | 82                                   |
+            | NumericGrade            | 81.63                                |
             | LetterGrade             | B--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
             | SubmittedOnTime         | 0                                    |
             | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
-    #
-    # TODO in LMS-354
-    # We don't have a descriptor for Schoology missing right now, therefore
-    # this test will never pass.
-    #
-    # Scenario: Missing or Past Due Happy Path (Schoology)
-    #    Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-S"
-    #         | AssignmentSubmissionIdentifier | pastdue-happy-path-s       |
-    #         | SubmissionStatus               | missing                    |
-    #         | SubmissionDateTime             |                            |
-    #         | EarnedPoints                   |                            |
-    #         | Grade                          |                            |
-    #         | LastModifiedDate               | 1054-07-09 9:12:34         |
-    #         | Namespace                      | uri://schoology            |
-    #     When I query for assignment submission "pastdue-happy-path-s"
-    #     Then there should be 1 submission records
-    #     And the submission record should have these values:
-    #         | AssignmentSubmissionKey | pastdue-happy-path-s                 |
-    #         | StudentSchoolKey        | first-student-54                     |
-    #         | SchoolKey               | 54                                   |
-    #         | StudentKey              | first-student                        |
-    #         | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
-    #         | AssignmentKey           | AssignmentSubmissionFact-C           |
-    #         | SubmissionDateKey       |                                      |
-    #         | EarnedPoints            |                                      |
-    #         | NumericGrade            |                                      |
-    #         | LetterGrade             |                                      |
-    #         | IsPastDue               | 1                                    |
-    #         | SubmittedLate           | 0                                    |
-    #         | SubmittedOnTime         | 0                                    |
-    #         | LastModifiedDate        | 1054-07-09 09:12:34                  |
+    Scenario: Missing or Past Due Happy Path (Schoology)
+       Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-S"
+            | AssignmentSubmissionIdentifier | pastdue-happy-path-s       |
+            | SubmissionStatus               | missing                    |
+            | SubmissionDateTime             |                            |
+            | EarnedPoints                   |                            |
+            | Grade                          |                            |
+            | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://schoology            |
+        When I query for assignment submission "pastdue-happy-path-s"
+        Then there should be 1 submission records
+        And the submission record should have these values:
+            | AssignmentSubmissionKey | pastdue-happy-path-s                 |
+            | StudentSchoolKey        | first-student-54                     |
+            | SchoolKey               | 54                                   |
+            | StudentKey              | first-student                        |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-C           |
+            | SubmissionDateKey       |                                      |
+            | EarnedPoints            | 0                                    |
+            | NumericGrade            | 0.0                                  |
+            | LetterGrade             |                                      |
+            | IsPastDue               | 1                                    |
+            | SubmittedLate           | 0                                    |
+            | SubmittedOnTime         | 0                                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
     Scenario: Do not report on Schoology drafts
         Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-S"
@@ -341,7 +336,7 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-G           |
             | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 92                                   |
+            | NumericGrade            | 91.84                                |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
@@ -368,7 +363,7 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-G           |
             | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 92                                   |
+            | NumericGrade            | 91.84                                |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
@@ -395,7 +390,7 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-G           |
             | SubmissionDateKey       | 20540709                             |
             | EarnedPoints            | 80                                   |
-            | NumericGrade            | 82                                   |
+            | NumericGrade            | 81.63                                |
             | LetterGrade             | B--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 1                                    |
@@ -421,8 +416,8 @@ Feature: AssignmentSubmissionFact-C View
             | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
             | AssignmentKey           | AssignmentSubmissionFact-G           |
             | SubmissionDateKey       |                                      |
-            | EarnedPoints            |                                      |
-            | NumericGrade            |                                      |
+            | EarnedPoints            | 0                                    |
+            | NumericGrade            | 0.0                                  |
             | LetterGrade             |                                      |
             | IsPastDue               | 1                                    |
             | SubmittedLate           | 0                                    |
