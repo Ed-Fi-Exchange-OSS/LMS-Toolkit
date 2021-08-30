@@ -19,13 +19,13 @@ def _get_date_formated(date) -> str:
 
 
 def _get_status(row: pd.Series):
-    if row["late"] == 1:
+    if row["late"] is True:
         return "late"
-    if row["missing"] == 1:
+    if row["missing"] is True:
         return "missing"
-    if row["graded_at"] is not None:
+    if pd.isnull(row["graded_at"]) is False:
         return "graded"
-    if row["submitted_at"] is None:
+    if pd.isnull(row["SubmissionDateTime"]) is False:
         return "upcoming"
     return "on-time"
 
