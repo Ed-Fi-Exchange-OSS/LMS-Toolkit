@@ -17,16 +17,27 @@ def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
         else ["-U", config.username, "-P", config.password]
     )
 
-    return ["-d", config.db_name, "-S", f"{config.server},{config.port}", *login]
+    ENABLE_QUOTED_IDENTIFIERS = "-I"
+    TERMINATE_ON_ERROR = "-b"
+    return [
+        ENABLE_QUOTED_IDENTIFIERS,
+        TERMINATE_ON_ERROR,
+        "-d",
+        config.db_name,
+        "-S",
+        f"{config.server},{config.port}",
+        *login,
+    ]
 
 
 def _run_command(arg_list: List[str]) -> None:
     print(f"Command arguments: {arg_list}")
     result = run(arg_list, stdout=PIPE, stderr=PIPE)
 
-    if result.returncode != 0 or result.stderr:
-        print(result.stdout)
-        raise Exception(result.stderr)
+    stdout = result.stdout.decode("UTF-8")
+
+    if result.returncode != 0 or result.stderr or "SQL exception" in stdout:
+        raise Exception(stdout)
 
 
 def _run_sqlcmd(config: ServerConfig, command: str, use_msdb: bool = False) -> None:
@@ -40,13 +51,12 @@ def _run_sqlcmd(config: ServerConfig, command: str, use_msdb: bool = False) -> N
             p if p != config.db_name else "msdb" for p in connection_params
         ]
 
-    _run_command(["sqlcmd.exe", "-b", *connection_params, "-Q", command])
+    _run_command(["sqlcmd.exe", *connection_params, "-Q", command])
 
 
 def _run_file_using_sqlcmd(config: ServerConfig, file_path: str) -> None:
-    _run_command(
-        ["sqlcmd.exe", "-b", *_sqlcmd_parameters_from(config), "-i", file_path]
-    )
+    print(f"Attempting to run SQL file {file_path}")
+    _run_command(["sqlcmd.exe", *_sqlcmd_parameters_from(config), "-i", file_path])
 
 
 def drop_database(config: ServerConfig) -> None:
@@ -113,19 +123,9 @@ def install_ds32_database(config: ServerConfig) -> None:
     _run_command(args)
 
 
-def install_lmsx_extension(config: ServerConfig) -> None:
+def run_ordered_sql_scripts(src_path: List[str], config: ServerConfig) -> None:
     parent = _get_parent_directory()
-    structure_path = os.path.join(
-        parent,
-        "..",
-        "..",
-        "extension",
-        "EdFi.Ods.Extensions.LMSX",
-        "Artifacts",
-        "MsSql",
-        "Structure",
-        "Ods",
-    )
+    structure_path = os.path.join(parent, "..", "..", *src_path)
 
     files = sorted(
         [
@@ -140,6 +140,27 @@ def install_lmsx_extension(config: ServerConfig) -> None:
         _run_file_using_sqlcmd(config, script)
 
 
+def install_lms_datastore(config: ServerConfig) -> None:
+    src_path = ["src", "lms-ds-loader", "edfi_lms_ds_loader", "scripts", "mssql"]
+
+    print("----> Installing LMS Data Store")
+    run_ordered_sql_scripts(src_path, config)
+
+
+def install_lmsx_extension(config: ServerConfig) -> None:
+    src_path = ["extension", "EdFi.Ods.Extensions.LMSX", "Artifacts", "MsSql", "Structure", "Ods"]
+
+    print("----> Installing LMSX Extension")
+    run_ordered_sql_scripts(src_path, config)
+
+
+def install_lms_harmonizer(config: ServerConfig) -> None:
+    src_path = ["src", "lms-harmonizer", "edfi_lms_harmonizer", "scripts", "MsSql"]
+
+    print("----> Installing LMS Harmonizer")
+    run_ordered_sql_scripts(src_path, config)
+
+
 def install_analytics_middle_tier(config: ServerConfig) -> None:
     args = [
         "dotnet",
@@ -152,4 +173,5 @@ def install_analytics_middle_tier(config: ServerConfig) -> None:
         "Engage",
     ]
 
+    print("----> Installing Analytics Middle Tier")
     _run_command(args)

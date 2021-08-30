@@ -17,6 +17,8 @@ from .db_prep import (
     install_ds32_database,
     install_analytics_middle_tier,
     install_lmsx_extension,
+    install_lms_datastore,
+    install_lms_harmonizer,
 )
 
 
@@ -80,7 +82,9 @@ def mssql_fixture(request) -> Iterator[engine.base.Engine]:
     # Warning - do not change the order of operations below
     drop_database(config)
     install_ds32_database(config)
+    install_lms_datastore(config)
     install_lmsx_extension(config)
+    install_lms_harmonizer(config)
 
     engine = create_engine(config.get_pyodbc_connection_string())
     load_lms_descriptors(engine)
