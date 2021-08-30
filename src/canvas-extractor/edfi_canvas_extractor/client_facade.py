@@ -198,7 +198,7 @@ def extract_submissions(
         for assignment_id, submissions_df in submissions_dfs_by_assignment_id.items():
             section_id = str(section.id)
             submissions_df = submissionsMap.map_to_udm_submissions(submissions_df, section_id)
-            export[(section_id, str(assignment_id))] = submissions_df
+            export[(section_id, f"{section_id}-{str(assignment_id)}")] = submissions_df
     return export
 
 
@@ -229,7 +229,7 @@ def extract_enrollments(
         filtered_enrollments = [enrollment for enrollment in local_enrollments if enrollment.enrollment_state == "active"]
         if len(list(filtered_enrollments)) < 1:
             logger.info(
-                "Skipping enrollments for section id %s - No data returned by API",
+                "There are no no active section associations for section id %s.",
                 section.id,
             )
             continue
