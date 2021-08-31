@@ -19,9 +19,9 @@ def _get_date_formated(date) -> str:
 
 
 def _get_status(row: pd.Series):
-    if row["late"] is True:
+    if row["late"] == 'True':
         return "late"
-    if row["missing"] is True:
+    if row["missing"] == 'True':
         return "missing"
     if pd.isnull(row["graded_at"]) is False:
         return "graded"
