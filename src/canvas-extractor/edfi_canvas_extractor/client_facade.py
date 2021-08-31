@@ -197,6 +197,8 @@ def extract_submissions(
 
         for assignment_id, submissions_df in submissions_dfs_by_assignment_id.items():
             section_id = str(section.id)
+            assignment_source_system_identifier = f"{section_id}-{str(assignment_id)}"
+            submissions_df["assignment_id"] = assignment_source_system_identifier
             submissions_df = submissionsMap.map_to_udm_submissions(submissions_df, section_id)
             export[(section_id, f"{section_id}-{str(assignment_id)}")] = submissions_df
     return export

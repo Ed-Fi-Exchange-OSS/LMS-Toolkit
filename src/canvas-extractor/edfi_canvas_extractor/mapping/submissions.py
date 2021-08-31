@@ -85,15 +85,13 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame, section_id: str) -> pd.
 
     df["submitted_at"] = df["submitted_at"].apply(_get_date_formated)
 
-    df["AssignmentSourceSystemIdentifier"] = df.apply(lambda row: f"{section_id}-{row.assignment_id}", axis=1)
-    df.drop(columns="assignment_id", inplace=True)
-
     df.rename(
         columns={
             "id": "SourceSystemIdentifier",
             "submitted_at": "SubmissionDateTime",
             "user_id": "LMSUserSourceSystemIdentifier",
             "grade": "Grade",
+            "assignment_id": "AssignmentSourceSystemIdentifier"
         },
         inplace=True,
     )
