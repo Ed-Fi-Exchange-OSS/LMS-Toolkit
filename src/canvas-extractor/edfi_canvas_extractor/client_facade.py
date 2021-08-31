@@ -229,7 +229,7 @@ def extract_enrollments(
         filtered_enrollments = [enrollment for enrollment in local_enrollments if enrollment.enrollment_state == "active"]
         if len(list(filtered_enrollments)) < 1:
             logger.info(
-                "There are no no active section associations for section id %s.",
+                "There are no active section associations for section id %s.",
                 section.id,
             )
             continue

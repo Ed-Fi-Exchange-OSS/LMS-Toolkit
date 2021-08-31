@@ -25,7 +25,7 @@ def _get_status(row: pd.Series):
         return "missing"
     if pd.isnull(row["graded_at"]) is False:
         return "graded"
-    if pd.isnull(row["SubmissionDateTime"]) is False:
+    if pd.isnull(row["SubmissionDateTime"]):
         return "upcoming"
     return "on-time"
 
