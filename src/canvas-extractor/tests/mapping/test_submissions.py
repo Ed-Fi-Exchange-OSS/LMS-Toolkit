@@ -23,8 +23,8 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
     def result() -> pd.DataFrame:
 
         submissions = """id,body,url,grade,score,submitted_at,submitted_at_date,assignment_id,user_id,submission_type,workflow_state,grade_matches_current_submission,graded_at,grader_id,attempt,cached_due_date,cached_due_date_date,excused,late_policy_status,points_deducted,grading_period_id,extra_attempts,posted_at,late,missing,seconds_late,entered_grade,entered_score,preview_url,anonymous_id,course_id,graded_at_date,posted_at_date,CreateDate,LastModifiedDate
-130,"<p><span>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>",,,,2020-09-14T17:23:46Z,2020-09-14 17:23:46+00:00,114,113,online_text_entry,submitted,True,,,1,2021-05-01T06:01:00Z,2021-05-01 06:01:00+00:00,,,,,,,False,False,0,,,https://edfialliance.instructure.com/courses/104/assignments/114/submissions/113?preview=1&version=1,Sg6Ki,104,,,2020-12-31 15:26:01.372034,2020-12-31 15:26:01.372034
-129,"<p><span>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>",,,,2020-09-14T17:26:42Z,2020-09-14 17:26:42+00:00,114,114,online_text_entry,submitted,True,,,1,2021-05-01T06:01:00Z,2021-05-01 06:01:00+00:00,,,,,,,False,False,0,,,https://edfialliance.instructure.com/courses/104/assignments/114/submissions/114?preview=1&version=1,6fcko,104,,,2020-12-31 15:26:01.372034,2020-12-31 15:26:01.372034"""
+130,"<p><span>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>",,,,2020-09-14T17:23:46Z,2020-09-14 17:23:46+00:00,1234567890-114,113,online_text_entry,submitted,True,,,1,2021-05-01T06:01:00Z,2021-05-01 06:01:00+00:00,,,,,,,False,False,0,,,https://edfialliance.instructure.com/courses/104/assignments/114/submissions/113?preview=1&version=1,Sg6Ki,104,,,2020-12-31 15:26:01.372034,2020-12-31 15:26:01.372034
+129,"<p><span>Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum.</span></p>",,,,2020-09-14T17:26:42Z,2020-09-14 17:26:42+00:00,1234567890-114,114,online_text_entry,submitted,True,,,1,2021-05-01T06:01:00Z,2021-05-01 06:01:00+00:00,,,,,,,False,False,0,,,https://edfialliance.instructure.com/courses/104/assignments/114/submissions/114?preview=1&version=1,6fcko,104,,,2020-12-31 15:26:01.372034,2020-12-31 15:26:01.372034"""
 
         lines = submissions.split("\n")
         section_associations = pd.DataFrame(
@@ -46,7 +46,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
     def it_should_map_id_to_SourceSystemIdentifier(result):
         assert result["SourceSystemIdentifier"].iloc[0] == "130"
 
-    def it_should_map_section_and_assignment_id_to_SourceSystemIdentifier(result):
+    def it_should_map_section_and_assignment_id_to_AssignmentSourceSystemIdentifier(result):
         assert result["AssignmentSourceSystemIdentifier"].iloc[0] == f"{SECTION_ID}-114"
 
     def it_should_map_uid_to_LMSUserSourceSystemIdentifier(result):
@@ -74,7 +74,7 @@ def describe_when_mapping_submission_using_read_data_example():
     "grade": "20",
     "score": 20.0,
     "submitted_at": "2021-03-16T16:20:10Z",
-    "assignment_id": 356597,
+    "assignment_id": "1234567890-356597",
     "user_id": 1163,
     "submission_type": "online_url",
     "workflow_state": "graded",
@@ -139,7 +139,7 @@ def describe_when_mapping_submission_using_read_data_example():
     def it_should_map_id_to_SourceSystemIdentifier(result):
         assert result["SourceSystemIdentifier"].iloc[0] == 7898567
 
-    def it_should_map_section_and_assignment_id_to_SourceSystemIdentifier(result):
+    def it_should_map_assignment_id_to_AssignmentSourceSystemIdentifier(result):
         assert result["AssignmentSourceSystemIdentifier"].iloc[0] == f"{SECTION_ID}-356597"
 
     def it_should_map_uid_to_LMSUserSourceSystemIdentifier(result):

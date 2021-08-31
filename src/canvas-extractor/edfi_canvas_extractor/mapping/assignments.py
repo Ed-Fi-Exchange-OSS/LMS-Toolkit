@@ -122,6 +122,8 @@ def map_to_udm_assignments(
         "LMSSectionSourceSystemIdentifier"
     ].astype("string")
 
+    assignments_df = assignments_df.drop_duplicates()
+
     # group by section id as a Dict of DataFrames
     result: Dict[str, DataFrame] = cast(
         Dict[str, DataFrame],
