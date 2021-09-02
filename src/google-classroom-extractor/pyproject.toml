@@ -22,7 +22,7 @@ xxhash = "^2.0.0"
 numpy = "1.19.3"
 errorhandler = "^2.0.1"
 ConfigArgParse = "^1.2.3"
-edfi-lms-extractor-lib = "1.0.0"
+edfi-lms-extractor-lib = "^1.1.0"
 edfi-lms-file-utils = "1.0.0"
 
 [tool.poetry.dev-dependencies]
