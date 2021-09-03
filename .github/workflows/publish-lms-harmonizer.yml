@@ -13,7 +13,7 @@ jobs:
     name: Run unit tests and publish
     runs-on: ubuntu-20.04
     env:
-        PACKAGE_NAME: edfi-lms-harmonizer
+        PACKAGE_NAME: lms-harmonizer
         SRC_DIR: src/lms-harmonizer
         LOCK_FILE: src/lms-harmonizer/poetry.lock
     steps:
