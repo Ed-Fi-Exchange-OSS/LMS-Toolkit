@@ -63,6 +63,10 @@ def derive_state(submission_row: Series) -> str:
     return api_state
 
 
+def _get_submission_datetime(submission_row: Series):
+    return submission_row["updateTime"] if submission_row["state"] == TURNED_IN_STATE else ""
+
+
 def submissions_to_assignment_submissions_dfs(
     submissions_df: DataFrame,
 ) -> Dict[Tuple[str, str], DataFrame]:
@@ -115,7 +119,7 @@ def submissions_to_assignment_submissions_dfs(
 
     submissions_df["Grade"] = submissions_df["assignedGrade"]
     submissions_df["SubmissionDateTime"] = submissions_df.apply(
-        lambda row: row["updateTime"] if row["state"] == TURNED_IN_STATE else "",
+        _get_submission_datetime,
         axis=1,
     )
     submissions_df["SubmissionStatus"] = submissions_df.apply(derive_state, axis=1)
