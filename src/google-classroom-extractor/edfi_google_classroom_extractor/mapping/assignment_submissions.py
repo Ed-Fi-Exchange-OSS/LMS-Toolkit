@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Dict, Tuple, Any
+from typing import Dict, List, Tuple, Any
 import ast
 
 from pandas import DataFrame, Series, isna
@@ -67,27 +67,36 @@ def derive_state(submission_row: Series) -> str:
 
 
 def _get_submission_datetime(submission_row: Series) -> str:
-    if submission_row["state"] == TURNED_IN_STATE or submission_row["state"] == RETURNED_STATE:
+    if (
+        submission_row["state"] == TURNED_IN_STATE
+        or submission_row["state"] == RETURNED_STATE
+    ):
         return submission_row["updateTime"]
 
-    status_history: list[dict] = ast.literal_eval(submission_row["submissionHistory"])
+    status_history: List[dict] = ast.literal_eval(submission_row["submissionHistory"])
     # this submission history also has a history of grades, but for this purpose, we only care
     # about stateHistory so we filter by stateHistory
-    status_history = [status_item['stateHistory'] for status_item in status_history if 'stateHistory' in status_item.keys()]
-    status_history = sorted(status_history, key=lambda k: k['stateTimestamp'], reverse=True)
+    status_history = [
+        status_item["stateHistory"]
+        for status_item in status_history
+        if "stateHistory" in status_item.keys()
+    ]
+    status_history = sorted(
+        status_history, key=lambda k: k["stateTimestamp"], reverse=True
+    )
 
     for status_record in status_history:
-        status_is_turned_in: bool = status_record['state'] == TURNED_IN_STATE
-        status_is_returned: bool = status_record['state'] == RETURNED_STATE
-        status_is_reclaimed_by_student: bool = status_record['state'] == RECLAIMED_STATE
+        status_is_turned_in: bool = status_record["state"] == TURNED_IN_STATE
+        status_is_returned: bool = status_record["state"] == RETURNED_STATE
+        status_is_reclaimed_by_student: bool = status_record["state"] == RECLAIMED_STATE
 
         if status_is_reclaimed_by_student:
-            return None
+            return ""
 
         if status_is_turned_in or status_is_returned:
-            return status_record['stateTimestamp']
+            return status_record["stateTimestamp"]
 
-    return None
+    return ""
 
 
 def submissions_to_assignment_submissions_dfs(
