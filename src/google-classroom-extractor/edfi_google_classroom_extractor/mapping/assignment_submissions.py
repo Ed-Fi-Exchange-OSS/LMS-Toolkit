@@ -67,8 +67,8 @@ def derive_state(submission_row: Series) -> str:
 
 
 def _get_submission_datetime(submission_row: Series) -> str:
-    if submission_row["state"] == TURNED_IN_STATE:
-        return submission_row["updateTime"]
+    if submission_row["state"] != TURNED_IN_STATE and submission_row["state"] != RETURNED_STATE:
+        return ""
 
     status_history: List[dict] = ast.literal_eval(submission_row["submissionHistory"])
     # this submission history also has a history of grades, but for this purpose, we only care
@@ -84,10 +84,6 @@ def _get_submission_datetime(submission_row: Series) -> str:
 
     for status_record in status_history:
         status_is_turned_in: bool = status_record["state"] == TURNED_IN_STATE
-        status_is_reclaimed_by_student: bool = status_record["state"] == RECLAIMED_STATE
-
-        if status_is_reclaimed_by_student:
-            return ""
 
         if status_is_turned_in:
             return status_record["stateTimestamp"]

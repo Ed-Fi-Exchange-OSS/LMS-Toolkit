@@ -20,7 +20,7 @@ ID = "3"
 USER_ID = "4"
 CREATION_TIME = "2005-05-05 00:00:00"
 UPDATE_TIME = "2006-06-06 00:00:00"
-STATE = "7"
+STATE = "TURNED_IN"
 LATE = "8"
 DRAFT_GRADE = "9"
 ASSIGNED_GRADE = "10"
@@ -337,7 +337,7 @@ def describe_when_mapping_submission_datetime():
                 "userId": [USER_ID],
                 "creationTime": [CREATION_TIME],
                 "updateTime": [UPDATE_TIME],
-                "state": [STATE],
+                "state": ["RECLAIMED_BY_STUDENT"],
                 "late": [LATE],
                 "draftGrade": [DRAFT_GRADE],
                 "assignedGrade": [ASSIGNED_GRADE],
@@ -378,7 +378,7 @@ def describe_when_mapping_submission_datetime():
                 "userId": [USER_ID],
                 "creationTime": [CREATION_TIME],
                 "updateTime": [UPDATE_TIME],
-                "state": [STATE],
+                "state": ["CREATED"],
                 "late": [LATE],
                 "draftGrade": [DRAFT_GRADE],
                 "assignedGrade": [ASSIGNED_GRADE],
@@ -433,7 +433,7 @@ def describe_when_mapping_submission_datetime():
                 "userId": [USER_ID],
                 "creationTime": [CREATION_TIME],
                 "updateTime": [UPDATE_TIME],
-                "state": [STATE],
+                "state": ["RETURNED"],
                 "late": [LATE],
                 "draftGrade": [DRAFT_GRADE],
                 "assignedGrade": [ASSIGNED_GRADE],
@@ -494,7 +494,7 @@ def describe_when_mapping_submission_datetime():
                 "userId": [USER_ID],
                 "creationTime": [CREATION_TIME],
                 "updateTime": [UPDATE_TIME],
-                "state": [STATE],
+                "state": ["TURNED_IN"],
                 "late": [LATE],
                 "draftGrade": [DRAFT_GRADE],
                 "assignedGrade": [ASSIGNED_GRADE],
