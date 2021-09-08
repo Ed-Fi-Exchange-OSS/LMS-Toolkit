@@ -7,7 +7,8 @@ from typing import Dict, Tuple
 import pytest
 from pandas import DataFrame
 from edfi_google_classroom_extractor.mapping.assignment_submissions import (
-    submissions_to_assignment_submissions_dfs, _get_submission_datetime
+    submissions_to_assignment_submissions_dfs,
+    _get_submission_datetime,
 )
 from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 from tests.helper import merged_dict

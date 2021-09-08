@@ -67,9 +67,7 @@ def derive_state(submission_row: Series) -> str:
 
 
 def _get_submission_datetime(submission_row: Series) -> str:
-    if (
-        submission_row["state"] == TURNED_IN_STATE
-    ):
+    if submission_row["state"] == TURNED_IN_STATE:
         return submission_row["updateTime"]
 
     status_history: List[dict] = ast.literal_eval(submission_row["submissionHistory"])
