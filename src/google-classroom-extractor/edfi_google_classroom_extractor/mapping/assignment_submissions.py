@@ -3,9 +3,12 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import Dict, Tuple, Any
+from typing import Dict, List, Tuple, Any
+import ast
+
 from pandas import DataFrame, Series, isna
 from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
+
 
 # States returned by API
 CREATED_STATE = "CREATED"
@@ -63,6 +66,31 @@ def derive_state(submission_row: Series) -> str:
     return api_state
 
 
+def _get_submission_datetime(submission_row: Series) -> str:
+    if submission_row["state"] != TURNED_IN_STATE and submission_row["state"] != RETURNED_STATE:
+        return ""
+
+    status_history: List[dict] = ast.literal_eval(submission_row["submissionHistory"])
+    # this submission history also has a history of grades, but for this purpose, we only care
+    # about stateHistory so we filter by stateHistory
+    status_history = [
+        status_item["stateHistory"]
+        for status_item in status_history
+        if "stateHistory" in status_item.keys()
+    ]
+    status_history = sorted(
+        status_history, key=lambda k: k["stateTimestamp"], reverse=True
+    )
+
+    for status_record in status_history:
+        status_is_turned_in: bool = status_record["state"] == TURNED_IN_STATE
+
+        if status_is_turned_in:
+            return status_record["stateTimestamp"]
+
+    return ""
+
+
 def submissions_to_assignment_submissions_dfs(
     submissions_df: DataFrame,
 ) -> Dict[Tuple[str, str], DataFrame]:
@@ -115,7 +143,7 @@ def submissions_to_assignment_submissions_dfs(
 
     submissions_df["Grade"] = submissions_df["assignedGrade"]
     submissions_df["SubmissionDateTime"] = submissions_df.apply(
-        lambda row: row["updateTime"] if row["state"] == TURNED_IN_STATE else "",
+        _get_submission_datetime,
         axis=1,
     )
     submissions_df["SubmissionStatus"] = submissions_df.apply(derive_state, axis=1)

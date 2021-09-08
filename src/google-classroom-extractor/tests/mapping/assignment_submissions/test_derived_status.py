@@ -32,7 +32,22 @@ DRAFT_GRADE = "9"
 ASSIGNED_GRADE = "10"
 ALTERNATE_LINK = "11"
 ASSOCIATED_WITH_DEVELOPER = "13"
-SUBMISSION_HISTORY = "14"
+SUBMISSION_HISTORY = """[
+        {
+          "stateHistory": {
+            "state": "CREATED",
+            "stateTimestamp": "2021-09-02T16:38:34.895Z",
+            "actorUserId": "114946936387309047192"
+          }
+        },
+        {
+          "stateHistory": {
+            "state": "TURNED_IN",
+            "stateTimestamp": "2021-10-02T16:38:34.895Z",
+            "actorUserId": "114946936387309047192"
+          }
+        }
+      ]"""
 CREATE_DATE = "2020-01-01"
 LAST_MODIFIED_DATE = "2020-01-02"
 
