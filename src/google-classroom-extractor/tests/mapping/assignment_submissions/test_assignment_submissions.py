@@ -7,7 +7,7 @@ from typing import Dict, Tuple
 import pytest
 from pandas import DataFrame
 from edfi_google_classroom_extractor.mapping.assignment_submissions import (
-    submissions_to_assignment_submissions_dfs,
+    submissions_to_assignment_submissions_dfs, _get_submission_datetime
 )
 from edfi_google_classroom_extractor.mapping.constants import SOURCE_SYSTEM
 from tests.helper import merged_dict
@@ -98,7 +98,7 @@ def describe_when_a_single_submission_with_unique_fields_is_mapped():
         assert row_dict["SourceSystem"] == SOURCE_SYSTEM
         assert row_dict["SourceSystemIdentifier"] == f"{COURSE_ID}-{COURSEWORK_ID}-{ID}"
         assert row_dict["SubmissionStatus"] == STATE
-        assert row_dict["SubmissionDateTime"] == ""
+        assert row_dict["SubmissionDateTime"] == "2021-10-02T16:38:34.895Z"
         assert row_dict["LMSUserSourceSystemIdentifier"] == USER_ID
         assert row_dict["SourceCreateDate"] == CREATION_TIME
         assert row_dict["SourceLastModifiedDate"] == UPDATE_TIME
@@ -251,3 +251,267 @@ def describe_when_submissions_in_different_assignments_are_mapped():
             coursework2_dict["SourceSystemIdentifier"]
             == f"{COURSE_ID}-{coursework2_id}-{submission2_id}"
         )
+
+
+def describe_when_mapping_submission_datetime():
+    def given_it_has_final_turned_in_status():
+        SUBMISSION_HISTORY_TURNED_IN = """[
+                {
+                "stateHistory": {
+                    "state": "CREATED",
+                    "stateTimestamp": "2021-09-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                },
+                {
+                "stateHistory": {
+                    "state": "TURNED_IN",
+                    "stateTimestamp": "2021-10-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                }
+            ]"""
+
+        submissions_df = DataFrame(
+            {
+                "courseId": [COURSE_ID],
+                "courseWorkId": [COURSEWORK_ID],
+                "id": [ID],
+                "userId": [USER_ID],
+                "creationTime": [CREATION_TIME],
+                "updateTime": [UPDATE_TIME],
+                "state": [STATE],
+                "late": [LATE],
+                "draftGrade": [DRAFT_GRADE],
+                "assignedGrade": [ASSIGNED_GRADE],
+                "alternateLink": [ALTERNATE_LINK],
+                "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
+                "submissionHistory": SUBMISSION_HISTORY_TURNED_IN,
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
+            }
+        )
+
+        def it_should_return_a_submission_date_matching_turned_in_record():
+            # act
+            submissions_df["SubmissionDateTime"] = submissions_df.apply(
+                _get_submission_datetime,
+                axis=1,
+            )
+
+            # assert
+            submission_dict = submissions_df.to_dict()[0]
+            assert submission_dict["SubmissionDateTime"] == "2021-10-02T16:38:34.895Z"
+
+    def given_it_has_final_reclaimed_by_student_status():
+        SUBMISSION_HISTORY_RECLAIMED_BY_STUDENT = """[
+                {
+                "stateHistory": {
+                    "state": "CREATED",
+                    "stateTimestamp": "2021-09-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                },
+                {
+                "stateHistory": {
+                    "state": "TURNED_IN",
+                    "stateTimestamp": "2021-09-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                },
+                {
+                "stateHistory": {
+                    "state": "RECLAIMED_BY_STUDENT",
+                    "stateTimestamp": "2021-10-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                }
+            ]"""
+
+        submissions_df = DataFrame(
+            {
+                "courseId": [COURSE_ID],
+                "courseWorkId": [COURSEWORK_ID],
+                "id": [ID],
+                "userId": [USER_ID],
+                "creationTime": [CREATION_TIME],
+                "updateTime": [UPDATE_TIME],
+                "state": [STATE],
+                "late": [LATE],
+                "draftGrade": [DRAFT_GRADE],
+                "assignedGrade": [ASSIGNED_GRADE],
+                "alternateLink": [ALTERNATE_LINK],
+                "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
+                "submissionHistory": SUBMISSION_HISTORY_RECLAIMED_BY_STUDENT,
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
+            }
+        )
+
+        def it_should_return_an_empty_submission_datetime_record():
+            # act
+            submissions_df["SubmissionDateTime"] = submissions_df.apply(
+                _get_submission_datetime,
+                axis=1,
+            )
+
+            # assert
+            submission_dict = submissions_df.to_dict()[0]
+            assert submission_dict["SubmissionDateTime"] == ""
+
+    def given_it_has_not_been_sent():
+        SUBMISSION_HISTORY_NOT_SENT = """[
+                {
+                "stateHistory": {
+                    "state": "CREATED",
+                    "stateTimestamp": "2021-09-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                }
+            ]"""
+        submissions_df = DataFrame(
+            {
+                "courseId": [COURSE_ID],
+                "courseWorkId": [COURSEWORK_ID],
+                "id": [ID],
+                "userId": [USER_ID],
+                "creationTime": [CREATION_TIME],
+                "updateTime": [UPDATE_TIME],
+                "state": [STATE],
+                "late": [LATE],
+                "draftGrade": [DRAFT_GRADE],
+                "assignedGrade": [ASSIGNED_GRADE],
+                "alternateLink": [ALTERNATE_LINK],
+                "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
+                "submissionHistory": SUBMISSION_HISTORY_NOT_SENT,
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
+            }
+        )
+
+        def it_should_return_an_empty_submission_datetime_record():
+            # act
+            submissions_df["SubmissionDateTime"] = submissions_df.apply(
+                _get_submission_datetime,
+                axis=1,
+            )
+
+            # assert
+            submission_dict = submissions_df.to_dict()[0]
+            assert submission_dict["SubmissionDateTime"] == ""
+
+    def given_it_has_been_graded():
+        SUBMISSION_HISTORY_TURNED_IN = """[
+                {
+                "stateHistory": {
+                    "state": "CREATED",
+                    "stateTimestamp": "2021-09-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                },
+                {
+                "stateHistory": {
+                    "state": "TURNED_IN",
+                    "stateTimestamp": "2021-10-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                },
+                {
+                "stateHistory": {
+                    "state": "RETURNED",
+                    "stateTimestamp": "2021-11-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                }
+            ]"""
+
+        submissions_df = DataFrame(
+            {
+                "courseId": [COURSE_ID],
+                "courseWorkId": [COURSEWORK_ID],
+                "id": [ID],
+                "userId": [USER_ID],
+                "creationTime": [CREATION_TIME],
+                "updateTime": [UPDATE_TIME],
+                "state": [STATE],
+                "late": [LATE],
+                "draftGrade": [DRAFT_GRADE],
+                "assignedGrade": [ASSIGNED_GRADE],
+                "alternateLink": [ALTERNATE_LINK],
+                "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
+                "submissionHistory": SUBMISSION_HISTORY_TURNED_IN,
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
+            }
+        )
+
+        def it_should_take_the_date_for_turned_in():
+            # act
+            submissions_df["SubmissionDateTime"] = submissions_df.apply(
+                _get_submission_datetime,
+                axis=1,
+            )
+
+            # assert
+            submission_dict = submissions_df.to_dict()[0]
+            assert submission_dict["SubmissionDateTime"] == "2021-10-02T16:38:34.895Z"
+
+    def given_it_has_been_sent_then_reclaimed_by_the_student_then_resent():
+        SUBMISSION_HISTORY_COMPLEX = """[
+                {
+                "stateHistory": {
+                    "state": "CREATED",
+                    "stateTimestamp": "2021-09-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                },
+                {
+                "stateHistory": {
+                    "state": "TURNED_IN",
+                    "stateTimestamp": "2021-10-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                },
+                {
+                "stateHistory": {
+                    "state": "RECLAIMED_BY_STUDENT",
+                    "stateTimestamp": "2021-11-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                },
+                {
+                "stateHistory": {
+                    "state": "TURNED_IN",
+                    "stateTimestamp": "2021-12-02T16:38:34.895Z",
+                    "actorUserId": "114946936387309047192"
+                }
+                }
+            ]"""
+
+        submissions_df = DataFrame(
+            {
+                "courseId": [COURSE_ID],
+                "courseWorkId": [COURSEWORK_ID],
+                "id": [ID],
+                "userId": [USER_ID],
+                "creationTime": [CREATION_TIME],
+                "updateTime": [UPDATE_TIME],
+                "state": [STATE],
+                "late": [LATE],
+                "draftGrade": [DRAFT_GRADE],
+                "assignedGrade": [ASSIGNED_GRADE],
+                "alternateLink": [ALTERNATE_LINK],
+                "associatedWithDeveloper": [ASSOCIATED_WITH_DEVELOPER],
+                "submissionHistory": SUBMISSION_HISTORY_COMPLEX,
+                "CreateDate": [CREATE_DATE],
+                "LastModifiedDate": [LAST_MODIFIED_DATE],
+            }
+        )
+
+        def it_should_take_the_last_date_of_turned_in_status():
+            # act
+            submissions_df["SubmissionDateTime"] = submissions_df.apply(
+                _get_submission_datetime,
+                axis=1,
+            )
+
+            # assert
+            submission_dict = submissions_df.to_dict()[0]
+            assert submission_dict["SubmissionDateTime"] == "2021-12-02T16:38:34.895Z"
