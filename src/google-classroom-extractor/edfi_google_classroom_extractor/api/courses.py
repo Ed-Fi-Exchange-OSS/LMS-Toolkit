@@ -193,7 +193,7 @@ def request_courses(resource: Resource) -> List[Dict[str, str]]:
     """
     return call_api(
         cast(ResourceType, resource).courses().list,
-        {},
+        {"courseStates": "ACTIVE"},
         "courses",
     )
 
