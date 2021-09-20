@@ -177,7 +177,7 @@ xxhash = ">=2.0.0,<3.0.0"
 
 [[package]]
 name = "edfi-sql-adapter"
-version = "1.0.0a6"
+version = "1.0.0"
 description = "Lightweight wrapper to facilitate connections to SQL databases"
 category = "main"
 optional = false
@@ -752,7 +752,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "9814d3ad56b2bd1916a05f2e60f5c33666f646856d15ee0a7620f95cdb175ce0"
+content-hash = "15c3c95b9256f9da05842f9b820baf6dce1db896cc19f17dc92a74953d27e8d1"
 
 [metadata.files]
 appdirs = [
@@ -903,6 +903,7 @@ cryptography = [
     {file = "cryptography-3.4.8-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:34dae04a0dce5730d8eb7894eab617d8a70d0c97da76b905de9efb7128ad7085"},
     {file = "cryptography-3.4.8-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1eb7bb0df6f6f583dd8e054689def236255161ebbcf62b226454ab9ec663746b"},
     {file = "cryptography-3.4.8-cp36-abi3-manylinux_2_24_x86_64.whl", hash = "sha256:9965c46c674ba8cc572bc09a03f4c649292ee73e1b683adb1ce81e82e9a6a0fb"},
+    {file = "cryptography-3.4.8-cp36-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:695104a9223a7239d155d7627ad912953b540929ef97ae0c34c7b8bf30857e89"},
     {file = "cryptography-3.4.8-cp36-abi3-win32.whl", hash = "sha256:21ca464b3a4b8d8e86ba0ee5045e103a1fcfac3b39319727bc0fc58c09c6aff7"},
     {file = "cryptography-3.4.8-cp36-abi3-win_amd64.whl", hash = "sha256:3520667fda779eb788ea00080124875be18f2d8f0848ec00733c0ec3bb8219fc"},
     {file = "cryptography-3.4.8-pp36-pypy36_pp73-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:d2a6e5ef66503da51d2110edf6c403dc6b494cc0082f85db12f54e9c5d4c3ec5"},
@@ -924,8 +925,8 @@ edfi-lms-extractor-lib = [
     {file = "edfi_lms_extractor_lib-1.1.0-py3-none-any.whl", hash = "sha256:c2ca94ae5c5e5cff11af72ee60ce7b7072822634eb31710ae84c47ff954d86d2"},
 ]
 edfi-sql-adapter = [
-    {file = "edfi-sql-adapter-1.0.0a6.tar.gz", hash = "sha256:b724f4ad80926114bb0d2108872f7330229f10bf402b730d713b416a65548dc9"},
-    {file = "edfi_sql_adapter-1.0.0a6-py3-none-any.whl", hash = "sha256:a24b91eb69a34d0dbac108891ac01a5396a029a3294d5b05c0c6397ee12a9667"},
+    {file = "edfi-sql-adapter-1.0.0.tar.gz", hash = "sha256:c72a6f52f20ccc1eb0d830e88e963f929040f743c6e1d943121ecd5b31bde631"},
+    {file = "edfi_sql_adapter-1.0.0-py3-none-any.whl", hash = "sha256:c858b2436b53fa49f568d1e1ff1b9d5ae0b53ba9c78931a2e9bbb596be4296b9"},
 ]
 errorhandler = [
     {file = "errorhandler-2.0.1-py2.py3-none-any.whl", hash = "sha256:dc6c54f5d9a4599e744b57aac2f925cce873188e9b02cae7c0eb120ee08a893f"},
