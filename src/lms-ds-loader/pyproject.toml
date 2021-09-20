@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-lms-ds-loader"
-version = "1.1.0"
+version = "1.1.1"
 description = "Ed-Fi LMS Toolkit Data Store Loader"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"

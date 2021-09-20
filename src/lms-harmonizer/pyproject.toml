@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-lms-harmonizer"
-version = "1.1.0"
+version = "1.1.1"
 description = "Ed-Fi LMS Toolkit Harmonizer"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
