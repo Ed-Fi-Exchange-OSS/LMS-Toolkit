@@ -78,7 +78,7 @@ Feature: AssignmentDim View
             | DueDateKey       | 10530709                             |
             | MaxPoints        | 99                                   |
             | SectionKey       | 53-abc-1053-1053-si-1053-Summer-1053 |
-            | GradingPeriodKey | r"[0-9]+-53-1053-07-01"              |
+            | GradingPeriodKey | r"[0-9]+-53-10530701"                |
             | LastModifiedDate | r"\d{4}-\d{2}-\d{2}"                 |
 
 
