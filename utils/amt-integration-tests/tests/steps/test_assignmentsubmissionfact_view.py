@@ -72,6 +72,14 @@ def test_pastdue_canvas() -> None:
 
 @scenario(
     "../features/assignmentsubmissionfact_view.feature",
+    "Upcoming Happy Path (Canvas)",
+)
+def test_upcoming_canvas() -> None:
+    pass
+
+
+@scenario(
+    "../features/assignmentsubmissionfact_view.feature",
     "On Time Happy Path (Schoology)",
 )
 def test_ontime_schoology() -> None:
@@ -125,7 +133,7 @@ def test_pastdue_google() -> None:
 
 @scenario(
     "../features/assignmentsubmissionfact_view.feature",
-    "Do not report on Google New submissions",
+    "New Happy Path (Google)",
 )
 def test_new_google() -> None:
     pass
@@ -133,7 +141,7 @@ def test_new_google() -> None:
 
 @scenario(
     "../features/assignmentsubmissionfact_view.feature",
-    "Do not report on Google Created submissions",
+    "Created Happy Path (Google)",
 )
 def test_created_google() -> None:
     pass
@@ -141,7 +149,7 @@ def test_created_google() -> None:
 
 @scenario(
     "../features/assignmentsubmissionfact_view.feature",
-    "Do not report on Google Reclaimed submissions",
+    "Reclaimed Happy Path (Google)",
 )
 def test_reclaimed_google() -> None:
     pass
