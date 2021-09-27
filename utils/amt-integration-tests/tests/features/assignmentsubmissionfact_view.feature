@@ -131,7 +131,7 @@ Feature: AssignmentSubmissionFact-C View
             | AssignmentKey           | AssignmentSubmissionFact-C           |
             | SubmissionDateKey       | 10540709                             |
             | EarnedPoints            | 90                                   |
-            | NumericGrade            | 91.84                                 |
+            | NumericGrade            | 91.84                                |
             | LetterGrade             | A--                                  |
             | IsPastDue               | 0                                    |
             | SubmittedLate           | 0                                    |
@@ -220,6 +220,32 @@ Feature: AssignmentSubmissionFact-C View
             | SubmittedOnTime         | 0                                    |
             | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
+    Scenario: Upcoming Happy Path (Canvas)
+        Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-C"
+            | AssignmentSubmissionIdentifier | upcoming-happy-path-c      |
+            | SubmissionStatus               | Upcoming                   |
+            | SubmissionDateTime             |                            |
+            | EarnedPoints                   |                            |
+            | Grade                          |                            |
+            | LastModifiedDate               | 1054-07-09 9:12:34         |
+            | Namespace                      | uri://canvas               |
+        When I query for assignment submission "upcoming-happy-path-c"
+        Then there should be 1 submission records
+        And the submission record should have these values:
+            | AssignmentSubmissionKey | upcoming-happy-path-c                |
+            | StudentSchoolKey        | first-student-54                     |
+            | SchoolKey               | 54                                   |
+            | StudentKey              | first-student                        |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-C           |
+            | SubmissionDateKey       |                                      |
+            | EarnedPoints            | 0                                    |
+            | NumericGrade            | 0.0                                  |
+            | LetterGrade             |                                      |
+            | IsPastDue               | 0                                    |
+            | SubmittedLate           | 0                                    |
+            | SubmittedOnTime         | 0                                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
 
     Scenario: On Time Happy Path (Schoology)
@@ -424,41 +450,86 @@ Feature: AssignmentSubmissionFact-C View
             | SubmittedOnTime         | 0                                    |
             | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
-    Scenario: Do not report on Google New submissions
+    Scenario: New Happy Path (Google)
         Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
-            | AssignmentSubmissionIdentifier | google-new                 |
-            | SubmissionStatus               | new                        |
+            | AssignmentSubmissionIdentifier | new-happy-path-g           |
+            | SubmissionStatus               | NEW                        |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
             | Grade                          |                            |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
             | Namespace                      | uri://google               |
-        When I query for assignment submission "google-new"
-        Then there should be 0 submission records
+        When I query for assignment submission "new-happy-path-g"
+        Then there should be 1 submission records
+        And the submission record should have these values:
+            | AssignmentSubmissionKey | new-happy-path-g                     |
+            | StudentSchoolKey        | first-student-54                     |
+            | SchoolKey               | 54                                   |
+            | StudentKey              | first-student                        |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-G           |
+            | SubmissionDateKey       |                                      |
+            | EarnedPoints            | 0                                    |
+            | NumericGrade            | 0.0                                  |
+            | LetterGrade             |                                      |
+            | IsPastDue               | 0                                    |
+            | SubmittedLate           | 0                                    |
+            | SubmittedOnTime         | 0                                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
-    Scenario: Do not report on Google Created submissions
+    Scenario: Created Happy Path (Google)
         Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
-            | AssignmentSubmissionIdentifier | google-created             |
-            | SubmissionStatus               | new                        |
+            | AssignmentSubmissionIdentifier | created-happy-path-g       |
+            | SubmissionStatus               | CREATED                    |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
             | Grade                          |                            |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
             | Namespace                      | uri://google               |
-        When I query for assignment submission "google-created"
-        Then there should be 0 submission records
+        When I query for assignment submission "created-happy-path-g"
+        Then there should be 1 submission records
+        And the submission record should have these values:
+            | AssignmentSubmissionKey | created-happy-path-g                 |
+            | StudentSchoolKey        | first-student-54                     |
+            | SchoolKey               | 54                                   |
+            | StudentKey              | first-student                        |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-G           |
+            | SubmissionDateKey       |                                      |
+            | EarnedPoints            | 0                                    |
+            | NumericGrade            | 0.0                                  |
+            | LetterGrade             |                                      |
+            | IsPastDue               | 0                                    |
+            | SubmittedLate           | 0                                    |
+            | SubmittedOnTime         | 0                                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
-    Scenario: Do not report on Google Reclaimed submissions
+    Scenario: Reclaimed Happy Path (Google)
         Given student "first-student" has a submission for assignment "AssignmentSubmissionFact-G"
-            | AssignmentSubmissionIdentifier | google-reclaimed           |
-            | SubmissionStatus               | reclaimed_by_student       |
+            | AssignmentSubmissionIdentifier | Reclaimed-happy-path-g     |
+            | SubmissionStatus               | RECLAIMED_BY_STUDENT       |
             | SubmissionDateTime             |                            |
             | EarnedPoints                   |                            |
             | Grade                          |                            |
             | LastModifiedDate               | 1054-07-09 9:12:34         |
             | Namespace                      | uri://google               |
-        When I query for assignment submission "google-reclaimed"
-        Then there should be 0 submission records
+        When I query for assignment submission "Reclaimed-happy-path-g"
+        Then there should be 1 submission records
+        And the submission record should have these values:
+            | AssignmentSubmissionKey | Reclaimed-happy-path-g               |
+            | StudentSchoolKey        | first-student-54                     |
+            | SchoolKey               | 54                                   |
+            | StudentKey              | first-student                        |
+            | SectionKey              | 54-abc-1054-1054-si-1054-Summer-1054 |
+            | AssignmentKey           | AssignmentSubmissionFact-G           |
+            | SubmissionDateKey       |                                      |
+            | EarnedPoints            | 0                                    |
+            | NumericGrade            | 0.0                                  |
+            | LetterGrade             |                                      |
+            | IsPastDue               | 0                                    |
+            | SubmittedLate           | 0                                    |
+            | SubmittedOnTime         | 0                                    |
+            | LastModifiedDate        | 1054-07-09 09:12:34                  |
 
 
 
