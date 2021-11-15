@@ -48,6 +48,9 @@ and the LMS DS Loader must be run once for each extractor's output directory.
 * This tool only supports SQL Server (tested on MSSQL 2019). PostgreSQL support
   will be added at a future data.
 
+## November 2021
+* Adding support for Users load on Postgres
+
 ## Getting Started
 
 1. SQL Server support requires the Microsoft ODBC 17 driver, which is newer than
