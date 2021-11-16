@@ -15,6 +15,7 @@ from edfi_sql_adapter.sql_adapter import (
     Adapter,
     create_mssql_adapter_with_integrated_security,
     create_mssql_adapter,
+    create_postgresql_adapter,
 )
 
 
@@ -47,8 +48,8 @@ class MainArguments:
         return 1433 if not self.port or self.port == 0 else self.port
 
     # For future use
-    # def _get_pgsql_server_port(self) -> int:
-    #     return 5432 if not self.port or self.port == 0 else self.port
+    def _get_pgsql_server_port(self) -> int:
+        return 5432 if not self.port or self.port == 0 else self.port
 
     def build_mssql_adapter(self, username: str, password: str) -> None:
         self.db_adapter = create_mssql_adapter(
@@ -59,6 +60,15 @@ class MainArguments:
             self._get_sql_server_port(),
             self.encrypt,
             self.trust_certificate,
+        )
+
+    def build_pgsql_adapter(self, username: str, password: str) -> None:
+        self.db_adapter = create_postgresql_adapter(
+            username,
+            password,
+            self.server,
+            self.db_name,
+            self._get_pgsql_server_port(),
         )
 
     def build_mssql_adapter_with_integrated_security(self) -> None:
@@ -216,10 +226,15 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         args_parsed.trust_certificate,
     )
 
-    if args_parsed.useintegratedsecurity:
+    if args_parsed.useintegratedsecurity and args_parsed.engine == DbEngine.MSSQL:
         arguments.build_mssql_adapter_with_integrated_security()
-    else:
+    elif args_parsed.engine == DbEngine.MSSQL:
         arguments.build_mssql_adapter(
+            args_parsed.username,
+            args_parsed.password,
+        )
+    elif args_parsed.engine == DbEngine.POSTGRESQL:
+        arguments.build_pgsql_adapter(
             args_parsed.username,
             args_parsed.password,
         )
