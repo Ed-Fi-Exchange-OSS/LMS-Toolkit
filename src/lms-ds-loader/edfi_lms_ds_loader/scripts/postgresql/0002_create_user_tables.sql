@@ -17,7 +17,7 @@ CREATE TABLE lms.LMSUser (
     CreateDate TIMESTAMP NOT NULL DEFAULT (now()),
     LastModifiedDate TIMESTAMP NOT NULL DEFAULT (now()),
     DeletedAt TIMESTAMP NULL,
-    EdFiStudentId UNIQUEIDENTIFIER null,
+    EdFiStudentId UUID null,
     CONSTRAINT LMSUser_PK PRIMARY KEY (
         LMSUserIdentifier
     )
@@ -39,7 +39,7 @@ CREATE TABLE lms.stg_LMSUser (
     SourceLastModifiedDate TIMESTAMP(7) NULL,
     CreateDate TIMESTAMP NOT NULL,
     LastModifiedDate TIMESTAMP NOT NULL,
-    EdFiStudentId UNIQUEIDENTIFIER null,
+    EdFiStudentId UUID null,
     CONSTRAINT stg_LMSUser_PK PRIMARY KEY (
         StagingId
     )

@@ -10,7 +10,7 @@ from typing import List
 from configargparse import ArgParser  # type: ignore
 
 from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
 from edfi_sql_adapter.sql_adapter import (
     Adapter,
     create_mssql_adapter_with_integrated_security,
@@ -81,7 +81,7 @@ class MainArguments:
         )
 
     def get_adapter(self) -> Adapter:
-        if self.engine != DbEngine.MSSQL:
+        if self.engine != DbEngine.MSSQL and self.engine != DbEngine.POSTGRESQL:
             raise NotImplementedError(
                 f"Support for '{self.engine}' has not yet been implemented."
             )
@@ -91,8 +91,8 @@ class MainArguments:
 
         return self.db_adapter
 
-    def get_db_operations_adapter(self) -> MssqlLmsOperations:
-        return MssqlLmsOperations(self.get_adapter())
+    def get_db_operations_adapter(self) -> SqlLmsOperations:
+        return SqlLmsOperations(self.get_adapter())
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
