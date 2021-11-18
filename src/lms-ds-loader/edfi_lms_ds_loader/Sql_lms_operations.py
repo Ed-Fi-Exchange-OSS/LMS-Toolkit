@@ -352,7 +352,7 @@ class SqlLmsOperations:
         statement = ""
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.insert_new_records_to_production_for_attendance_events(
-                table, insert_columns, select_columns)
+                insert_columns, select_columns)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -555,7 +555,7 @@ class SqlLmsOperations:
         """
         statement = ""
         if self.engine == DbEngine.MSSQL:
-            statement = MS_builder.get_processed_files(resource_name)
+            statement = MS_builder.add_processed_file(path, resource_name, rows)
 
         statement.strip()
 

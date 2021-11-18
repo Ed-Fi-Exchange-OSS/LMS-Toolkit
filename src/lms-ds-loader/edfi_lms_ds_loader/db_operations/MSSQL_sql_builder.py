@@ -187,38 +187,45 @@ WHERE NOT EXISTS (
 
 
 def insert_new_records_to_production_for_attendance_events(
-        table: str,
         insert_columns: str,
         select_columns: str) -> str:
     return f"""
 INSERT INTO
-    lms.{table}
+    lms.LMSUserAttendanceEvent
 (
-    AssignmentIdentifier,
-    LMSUserIdentifier,{insert_columns}
+    LMSSectionIdentifier,
+    LMSUserIdentifier,
+    LMSUserLMSSectionAssociationIdentifier,{insert_columns}
 )
 SELECT
-    Assignment.AssignmentIdentifier,
-    LMSUser.LMSUserIdentifier,{select_columns}
+    LMSSection.LMSSectionIdentifier,
+    LMSUser.LMSUserIdentifier,
+    LMSUserLMSSectionAssociation.LMSUserLMSSectionAssociationIdentifier,{select_columns}
 FROM
-    lms.stg_{table} as stg
+    lms.stg_LMSUserAttendanceEvent as stg
 INNER JOIN
-    lms.Assignment
+    lms.LMSSection
 ON
-    stg.AssignmentSourceSystemIdentifier = Assignment.SourceSystemIdentifier
+    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
 AND
-    stg.SourceSystem = Assignment.SourceSystem
+    stg.SourceSystem = LMSSection.SourceSystem
 INNER JOIN
     lms.LMSUser
 ON
     stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
 AND
     stg.SourceSystem = LMSUser.SourceSystem
+INNER JOIN
+    lms.LMSUserLMSSectionAssociation
+ON
+    LMSUser.LMSUserIdentifier = LMSUserLMSSectionAssociation.LMSUserIdentifier
+AND
+    LMSSection.LMSSectionIdentifier = LMSUserLMSSectionAssociation.LMSSectionIdentifier
 WHERE NOT EXISTS (
   SELECT
     1
   FROM
-    lms.{table}
+    lms.LMSUserAttendanceEvent
   WHERE
     SourceSystemIdentifier = stg.SourceSystemIdentifier
   AND
