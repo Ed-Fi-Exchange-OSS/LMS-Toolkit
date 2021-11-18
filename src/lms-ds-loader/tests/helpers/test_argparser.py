@@ -9,7 +9,7 @@ import pytest
 
 from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments, MainArguments
 from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
 
 
 PATH = "./lms_udm_files"
@@ -406,4 +406,4 @@ def describe_when_getting_db_operations_adapter() -> None:
             a.build_mssql_adapter_with_integrated_security()
             actual = a.get_db_operations_adapter()
 
-            assert type(actual) is MssqlLmsOperations
+            assert type(actual) is SqlLmsOperations

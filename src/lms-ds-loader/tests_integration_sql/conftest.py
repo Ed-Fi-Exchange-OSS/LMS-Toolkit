@@ -10,7 +10,7 @@ from pandas import DataFrame
 from sqlalchemy.engine.base import Connection, Transaction
 
 from edfi_lms_ds_loader.migrator import migrate
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
 
 from edfi_sql_adapter.sql_adapter import Adapter, create_mssql_adapter_with_integrated_security
 
@@ -39,13 +39,13 @@ def mssql_connection() -> Iterable[Connection]:
 @pytest.fixture(autouse=True)
 def test_mssql_db(
     mssql_connection: Connection, request
-) -> Tuple[MssqlLmsOperations, Connection]:
+) -> Tuple[SqlLmsOperations, Connection]:
     """
     Fixture that takes the set-up connection and wraps in a transaction. Transaction
     will be rolled-back automatically after each test.
 
     Returns both a plain transaction-wrapped Connection and a monkey-patched
-    MssqlLmsOperations that uses that Connection. They may be used interchangeably.
+    SqlLmsOperations that uses that Connection. They may be used interchangeably.
     """
     # Wrap connection in transaction
     transaction: Transaction = mssql_connection.begin()
@@ -54,7 +54,7 @@ def test_mssql_db(
     request.addfinalizer(lambda: transaction.rollback())
 
     # New version of _exec using our transaction
-    def replace_exec(self: MssqlLmsOperations, statement: str) -> int:
+    def replace_exec(self: SqlLmsOperations, statement: str) -> int:
         result = mssql_connection.execute(statement)
         if result:
             return int(result.rowcount)
@@ -62,7 +62,7 @@ def test_mssql_db(
 
     # New version of insert_into_staging using our transaction
     def replace_insert_into_staging(
-        self: MssqlLmsOperations, df: DataFrame, table: str
+        self: SqlLmsOperations, df: DataFrame, table: str
     ):
         df.to_sql(
             f"stg_{table}",
@@ -74,11 +74,11 @@ def test_mssql_db(
             chunksize=120,
         )
 
-    # Monkey-patch MssqlLmsOperations to use our transaction
-    MssqlLmsOperations._exec = replace_exec  # type:ignore
-    MssqlLmsOperations.insert_into_staging = replace_insert_into_staging  # type:ignore
+    # Monkey-patch SqlLmsOperations to use our transaction
+    SqlLmsOperations._exec = replace_exec  # type:ignore
+    SqlLmsOperations.insert_into_staging = replace_insert_into_staging  # type:ignore
 
     # Initialize monkey-patched adapter with a dummy engine, doesn't need a real one now
-    adapter: MssqlLmsOperations = MssqlLmsOperations(MagicMock())
+    adapter: SqlLmsOperations = SqlLmsOperations(MagicMock())
 
     return (adapter, mssql_connection)

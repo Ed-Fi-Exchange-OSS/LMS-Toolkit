@@ -3,11 +3,11 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from sqlalchemy.engine.base import Connection
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
 
 
-def main_arguments(adapter: MssqlLmsOperations, csv_path: str) -> MainArguments:
+def main_arguments(adapter: SqlLmsOperations, csv_path: str) -> MainArguments:
     args = MainArguments(
         csv_path,
         "mssql",
