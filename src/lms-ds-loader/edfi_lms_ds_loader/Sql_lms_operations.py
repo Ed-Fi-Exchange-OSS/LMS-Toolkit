@@ -530,7 +530,7 @@ class SqlLmsOperations:
             query = ""
             if self.engine == DbEngine.MSSQL:
                 query = MS_builder.get_processed_files(resource_name)
-            query.strip()
+            query = query.strip()
             result = pd.read_sql_query(query, self.db_adapter.engine)
             if "FullPath" in result:
                 return set(result["FullPath"])
@@ -557,7 +557,7 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.add_processed_file(path, resource_name, rows)
 
-        statement.strip()
+        statement = statement.strip()
 
         try:
             _ = self._exec(statement)
