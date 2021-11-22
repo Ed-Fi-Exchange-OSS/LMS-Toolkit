@@ -8,7 +8,7 @@ def truncate_stg_table(table: str) -> str:
 
 
 def drop_staging_natural_key_index(table: str) -> str:
-    return f"DROP INDEX ix_stg_{table.lower()}_natural_key;"
+    return f"DROP INDEX IF EXISTS lms.ix_stg_{table.lower()}_natural_key;"
 
 
 def recreate_staging_natural_key_index(table: str) -> str:

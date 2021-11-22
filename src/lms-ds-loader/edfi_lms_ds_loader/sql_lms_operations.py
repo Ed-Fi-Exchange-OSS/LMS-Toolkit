@@ -165,7 +165,7 @@ class SqlLmsOperations:
             statement = MS_builder.insert_new_records_to_production(table, column_string)
 
         if self.engine == DbEngine.POSTGRESQL:
-            self._exec(PG_builder.insert_new_records_to_production(table, column_string))
+            statement = PG_builder.insert_new_records_to_production(table, column_string)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -424,6 +424,9 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.copy_updates_to_production(table, update_columns)
 
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.copy_updates_to_production(table, update_columns)
+
         row_count = self._exec(statement)
         logger.debug(f"Updated {row_count} records in table `{table}`.")
 
@@ -557,6 +560,8 @@ class SqlLmsOperations:
             query = ""
             if self.engine == DbEngine.MSSQL:
                 query = MS_builder.get_processed_files(resource_name)
+            if self.engine == DbEngine.POSTGRESQL:
+                query = PG_builder.get_processed_files(resource_name)
             query = query.strip()
             result = pd.read_sql_query(query, self.db_adapter.engine)
             if "FullPath" in result:
