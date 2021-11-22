@@ -11,11 +11,12 @@ from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
 
 from edfi_sql_adapter.sql_adapter import Adapter, Statement
+from edfi_lms_ds_loader.helpers.constants import DbEngine
 
 
 logger = logging.getLogger(__name__)
 
-MIGRATION_SCRIPTS = [
+MSSQL_MIGRATION_SCRIPTS = [
     # CAUTION: these scripts will run in order from "top to bottom", so it is
     # critical to maintain the script order at all times.
     "0001_initialize_lms_database",
@@ -30,6 +31,14 @@ MIGRATION_SCRIPTS = [
     "0010_create_attendance_tables",
     "0011_remove_startdate_enddate_from_sectionassociation",
     "0012_add_mapping_columns_for_edfi_student_and_section",
+]
+
+PGSQL_MIGRATION_SCRIPTS = [
+    # CAUTION: these scripts will run in order from "top to bottom", so it is
+    # critical to maintain the script order at all times.
+    "0001_initialize_lms_database",
+    "0002_create_user_tables",
+    "0003_create_processed_files_table",
 ]
 
 
@@ -71,18 +80,26 @@ def _script_has_been_run(adapter: Adapter, migration: str) -> bool:
 def _record_migration_in_journal(adapter: Adapter, migration: str) -> None:
     statement = Statement(
         f"INSERT INTO lms.migrationjournal (script) values ('{migration}');",
-        "Updating migration journal table"
+        "Updating migration journal table",
     )
 
     adapter.execute([statement])
 
 
-def _lms_schema_exists(adapter: Adapter) -> bool:
+def _mssql_lms_schema_exists(adapter: Adapter) -> bool:
     statement = """
 select case when exists (
     select 1 from INFORMATION_SCHEMA.SCHEMATA where schema_name = 'lms'
 ) then 1 else 0 end
 """.strip()
+
+    return adapter.get_int(statement) == 1
+
+
+def _pgsql_lms_schema_exists(adapter: Adapter) -> bool:
+    statement = (
+        "SELECT 1 FROM information_schema.schemata WHERE schema_name = 'lms';"
+    )
 
     return adapter.get_int(statement) == 1
 
@@ -101,7 +118,7 @@ def _run_migration_script(adapter: Adapter, migration: str) -> None:
     logger.debug(f"Done with migration {migration}.")
 
 
-def migrate(adapter: Adapter) -> None:
+def migrate(adapter: Adapter, engine: str) -> None:
     """
     Runs database migration scripts for installing LMS table schema into the
     destination database.
@@ -113,10 +130,20 @@ def migrate(adapter: Adapter) -> None:
     """
     logger.info("Begin database auto-migration...")
 
-    if not _lms_schema_exists(adapter):
+    schema_exist = (
+        _mssql_lms_schema_exists
+        if DbEngine.MSSQL == engine
+        else _pgsql_lms_schema_exists
+    )
+
+    if not schema_exist(adapter):
         _run_migration_script(adapter, "0001_initialize_lms_database")
 
-    for migration in MIGRATION_SCRIPTS:
+    migrations_to_run = (
+        MSSQL_MIGRATION_SCRIPTS if DbEngine.MSSQL == engine else PGSQL_MIGRATION_SCRIPTS
+    )
+
+    for migration in migrations_to_run:
         # The following block of code does not belong in _run_migration_script
         # because it will throw an exception if the migration journal does not
         # exist, and therefore is not appropriate when initializing the LMS

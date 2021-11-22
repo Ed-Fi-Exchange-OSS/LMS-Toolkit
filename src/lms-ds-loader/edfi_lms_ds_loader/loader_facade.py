@@ -242,7 +242,7 @@ def run_loader(arguments: MainArguments) -> None:
     logger.info("Begin loading files into the LMS Data Store (DS)...")
 
     db_adapter = arguments.get_adapter()
-    migrator.migrate(db_adapter)
+    migrator.migrate(db_adapter, arguments.engine)
 
     csv_path = arguments.csv_path
 
