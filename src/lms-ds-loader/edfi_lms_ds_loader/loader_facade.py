@@ -21,7 +21,7 @@ from edfi_lms_file_utils import file_reader, file_repository
 from edfi_lms_file_utils.constants import Resources
 from edfi_lms_ds_loader import df_to_db
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
-from helpers.constants import DbEngine
+from edfi_lms_ds_loader.helpers.constants import DbEngine
 
 logger = logging.getLogger(__name__)
 
