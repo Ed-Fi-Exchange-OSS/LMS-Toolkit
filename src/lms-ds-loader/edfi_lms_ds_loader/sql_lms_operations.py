@@ -27,6 +27,8 @@ class SqlLmsOperations:
 
     Parameters
     ----------
+    sql_adapter: Adapter
+        The adapter to be used.
     engine: sqlalchemy.engine.Engine
         SQL Alchemy engine.
     """

@@ -118,7 +118,7 @@ def _run_migration_script(adapter: Adapter, migration: str) -> None:
     logger.debug(f"Done with migration {migration}.")
 
 
-def migrate(adapter: Adapter, engine: str) -> None:
+def migrate(adapter: Adapter, engine: str = DbEngine.MSSQL) -> None:
     """
     Runs database migration scripts for installing LMS table schema into the
     destination database.

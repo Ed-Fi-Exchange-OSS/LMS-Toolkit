@@ -246,16 +246,16 @@ def run_loader(arguments: MainArguments) -> None:
 
     csv_path = arguments.csv_path
 
-    mssql_operations = arguments.get_db_operations_adapter()
+    sql_operations = arguments.get_db_operations_adapter()
 
-    _load_users(csv_path, mssql_operations)
-    _load_sections(csv_path, mssql_operations)
+    _load_users(csv_path, sql_operations)
+    _load_sections(csv_path, sql_operations)
     # Important: run this immediately after loading sections, before loading other section-related resources
-    _load_section_associations(csv_path, mssql_operations)
-    _load_assignments(csv_path, mssql_operations)
-    _load_assignment_submissions(csv_path, mssql_operations)
-    _load_attendance_events(csv_path, mssql_operations)
-    _load_section_activities(csv_path, mssql_operations)
-    _load_system_activities(csv_path, mssql_operations)
+    _load_section_associations(csv_path, sql_operations)
+    _load_assignments(csv_path, sql_operations)
+    _load_assignment_submissions(csv_path, sql_operations)
+    _load_attendance_events(csv_path, sql_operations)
+    _load_section_activities(csv_path, sql_operations)
+    _load_system_activities(csv_path, sql_operations)
 
     logger.info("Done loading files into the LMS Data Store.")

@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, Mock
 from edfi_lms_ds_loader import migrator
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
 from edfi_lms_ds_loader.loader_facade import run_loader
+from edfi_lms_ds_loader.helpers.constants import DbEngine
 
 
 def describe_when_uploading_extractor_files() -> None:
@@ -20,6 +21,8 @@ def describe_when_uploading_extractor_files() -> None:
         def fixture(mocker) -> Tuple[Dict[str, MagicMock], Dict[str, pd.DataFrame]]:
             # Arrange
             args_mock = MagicMock(spec=MainArguments)
+            args_mock.engine = DbEngine.MSSQL
+
             db_engine_mock = MagicMock()
             args_mock.get_adapter.return_value = db_engine_mock
 
@@ -29,10 +32,12 @@ def describe_when_uploading_extractor_files() -> None:
             db_adapter_mock.get_processed_files = Mock(
                 return_value=set(["FullPathOne"])
             )
+            db_adapter_mock.engine = DbEngine.MSSQL
 
             args_mock.get_db_operations_adapter.return_value = db_adapter_mock
 
             migrator_mock = MagicMock(spec=migrator.migrate)
+            migrator_mock.engine = DbEngine.MSSQL
             mocker.patch("edfi_lms_ds_loader.migrator.migrate", migrator_mock)
 
             fake_df_users = pd.DataFrame({"generic_df": [1, 2, 3]})
@@ -211,7 +216,7 @@ def describe_when_uploading_extractor_files() -> None:
         def it_runs_migrations(mocker, fixture) -> None:
             mocks, _ = fixture
 
-            mocks["migrate"].assert_called_once_with(mocks["get_adapter"])
+            mocks["migrate"].assert_called_once_with(mocks["get_adapter"], 'mssql')
 
         def it_uploads_users(mocker, fixture) -> None:
             mocks, dfs = fixture

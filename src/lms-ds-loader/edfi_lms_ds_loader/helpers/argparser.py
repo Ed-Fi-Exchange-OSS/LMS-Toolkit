@@ -92,7 +92,7 @@ class MainArguments:
         return self.db_adapter
 
     def get_db_operations_adapter(self) -> SqlLmsOperations:
-        return SqlLmsOperations(self.get_adapter())
+        return SqlLmsOperations(self.get_adapter(), self.engine)
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
