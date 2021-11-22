@@ -449,6 +449,9 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.soft_delete_from_production(table, source_system)
 
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.soft_delete_from_production(table, source_system)
+
         row_count = self._exec(statement)
         logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
 
@@ -564,8 +567,8 @@ class SqlLmsOperations:
                 query = PG_builder.get_processed_files(resource_name)
             query = query.strip()
             result = pd.read_sql_query(query, self.db_adapter.engine)
-            if "FullPath" in result:
-                return set(result["FullPath"])
+            if "fullpath" in result:
+                return set(result["fullpath"])
             return set()
         except ProgrammingError as pe:
             logger.exception(pe)
@@ -588,6 +591,8 @@ class SqlLmsOperations:
         statement = ""
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.add_processed_file(path, resource_name, rows)
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.add_processed_file(path, resource_name, rows)
 
         statement = statement.strip()
 

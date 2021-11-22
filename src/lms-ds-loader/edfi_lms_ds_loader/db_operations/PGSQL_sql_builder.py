@@ -151,10 +151,10 @@ def copy_updates_to_production(
         update_columns: str) -> str:
     return f"""
 UPDATE
-    t
+    lms.{table}
 SET{update_columns}
 FROM
-    lms.{table} as t
+    lms.{table} t
 INNER JOIN
     lms.stg_{table} as stg
 ON
@@ -163,6 +163,10 @@ AND
     t.SourceSystemIdentifier = stg.SourceSystemIdentifier
 AND
     t.LastModifiedDate <> stg.LastModifiedDate
+WHERE
+    t.SourceSystemIdentifier = lms.{table}.SourceSystemIdentifier
+AND
+    t.SourceSystem = lms.{table}.SourceSystem
 """
 
 
@@ -171,9 +175,9 @@ def soft_delete_from_production(
         source_system: str) -> str:
     return f"""
 UPDATE
-    t
+    lms.{table}
 SET
-    t.DeletedAt = getdate()
+    DeletedAt = Now()
 FROM
     lms.{table} as t
 WHERE
@@ -191,6 +195,10 @@ AND
     t.DeletedAt IS NULL
 AND
     t.SourceSystem = '{source_system}'
+AND
+    lms.{table}.SourceSystem = t.SourceSystem
+AND
+    lms.{table}.SourceSystemIdentifier= t.SourceSystemIdentifier
 """
 
 
@@ -238,7 +246,7 @@ AND
 def get_processed_files(resource_name: str) -> str:
     return f"""
 SELECT
-    FullPath
+    fullpath
 FROM
     lms.ProcessedFiles
 WHERE
