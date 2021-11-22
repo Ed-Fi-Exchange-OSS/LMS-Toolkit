@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from sqlalchemy.engine.base import Connection
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
 
 

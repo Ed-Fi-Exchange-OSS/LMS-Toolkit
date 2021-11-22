@@ -10,7 +10,7 @@ from unittest.mock import Mock
 import pandas as pd
 from sqlalchemy.exc import ProgrammingError
 
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_sql_adapter import sql_adapter
 
 
@@ -758,7 +758,7 @@ WHERE
             # Typically we do not test the logging. In this case and another
             # below, logging was a core business requirement for a task, and
             # thus it makes sense to test that requirement.
-            logger = logging.getLogger("edfi_lms_ds_loader.Sql_lms_operations")
+            logger = logging.getLogger("edfi_lms_ds_loader.sql_lms_operations")
             mock_exc_logger = mocker.patch.object(logger, "exception")
 
             with pytest.raises(ProgrammingError):
@@ -805,7 +805,7 @@ VALUES
 
             mocker.patch.object(SqlLmsOperations, "_exec", side_effect=__raise)
 
-            logger = logging.getLogger("edfi_lms_ds_loader.Sql_lms_operations")
+            logger = logging.getLogger("edfi_lms_ds_loader.sql_lms_operations")
             mock_exc_logger = mocker.patch.object(logger, "exception")
 
             with pytest.raises(ProgrammingError):

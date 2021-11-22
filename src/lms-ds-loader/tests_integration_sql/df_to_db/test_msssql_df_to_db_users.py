@@ -5,7 +5,7 @@
 from typing import Tuple, List
 from pandas import DataFrame
 from sqlalchemy.engine.base import Connection
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.df_to_db import upload_users
 
 USER_NAMES = ["Alice", "Bob", "Charlie"]

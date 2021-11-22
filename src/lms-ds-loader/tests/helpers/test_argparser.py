@@ -9,7 +9,7 @@ import pytest
 
 from edfi_lms_ds_loader.helpers.argparser import parse_main_arguments, MainArguments
 from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 
 
 PATH = "./lms_udm_files"

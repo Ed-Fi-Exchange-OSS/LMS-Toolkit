@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 from typing import Tuple
 from sqlalchemy.engine.base import Connection
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.loader_facade import run_loader
 from tests_integration_sql.mssql_e2e_helper import (
     insert_assignment,

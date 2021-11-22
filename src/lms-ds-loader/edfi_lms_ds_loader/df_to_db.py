@@ -9,7 +9,7 @@ from typing import Callable, List
 import pandas as pd
 
 from edfi_lms_ds_loader.helpers.constants import Table
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.helpers import assignment_splitter
 
 logger = logging.getLogger(__name__)

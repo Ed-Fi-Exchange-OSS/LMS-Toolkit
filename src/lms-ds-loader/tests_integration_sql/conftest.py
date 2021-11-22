@@ -10,7 +10,7 @@ from pandas import DataFrame
 from sqlalchemy.engine.base import Connection, Transaction
 
 from edfi_lms_ds_loader.migrator import migrate
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 
 from edfi_sql_adapter.sql_adapter import Adapter, create_mssql_adapter_with_integrated_security
 

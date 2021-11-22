@@ -10,7 +10,7 @@ from typing import List
 from configargparse import ArgParser  # type: ignore
 
 from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_sql_adapter.sql_adapter import (
     Adapter,
     create_mssql_adapter_with_integrated_security,

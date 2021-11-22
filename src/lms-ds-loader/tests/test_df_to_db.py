@@ -11,7 +11,7 @@ import pytest
 
 from edfi_lms_ds_loader.helpers.constants import Table
 from edfi_lms_ds_loader import df_to_db
-from edfi_lms_ds_loader.Sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 
 SOURCE_SYSTEM = "google"
 
