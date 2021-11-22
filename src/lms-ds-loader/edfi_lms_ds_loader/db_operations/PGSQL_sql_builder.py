@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 def truncate_stg_table(table: str) -> str:
-    return f"TRUNCATE TABLE lms.stg_{table};"
+    return f"TRUNCATE TABLE lms.stg_{table} RESTART IDENTITY;"
 
 
 def drop_staging_natural_key_index(table: str) -> str:

@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session as sa_Session
 from edfi_lms_ds_loader.helpers.constants import DbEngine, Table
 from edfi_sql_adapter.sql_adapter import Adapter
 from edfi_lms_ds_loader.db_operations import MSSQL_sql_builder as MS_builder
+from edfi_lms_ds_loader.db_operations import PGSQL_sql_builder as PG_builder
 
 logger = logging.getLogger(__name__)
 SUPPORTED_ENGINES = [DbEngine.POSTGRESQL, DbEngine.MSSQL]
@@ -38,6 +39,7 @@ class SqlLmsOperations:
         self.engine = engine
         if self.engine not in SUPPORTED_ENGINES:
             logger.error(f"The engine {self.engine} is not supported.")
+        # TODO: remove this message when we reach the full support for PG
         if self.engine == DbEngine.POSTGRESQL:
             logger.info(
                 f"The support for the engine {self.engine} is a work in progress," +
@@ -71,9 +73,11 @@ class SqlLmsOperations:
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        # Note: for postgresql we'll want `TRUNCATE TABLE {staging} RESTART IDENTITY`
         if self.engine == DbEngine.MSSQL:
             self._exec(MS_builder.truncate_stg_table(table))
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.truncate_stg_table(table))
 
     def disable_staging_natural_key_index(self, table: str) -> None:
         """
@@ -91,6 +95,9 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             self._exec(MS_builder.disable_staging_natural_key_index(table))
 
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.drop_staging_natural_key_index(table))
+
     def enable_staging_natural_key_index(self, table: str) -> None:
         """
         Re-builds the natural key index on the staging table.
@@ -105,6 +112,9 @@ class SqlLmsOperations:
 
         if self.engine == DbEngine.MSSQL:
             self._exec(MS_builder.enable_staging_natural_key_index(table))
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.recreate_staging_natural_key_index(table))
 
     def insert_into_staging(self, df: pd.DataFrame, table: str) -> None:
         """
@@ -152,6 +162,9 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.insert_new_records_to_production(table, column_string)
 
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.insert_new_records_to_production(table, column_string))
+
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
 
@@ -184,6 +197,10 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.insert_new_records_to_production_for_user_relation(
                 table, insert_columns, select_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.insert_new_records_to_production_for_user_relation(
+                table, insert_columns, select_columns))
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -221,6 +238,10 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.insert_new_records_to_production_for_section_relation(
                 table, insert_columns, select_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.insert_new_records_to_production_for_section_relation(
+                table, insert_columns, select_columns))
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -268,6 +289,10 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.insert_new_records_to_production_for_section_and_user_relation(
                 table, insert_columns, select_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.insert_new_records_to_production_for_section_and_user_relation(
+                table, insert_columns, select_columns))
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
