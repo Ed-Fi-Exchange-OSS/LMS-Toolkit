@@ -132,8 +132,13 @@ class SqlLmsOperations:
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
+        # PostgreSQL requires lower case column names, but our
+        # code uses upper case. Temporarily convert, then restore
+        proper_names = df.columns
+
+        df.columns = proper_names.str.lower()
         df.to_sql(
-            f"stg_{table}",
+            f"stg_{table}".lower(),
             self.db_adapter.engine,
             schema="lms",
             if_exists="append",
@@ -141,6 +146,7 @@ class SqlLmsOperations:
             method="multi",
             chunksize=120,
         )
+        df.columns = proper_names
         logger.debug(f"All records have been loaded into staging table 'stg_{table}'")
 
     def insert_new_records_to_production(self, table: str, columns: List[str]) -> None:
