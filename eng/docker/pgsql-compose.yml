@@ -1,0 +1,18 @@
+services:
+  postgresql:
+    image: postgres:12-alpine
+    container_name: lms_toolkit_pgsql
+    environment:
+      POSTGRES_USER: "${PGSQL_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "postgres"
+      PG_PORT: 5432
+    ports:
+      - ${PGSQL_PORT}:5432
+    volumes:
+      - lms_toolkit_pgsql-data:/var/lib/postgresql/data
+
+volumes:
+  lms_toolkit_pgsql-data:
+     driver: local
+     name: lms_toolkit_pgsql-data
