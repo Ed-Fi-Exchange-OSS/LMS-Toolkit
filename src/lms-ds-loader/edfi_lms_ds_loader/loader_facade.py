@@ -250,8 +250,8 @@ def run_loader(arguments: MainArguments) -> None:
     sql_operations = arguments.get_db_operations_adapter()
 
     _load_users(csv_path, sql_operations)
+    _load_sections(csv_path, sql_operations)
     if (arguments.engine == DbEngine.MSSQL):
-        _load_sections(csv_path, sql_operations)
         # Important: run this immediately after loading sections, before loading other section-related resources
         _load_section_associations(csv_path, sql_operations)
         _load_assignments(csv_path, sql_operations)

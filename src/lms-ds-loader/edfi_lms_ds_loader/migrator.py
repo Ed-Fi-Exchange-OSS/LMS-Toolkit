@@ -39,6 +39,7 @@ PGSQL_MIGRATION_SCRIPTS = [
     "0001_initialize_lms_database",
     "0002_create_user_tables",
     "0003_create_processed_files_table",
+    "0004_create_section_tables"
 ]
 
 
