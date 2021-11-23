@@ -10,11 +10,12 @@ from typing import List
 from configargparse import ArgParser  # type: ignore
 
 from edfi_lms_ds_loader.helpers.constants import DbEngine, LOG_LEVELS
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_sql_adapter.sql_adapter import (
     Adapter,
     create_mssql_adapter_with_integrated_security,
     create_mssql_adapter,
+    create_postgresql_adapter,
 )
 
 
@@ -47,8 +48,8 @@ class MainArguments:
         return 1433 if not self.port or self.port == 0 else self.port
 
     # For future use
-    # def _get_pgsql_server_port(self) -> int:
-    #     return 5432 if not self.port or self.port == 0 else self.port
+    def _get_pgsql_server_port(self) -> int:
+        return 5432 if not self.port or self.port == 0 else self.port
 
     def build_mssql_adapter(self, username: str, password: str) -> None:
         self.db_adapter = create_mssql_adapter(
@@ -61,6 +62,15 @@ class MainArguments:
             self.trust_certificate,
         )
 
+    def build_pgsql_adapter(self, username: str, password: str) -> None:
+        self.db_adapter = create_postgresql_adapter(
+            username,
+            password,
+            self.server,
+            self.db_name,
+            self._get_pgsql_server_port(),
+        )
+
     def build_mssql_adapter_with_integrated_security(self) -> None:
         self.db_adapter = create_mssql_adapter_with_integrated_security(
             self.server,
@@ -71,7 +81,7 @@ class MainArguments:
         )
 
     def get_adapter(self) -> Adapter:
-        if self.engine != DbEngine.MSSQL:
+        if self.engine != DbEngine.MSSQL and self.engine != DbEngine.POSTGRESQL:
             raise NotImplementedError(
                 f"Support for '{self.engine}' has not yet been implemented."
             )
@@ -81,8 +91,8 @@ class MainArguments:
 
         return self.db_adapter
 
-    def get_db_operations_adapter(self) -> MssqlLmsOperations:
-        return MssqlLmsOperations(self.get_adapter())
+    def get_db_operations_adapter(self) -> SqlLmsOperations:
+        return SqlLmsOperations(self.get_adapter(), self.engine)
 
 
 def parse_main_arguments(args_in: List[str]) -> MainArguments:
@@ -216,10 +226,15 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         args_parsed.trust_certificate,
     )
 
-    if args_parsed.useintegratedsecurity:
+    if args_parsed.useintegratedsecurity and args_parsed.engine == DbEngine.MSSQL:
         arguments.build_mssql_adapter_with_integrated_security()
-    else:
+    elif args_parsed.engine == DbEngine.MSSQL:
         arguments.build_mssql_adapter(
+            args_parsed.username,
+            args_parsed.password,
+        )
+    elif args_parsed.engine == DbEngine.POSTGRESQL:
+        arguments.build_pgsql_adapter(
             args_parsed.username,
             args_parsed.password,
         )

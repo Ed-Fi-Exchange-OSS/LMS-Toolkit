@@ -43,10 +43,9 @@ and the LMS DS Loader must be run once for each extractor's output directory.
     </div>
     </details>
 
-## Limitations as of April 2021
+## Limitations as of November 2021
 
-* This tool only supports SQL Server (tested on MSSQL 2019). PostgreSQL support
-  will be added at a future data.
+* PostgreSQL support currently ony covers the Users file. Other files will soon be supported.
 
 ## Getting Started
 
@@ -132,6 +131,19 @@ integration pytests.
 
 To run only the _unit tests_: `poetry run pytest tests`. To run only the
 integration tests, `poetry run pytest tests_integration_sql`.
+
+#### Docker
+
+If you do not have local installations of Microsoft SQL Server (MSSQL) or
+PostgreSQL, then you can try running them in Docker. See the
+[eng/docker](../../eng/docker/) folder for more information. Integration tests
+currently only support MSSQL.
+
+To create the test database database after starting the MSSQL Docker container:
+
+```bash
+docker exec lms_toolkit_mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P '<a good password>' -Q 'create database test_integration_lms_toolkit'
+```
 
 #### Writing New Tests
 

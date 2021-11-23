@@ -10,7 +10,7 @@ from unittest.mock import Mock
 import pandas as pd
 from sqlalchemy.exc import ProgrammingError
 
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_sql_adapter import sql_adapter
 
 
@@ -18,7 +18,7 @@ def describe_when_truncating_staging_table() -> None:
     def describe_given_invalid_input() -> None:
         def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
-                MssqlLmsOperations(Mock()).truncate_staging_table("   ")
+                SqlLmsOperations(Mock()).truncate_staging_table("   ")
 
     def describe_given_valid_input() -> None:
         def it_should_issue_truncate_statement(mocker) -> None:
@@ -29,10 +29,10 @@ def describe_when_truncating_staging_table() -> None:
 
             # Explanation: the raw SQLAlchemy execution call is wrapped in
             # method `_exec`, which we can easily bypass here for unit testing.
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).truncate_staging_table(table)
+            SqlLmsOperations(Mock()).truncate_staging_table(table)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -42,7 +42,7 @@ def describe_when_disabling_natural_key_index() -> None:
     def describe_given_table_name_is_whitespace() -> None:
         def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
-                MssqlLmsOperations(Mock()).disable_staging_natural_key_index("   ")
+                SqlLmsOperations(Mock()).disable_staging_natural_key_index("   ")
 
     def describe_given_valid_input() -> None:
         def it_issues_truncate_statement(mocker) -> None:
@@ -50,10 +50,10 @@ def describe_when_disabling_natural_key_index() -> None:
             expected = "ALTER INDEX IX_stg_user_Natural_Key on lms.stg_user DISABLE;"
 
             # Arrange
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).disable_staging_natural_key_index(table)
+            SqlLmsOperations(Mock()).disable_staging_natural_key_index(table)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -63,7 +63,7 @@ def describe_when_enabling_natural_key_index() -> None:
     def describe_given_table_name_is_whitespace() -> None:
         def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
-                MssqlLmsOperations(Mock()).enable_staging_natural_key_index("   ")
+                SqlLmsOperations(Mock()).enable_staging_natural_key_index("   ")
 
     def describe_given_valid_input() -> None:
         def it_issues_alter__index_statement(mocker) -> None:
@@ -71,10 +71,10 @@ def describe_when_enabling_natural_key_index() -> None:
             expected = "ALTER INDEX IX_stg_user_Natural_Key on lms.stg_user REBUILD;"
 
             # Arrange
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).enable_staging_natural_key_index(table)
+            SqlLmsOperations(Mock()).enable_staging_natural_key_index(table)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -86,7 +86,7 @@ def describe_when_inserting_into_staging() -> None:
             df = pd.DataFrame()
 
             with pytest.raises(AssertionError):
-                MssqlLmsOperations(Mock()).insert_into_staging(df, "   ")
+                SqlLmsOperations(Mock()).insert_into_staging(df, "   ")
 
     def describe_given_valid_arguments() -> None:
         def it_then_use_pandas_to_load_into_the_db(mocker) -> None:
@@ -97,7 +97,7 @@ def describe_when_inserting_into_staging() -> None:
             engine = adapter_mock.engine = Mock()
 
             # Act
-            MssqlLmsOperations(adapter_mock).insert_into_staging(df, table)
+            SqlLmsOperations(adapter_mock).insert_into_staging(df, table)
 
             # Assert
             # adapter_mock.assert_called()
@@ -116,12 +116,12 @@ def describe_when_updating_records() -> None:
     def describe_given_table_is_whitespace() -> None:
         def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
-                MssqlLmsOperations(Mock()).copy_updates_to_production("   ", ["a"])
+                SqlLmsOperations(Mock()).copy_updates_to_production("   ", ["a"])
 
     def describe_give_columns_is_empty_list() -> None:
         def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
-                MssqlLmsOperations(Mock()).copy_updates_to_production("t", list())
+                SqlLmsOperations(Mock()).copy_updates_to_production("t", list())
 
     def describe_given_valid_input() -> None:
         def it_issues_insert_where_not_exists_statement(mocker) -> None:
@@ -147,10 +147,10 @@ AND
 """
 
             # Arrange
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
+            SqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -185,10 +185,10 @@ AND
 """
 
             # Arrange
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
+            SqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -224,10 +224,10 @@ AND
 """
 
             # Arrange
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
+            SqlLmsOperations(Mock()).copy_updates_to_production(table, columns)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -237,7 +237,7 @@ def describe_when_soft_deleting_a_record() -> None:
     def describe_given_table_is_whitespace() -> None:
         def it_raises_an_error() -> None:
             with pytest.raises(AssertionError):
-                MssqlLmsOperations(Mock()).soft_delete_from_production("   ", "a")
+                SqlLmsOperations(Mock()).soft_delete_from_production("   ", "a")
 
     def describe_given_valid_input() -> None:
         def it_updates_records_that_are_not_in_the_staging_table(mocker) -> None:
@@ -269,10 +269,10 @@ AND
 """
 
             # Arrange
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).soft_delete_from_production(table, source_system)
+            SqlLmsOperations(Mock()).soft_delete_from_production(table, source_system)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -282,7 +282,7 @@ def describe_given_assignment_submission_types() -> None:
     def describe_when_inserting_new_records() -> None:
         def it_issues_insert_statement(mocker) -> None:
             # Arrange
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             expected = """
 INSERT INTO lms.AssignmentSubmissionType (
@@ -314,7 +314,7 @@ WHERE
 """
 
             # Act
-            MssqlLmsOperations(Mock()).insert_new_submission_types()
+            SqlLmsOperations(Mock()).insert_new_submission_types()
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -322,7 +322,7 @@ WHERE
     def describe_when_soft_deleting_records() -> None:
         def it_issues_update_statement(mocker) -> None:
             # Arrange
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             source_system = "Canvas"
             expected = """
@@ -354,7 +354,7 @@ AND
 """
 
             # Act
-            MssqlLmsOperations(Mock()).soft_delete_removed_submission_types(
+            SqlLmsOperations(Mock()).soft_delete_removed_submission_types(
                 source_system
             )
 
@@ -367,14 +367,14 @@ def describe_when_inserting_new_records() -> None:
         def describe_given_table_is_whitespace() -> None:
             def it_raises_an_error() -> None:
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations(Mock()).insert_new_records_to_production(
+                    SqlLmsOperations(Mock()).insert_new_records_to_production(
                         "   ", ["a"]
                     )
 
         def describe_given_columns_is_an_empty_list() -> None:
             def it_raises_an_error() -> None:
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations(Mock()).insert_new_records_to_production(
+                    SqlLmsOperations(Mock()).insert_new_records_to_production(
                         "table", list()
                     )
 
@@ -408,10 +408,10 @@ WHERE
 """
 
                 # Arrange
-                exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+                exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
                 # Act
-                MssqlLmsOperations(Mock()).insert_new_records_to_production(
+                SqlLmsOperations(Mock()).insert_new_records_to_production(
                     table, columns
                 )
 
@@ -459,10 +459,10 @@ WHERE NOT EXISTS (
                 "SourceSystemIdentifier",
             ]
 
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_section_relation(
+            SqlLmsOperations(Mock()).insert_new_records_to_production_for_section_relation(
                 TABLE, COLUMNS
             )
 
@@ -510,10 +510,10 @@ WHERE NOT EXISTS (
                 "SourceSystemIdentifier",
             ]
 
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(Mock()).insert_new_records_to_production_for_user_relation(
+            SqlLmsOperations(Mock()).insert_new_records_to_production_for_user_relation(
                 TABLE, COLUMNS
             )
 
@@ -570,10 +570,10 @@ WHERE NOT EXISTS (
                 "SourceSystemIdentifier",
             ]
 
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(
+            SqlLmsOperations(
                 Mock()
             ).insert_new_records_to_production_for_section_and_user_relation(TABLE, COLUMNS)
 
@@ -630,10 +630,10 @@ WHERE NOT EXISTS (
                 "SourceSystemIdentifier",
             ]
 
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            MssqlLmsOperations(
+            SqlLmsOperations(
                 Mock()
             ).insert_new_records_to_production_for_assignment_and_user_relation(TABLE, COLUMNS)
 
@@ -644,14 +644,14 @@ WHERE NOT EXISTS (
         def describe_and_no_table_name_provided():
             def it_raises_an_error():
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations(
+                    SqlLmsOperations(
                         Mock()
                     ).insert_new_records_to_production_for_attendance_events("", ["a"])
 
         def describe_and_no_columns_provided():
             def it_raises_an_error():
                 with pytest.raises(AssertionError):
-                    MssqlLmsOperations(
+                    SqlLmsOperations(
                         Mock()
                     ).insert_new_records_to_production_for_attendance_events(
                         "something", []
@@ -713,7 +713,7 @@ WHERE NOT EXISTS (
     SourceSystem = stg.SourceSystem
 )
 """
-                system = MssqlLmsOperations(Mock())
+                system = SqlLmsOperations(Mock())
                 mock = mocker.patch.object(system, "_exec", return_value=row_count)
 
                 # Act
@@ -742,7 +742,7 @@ WHERE
                 pd, "read_sql_query", return_value=pd.DataFrame(columns=["FullPath"])
             )
 
-            MssqlLmsOperations(Mock()).get_processed_files(resource_name)
+            SqlLmsOperations(Mock()).get_processed_files(resource_name)
 
             call_args = query_mock.call_args
             assert len(call_args) == 2
@@ -758,11 +758,11 @@ WHERE
             # Typically we do not test the logging. In this case and another
             # below, logging was a core business requirement for a task, and
             # thus it makes sense to test that requirement.
-            logger = logging.getLogger("edfi_lms_ds_loader.mssql_lms_operations")
+            logger = logging.getLogger("edfi_lms_ds_loader.sql_lms_operations")
             mock_exc_logger = mocker.patch.object(logger, "exception")
 
             with pytest.raises(ProgrammingError):
-                MssqlLmsOperations(Mock()).get_processed_files("fake_resource_name")
+                SqlLmsOperations(Mock()).get_processed_files("fake_resource_name")
 
             mock_exc_logger.assert_called_once()
 
@@ -789,8 +789,8 @@ VALUES
 )
 """.strip()
 
-            exec_mock = mocker.patch.object(MssqlLmsOperations, "_exec")
-            MssqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
+            exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
+            SqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
 
             exec_mock.assert_called_with(expected_statement)
 
@@ -803,13 +803,13 @@ VALUES
             path = "fake_path/"
             rows = 3
 
-            mocker.patch.object(MssqlLmsOperations, "_exec", side_effect=__raise)
+            mocker.patch.object(SqlLmsOperations, "_exec", side_effect=__raise)
 
-            logger = logging.getLogger("edfi_lms_ds_loader.mssql_lms_operations")
+            logger = logging.getLogger("edfi_lms_ds_loader.sql_lms_operations")
             mock_exc_logger = mocker.patch.object(logger, "exception")
 
             with pytest.raises(ProgrammingError):
-                MssqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
+                SqlLmsOperations(Mock()).add_processed_file(path, resource_name, rows)
 
             mock_exc_logger.assert_called_once()
 

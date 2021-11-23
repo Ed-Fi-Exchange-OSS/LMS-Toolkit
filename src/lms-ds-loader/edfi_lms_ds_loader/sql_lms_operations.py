@@ -11,27 +11,41 @@ from sqlalchemy.engine.result import ResultProxy as sa_Result
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import Session as sa_Session
 
-from edfi_lms_ds_loader.helpers.constants import Table
+from edfi_lms_ds_loader.helpers.constants import DbEngine, Table
 from edfi_sql_adapter.sql_adapter import Adapter
+from edfi_lms_ds_loader.db_operations import MSSQL_sql_builder as MS_builder
+from edfi_lms_ds_loader.db_operations import PGSQL_sql_builder as PG_builder
 
 logger = logging.getLogger(__name__)
+SUPPORTED_ENGINES = [DbEngine.POSTGRESQL, DbEngine.MSSQL]
 
 
-class MssqlLmsOperations:
+class SqlLmsOperations:
     """
-    An adapter providing Microsoft SQL Server operations for management and use
+    An adapter providing SQL operations for management and use
     of LMS staging and production tables.
 
     Parameters
     ----------
+    sql_adapter: Adapter
+        The adapter to be used.
     engine: sqlalchemy.engine.Engine
         SQL Alchemy engine.
     """
 
     db_adapter: Adapter
+    engine: str
 
-    def __init__(self, sql_adapter: Adapter) -> None:
+    def __init__(self, sql_adapter: Adapter, engine: str = DbEngine.MSSQL) -> None:
         self.db_adapter = sql_adapter
+        self.engine = engine
+        if self.engine not in SUPPORTED_ENGINES:
+            logger.error(f"The engine {self.engine} is not supported.")
+        # TODO: remove this message when we reach the full support for PG
+        if self.engine == DbEngine.POSTGRESQL:
+            logger.info(
+                f"The support for the engine {self.engine} is a work in progress," +
+                "some of the features may not be supported yet")
 
     def _exec(self, statement: str) -> int:
         """This is a wrapper function that will not be unit tested."""
@@ -61,8 +75,11 @@ class MssqlLmsOperations:
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        # Note: for postgresql we'll want `TRUNCATE TABLE {staging} RESTART IDENTITY`
-        self._exec(f"TRUNCATE TABLE lms.stg_{table};")
+        if self.engine == DbEngine.MSSQL:
+            self._exec(MS_builder.truncate_stg_table(table))
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.truncate_stg_table(table))
 
     def disable_staging_natural_key_index(self, table: str) -> None:
         """
@@ -77,9 +94,11 @@ class MssqlLmsOperations:
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        self._exec(
-            f"ALTER INDEX IX_stg_{table}_Natural_Key on lms.stg_{table} DISABLE;"
-        )
+        if self.engine == DbEngine.MSSQL:
+            self._exec(MS_builder.disable_staging_natural_key_index(table))
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.drop_staging_natural_key_index(table))
 
     def enable_staging_natural_key_index(self, table: str) -> None:
         """
@@ -93,9 +112,11 @@ class MssqlLmsOperations:
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        self._exec(
-            f"ALTER INDEX IX_stg_{table}_Natural_Key on lms.stg_{table} REBUILD;"
-        )
+        if self.engine == DbEngine.MSSQL:
+            self._exec(MS_builder.enable_staging_natural_key_index(table))
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.recreate_staging_natural_key_index(table))
 
     def insert_into_staging(self, df: pd.DataFrame, table: str) -> None:
         """
@@ -111,8 +132,13 @@ class MssqlLmsOperations:
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
+        # PostgreSQL requires lower case column names, but our
+        # code uses upper case. Temporarily convert, then restore
+        proper_names = df.columns
+
+        df.columns = proper_names.str.lower()
         df.to_sql(
-            f"stg_{table}",
+            f"stg_{table}".lower(),
             self.db_adapter.engine,
             schema="lms",
             if_exists="append",
@@ -120,6 +146,7 @@ class MssqlLmsOperations:
             method="multi",
             chunksize=120,
         )
+        df.columns = proper_names
         logger.debug(f"All records have been loaded into staging table 'stg_{table}'")
 
     def insert_new_records_to_production(self, table: str, columns: List[str]) -> None:
@@ -139,26 +166,12 @@ class MssqlLmsOperations:
 
         column_string = ",".join([f"\n    {c}" for c in columns])
 
-        statement = f"""
-INSERT INTO
-    lms.{table}
-({column_string}
-)
-SELECT{column_string}
-FROM
-    lms.stg_{table} as stg
-WHERE
-    NOT EXISTS (
-        SELECT
-            1
-        FROM
-            lms.{table}
-        WHERE
-            SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            SourceSystem = stg.SourceSystem
-    )
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.insert_new_records_to_production(table, column_string)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.insert_new_records_to_production(table, column_string)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -188,33 +201,14 @@ WHERE
             [f"\n    stg.{c}" for c in columns if c != "LMSUserSourceSystemIdentifier"]
         )
 
-        statement = f"""
-INSERT INTO
-    lms.{table}
-(
-    LMSUserIdentifier,{insert_columns}
-)
-SELECT
-    LMSUser.LMSUserIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
-    1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
-)
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.insert_new_records_to_production_for_user_relation(
+                table, insert_columns, select_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.insert_new_records_to_production_for_user_relation(
+                table, insert_columns, select_columns))
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -248,33 +242,14 @@ WHERE NOT EXISTS (
             ]
         )
 
-        statement = f"""
-INSERT INTO
-    lms.{table}
-(
-    LMSSectionIdentifier,{insert_columns}
-)
-SELECT
-    LMSSection.LMSSectionIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSSection
-ON
-    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSSection.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
-    1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
-)
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.insert_new_records_to_production_for_section_relation(
+                table, insert_columns, select_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.insert_new_records_to_production_for_section_relation(
+                table, insert_columns, select_columns))
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -318,41 +293,14 @@ WHERE NOT EXISTS (
             ]
         )
 
-        statement = f"""
-INSERT INTO
-    lms.{table}
-(
-    LMSSectionIdentifier,
-    LMSUserIdentifier,{insert_columns}
-)
-SELECT
-    LMSSection.LMSSectionIdentifier,
-    LMSUser.LMSUserIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSSection
-ON
-    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSSection.SourceSystem
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
-    1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
-)
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.insert_new_records_to_production_for_section_and_user_relation(
+                table, insert_columns, select_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            self._exec(PG_builder.insert_new_records_to_production_for_section_and_user_relation(
+                table, insert_columns, select_columns))
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -396,41 +344,10 @@ WHERE NOT EXISTS (
             ]
         )
 
-        statement = f"""
-INSERT INTO
-    lms.{table}
-(
-    AssignmentIdentifier,
-    LMSUserIdentifier,{insert_columns}
-)
-SELECT
-    Assignment.AssignmentIdentifier,
-    LMSUser.LMSUserIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.Assignment
-ON
-    stg.AssignmentSourceSystemIdentifier = Assignment.SourceSystemIdentifier
-AND
-    stg.SourceSystem = Assignment.SourceSystem
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
-    1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
-)
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.insert_new_records_to_production_for_assignment_and_user_relation(
+                table, insert_columns, select_columns)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -465,49 +382,10 @@ WHERE NOT EXISTS (
             [f"\n    stg.{c}" for c in columns if __not_a_foreign_key(c)]
         )
 
-        statement = f"""
-INSERT INTO
-    lms.LMSUserAttendanceEvent
-(
-    LMSSectionIdentifier,
-    LMSUserIdentifier,
-    LMSUserLMSSectionAssociationIdentifier,{insert_columns}
-)
-SELECT
-    LMSSection.LMSSectionIdentifier,
-    LMSUser.LMSUserIdentifier,
-    LMSUserLMSSectionAssociation.LMSUserLMSSectionAssociationIdentifier,{select_columns}
-FROM
-    lms.stg_LMSUserAttendanceEvent as stg
-INNER JOIN
-    lms.LMSSection
-ON
-    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSSection.SourceSystem
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-INNER JOIN
-    lms.LMSUserLMSSectionAssociation
-ON
-    LMSUser.LMSUserIdentifier = LMSUserLMSSectionAssociation.LMSUserIdentifier
-AND
-    LMSSection.LMSSectionIdentifier = LMSUserLMSSectionAssociation.LMSSectionIdentifier
-WHERE NOT EXISTS (
-  SELECT
-    1
-  FROM
-    lms.LMSUserAttendanceEvent
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
-)
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.insert_new_records_to_production_for_attendance_events(
+                insert_columns, select_columns)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -548,21 +426,12 @@ WHERE NOT EXISTS (
             + ",\n    DeletedAt = NULL"
         )
 
-        statement = f"""
-UPDATE
-    t
-SET{update_columns}
-FROM
-    lms.{table} as t
-INNER JOIN
-    lms.stg_{table} as stg
-ON
-    t.SourceSystem = stg.SourceSystem
-AND
-    t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-AND
-    t.LastModifiedDate <> stg.LastModifiedDate
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.copy_updates_to_production(table, update_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.copy_updates_to_production(table, update_columns)
 
         row_count = self._exec(statement)
         logger.debug(f"Updated {row_count} records in table `{table}`.")
@@ -582,29 +451,12 @@ AND
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        statement = f"""
-UPDATE
-    t
-SET
-    t.DeletedAt = getdate()
-FROM
-    lms.{table} as t
-WHERE
-    NOT EXISTS (
-        SELECT
-            1
-        FROM
-            lms.stg_{table} as stg
-        WHERE
-            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            t.SourceSystem = stg.SourceSystem
-    )
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.soft_delete_from_production(table, source_system)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.soft_delete_from_production(table, source_system)
 
         row_count = self._exec(statement)
         logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
@@ -627,42 +479,9 @@ AND
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        statement = f"""
-UPDATE
-    t
-SET
-    t.DeletedAt = getdate()
-FROM
-    lms.{table} as t
-WHERE
-    t.LMSSectionIdentifier IN (
-        SELECT
-            s.LMSSectionIdentifier
-        FROM
-           lms.LMSSection as s
-        INNER JOIN
-            lms.stg_{table} as stg
-        ON
-            stg.LMSSectionSourceSystemIdentifier = s.SourceSystemIdentifier
-        AND
-            stg.SourceSystem = s.SourceSystem
-    )
-AND
-    NOT EXISTS (
-        SELECT
-            1
-        FROM
-            lms.stg_{table} as stg
-        WHERE
-            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            t.SourceSystem = stg.SourceSystem
-    )
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.soft_delete_from_production_for_section_relation(table, source_system)
 
         row_count = self._exec(statement)
         logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
@@ -685,42 +504,9 @@ AND
 
         assert table.strip() != "", "Argument `table` cannot be whitespace"
 
-        statement = f"""
-UPDATE
-    t
-SET
-    t.DeletedAt = getdate()
-FROM
-    lms.{table} as t
-WHERE
-    t.AssignmentIdentifier IN (
-        SELECT
-            a.AssignmentIdentifier
-        FROM
-           lms.Assignment as a
-        INNER JOIN
-            lms.stg_{table} as stg
-        ON
-            stg.AssignmentSourceSystemIdentifier = a.SourceSystemIdentifier
-        AND
-            stg.SourceSystem = a.SourceSystem
-    )
-AND
-    NOT EXISTS (
-        SELECT
-            1
-        FROM
-            lms.stg_{table} as stg
-        WHERE
-            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            t.SourceSystem = stg.SourceSystem
-    )
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.soft_delete_from_production_for_assignment_relation(table, source_system)
 
         row_count = self._exec(statement)
         logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
@@ -731,34 +517,9 @@ AND
         into the production table.
         """
 
-        statement = """
-INSERT INTO lms.AssignmentSubmissionType (
-    AssignmentIdentifier,
-    SubmissionType
-)
-SELECT
-    Assignment.AssignmentIdentifier,
-    stg_AssignmentSubmissionType.SubmissionType
-FROM
-        lms.stg_AssignmentSubmissionType
-    INNER JOIN
-        lms.Assignment
-    ON
-        stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
-    AND
-        stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
-WHERE
-    NOT EXISTS (
-        SELECT
-            1
-        FROM
-            lms.AssignmentSubmissionType
-        WHERE
-            AssignmentIdentifier = Assignment.AssignmentIdentifier
-        AND
-            SubmissionType = stg_AssignmentSubmissionType.SubmissionType
-    )
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.insert_new_submission_types()
 
         row_count = self._exec(statement)
         logger.debug(
@@ -776,33 +537,9 @@ WHERE
             The name of the source system for the current import process.
         """
 
-        statement = f"""
-UPDATE
-    AssignmentSubmissionType
-SET
-    DeletedAt = GETDATE()
-FROM
-    lms.AssignmentSubmissionType
-INNER JOIN
-    lms.Assignment
-ON
-    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
-WHERE
-    SourceSystem = '{source_system}'
-AND
-    NOT EXISTS (
-        SELECT
-            1
-        FROM
-            lms.stg_AssignmentSubmissionType
-        WHERE
-            stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
-        AND
-            stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
-        AND
-            stg_AssignmentSubmissionType.SubmissionType = AssignmentSubmissionType.SubmissionType
-    )
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.soft_delete_removed_submission_types(source_system)
         row_count = self._exec(statement)
         logger.debug(
             f"Soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
@@ -819,33 +556,9 @@ AND
             The name of the source system for the current import process.
         """
 
-        statement = f"""
-UPDATE
-    AssignmentSubmissionType
-SET
-    DeletedAt = NULL
-FROM
-    lms.AssignmentSubmissionType
-INNER JOIN
-    lms.Assignment
-ON
-    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
-WHERE
-    SourceSystem = '{source_system}'
-AND
-    EXISTS (
-        SELECT
-            1
-        FROM
-            lms.stg_AssignmentSubmissionType
-        WHERE
-            stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
-        AND
-            stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
-        AND
-            stg_AssignmentSubmissionType.SubmissionType = AssignmentSubmissionType.SubmissionType
-    )
-"""
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.unsoft_delete_returned_submission_types(source_system)
         row_count = self._exec(statement)
         logger.debug(
             f"Un-soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
@@ -853,17 +566,15 @@ AND
 
     def get_processed_files(self, resource_name: str) -> Set[str]:
         try:
-            query = f"""
-SELECT
-    FullPath
-FROM
-    lms.ProcessedFiles
-WHERE
-    ResourceName = '{resource_name}'
-""".strip()
+            query = ""
+            if self.engine == DbEngine.MSSQL:
+                query = MS_builder.get_processed_files(resource_name)
+            if self.engine == DbEngine.POSTGRESQL:
+                query = PG_builder.get_processed_files(resource_name)
+            query = query.strip()
             result = pd.read_sql_query(query, self.db_adapter.engine)
-            if "FullPath" in result:
-                return set(result["FullPath"])
+            if "fullpath" in result:
+                return set(result["fullpath"])
             return set()
         except ProgrammingError as pe:
             logger.exception(pe)
@@ -883,22 +594,13 @@ WHERE
         rows: int
             Number of rows in the file.
         """
+        statement = ""
+        if self.engine == DbEngine.MSSQL:
+            statement = MS_builder.add_processed_file(path, resource_name, rows)
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.add_processed_file(path, resource_name, rows)
 
-        statement = f"""
-INSERT INTO
-    lms.ProcessedFiles
-(
-    FullPath,
-    ResourceName,
-    NumberOfRows
-)
-VALUES
-(
-    '{path}',
-    '{resource_name}',
-    {rows}
-)
-""".strip()
+        statement = statement.strip()
 
         try:
             _ = self._exec(statement)

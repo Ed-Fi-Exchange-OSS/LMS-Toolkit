@@ -20,7 +20,8 @@ from edfi_lms_ds_loader import migrator
 from edfi_lms_file_utils import file_reader, file_repository
 from edfi_lms_file_utils.constants import Resources
 from edfi_lms_ds_loader import df_to_db
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
+from edfi_lms_ds_loader.helpers.constants import DbEngine
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ def _get_assignments_df(csv_path: str) -> DataFrame:
 
 
 def _get_unprocessed_file_paths(
-    db_adapter: MssqlLmsOperations,
+    db_adapter: SqlLmsOperations,
     resource_name: str,
     file_paths: List[str],
 ) -> List[str]:
@@ -63,11 +64,11 @@ def _get_unprocessed_file_paths(
 
 
 def _upload_files_from_paths(
-    db_adapter: MssqlLmsOperations,
+    db_adapter: SqlLmsOperations,
     file_paths: List[str],
     resource_name: str,
     read_file_callback: Callable[[str], DataFrame],
-    upload_function: Callable[[MssqlLmsOperations, DataFrame], None],
+    upload_function: Callable[[SqlLmsOperations, DataFrame], None],
 ) -> None:
     unprocessed_files: List[str] = _get_unprocessed_file_paths(
         db_adapter, resource_name, file_paths
@@ -81,7 +82,7 @@ def _upload_files_from_paths(
         db_adapter.add_processed_file(path, resource_name, rows)
 
 
-def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+def _load_users(csv_path: str, db_adapter: SqlLmsOperations) -> None:
     file_paths = file_repository.get_users_file_paths(abspath(csv_path))
 
     _upload_files_from_paths(
@@ -93,7 +94,7 @@ def _load_users(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     )
 
 
-def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+def _load_sections(csv_path: str, db_adapter: SqlLmsOperations) -> None:
     file_paths = file_repository.get_sections_file_paths(abspath(csv_path))
 
     _upload_files_from_paths(
@@ -105,7 +106,7 @@ def _load_sections(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     )
 
 
-def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+def _load_assignments(csv_path: str, db_adapter: SqlLmsOperations) -> None:
     sections_df = _get_sections_df(csv_path)
     if sections_df.empty:
         logger.info("No sections loaded. Skipping assignments.")
@@ -130,7 +131,7 @@ def _load_assignments(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
     )
 
 
-def _load_attendance_events(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+def _load_attendance_events(csv_path: str, db_adapter: SqlLmsOperations) -> None:
     sections_df: DataFrame = _get_sections_df(csv_path)
     if sections_df.empty:
         logger.info("No sections loaded. Skipping section associations.")
@@ -153,7 +154,7 @@ def _load_attendance_events(csv_path: str, db_adapter: MssqlLmsOperations) -> No
     )
 
 
-def _load_section_associations(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+def _load_section_associations(csv_path: str, db_adapter: SqlLmsOperations) -> None:
     sections_df: DataFrame = _get_sections_df(csv_path)
     if sections_df.empty:
         logger.info("No sections loaded. Skipping section associations.")
@@ -176,7 +177,7 @@ def _load_section_associations(csv_path: str, db_adapter: MssqlLmsOperations) ->
     )
 
 
-def _load_assignment_submissions(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+def _load_assignment_submissions(csv_path: str, db_adapter: SqlLmsOperations) -> None:
     assignments_df: DataFrame = _get_assignments_df(csv_path)
     if assignments_df.empty:
         logger.info("No assignments loaded. Skipping assignment submissions.")
@@ -203,7 +204,7 @@ def _load_assignment_submissions(csv_path: str, db_adapter: MssqlLmsOperations) 
     )
 
 
-def _load_section_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+def _load_section_activities(csv_path: str, db_adapter: SqlLmsOperations) -> None:
     sections_df: DataFrame = _get_sections_df(csv_path)
     if sections_df.empty:
         logger.info("No sections loaded. Skipping section associations.")
@@ -226,7 +227,7 @@ def _load_section_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> N
     )
 
 
-def _load_system_activities(csv_path: str, db_adapter: MssqlLmsOperations) -> None:
+def _load_system_activities(csv_path: str, db_adapter: SqlLmsOperations) -> None:
     file_paths = file_repository.get_system_activities_file_paths(abspath(csv_path))
 
     _upload_files_from_paths(
@@ -242,20 +243,21 @@ def run_loader(arguments: MainArguments) -> None:
     logger.info("Begin loading files into the LMS Data Store (DS)...")
 
     db_adapter = arguments.get_adapter()
-    migrator.migrate(db_adapter)
+    migrator.migrate(db_adapter, arguments.engine)
 
     csv_path = arguments.csv_path
 
-    mssql_operations = arguments.get_db_operations_adapter()
+    sql_operations = arguments.get_db_operations_adapter()
 
-    _load_users(csv_path, mssql_operations)
-    _load_sections(csv_path, mssql_operations)
-    # Important: run this immediately after loading sections, before loading other section-related resources
-    _load_section_associations(csv_path, mssql_operations)
-    _load_assignments(csv_path, mssql_operations)
-    _load_assignment_submissions(csv_path, mssql_operations)
-    _load_attendance_events(csv_path, mssql_operations)
-    _load_section_activities(csv_path, mssql_operations)
-    _load_system_activities(csv_path, mssql_operations)
+    _load_users(csv_path, sql_operations)
+    if (arguments.engine == DbEngine.MSSQL):
+        _load_sections(csv_path, sql_operations)
+        # Important: run this immediately after loading sections, before loading other section-related resources
+        _load_section_associations(csv_path, sql_operations)
+        _load_assignments(csv_path, sql_operations)
+        _load_assignment_submissions(csv_path, sql_operations)
+        _load_attendance_events(csv_path, sql_operations)
+        _load_section_activities(csv_path, sql_operations)
+        _load_system_activities(csv_path, sql_operations)
 
     logger.info("Done loading files into the LMS Data Store.")

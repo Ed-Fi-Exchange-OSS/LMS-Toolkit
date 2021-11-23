@@ -5,7 +5,7 @@
 from typing import Tuple, List
 from pandas import DataFrame
 from sqlalchemy.engine.base import Connection
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.df_to_db import upload_users
 
 USER_NAMES = ["Alice", "Bob", "Charlie"]
@@ -39,7 +39,7 @@ def describe_when_a_user_is_updated():
     UPDATED_USER_ROLE = "55"
 
     def it_should_have_the_update_in_production(
-        test_mssql_db: Tuple[MssqlLmsOperations, Connection]
+        test_mssql_db: Tuple[SqlLmsOperations, Connection]
     ):
         adapter, connection = test_mssql_db
 
@@ -112,7 +112,7 @@ def describe_when_a_user_goes_missing_then_reappears():
     USER_NAMES_WITHOUT_BOB = ["Alice", "Charlie"]
 
     def it_should_soft_delete_then_restore(
-        test_mssql_db: Tuple[MssqlLmsOperations, Connection]
+        test_mssql_db: Tuple[SqlLmsOperations, Connection]
     ):
         adapter, connection = test_mssql_db
 

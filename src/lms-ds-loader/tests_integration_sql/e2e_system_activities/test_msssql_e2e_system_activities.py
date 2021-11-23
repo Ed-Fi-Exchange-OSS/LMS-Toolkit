@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 from typing import Tuple
 from sqlalchemy.engine.base import Connection
-from edfi_lms_ds_loader.mssql_lms_operations import MssqlLmsOperations
+from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.loader_facade import run_loader
 from tests_integration_sql.mssql_e2e_helper import main_arguments, insert_user
 
@@ -50,7 +50,7 @@ def insert_record(connection: Connection, ss_identifier: str, source_system: str
 
 def describe_when_a_record_is_missing_in_the_csv():
     def it_should_soft_delete_the_record(
-        test_mssql_db: Tuple[MssqlLmsOperations, Connection]
+        test_mssql_db: Tuple[SqlLmsOperations, Connection]
     ):
         adapter, connection = test_mssql_db
 
@@ -72,7 +72,7 @@ def describe_when_a_record_is_missing_in_the_csv():
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
     def it_should_match_the_record(
-        test_mssql_db: Tuple[MssqlLmsOperations, Connection]
+        test_mssql_db: Tuple[SqlLmsOperations, Connection]
     ):
         adapter, connection = test_mssql_db
 
