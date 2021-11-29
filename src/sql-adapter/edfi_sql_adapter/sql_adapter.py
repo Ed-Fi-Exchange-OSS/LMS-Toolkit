@@ -137,15 +137,13 @@ class Adapter:
         Integer result count.
         """
 
-        def __callback(session: sa_Session) -> int:
-            return session.execute(statement).scalar()
+        with self.engine.connect() as connection:
+            result = connection.execute(statement).scalar()
 
-        result: int = self.execute_transaction(__callback)
-
-        if result:
-            return result
-        else:
-            return 0
+            if result:
+                return result
+            else:
+                return 0
 
 
 # Below is a set of "static" functions for generating a new Adapter object
