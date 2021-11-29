@@ -4,8 +4,10 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from os import path, scandir
+from os import name, path, scandir
+from pathlib import Path
 from typing import List
+from collections import namedtuple
 
 from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
@@ -15,15 +17,22 @@ from edfi_lms_ds_loader.helpers.constants import DbEngine
 
 
 logger = logging.getLogger(__name__)
+Migration = namedtuple("Migration", "path name")
 
 
-def _get_file_names(adapter: Adapter) -> List[str]:
+def _get_migration_name(migration_file: str) -> str:
+    # Extracts from full path and chops off the extension
+    return Path(migration_file).stem
+
+
+def _get_file_names(adapter: Adapter) -> List[Migration]:
     script_dir = path.join(path.dirname(__file__), "scripts", adapter.engine.name)
-    files: List[str] = []
+    files: List[Migration] = []
+
     with scandir(script_dir) as all_files:
         for file in all_files:
             if file.path.endswith('.sql'):
-                files.append(file.path)
+                files.append(Migration(file.path, _get_migration_name(file.name)))
 
     files.sort()
 
@@ -69,36 +78,16 @@ def _record_migration_in_journal(adapter: Adapter, migration: str) -> None:
     adapter.execute([statement])
 
 
-def _mssql_lms_schema_exists(adapter: Adapter) -> bool:
-    statement = """
-select case when exists (
-    select 1 from INFORMATION_SCHEMA.SCHEMATA where schema_name = 'lms'
-) then 1 else 0 end
-""".strip()
+def _run_migration_script(adapter: Adapter, migration: Migration) -> None:
 
-    return adapter.get_int(statement) == 1
+    logger.debug(f"Running migration {migration.name}...")
 
-
-def _pgsql_lms_schema_exists(adapter: Adapter) -> bool:
-    statement = (
-        "SELECT 1 FROM information_schema.schemata WHERE schema_name = 'lms';"
-    )
-
-    return adapter.get_int(statement) == 1
-
-
-def _run_migration_script(adapter: Adapter, migration_script: str) -> None:
-
-    migration = migration_script.split(path.sep)[-1]
-
-    logger.debug(f"Running migration {migration}...")
-
-    statements = _read_statements_from_file(migration_script)
+    statements = _read_statements_from_file(migration.path)
     adapter.execute_script(statements)
 
-    _record_migration_in_journal(adapter, migration)
+    _record_migration_in_journal(adapter, migration.name)
 
-    logger.debug(f"Done with migration {migration}.")
+    logger.debug(f"Done with migration {migration.name}.")
 
 
 def migrate(adapter: Adapter, engine: str = DbEngine.MSSQL) -> None:
@@ -118,9 +107,9 @@ def migrate(adapter: Adapter, engine: str = DbEngine.MSSQL) -> None:
         # because it will throw an exception if the migration journal does not
         # exist, and therefore is not appropriate when initializing the LMS
         # database.
-        if _script_has_been_run(adapter, migration):
+        if _script_has_been_run(adapter, migration.name):
             logger.debug(
-                f"Migration {migration} has already run and will not be re-run."
+                f"Migration {migration.name} has already run and will not be re-run."
             )
             continue
 
