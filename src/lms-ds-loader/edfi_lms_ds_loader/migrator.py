@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from os import path
+from os import path, scandir
 from typing import List
 
 from sqlalchemy.exc import ProgrammingError
@@ -16,37 +16,18 @@ from edfi_lms_ds_loader.helpers.constants import DbEngine
 
 logger = logging.getLogger(__name__)
 
-MSSQL_MIGRATION_SCRIPTS = [
-    # CAUTION: these scripts will run in order from "top to bottom", so it is
-    # critical to maintain the script order at all times.
-    "0001_initialize_lms_database",
-    "0002_create_processed_files_table",
-    "0003_create_user_tables",
-    "0004_create_section_tables",
-    "0005_create_assignment_tables",
-    "0006_create_section_association_tables",
-    "0007_create_assignment_submission_tables",
-    "0008_create_section_activity_tables",
-    "0009_create_system_activity_tables",
-    "0010_create_attendance_tables",
-    "0011_remove_startdate_enddate_from_sectionassociation",
-    "0012_add_mapping_columns_for_edfi_student_and_section",
-]
 
-PGSQL_MIGRATION_SCRIPTS = [
-    # CAUTION: these scripts will run in order from "top to bottom", so it is
-    # critical to maintain the script order at all times.
-    "0001_initialize_lms_database",
-    "0002_create_user_tables",
-    "0003_create_processed_files_table",
-    "0004_create_section_tables",
-    "0005_create_assignment_tables"
-]
-
-
-def _get_script_path(adapter: Adapter, script_name: str) -> str:
+def _get_file_names(adapter: Adapter) -> List[str]:
     script_dir = path.join(path.dirname(__file__), "scripts", adapter.engine.name)
-    return path.join(script_dir, script_name)
+    files: List[str] = []
+    with scandir(script_dir) as all_files:
+        for file in all_files:
+            if file.path.endswith('.sql'):
+                files.append(file.path)
+
+    files.sort()
+
+    return files
 
 
 def _read_statements_from_file(full_path: str) -> List[str]:
@@ -106,11 +87,11 @@ def _pgsql_lms_schema_exists(adapter: Adapter) -> bool:
     return adapter.get_int(statement) == 1
 
 
-def _run_migration_script(adapter: Adapter, migration: str) -> None:
+def _run_migration_script(adapter: Adapter, migration_script: str) -> None:
+
+    migration = migration_script.split(path.sep)[-1]
 
     logger.debug(f"Running migration {migration}...")
-
-    migration_script = _get_script_path(adapter, f"{migration}.sql")
 
     statements = _read_statements_from_file(migration_script)
     adapter.execute_script(statements)
@@ -132,20 +113,7 @@ def migrate(adapter: Adapter, engine: str = DbEngine.MSSQL) -> None:
     """
     logger.info("Begin database auto-migration...")
 
-    schema_exist = (
-        _mssql_lms_schema_exists
-        if DbEngine.MSSQL == engine
-        else _pgsql_lms_schema_exists
-    )
-
-    if not schema_exist(adapter):
-        _run_migration_script(adapter, "0001_initialize_lms_database")
-
-    migrations_to_run = (
-        MSSQL_MIGRATION_SCRIPTS if DbEngine.MSSQL == engine else PGSQL_MIGRATION_SCRIPTS
-    )
-
-    for migration in migrations_to_run:
+    for migration in _get_file_names(adapter):
         # The following block of code does not belong in _run_migration_script
         # because it will throw an exception if the migration journal does not
         # exist, and therefore is not appropriate when initializing the LMS
