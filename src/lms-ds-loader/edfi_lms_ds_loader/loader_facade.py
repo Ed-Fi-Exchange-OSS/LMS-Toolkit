@@ -21,7 +21,6 @@ from edfi_lms_file_utils import file_reader, file_repository
 from edfi_lms_file_utils.constants import Resources
 from edfi_lms_ds_loader import df_to_db
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
-from edfi_lms_ds_loader.helpers.constants import DbEngine
 
 logger = logging.getLogger(__name__)
 
@@ -251,13 +250,13 @@ def run_loader(arguments: MainArguments) -> None:
 
     _load_users(csv_path, sql_operations)
     _load_sections(csv_path, sql_operations)
-    if (arguments.engine == DbEngine.MSSQL):
-        # Important: run this immediately after loading sections, before loading other section-related resources
-        _load_section_associations(csv_path, sql_operations)
-        _load_assignments(csv_path, sql_operations)
-        _load_assignment_submissions(csv_path, sql_operations)
-        _load_attendance_events(csv_path, sql_operations)
-        _load_section_activities(csv_path, sql_operations)
-        _load_system_activities(csv_path, sql_operations)
+
+    # Important: run this immediately after loading sections, before loading other section-related resources
+    _load_section_associations(csv_path, sql_operations)
+    _load_assignments(csv_path, sql_operations)
+    _load_assignment_submissions(csv_path, sql_operations)
+    _load_attendance_events(csv_path, sql_operations)
+    _load_section_activities(csv_path, sql_operations)
+    _load_system_activities(csv_path, sql_operations)
 
     logger.info("Done loading files into the LMS Data Store.")

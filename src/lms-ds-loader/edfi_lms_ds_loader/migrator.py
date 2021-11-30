@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from os import name, path, scandir
+from os import path, scandir
 from pathlib import Path
 from typing import List
 from collections import namedtuple
