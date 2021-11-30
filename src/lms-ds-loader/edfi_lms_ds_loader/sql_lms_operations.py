@@ -571,10 +571,15 @@ class SqlLmsOperations:
                 query = MS_builder.get_processed_files(resource_name)
             if self.engine == DbEngine.POSTGRESQL:
                 query = PG_builder.get_processed_files(resource_name)
+
             query = query.strip()
             result = pd.read_sql_query(query, self.db_adapter.engine)
+
+            result.columns = result.columns.str.lower()
+
             if "fullpath" in result:
                 return set(result["fullpath"])
+
             return set()
         except ProgrammingError as pe:
             logger.exception(pe)
