@@ -311,7 +311,7 @@ def describe_when_soft_delete_from_production_for_section_relation_is_called():
 UPDATE
     t
 SET
-    t.DeletedAt = getdate()
+    t.DeletedAt = now()
 FROM
     lms.{table} as t
 WHERE
