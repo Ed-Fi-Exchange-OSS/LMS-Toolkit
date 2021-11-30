@@ -77,7 +77,7 @@ COMMENT ON COLUMN lms.Assignment.DeletedAt IS 'The date and time at which a reco
 CREATE TABLE lms.AssignmentSubmissionType (
     AssignmentIdentifier INT NOT NULL,
     SubmissionType VARCHAR(60) NOT NULL,
-    CreateDate TIMESTAMP NOT NULL,
+    CreateDate TIMESTAMP NOT NULL DEFAULT (now()),
     DeletedAt TIMESTAMP NULL,
     CONSTRAINT AssignmentSubmissionType_PK PRIMARY KEY (
         AssignmentIdentifier,
@@ -102,7 +102,7 @@ CREATE TABLE lms.stg_AssignmentSubmissionType (
     SourceSystemIdentifier VARCHAR(255) NOT NULL,
     SourceSystem VARCHAR(255) NOT NULL,
     SubmissionType VARCHAR(60) NOT NULL,
-    CreateDate TIMESTAMP NOT NULL,
+    CreateDate TIMESTAMP NOT NULL DEFAULT (now()),
     CONSTRAINT stg_AssignmentSubmissionType_PK PRIMARY KEY (
         StagingId
     )
