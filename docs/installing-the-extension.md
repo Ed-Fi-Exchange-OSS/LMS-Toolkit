@@ -61,14 +61,18 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
 1. Compile the client side bulk loader in the `Ed-Fi-ODS` directory. Either:
    1. Open `Ed-Fi-ODS\Utilities\DataLoading\LoadTools.sln` and compile with Visual Studio, or
    1. At a command prompt, run:
+
       ```powershell
-       > cd Ed-Fi-ODS\Utilities\DataLoading
-       > dotnet restore LoadTools.sln
-       > dotnet build LoadTools.sln
+       cd Ed-Fi-ODS\Utilities\DataLoading
+       dotnet restore LoadTools.sln
+       dotnet build LoadTools.sln
+      ```
+
 1. At a command prompt, run the bulk load script:
+
    ```powershell
-   > cd LMS-Toolkit\extension
-   > ./LoadDescriptor.sps1
+   cd LMS-Toolkit\extension
+   ./LoadDescriptor.sps1
    ```
 
 ## Installing LMS Harmonizer Support
