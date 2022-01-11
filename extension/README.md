@@ -46,3 +46,52 @@ purged by retention rules.
    cd EdFi.Ods.Extensions.LMSX
    ./build_package.ps1 -ExtensionVersion 1.0.1 -PackageVersion 5.2.1
    ```
+
+## Notes on Use in Docker
+
+SF: I have not been able to get the plugin working in Docker yet, though I was
+probably very close. Rough notes on what I have done:
+
+* Prep for database installation: in `configuration.json`, use the following
+  * connection strings:
+
+    ```json
+    {
+      "EdFi_Ods": "Host=localhost; Port=5402; Username=postgres; Database=EdFi_{0};",
+      "EdFi_Admin": "Host=localhost; Port=5401; Username=postgres; Database=EdFi_Admin;",
+      "EdFi_Security": "Host=localhost; Port=5401; Username=postgres; Database=EdFi_Security;",
+      "EdFi_Master": "Host=localhost; Port=5401; Username=postgres; Database=postgres;"
+    }
+    ```
+
+  * ApiSettings:
+    * Mode: `SharedInstance`
+    * Engine: `postgresql`
+  * Plugin:
+    * Folder: `./Plugin`
+    * Scripts: `["lmsx"]
+  * Copy the `lmsx.ps1` script into a `Plugin` directory _under_ the unzipped
+    RestApi.Databases directory.
+* Get the Docker repository
+  * Run the shared-instance environment file `compose-shared-instance-env.yml`
+* Run the database deployment.
+* Create a local version of the appsettings file:
+  * Grab the appsettings template from the running container:
+
+    ```powershell
+    docker cp ed-fi-ods-api:/app/appsettings.template.json .
+    ```
+
+  * Modify that appsettings file to add "lmsx" to the scripts list
+  * Modify the docker compose yml file. Need to load the extension and the
+    modified appsettings file into the container at runtime. UNder the
+    `api: volumes: ` structure, add these two volumes:
+
+    ```yml
+     - C:/Temp/EdFi.Suite3.RestApi.Databases.5.2.14406/Plugin/EdFi.Ods.Extensions.LMSX.1.0.0.5.2.1:/app/Plugin/EdFi.Ods.Extensions.LMSX.1.0.0.5.2.1
+    - c:/Temp/EdFi.Suite3.RestApi.Databases.5.2.14406/appsettings.template.json:/app/appsettings.template.json
+    ```
+
+* Stop and restart the Docker containers.
+  * --> LMSX didn't work. Maybe because the DLL was not compiled for Linux?
+    Didn't find a clear error message anywhere.
