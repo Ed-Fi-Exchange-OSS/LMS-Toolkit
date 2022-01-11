@@ -3,11 +3,11 @@
 ## Introduction
 
 The `Ed-Fi-LMS` extension to Ed-Fi Data Standard can be loaded into an Ed-Fi
-ODS/API Suite 3, version 5.2 code base for deployment. In theory it should work
+ODS/API Suite 3, version 5.2+ code base for deployment. In theory it should work
 with older data standards, but it is only being tested with Ed-Fi Data Standard
 version 3.3-a, which is implemented in the API version 5.2.
 
-When do deployed, `Assignments` and `AssignmentSubmissions` can be uploaded into
+When deployed, `Assignments` and `AssignmentSubmissions` can be uploaded into
 an ODS database through the Ed-Fi API. Alternately, one can use the [LMS
 Harmonizer](../src/lms-harmonizer) to copy LMS Toolkit data uploaded with [LMS
 Data Store Loader](../src/lms-ds-loader) directly into the `edfilms.Assignment`
@@ -16,7 +16,44 @@ and associated extension tables.
 For more information about the extension data model, please see [LMS
 Extension](https://techdocs.ed-fi.org/display/EFTD/LMS+Extension) in Tech Docs.
 
-## Adding the Extension to the ODS / API
+## Deployment Process
+
+There are several methods for deploying the the extension into an ODS/API instance:
+
+1. Integrate the extension source code directly into the ODS/API. :exclamation:
+   This is the method required to build a new release of the extension.
+2. Integrate the binary release of the extension into source code as a dynamic plugin.
+3. Integrate the binary release of the extension into an ODS/API instance
+   running from binaries, as a dynamic plugin.
+
+After deployment, you can confirm that the installation succeeded by accessing
+Web API application's version endpoint (the root endpoint) and looking in the
+list of supported data models, where you should see something like this:
+
+```json
+{
+    "version": "...",
+    ...,
+    "dataModels": [
+        {
+            "name": "Ed-Fi",
+            ...
+        },
+        {
+            "name": "LMSX",
+            "version": "1.0.0"
+        }
+    ],
+    "urls": ...
+}
+```
+
+:exclamation: All of these instructions require running in PowerShell on
+Windows. PowerShell Core on Linux is not yet supported. It should be technically
+feasible to deploy from a Linux machine, but we have not tested this or
+documented the extra commands that would be required to bypass PowerShell.
+
+### Direct Source Code Integration into ODS/API
 
 These instructions assume you have already [gotten
 started](https://techdocs.ed-fi.org/display/ODSAPIS3V520/Getting+Started) with
@@ -41,12 +78,90 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
       > dotnet add .\EdFi.Ods.WebApi\ reference .\EdFi.Ods.Extensions.LMSX\
       ```
 
-1. Re-run `initdev`.
+1. Re-run `initdev` in PowerShell.
 1. To test, run the solution by starting the API in the default Sandbox mode,
    and starting the Sandbox Admin and Swagger UI.
 1. In Swagger UI, confirm that the new descriptors and resources are available.
 
-## Bulk-Loading Default Descriptors
+### Dynamic Plugin Into Source Code
+
+1. Copy [lmsx.ps1](../extension/lmsx.ps1) to your
+   `Ed-Fi-ODS-Implementation/Plugin` directory.
+2. In your `Ed-Fi-ODS-Implementation/Application/EdFi.Ods.WebApi` directory, run
+   the following commands (:exclamation: if you already have any dynamic
+   extension, then increment the script number in the second command
+   accordingly):
+
+   ```powershell
+   dotnet user-secrets set "Plugin:Folder" "../../Plugins"
+   dotnet user-secrets set "Plugin:Scripts:0" "lmsx"
+   ```
+
+3. Run `initdev`:
+
+   ```powershell
+   ./Initialize-PowershellForDevelopment.ps1
+    Initdev
+    ```
+
+### Dynamic Plugin Into Runtime
+
+1. Download the correct version of the `EdFi.Suite3.RestApi.Databases` NuGet
+   package from [Ed-Fi on Azure
+   Artifacts](https://dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging?_a=package&feed=EdFi%40Release&package=EdFi.Suite3.RestApi.Databases&protocolType=NuGet&version=5.3.1146&view=versions)
+   * If you have `nuget.exe` you can download and extract files with the
+     following command. This will create directory
+     `EdFi.Suite3.RestApi.Databases.5.2.14406` in the current working directory.
+     See link above for other available versions, matching the ODS/API releases:
+
+   ```bash
+   nuget.exe install EdFi.Suite3.RestApi.Databases -version 5.2.14406 -source https://pkgs.dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging/EdFi%40Release/nuget/v3/index.json
+   ```
+
+   * If you don't have `nuget.exe`, just download from the link above and treat
+     it as a zip file. Unzip to an appropriate location.
+2. Locate the directory for your WebAPI website. Does it have a `Plugin`
+   sub-directory? If not, create it. Copy the full exact path for use in the
+   next step.
+3. In the new `EdFi.Suite3.RestApi.Databases` directory, edit
+   `configuration.json` and add "lmsx" to the `Plugin.Scripts` array, as shown
+   below. Paste the `Plugin` directory path into the `Folder` entry below:
+
+   ```json
+   "Plugin": {
+       "Folder": "d:/Ed-Fi/5.2/WebApi/Plugin",
+       "Scripts": [ "lmsx" ]
+   }
+   ```
+
+4. In that same file, adjust the database connection strings and database engine
+   as appropriate for your installation. If you are not sure what they are, then
+   look in the `appsettings.json` file in your WebAPI directory.
+5. Run the database deployment process in PowerShell while in the
+   `EdFi.Suite3.RestApi.Databases` directory:
+
+   ```powershell
+   Import-Module ./Deployment.psm1
+   Initialize-DeploymentEnvironment
+   ```
+
+6. Open the `appsettings.json` file in your WebAPI directory, and add an "lmsx"
+   entry under `Scripts`, just as done in step 3 above.
+7. Restart the web site in IIS.
+
+## Loading Descriptors
+
+### Manually Loading Descriptors
+
+Once the extension is loaded into the ODS/API, the descriptor endpoints are
+available in the API and a user with authorization to create new descriptors can
+utilize it directly. For examples, see
+[extension-tests.http](../extension/extension-tests.http).
+
+### Bulk-Loading Default Descriptors
+
+This automated upload utilize the API Client Bulk Load utility from the
+[Ed-Fi-ODS](https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS) repository.
 
 1. Acquire a key and secret for bulk upload:
    1. If following the steps above:
