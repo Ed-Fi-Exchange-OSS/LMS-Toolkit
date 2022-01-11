@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>EdFi.Ods.Extensions.LMSX.1.0.0</id>
+    <id>$id$</id>
     <version>1.0.0</version>
     <authors>Ed-Fi Alliance, LLC and contributors</authors>
     <license type="expression">APACHE-2.0</license>
@@ -10,7 +10,7 @@
     <description>Dynamic plugin to the Ed-Fi ODS/API for the LMSX extension, providing an API for Learning Management System (LMS) data</description>
     <releaseNotes>Initial release in support of ODS/API v5.2</releaseNotes>
   </metadata>
-  <files> 
+  <files>
     <file src="../../LICENSE.txt" />
     <file src="Artifacts/**/*.json" target="Artifacts"/>
     <file src="Artifacts/**/*.sql" target="Artifacts"/>
