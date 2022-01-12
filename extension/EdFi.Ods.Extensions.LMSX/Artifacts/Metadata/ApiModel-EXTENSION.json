@@ -1,8 +1,9 @@
 {
-  "odsApiVersion": "5.2",
+  "odsApiVersion": "5.3",
   "schemaDefinition": {
     "logicalName": "LMSX",
     "physicalName": "lmsx",
+    "description": "The Ed-Fi LMS extension data model",
     "version": "1.0.0"
   },
   "aggregateDefinitions": [
