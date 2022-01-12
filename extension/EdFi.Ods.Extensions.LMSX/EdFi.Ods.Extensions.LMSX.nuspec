@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>EdFi.Ods.Extensions.LMSX</id>
+    <id>$id$</id>
     <version>1.0.0</version>
-    <authors>Ed-Fi Alliance</authors>
-    <owners>Ed-Fi Alliance</owners>
+    <authors>Ed-Fi Alliance, LLC and contributors</authors>
+    <license type="expression">APACHE-2.0</license>
     <projectUrl>https://github.com/Ed-Fi-Alliance-OSS/LMS-Toolkit</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>EdFi.Ods.Extensions.LMSX</description>
-    <releaseNotes></releaseNotes>
+    <description>Dynamic plugin to the Ed-Fi ODS/API for the LMSX extension, providing an API for Learning Management System (LMS) data</description>
+    <releaseNotes>Initial release in support of ODS/API v5.2</releaseNotes>
   </metadata>
   <files>
-    <file src="Artifacts/**/*.sql" target="."/>
-    <file src="Artifacts/**/*.json" target="."/>
-    <file src="assemblyMetadata.json" target="."/>
-    <file src="bin\$configuration$\netcoreapp3.1\EdFi.Ods.Extensions.LMSX.dll" target="."/>
+    <file src="../../LICENSE.txt" />
+    <file src="Artifacts/**/*.json" target=""/>
+    <file src="Artifacts/**/*.sql" target=""/>
+    <file src="bin/$configuration$/netcoreapp3.1/EdFi.Ods.Extensions.LMSX.dll" target="."/>
   </files>
 </package>

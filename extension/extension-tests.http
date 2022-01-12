@@ -1,0 +1,235 @@
+# Integration tests for the LMSX extension in a running ODS/API instance. Need
+# to authenticate separately and paste the bearer token in here. For example,
+# you can authenticate through Swagger UI. Run any command in Swagger and look
+# at the Curl output. There you will see the authorization header. Copy the
+# token from there and paste below.
+@baseUrl=http://localhost:54746
+@token=d1787f6b17e045e990e4e7a4e87ac030
+
+#
+# Need to setup a minimal set of descriptors. Instead of using the automated
+# tools, test the API integration.
+#
+
+###
+POST {{baseUrl}}/data/v3/lmsx/assignmentCategoryDescriptors
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codeValue": "Assignment",
+  "description": "Assignment",
+  "effectiveBeginDate": "2022-01-10",
+  "effectiveEndDate": "2022-01-10",
+  "namespace": "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Canvas",
+  "shortDescription": "Assignment"
+}
+
+###
+POST {{baseUrl}}/data/v3/lmsx/lmsSourceSystemDescriptors
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codeValue": "Canvas",
+  "description": "Canvas",
+  "effectiveBeginDate": "2022-01-10",
+  "effectiveEndDate": "2022-01-10",
+  "namespace": "uri://ed-fi.org/edfilms/LMSSourceSystem",
+  "shortDescription": "Canvas"
+}
+
+###
+POST {{baseUrl}}/data/v3/lmsx/submissionStatusDescriptors
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codeValue": "late",
+  "description": "late",
+  "effectiveBeginDate": "2022-01-10",
+  "effectiveEndDate": "2022-01-10",
+  "namespace": "uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas",
+  "shortDescription": "late"
+}
+
+###
+POST {{baseUrl}}/data/v3/lmsx/submissionTypeDescriptors
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codeValue": "online_text_entry",
+  "description": "online_text_entry",
+  "effectiveBeginDate": "2022-01-10",
+  "effectiveEndDate": "2022-01-10",
+  "namespace": "uri://ed-fi.org/edfilms/SubmissionTypeDescriptor/Canvas",
+  "shortDescription": "online_text_entry"
+}
+
+#
+# Run POST, GET, GET by Id, and PUT on Assignment
+#
+
+###
+POST {{baseUrl}}/data/v3/lmsx/assignments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "assignmentIdentifier": "ABCD9875654",
+    "namespace": "uri://gbisd.org",
+    "title": "Assignment 12354",
+    "sectionReference": {
+        "localCourseCode": "ALG-1",
+        "schoolId": "255901001",
+        "schoolYear": 2011,
+        "sectionIdentifier": "25590100102Trad220ALG112011",
+        "sessionName": "2010-2011 Fall Semester"
+    },
+    "assignmentCategoryDescriptor": "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Canvas#Assignment",
+    "assignmentDescription": "string",
+    "dueDateTime": "2021-06-19T19:59:16.809Z",
+    "endDateTime": "2021-06-19T19:59:16.809Z",
+    "lmsSourceSystemDescriptor": "uri://ed-fi.org/edfilms/LMSSourceSystem#Canvas",
+    "maxPoints": 0,
+    "startDateTime": "2021-06-19T19:59:16.809Z",
+    "submissionTypes": [
+        {
+            "submissionTypeDescriptor": "uri://ed-fi.org/edfilms/SubmissionTypeDescriptor/Canvas#online_text_entry"
+        }
+    ]
+}
+
+###
+GET {{baseUrl}}/data/v3/lmsx/assignments
+Authorization: Bearer {{token}}
+
+# --> Get the ID from the location header in the POST or from the GET request
+# above.
+@assignmentId=402581076dd04d2182e2b707eb45bded
+
+###
+GET {{baseUrl}}/data/v3/lmsx/assignments/{{assignmentId}}
+Authorization: Bearer {{token}}
+
+###
+PUT {{baseUrl}}/data/v3/lmsx/assignments/{{assignmentId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "assignmentIdentifier": "ABCD9875654",
+    "namespace": "uri://gbisd.org",
+    "title": "New Title",
+    "sectionReference": {
+        "localCourseCode": "ALG-1",
+        "schoolId": "255901001",
+        "schoolYear": 2011,
+        "sectionIdentifier": "25590100102Trad220ALG112011",
+        "sessionName": "2010-2011 Fall Semester"
+    },
+    "assignmentCategoryDescriptor": "uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/Canvas#Assignment",
+    "assignmentDescription": "string",
+    "dueDateTime": "2021-06-19T19:59:16.809Z",
+    "endDateTime": "2021-06-19T19:59:16.809Z",
+    "lmsSourceSystemDescriptor": "uri://ed-fi.org/edfilms/LMSSourceSystem#Canvas",
+    "maxPoints": 0,
+    "startDateTime": "2021-06-19T19:59:16.809Z",
+    "submissionTypes": [
+        {
+            "submissionTypeDescriptor": "uri://ed-fi.org/edfilms/SubmissionTypeDescriptor/Canvas#online_text_entry"
+        }
+    ]
+}
+
+# --> Review to make sure that the title has been changed to "New Title"
+###
+GET {{baseUrl}}/data/v3/lmsx/assignments/{{assignmentId}}
+Authorization: Bearer {{token}}
+
+
+#
+# Run POST, GET, GET by Id, and PUT on Assignment Submission
+#
+
+###
+POST {{baseUrl}}/data/v3/lmsx/assignmentSubmissions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "assignmentSubmissionIdentifier": "ABCD9875654-604822",
+    "namespace": "uri://gbisd.org",
+    "assignmentReference": {
+      "assignmentIdentifier": "ABCD9875654",
+      "schoolId": 255901001,
+      "namespace": "uri://gbisd.org"
+    },
+    "studentReference": {
+      "studentUniqueId": "604822"
+    },
+    "earnedPoints": 10,
+    "grade": "F",
+    "submissionDateTime": "2021-06-22T22:07:54.524Z",
+    "submissionStatusDescriptor": "uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas#late"
+}
+
+
+###
+GET {{baseUrl}}/data/v3/lmsx/assignmentSubmissions
+Authorization: Bearer {{token}}
+
+# --> Get the ID from the location header in the POST or from the GET request
+# above.
+@submissionId=d3e69f93ed79449ab58ca7dbf11651bf
+
+###
+GET {{baseUrl}}/data/v3/lmsx/assignmentSubmissions/{{submissionId}}
+Authorization: Bearer {{token}}
+
+###
+PUT {{baseUrl}}/data/v3/lmsx/assignmentSubmissions/{{submissionId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "assignmentSubmissionIdentifier": "ABCD9875654-604822",
+    "namespace": "uri://gbisd.org",
+    "assignmentReference": {
+      "assignmentIdentifier": "ABCD9875654",
+      "schoolId": 255901001,
+      "namespace": "uri://gbisd.org"
+    },
+    "studentReference": {
+      "studentUniqueId": "604822"
+    },
+    "earnedPoints": 23,
+    "grade": "F",
+    "submissionDateTime": "2021-06-22T22:07:54.524Z",
+    "submissionStatusDescriptor": "uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Canvas#late"
+}
+
+# --> Review to make sure that the earnedPoints has been changed to 23
+###
+GET {{baseUrl}}/data/v3/lmsx/assignmentSubmissions/{{submissionId}}
+Authorization: Bearer {{token}}
+
+
+#
+# Test out the delete functionality
+#
+
+# --> This first request should fail due to foreign key reference from submission
+###
+DELETE {{baseUrl}}/data/v3/lmsx/assignments/{{assignmentId}}
+Authorization: Bearer {{token}}
+
+
+###
+DELETE {{baseUrl}}/data/v3/lmsx/assignmentSubmissions/{{submissionId}}
+Authorization: Bearer {{token}}
+
+###
+DELETE {{baseUrl}}/data/v3/lmsx/assignments/{{assignmentId}}
+Authorization: Bearer {{token}}
