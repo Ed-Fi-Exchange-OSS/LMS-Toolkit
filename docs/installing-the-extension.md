@@ -87,7 +87,9 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
 
 1. Copy [lmsx.ps1](../extension/lmsx.ps1) to your
    `Ed-Fi-ODS-Implementation/Plugin` directory.
-2. In your `Ed-Fi-ODS-Implementation/Application/EdFi.Ods.WebApi` directory, run
+2. Open the copy of `lmsx.ps1` and uncomment the correct "PackageVersion" entry
+   for your target ODS/API version.
+3. In your `Ed-Fi-ODS-Implementation/Application/EdFi.Ods.WebApi` directory, run
    the following commands (:exclamation: if you already have any dynamic
    extension, then increment the script number in the second command
    accordingly):
@@ -97,7 +99,7 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
    dotnet user-secrets set "Plugin:Scripts:0" "lmsx"
    ```
 
-3. Run `initdev`:
+4. Run `initdev`:
 
    ```powershell
    ./Initialize-PowershellForDevelopment.ps1
@@ -108,7 +110,9 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
 
 1. Download the correct version of the `EdFi.Suite3.RestApi.Databases` NuGet
    package from [Ed-Fi on Azure
-   Artifacts](https://dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging?_a=package&feed=EdFi%40Release&package=EdFi.Suite3.RestApi.Databases&protocolType=NuGet&version=5.3.1146&view=versions)
+   Artifacts](https://dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging?_a=package&feed=EdFi%40Release&package=EdFi.Suite3.RestApi.Databases&protocolType=NuGet&view=versions).
+   If you are targeting ODS/API version 5.2, then download version 5.2.14406. If
+   targeting version 5.3, then download 5.3.1146.
    * If you have `nuget.exe` you can download and extract files with the
      following command. This will create directory
      `EdFi.Suite3.RestApi.Databases.5.2.14406` in the current working directory.
@@ -133,6 +137,10 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
        "Scripts": [ "lmsx" ]
    }
    ```
+
+   :exclamation: If you do not use the WebAPI project's Plugin directory at this
+   step, then the plugin will not load when you run the application at the final
+   step below.
 
 4. In that same file, adjust the database connection strings and database engine
    as appropriate for your installation. If you are not sure what they are, then
