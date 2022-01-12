@@ -18,7 +18,7 @@ Extension](https://techdocs.ed-fi.org/display/EFTD/LMS+Extension) in Tech Docs.
 
 ## Deployment Process
 
-There are several methods for deploying the the extension into an ODS/API instance:
+There are several methods for deploying the extension into an ODS/API instance:
 
 1. Integrate the extension source code directly into the ODS/API. :exclamation:
    This is the method required to build a new release of the extension.
@@ -95,7 +95,7 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
    accordingly):
 
    ```powershell
-   dotnet user-secrets set "Plugin:Folder" "../../Plugins"
+   dotnet user-secrets set "Plugin:Folder" "../../Plugin"
    dotnet user-secrets set "Plugin:Scripts:0" "lmsx"
    ```
 
