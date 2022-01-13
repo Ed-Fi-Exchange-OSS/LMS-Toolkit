@@ -9,7 +9,7 @@ license = "Apache-2.0"
 python = "^3.9"
 pandas = "^1.1.4"
 numpy = "1.19.3"
-edfi-lms-file-utils = "1.0.0a0"
+edfi-lms-file-utils = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.4"
@@ -20,7 +20,7 @@ pytest-describe = "^1.0.0"
 pylint = "^2.6.0"
 black = "^20.8b1"
 teamcity-messages = "^1.28"
-pyfakefs = "4.1.0"
+pyfakefs = "^4.5.0"
 coverage = "^5.3"
 
 [build-system]
