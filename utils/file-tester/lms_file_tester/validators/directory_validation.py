@@ -6,7 +6,7 @@
 import os
 import re
 import sys
-from typing import List, Optional, Union
+from typing import List, Optional
 
 # The following is a hack to load a local package above this package's base
 # directory, so that this test utility does not need to rely on downloading a
@@ -54,7 +54,7 @@ def validate_base_directory_structure(input_directory: str) -> List[str]:
 
 
 def validate_section_directory_structure(
-    input_directory: str, section_id: Union[str, int]
+    input_directory: str, section_id: int
 ) -> List[str]:
     """
     Validates that a Section directory contains the section associations,
@@ -94,7 +94,7 @@ def validate_section_directory_structure(
 
 
 def validate_assignment_directory_structure(
-    input_directory: str, section_id: Union[str, int], assignment_id: Union[str, int]
+    input_directory: str, section_id: int, assignment_id: int
 ) -> List[str]:
     """
     Validates that an Assignments directory contains the submissions directory.

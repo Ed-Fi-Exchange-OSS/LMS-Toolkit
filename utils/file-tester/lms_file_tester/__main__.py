@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from typing import List, Union
+from typing import List
 
 # This next line *should* have
 # `lms_file_tester.validators.directory_validation`, but the script does not run
@@ -70,7 +70,7 @@ def _validate_users_and_sections(input_directory: str):
     _report(errors, "Sections file is valid.")
 
 
-def _validate_assignment_directories(input_directory: str, section_id: Union[int, str]):
+def _validate_assignment_directories(input_directory: str, section_id: int):
     assignments = fread.get_assignments(input_directory, section_id)
 
     if assignments.empty:

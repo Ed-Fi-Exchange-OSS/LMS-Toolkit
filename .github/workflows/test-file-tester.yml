@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-20.04
     env:
         PACKAGE_NAME: file-tester
-        SRC_DIR: utils/file-tester/extractor-lib
+        SRC_DIR: utils/file-tester/lms_file_tester
         LOCK_FILE: utils/file-tester/poetry.lock
     steps:
       - name: Checkout code
