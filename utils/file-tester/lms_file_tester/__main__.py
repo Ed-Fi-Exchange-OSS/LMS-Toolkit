@@ -5,7 +5,7 @@
 
 import logging
 import sys
-from typing import List, Union
+from typing import List
 
 # This next line *should* have
 # `lms_file_tester.validators.directory_validation`, but the script does not run
