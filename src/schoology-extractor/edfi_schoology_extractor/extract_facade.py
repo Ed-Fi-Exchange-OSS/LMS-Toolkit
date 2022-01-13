@@ -191,20 +191,21 @@ def run(arguments: MainArguments) -> None:
         )
         sys.exit(1)
 
-    for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
-        _get_section_associations(facade, arguments.output_directory, section_id)
+    if result_bucket["sections"].shape[0] > 0:
+        for section_id in result_bucket["sections"]["SourceSystemIdentifier"].values:
+            _get_section_associations(facade, arguments.output_directory, section_id)
 
-        if arguments.extract_assignments:
-            _get_assignments(facade, arguments.output_directory, section_id)
-            succeeded = result_bucket.get("assignments", None) is not None
-            if succeeded:
-                _get_submissions(facade, arguments.output_directory, section_id)
+            if arguments.extract_assignments:
+                _get_assignments(facade, arguments.output_directory, section_id)
+                succeeded = result_bucket.get("assignments", None) is not None
+                if succeeded:
+                    _get_submissions(facade, arguments.output_directory, section_id)
 
-        if arguments.extract_activities:
-            _get_section_activities(facade, arguments.output_directory, section_id)
+            if arguments.extract_activities:
+                _get_section_activities(facade, arguments.output_directory, section_id)
 
-        if arguments.extract_attendance:
-            _get_attendance_events(facade, arguments.output_directory, section_id)
+            if arguments.extract_attendance:
+                _get_attendance_events(facade, arguments.output_directory, section_id)
 
     if arguments.extract_activities:
         _get_system_activities(arguments, db_engine)
