@@ -6,7 +6,7 @@
 import os
 import re
 import sys
-from typing import List, Optional, Union
+from typing import List, Optional
 
 # The following is a hack to load a local package above this package's base
 # directory, so that this test utility does not need to rely on downloading a
