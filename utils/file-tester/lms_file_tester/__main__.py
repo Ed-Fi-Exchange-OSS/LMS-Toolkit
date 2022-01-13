@@ -70,7 +70,7 @@ def _validate_users_and_sections(input_directory: str):
     _report(errors, "Sections file is valid.")
 
 
-def _validate_assignment_directories(input_directory: str, section_id: Union[int, str]):
+def _validate_assignment_directories(input_directory: str, section_id: int):
     assignments = fread.get_assignments(input_directory, section_id)
 
     if assignments.empty:
