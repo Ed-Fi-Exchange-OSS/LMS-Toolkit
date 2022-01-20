@@ -244,15 +244,11 @@ AND
 def soft_delete_from_production_for_section_relation(
     table: str, source_system: str
 ) -> str:
-
-    # TODO LMS-340 `UPDATE t SET ...` is invalid syntax and this will fail. See
-    # longer comment on next function.
-
     return f"""
 UPDATE
-    t
+    lms.{table}
 SET
-    t.DeletedAt = now()
+    DeletedAt = now()
 FROM
     lms.{table} as t
 WHERE
@@ -280,6 +276,8 @@ AND
             t.SourceSystem = stg.SourceSystem
     )
 AND
+    lms.{table}.{table}Identifier = t.{table}Identifier
+AND
     t.DeletedAt IS NULL
 AND
     t.SourceSystem = '{source_system}'
@@ -290,7 +288,7 @@ def soft_delete_from_production_for_assignment_relation(
     table: str, source_system: str
 ) -> str:
 
-    # TODO LMS-240. This following fail or at least not work as intended because
+    # TODO LMS-444. This following fail or at least not work as intended because
     # the table to update is not being joined to `t`. For discussion on how to
     # join in an update statement:
     # https://stackoverflow.com/questions/7869592/how-to-do-an-update-join-in-postgresql

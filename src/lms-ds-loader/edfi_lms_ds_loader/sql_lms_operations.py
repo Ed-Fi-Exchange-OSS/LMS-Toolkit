@@ -207,8 +207,8 @@ class SqlLmsOperations:
                 table, insert_columns, select_columns)
 
         if self.engine == DbEngine.POSTGRESQL:
-            self._exec(PG_builder.insert_new_records_to_production_for_user_relation(
-                table, insert_columns, select_columns))
+            statement = PG_builder.insert_new_records_to_production_for_user_relation(
+                table, insert_columns, select_columns)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -390,6 +390,10 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.insert_new_records_to_production_for_attendance_events(
                 insert_columns, select_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            logger.debug("**** TODO: PostgreSQL implmentation of insert_new_records_to_production_for_attendance_events")
+            return
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -590,6 +594,7 @@ class SqlLmsOperations:
             query = ""
             if self.engine == DbEngine.MSSQL:
                 query = MS_builder.get_processed_files(resource_name)
+
             if self.engine == DbEngine.POSTGRESQL:
                 query = PG_builder.get_processed_files(resource_name)
 
@@ -623,6 +628,7 @@ class SqlLmsOperations:
         statement = ""
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.add_processed_file(path, resource_name, rows)
+
         if self.engine == DbEngine.POSTGRESQL:
             statement = PG_builder.add_processed_file(path, resource_name, rows)
 
