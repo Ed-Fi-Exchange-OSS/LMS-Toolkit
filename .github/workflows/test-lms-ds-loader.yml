@@ -53,7 +53,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Run CI Test Task
+      - name: Run CI Unit Test Task
         run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
 
       - name: Archive code coverage results
