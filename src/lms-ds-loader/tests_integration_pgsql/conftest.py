@@ -5,7 +5,6 @@
 
 from dataclasses import dataclass
 from os import environ
-import string
 
 from typing import Iterable, Tuple, Optional
 import pytest
@@ -20,7 +19,6 @@ from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.helpers.constants import DbEngine
 
 from edfi_sql_adapter.sql_adapter import (
-    Adapter,
     create_postgresql_adapter,
 )
 
@@ -87,6 +85,7 @@ def pgsql_connection() -> Iterable[Connection]:
     connection = adapter.engine.connect()
     yield connection
     connection.close()
+
 
 @pytest.fixture()
 def test_pgsql_db(
