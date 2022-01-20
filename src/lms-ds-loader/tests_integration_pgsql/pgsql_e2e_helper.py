@@ -11,7 +11,7 @@ from tests_integration_pgsql.conftest import Settings
 def main_arguments(adapter: SqlLmsOperations, csv_path: str) -> MainArguments:
     args = MainArguments(
         csv_path,
-        "pgsql",
+        "postgresql",
         "INFO",
         Settings.host,
         Settings.db,
