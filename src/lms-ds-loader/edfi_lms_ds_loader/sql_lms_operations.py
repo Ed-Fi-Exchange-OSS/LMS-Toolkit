@@ -207,8 +207,8 @@ class SqlLmsOperations:
                 table, insert_columns, select_columns)
 
         if self.engine == DbEngine.POSTGRESQL:
-            self._exec(PG_builder.insert_new_records_to_production_for_user_relation(
-                table, insert_columns, select_columns))
+            statement = PG_builder.insert_new_records_to_production_for_user_relation(
+                table, insert_columns, select_columns)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -248,8 +248,8 @@ class SqlLmsOperations:
                 table, insert_columns, select_columns)
 
         if self.engine == DbEngine.POSTGRESQL:
-            self._exec(PG_builder.insert_new_records_to_production_for_section_relation(
-                table, insert_columns, select_columns))
+            statement = PG_builder.insert_new_records_to_production_for_section_relation(
+                table, insert_columns, select_columns)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -299,8 +299,8 @@ class SqlLmsOperations:
                 table, insert_columns, select_columns)
 
         if self.engine == DbEngine.POSTGRESQL:
-            self._exec(PG_builder.insert_new_records_to_production_for_section_and_user_relation(
-                table, insert_columns, select_columns))
+            statement = PG_builder.insert_new_records_to_production_for_section_and_user_relation(
+                table, insert_columns, select_columns)
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -349,6 +349,10 @@ class SqlLmsOperations:
             statement = MS_builder.insert_new_records_to_production_for_assignment_and_user_relation(
                 table, insert_columns, select_columns)
 
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.insert_new_records_to_production_for_assignment_and_user_relation(
+                table, insert_columns, select_columns)
+
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
 
@@ -386,6 +390,10 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.insert_new_records_to_production_for_attendance_events(
                 insert_columns, select_columns)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            logger.debug("**** TODO: PostgreSQL implmentation of insert_new_records_to_production_for_attendance_events")
+            return
 
         row_count = self._exec(statement)
         logger.debug(f"Inserted {row_count} records into table `{table}`.")
@@ -483,6 +491,9 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.soft_delete_from_production_for_section_relation(table, source_system)
 
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.soft_delete_from_production_for_section_relation(table, source_system)
+
         row_count = self._exec(statement)
         logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
 
@@ -508,6 +519,9 @@ class SqlLmsOperations:
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.soft_delete_from_production_for_assignment_relation(table, source_system)
 
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.soft_delete_from_production_for_assignment_relation(table, source_system)
+
         row_count = self._exec(statement)
         logger.debug(f"Soft-deleted {row_count} records in table `{table}`")
 
@@ -520,6 +534,9 @@ class SqlLmsOperations:
         statement = ""
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.insert_new_submission_types()
+
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.insert_new_submission_types()
 
         row_count = self._exec(statement)
         logger.debug(
@@ -540,6 +557,10 @@ class SqlLmsOperations:
         statement = ""
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.soft_delete_removed_submission_types(source_system)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.soft_delete_removed_submission_types(source_system)
+
         row_count = self._exec(statement)
         logger.debug(
             f"Soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
@@ -559,6 +580,10 @@ class SqlLmsOperations:
         statement = ""
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.unsoft_delete_returned_submission_types(source_system)
+
+        if self.engine == DbEngine.POSTGRESQL:
+            statement = PG_builder.unsoft_delete_returned_submission_types(source_system)
+
         row_count = self._exec(statement)
         logger.debug(
             f"Un-soft deleted {row_count} records in table `{Table.ASSIGNMENT_SUBMISSION_TYPES}`."
@@ -569,12 +594,18 @@ class SqlLmsOperations:
             query = ""
             if self.engine == DbEngine.MSSQL:
                 query = MS_builder.get_processed_files(resource_name)
+
             if self.engine == DbEngine.POSTGRESQL:
                 query = PG_builder.get_processed_files(resource_name)
+
             query = query.strip()
             result = pd.read_sql_query(query, self.db_adapter.engine)
+
+            result.columns = result.columns.str.lower()
+
             if "fullpath" in result:
                 return set(result["fullpath"])
+
             return set()
         except ProgrammingError as pe:
             logger.exception(pe)
@@ -597,6 +628,7 @@ class SqlLmsOperations:
         statement = ""
         if self.engine == DbEngine.MSSQL:
             statement = MS_builder.add_processed_file(path, resource_name, rows)
+
         if self.engine == DbEngine.POSTGRESQL:
             statement = PG_builder.add_processed_file(path, resource_name, rows)
 

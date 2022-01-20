@@ -13,7 +13,6 @@ from edfi_lms_ds_loader.db_operations.PGSQL_sql_builder import (
     insert_new_records_to_production_for_section_and_user_relation,
     copy_updates_to_production,
     soft_delete_from_production,
-    soft_delete_from_production_for_section_relation,
     get_processed_files,
     add_processed_file,
 )
@@ -297,57 +296,6 @@ AND
 
         # Act
         sql = soft_delete_from_production(table, source_system).strip()
-
-        # Assert
-        assert sql == expected
-
-
-def describe_when_soft_delete_from_production_for_section_relation_is_called():
-    def it_should_return_the_expected_sql():
-        # Arrange
-        table = "a_table_for_testing"
-        source_system = "sourcesystem"
-        expected = f"""
-UPDATE
-    t
-SET
-    t.DeletedAt = getdate()
-FROM
-    lms.{table} as t
-WHERE
-    t.LMSSectionIdentifier IN (
-        SELECT
-            s.LMSSectionIdentifier
-        FROM
-           lms.LMSSection as s
-        INNER JOIN
-            lms.stg_{table} as stg
-        ON
-            stg.LMSSectionSourceSystemIdentifier = s.SourceSystemIdentifier
-        AND
-            stg.SourceSystem = s.SourceSystem
-    )
-AND
-    NOT EXISTS (
-        SELECT
-            1
-        FROM
-            lms.stg_{table} as stg
-        WHERE
-            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            t.SourceSystem = stg.SourceSystem
-    )
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
-""".strip()
-
-        # Act
-        sql = soft_delete_from_production_for_section_relation(
-            table, source_system
-        ).strip()
 
         # Assert
         assert sql == expected
