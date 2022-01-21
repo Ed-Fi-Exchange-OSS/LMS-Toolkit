@@ -5,11 +5,11 @@
 
 
 def truncate_stg_table(table: str) -> str:
-    return f"TRUNCATE TABLE lms.stg_{table} RESTART IDENTITY;"
+    return f"TRUNCATE TABLE lms.stg_{table} RESTART IDENTITY;".lower()
 
 
 def drop_staging_natural_key_index(table: str) -> str:
-    return f"DROP INDEX IF EXISTS lms.ix_stg_{table.lower()}_natural_key;"
+    return f"DROP INDEX IF EXISTS lms.ix_stg_{table}_natural_key;".lower()
 
 
 def recreate_staging_natural_key_index(table: str) -> str:
@@ -42,7 +42,7 @@ WHERE
         AND
             SourceSystem = stg.SourceSystem
     )
-"""
+""".lower()
 
 
 def insert_new_records_to_production_for_user_relation(
@@ -74,7 +74,7 @@ WHERE NOT EXISTS (
   AND
     SourceSystem = stg.SourceSystem
 )
-"""
+""".lower()
 
 
 def insert_new_records_to_production_for_assignment_and_user_relation(
@@ -114,7 +114,7 @@ WHERE NOT EXISTS (
   AND
     SourceSystem = stg.SourceSystem
 )
-"""
+""".lower()
 
 
 def insert_new_records_to_production_for_section_relation(
@@ -146,7 +146,7 @@ WHERE NOT EXISTS (
   AND
     SourceSystem = stg.SourceSystem
 )
-"""
+""".lower()
 
 
 def insert_new_records_to_production_for_section_and_user_relation(
@@ -186,7 +186,7 @@ WHERE NOT EXISTS (
   AND
     SourceSystem = stg.SourceSystem
 )
-"""
+""".lower()
 
 
 def copy_updates_to_production(table: str, update_columns: str) -> str:
@@ -208,7 +208,7 @@ WHERE
     t.SourceSystemIdentifier = lms.{table}.SourceSystemIdentifier
 AND
     t.SourceSystem = lms.{table}.SourceSystem
-"""
+""".lower()
 
 
 def soft_delete_from_production(table: str, source_system: str) -> str:
@@ -238,7 +238,7 @@ AND
     lms.{table}.SourceSystem = t.SourceSystem
 AND
     lms.{table}.SourceSystemIdentifier= t.SourceSystemIdentifier
-"""
+""".lower()
 
 
 def soft_delete_from_production_for_section_relation(
@@ -282,7 +282,7 @@ AND
     t.DeletedAt IS NULL
 AND
     t.SourceSystem = '{source_system}'
-"""
+""".lower()
 
 
 def soft_delete_from_production_for_assignment_relation(
@@ -326,7 +326,7 @@ AND
     t.DeletedAt IS NULL
 AND
     t.SourceSystem = '{source_system}'
-"""
+""".lower()
 
 
 def insert_new_submission_types() -> str:
@@ -357,7 +357,7 @@ WHERE
         AND
             SubmissionType = lms.stg_AssignmentSubmissionType.SubmissionType
     )
-"""
+""".lower()
 
 
 def soft_delete_removed_submission_types(source_system: str) -> str:
@@ -438,7 +438,7 @@ FROM
     lms.ProcessedFiles
 WHERE
     ResourceName = '{resource_name}'
-"""
+""".lower()
 
 
 def add_processed_file(path: str, resource_name: str, rows: int) -> str:
@@ -456,4 +456,4 @@ VALUES
     '{resource_name}',
     {rows}
 )
-"""
+""".lower()

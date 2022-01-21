@@ -113,7 +113,9 @@ def test_pgsql_db(
 
     # New version of insert_into_staging using our transaction
     def replace_insert_into_staging(self: SqlLmsOperations, df: DataFrame, table: str):
-        df.to_sql(
+        copy = df.copy()
+        copy.columns = copy.columns.str.lower()
+        copy.to_sql(
             f"stg_{table}",
             con=pgsql_connection,
             schema="lms",
