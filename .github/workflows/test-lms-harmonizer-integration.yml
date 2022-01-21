@@ -64,5 +64,8 @@ jobs:
       - name: Add sqlcmd to PATH
         run: echo "/opt/mssql-tools/bin" >> $GITHUB_PATH
 
+      - name: Wait for SQL Server
+        run: timeout 30s bash -c 'until sqlcmd -l 30 -S localhost -U sa -P abcdefgh1! -h-1 -V1 -Q "SET NOCOUNT ON SELECT @@servername"; do sleep 5; done'
+
       - name: Run CI Integration Task
         run: python ./eng/build.py ci:integration-test ${{ env.PACKAGE_NAME }}
