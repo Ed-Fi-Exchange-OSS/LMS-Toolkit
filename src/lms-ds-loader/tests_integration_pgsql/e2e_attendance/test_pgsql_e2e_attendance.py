@@ -27,30 +27,30 @@ def insert_record(
 ):
     connection.execute(
         f"""
-    INSERT INTO lms.LMSUserAttendanceEvent
-           (SourceSystemIdentifier
-           ,SourceSystem
-           ,LMSUserIdentifier
-           ,LMSSectionIdentifier
-           ,LMSUserLMSSectionAssociationIdentifier
-           ,EventDate
-           ,AttendanceStatus
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,DeletedAt
-           ,CreateDate
-           ,LastModifiedDate)
-     VALUES
+    insert into lms.lmsuserattendanceevent
+           (sourcesystemidentifier
+           ,sourcesystem
+           ,lmsuseridentifier
+           ,lmssectionidentifier
+           ,lmsuserlmssectionassociationidentifier
+           ,eventdate
+           ,attendancestatus
+           ,sourcecreatedate
+           ,sourcelastmodifieddate
+           ,deletedat
+           ,createdate
+           ,lastmodifieddate)
+     values
            ('{ss_identifier}'
            ,'{source_system}'
            ,'{user_identifier}'
            ,'{section_identifier}'
            ,'{user_section_association_identifier}'
            ,'2021-01-01 00:00:00'
-           ,'Active'
-           ,NULL
-           ,NULL
-           ,NULL
+           ,'active'
+           ,null
+           ,null
+           ,null
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
            )
@@ -77,10 +77,10 @@ def describe_when_a_record_is_missing_in_the_csv():
 
         # assert - B234567 has been soft deleted
         LMSUserAttendanceEvent = connection.execute(
-            "SELECT SourceSystemIdentifier from lms.LMSUserAttendanceEvent WHERE DeletedAt IS NOT NULL"
+            "select sourcesystemidentifier from lms.lmsuserattendanceevent where deletedat is not null"
         ).fetchall()
         assert len(LMSUserAttendanceEvent) == 1
-        assert LMSUserAttendanceEvent[0]["SourceSystemIdentifier"] == "B234567"
+        assert LMSUserAttendanceEvent[0]["sourcesystemidentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
@@ -105,16 +105,16 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
 
         # assert - records are unchanged
         LMSUserAttendanceEvent = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSUserAttendanceEvent"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmsuserattendanceevent order by sourcesystemidentifier"
         ).fetchall()
         assert len(LMSUserAttendanceEvent) == 2
         assert [SOURCE_SYSTEM, "FirstLMS"] == [
-            x["SourceSystem"] for x in LMSUserAttendanceEvent
+            x["sourcesystem"] for x in LMSUserAttendanceEvent
         ]
         assert ["B123456", "F234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSUserAttendanceEvent
+            x["sourcesystemidentifier"] for x in LMSUserAttendanceEvent
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSUserAttendanceEvent]
+        assert [None, None] == [x["deletedat"] for x in LMSUserAttendanceEvent]
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
@@ -138,13 +138,13 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
 
         # assert - records are unchanged
         LMSUserAttendanceEvent = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSUserAttendanceEvent"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmsuserattendanceevent order by sourcesystemidentifier"
         ).fetchall()
         assert len(LMSUserAttendanceEvent) == 2
         assert [SOURCE_SYSTEM, SOURCE_SYSTEM] == [
-            x["SourceSystem"] for x in LMSUserAttendanceEvent
+            x["sourcesystem"] for x in LMSUserAttendanceEvent
         ]
         assert ["B123456", "B234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSUserAttendanceEvent
+            x["sourcesystemidentifier"] for x in LMSUserAttendanceEvent
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSUserAttendanceEvent]
+        assert [None, None] == [x["deletedat"] for x in LMSUserAttendanceEvent]

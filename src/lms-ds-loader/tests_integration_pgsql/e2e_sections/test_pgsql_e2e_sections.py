@@ -6,44 +6,10 @@ from typing import Tuple
 from sqlalchemy.engine.base import Connection
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.loader_facade import run_loader
-from tests_integration_pgsql.pgsql_e2e_helper import main_arguments
+from tests_integration_pgsql.pgsql_e2e_helper import main_arguments, insert_section
 
 CSV_PATH = "tests_integration_sql/e2e_sections/data"
 SOURCE_SYSTEM = "BestLMS"
-
-
-def insert_record(connection: Connection, ss_identifier: str, source_system: str):
-    connection.execute(
-        f"""
-    INSERT INTO lms.LMSSection
-           (SourceSystemIdentifier
-           ,SourceSystem
-           ,SISSectionIdentifier
-           ,Title
-           ,SectionDescription
-           ,Term
-           ,LMSSectionStatus
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,CreateDate
-           ,LastModifiedDate
-           ,DeletedAt)
-     VALUES
-           ('{ss_identifier}'
-           ,'{source_system}'
-           ,'{ss_identifier}'
-           ,'{ss_identifier}'
-           ,'{ss_identifier}'
-           ,'{ss_identifier}'
-           ,'Archived'
-           ,NULL
-           ,NULL
-           ,'2021-01-01 00:00:00'
-           ,'2021-01-01 00:00:00'
-           ,NULL
-           )
-"""
-    )
 
 
 def describe_when_a_record_is_missing_in_the_csv():
@@ -53,18 +19,18 @@ def describe_when_a_record_is_missing_in_the_csv():
         adapter, connection = test_pgsql_db
 
         # arrange - note csv file has only B123456
-        insert_record(connection, "B123456", SOURCE_SYSTEM)
-        insert_record(connection, "B234567", SOURCE_SYSTEM)
+        insert_section(connection, "B123456", SOURCE_SYSTEM, 99988)
+        insert_section(connection, "B234567", SOURCE_SYSTEM, 99989)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - B234567 has been soft deleted
         LMSSection = connection.execute(
-            "SELECT SourceSystemIdentifier from lms.LMSSection WHERE DeletedAt IS NOT NULL"
+            "select sourcesystemidentifier from lms.lmssection where deletedat is not null"
         ).fetchall()
         assert len(LMSSection) == 1
-        assert LMSSection[0]["SourceSystemIdentifier"] == "B234567"
+        assert LMSSection[0]["sourcesystemidentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
@@ -74,19 +40,19 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
         adapter, connection = test_pgsql_db
 
         # arrange - note csv file has only B123456 from BestLMS
-        insert_record(connection, "B123456", SOURCE_SYSTEM)
-        insert_record(connection, "F234567", "FirstLMS")
+        insert_section(connection, "B123456", SOURCE_SYSTEM, 99998)
+        insert_section(connection, "F234567", "FirstLMS", 99999)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
         LMSSection = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSSection"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmssection order by sourcesystemidentifier"
         ).fetchall()
         assert len(LMSSection) == 2
-        assert [SOURCE_SYSTEM, "FirstLMS"] == [x["SourceSystem"] for x in LMSSection]
+        assert [SOURCE_SYSTEM, "FirstLMS"] == [x["sourcesystem"] for x in LMSSection]
         assert ["B123456", "F234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSSection
+            x["sourcesystemidentifier"] for x in LMSSection
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSSection]
+        assert [None, None] == [x["deletedat"] for x in LMSSection]

@@ -25,34 +25,34 @@ def insert_record(
 ):
     connection.execute(
         f"""
-    INSERT INTO lms.LMSSectionActivity
-           (SourceSystemIdentifier
-           ,SourceSystem
-           ,LMSUserIdentifier
-           ,LMSSectionIdentifier
-           ,ActivityType
-           ,ActivityDateTime
-           ,ActivityStatus
-           ,ParentSourceSystemIdentifier
-           ,ActivityTimeInMinutes
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,DeletedAt
-           ,CreateDate
-           ,LastModifiedDate)
-     VALUES
+    insert into lms.lmssectionactivity
+           (sourcesystemidentifier
+           ,sourcesystem
+           ,lmsuseridentifier
+           ,lmssectionidentifier
+           ,activitytype
+           ,activitydatetime
+           ,activitystatus
+           ,parentsourcesystemidentifier
+           ,activitytimeinminutes
+           ,sourcecreatedate
+           ,sourcelastmodifieddate
+           ,deletedat
+           ,createdate
+           ,lastmodifieddate)
+     values
            ('{ss_identifier}'
            ,'{source_system}'
            ,'{user_identifier}'
            ,'{section_identifier}'
-           ,'Discussion'
+           ,'discussion'
            ,'2021-01-01 00:00:00'
-           ,'Published'
-           ,NULL
+           ,'published'
+           ,null
            ,100
-           ,NULL
-           ,NULL
-           ,NULL
+           ,null
+           ,null
+           ,null
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
            )
@@ -78,10 +78,10 @@ def describe_when_a_record_is_missing_in_the_csv():
 
         # assert - B234567 has been soft deleted
         LMSSectionActivity = connection.execute(
-            "SELECT SourceSystemIdentifier from lms.LMSSectionActivity WHERE DeletedAt IS NOT NULL"
+            "select sourcesystemidentifier from lms.lmssectionactivity where deletedat is not null"
         ).fetchall()
         assert len(LMSSectionActivity) == 1
-        assert LMSSectionActivity[0]["SourceSystemIdentifier"] == "B234567"
+        assert LMSSectionActivity[0]["sourcesystemidentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
@@ -103,16 +103,16 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
 
         # assert - records are unchanged
         LMSSectionActivity = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSSectionActivity"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmssectionactivity order by sourcesystemidentifier"
         ).fetchall()
         assert len(LMSSectionActivity) == 2
         assert [SOURCE_SYSTEM, "FirstLMS"] == [
-            x["SourceSystem"] for x in LMSSectionActivity
+            x["sourcesystem"] for x in LMSSectionActivity
         ]
         assert ["B123456", "F234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSSectionActivity
+            x["sourcesystemidentifier"] for x in LMSSectionActivity
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSSectionActivity]
+        assert [None, None] == [x["deletedat"] for x in LMSSectionActivity]
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
@@ -133,13 +133,13 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
 
         # assert - records are unchanged
         LMSSectionActivity = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSSectionActivity"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmssectionactivity order by sourcesystemidentifier"
         ).fetchall()
         assert len(LMSSectionActivity) == 2
         assert [SOURCE_SYSTEM, SOURCE_SYSTEM] == [
-            x["SourceSystem"] for x in LMSSectionActivity
+            x["sourcesystem"] for x in LMSSectionActivity
         ]
         assert ["B123456", "B234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSSectionActivity
+            x["sourcesystemidentifier"] for x in LMSSectionActivity
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSSectionActivity]
+        assert [None, None] == [x["deletedat"] for x in LMSSectionActivity]

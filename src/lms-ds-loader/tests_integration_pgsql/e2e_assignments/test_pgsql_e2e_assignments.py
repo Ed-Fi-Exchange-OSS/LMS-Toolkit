@@ -9,55 +9,11 @@ from edfi_lms_ds_loader.loader_facade import run_loader
 from tests_integration_pgsql.pgsql_e2e_helper import (
     insert_section,
     main_arguments,
+    insert_assignment
 )
 
 CSV_PATH = "tests_integration_sql/e2e_assignments/data"
 SOURCE_SYSTEM = "BestLMS"
-
-
-def insert_record(
-    connection: Connection,
-    ss_identifier: str,
-    source_system: str,
-    section_identifier: int,
-):
-    connection.execute(
-        f"""
-    INSERT INTO lms.Assignment
-           (SourceSystemIdentifier
-           ,SourceSystem
-           ,LMSSectionIdentifier
-           ,Title
-           ,AssignmentCategory
-           ,AssignmentDescription
-           ,StartDateTime
-           ,EndDateTime
-           ,DueDateTime
-           ,MaxPoints
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,CreateDate
-           ,LastModifiedDate
-           ,DeletedAt)
-     VALUES
-           ('{ss_identifier}'
-           ,'{source_system}'
-           ,{section_identifier}
-           ,'{ss_identifier}'
-           ,'online_upload'
-           ,'{ss_identifier}'
-           ,'2021-01-01 00:00:00'
-           ,'2021-01-01 00:00:00'
-           ,'2021-01-01 00:00:00'
-           ,100
-           ,NULL
-           ,NULL
-           ,'2021-01-01 00:00:00'
-           ,'2021-01-01 00:00:00'
-           ,NULL
-           )
-"""
-    )
 
 
 def describe_when_a_record_is_missing_in_the_csv():
@@ -67,19 +23,20 @@ def describe_when_a_record_is_missing_in_the_csv():
         adapter, connection = test_pgsql_db
 
         # arrange - note csv file has only B123456
-        insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1)
-        insert_record(connection, "B234567", SOURCE_SYSTEM, 1)
+        section_identifier = 11
+        insert_section(connection, "B098765", SOURCE_SYSTEM, section_identifier)
+        insert_assignment(connection, "B123456", SOURCE_SYSTEM, 11, section_identifier)
+        insert_assignment(connection, "B234567", SOURCE_SYSTEM, 12, section_identifier)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - B234567 has been soft deleted
         Assignment = connection.execute(
-            "SELECT SourceSystemIdentifier from lms.Assignment WHERE DeletedAt IS NOT NULL"
+            "select sourcesystemidentifier from lms.assignment where deletedat is not null"
         ).fetchall()
         assert len(Assignment) == 1
-        assert Assignment[0]["SourceSystemIdentifier"] == "B234567"
+        assert Assignment[0]["sourcesystemidentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
@@ -88,25 +45,27 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
     ):
         adapter, connection = test_pgsql_db
 
-        insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
-        insert_section(connection, "F098765", "FirstLMS", 2)
+        section_identifier_1 = 11
+        insert_section(connection, "B098765", SOURCE_SYSTEM, section_identifier_1)
+        section_identifier_2 = 12
+        insert_section(connection, "F098765", "FirstLMS", section_identifier_2)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1)
-        insert_record(connection, "F234567", "FirstLMS", 2)
+        insert_assignment(connection, "B123456", SOURCE_SYSTEM, 11, section_identifier_1)
+        insert_assignment(connection, "F234567", "FirstLMS", 12, section_identifier_2)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
         Assignment = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.Assignment"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.assignment order by sourcesystemidentifier"
         ).fetchall()
         assert len(Assignment) == 2
-        assert [SOURCE_SYSTEM, "FirstLMS"] == [x["SourceSystem"] for x in Assignment]
+        assert [SOURCE_SYSTEM, "FirstLMS"] == [x["sourcesystem"] for x in Assignment]
         assert ["B123456", "F234567"] == [
-            x["SourceSystemIdentifier"] for x in Assignment
+            x["sourcesystemidentifier"] for x in Assignment
         ]
-        assert [None, None] == [x["DeletedAt"] for x in Assignment]
+        assert [None, None] == [x["deletedat"] for x in Assignment]
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
@@ -115,22 +74,24 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
     ):
         adapter, connection = test_pgsql_db
 
-        insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
-        insert_section(connection, "B109876", SOURCE_SYSTEM, 2)
+        section_identifier_1 = 13
+        insert_section(connection, "B098765", SOURCE_SYSTEM, section_identifier_1)
+        section_identifier_2 = 14
+        insert_section(connection, "B109876", SOURCE_SYSTEM, section_identifier_2)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1)
-        insert_record(connection, "B234567", SOURCE_SYSTEM, 2)
+        insert_assignment(connection, "B123456", SOURCE_SYSTEM, 11, section_identifier_1)
+        insert_assignment(connection, "B234567", SOURCE_SYSTEM, 12, section_identifier_2)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
         Assignment = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.Assignment"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.assignment order by sourcesystemidentifier"
         ).fetchall()
         assert len(Assignment) == 2
-        assert [SOURCE_SYSTEM, SOURCE_SYSTEM] == [x["SourceSystem"] for x in Assignment]
+        assert [SOURCE_SYSTEM, SOURCE_SYSTEM] == [x["sourcesystem"] for x in Assignment]
         assert ["B123456", "B234567"] == [
-            x["SourceSystemIdentifier"] for x in Assignment
+            x["sourcesystemidentifier"] for x in Assignment
         ]
-        assert [None, None] == [x["DeletedAt"] for x in Assignment]
+        assert [None, None] == [x["deletedat"] for x in Assignment]

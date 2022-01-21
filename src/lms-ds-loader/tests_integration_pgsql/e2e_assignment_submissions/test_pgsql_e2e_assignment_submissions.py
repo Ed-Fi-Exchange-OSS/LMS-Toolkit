@@ -26,21 +26,21 @@ def insert_record(
 ):
     connection.execute(
         f"""
-    INSERT INTO lms.AssignmentSubmission
-           (SourceSystemIdentifier
-           ,SourceSystem
-           ,AssignmentIdentifier
-           ,LMSUserIdentifier
-           ,SubmissionStatus
-           ,SubmissionDateTime
-           ,EarnedPoints
-           ,Grade
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,CreateDate
-           ,LastModifiedDate
-           ,DeletedAt)
-     VALUES
+    insert into lms.assignmentsubmission
+           (sourcesystemidentifier
+           ,sourcesystem
+           ,assignmentidentifier
+           ,lmsuseridentifier
+           ,submissionstatus
+           ,submissiondatetime
+           ,earnedpoints
+           ,grade
+           ,sourcecreatedate
+           ,sourcelastmodifieddate
+           ,createdate
+           ,lastmodifieddate
+           ,deletedat)
+     values
            ('{ss_identifier}'
            ,'{source_system}'
            ,{assignment_identifier}
@@ -48,12 +48,12 @@ def insert_record(
            ,'Returned'
            ,'2021-01-01 00:00:00'
            ,100
-           ,N'A'
-           ,NULL
-           ,NULL
+           ,n'a'
+           ,null
+           ,null
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
-           ,NULL
+           ,null
            )
 """
     )
@@ -66,22 +66,27 @@ def describe_when_a_record_is_missing_in_the_csv():
         adapter, connection = test_pgsql_db
 
         # arrange - note csv file has only B123456
-        insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
-        insert_section(connection, "S098765", SOURCE_SYSTEM, 1)
-        insert_assignment(connection, "B098765", SOURCE_SYSTEM, 1, 1)
+        user_identifier = 13
+        insert_user(connection, "U123456", SOURCE_SYSTEM, user_identifier)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "B234567", SOURCE_SYSTEM, 1, 1)
+        section_identifier = 14
+        insert_section(connection, "S098765", SOURCE_SYSTEM, section_identifier)
+
+        assignment_identifier = 15
+        insert_assignment(connection, "B098765", SOURCE_SYSTEM, assignment_identifier, section_identifier)
+
+        insert_record(connection, "B123456", SOURCE_SYSTEM, assignment_identifier, user_identifier)
+        insert_record(connection, "B234567", SOURCE_SYSTEM, assignment_identifier, user_identifier)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - B234567 has been soft deleted
         AssignmentSubmission = connection.execute(
-            "SELECT SourceSystemIdentifier from lms.AssignmentSubmission WHERE DeletedAt IS NOT NULL"
+            "select sourcesystemidentifier from lms.assignmentsubmission where deletedat is not null"
         ).fetchall()
         assert len(AssignmentSubmission) == 1
-        assert AssignmentSubmission[0]["SourceSystemIdentifier"] == "B234567"
+        assert AssignmentSubmission[0]["sourcesystemidentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
@@ -89,33 +94,40 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
         test_pgsql_db: Tuple[SqlLmsOperations, Connection]
     ):
         adapter, connection = test_pgsql_db
-        insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
-        insert_user(connection, "U123456", "FirstLMS", 2)
 
-        insert_section(connection, "S098765", SOURCE_SYSTEM, 1)
-        insert_section(connection, "S098765", "FirstLMS", 2)
+        user_identifier = 11
+        insert_user(connection, "U123456", SOURCE_SYSTEM, user_identifier)
+        user_identifier = 12
+        insert_user(connection, "U123456", "FirstLMS", user_identifier)
 
-        insert_assignment(connection, "B098765", SOURCE_SYSTEM, 1, 1)
-        insert_assignment(connection, "F098765", SOURCE_SYSTEM, 2, 2)
+        section_identifier = 13
+        insert_section(connection, "S098765", SOURCE_SYSTEM, section_identifier)
+        section_identifier = 14
+        insert_section(connection, "S098765", "FirstLMS", section_identifier)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "F234567", "FirstLMS", 2, 2)
+        assignment_identifier_1 = 15
+        insert_assignment(connection, "B098765", SOURCE_SYSTEM, assignment_identifier_1, section_identifier)
+        assignment_identifier_2 = 16
+        insert_assignment(connection, "F098765", SOURCE_SYSTEM, assignment_identifier_2, section_identifier)
+
+        insert_record(connection, "B123456", SOURCE_SYSTEM, assignment_identifier_1, user_identifier)
+        insert_record(connection, "F234567", "FirstLMS", assignment_identifier_2, user_identifier)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
         AssignmentSubmission = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.AssignmentSubmission"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.assignmentsubmission order by sourcesystemidentifier"
         ).fetchall()
         assert len(AssignmentSubmission) == 2
         assert [SOURCE_SYSTEM, "FirstLMS"] == [
-            x["SourceSystem"] for x in AssignmentSubmission
+            x["sourcesystem"] for x in AssignmentSubmission
         ]
         assert ["B123456", "F234567"] == [
-            x["SourceSystemIdentifier"] for x in AssignmentSubmission
+            x["sourcesystemidentifier"] for x in AssignmentSubmission
         ]
-        assert [None, None] == [x["DeletedAt"] for x in AssignmentSubmission]
+        assert [None, None] == [x["deletedat"] for x in AssignmentSubmission]
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
@@ -123,29 +135,34 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
         test_pgsql_db: Tuple[SqlLmsOperations, Connection]
     ):
         adapter, connection = test_pgsql_db
-        insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
+        user_identifier = 11
+        insert_user(connection, "U123456", SOURCE_SYSTEM, user_identifier)
 
-        insert_section(connection, "S098765", SOURCE_SYSTEM, 1)
-        insert_section(connection, "S109876", SOURCE_SYSTEM, 2)
+        section_identifier_1 = 12
+        insert_section(connection, "S098765", SOURCE_SYSTEM, section_identifier_1)
+        section_identifier_2 = 13
+        insert_section(connection, "S109876", SOURCE_SYSTEM, section_identifier_2)
 
-        insert_assignment(connection, "B098765", SOURCE_SYSTEM, 1, 1)
-        insert_assignment(connection, "B109876", SOURCE_SYSTEM, 2, 2)
+        assignment_identifier_1 = 14
+        insert_assignment(connection, "B098765", SOURCE_SYSTEM, assignment_identifier_1, section_identifier_1)
+        assignment_identifier_2 = 15
+        insert_assignment(connection, "B109876", SOURCE_SYSTEM, assignment_identifier_2, section_identifier_2)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "B234567", SOURCE_SYSTEM, 2, 1)
+        insert_record(connection, "B123456", SOURCE_SYSTEM, assignment_identifier_1, user_identifier)
+        insert_record(connection, "B234567", SOURCE_SYSTEM, assignment_identifier_2, user_identifier)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
         AssignmentSubmission = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.AssignmentSubmission"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.assignmentsubmission order by sourcesystemidentifier"
         ).fetchall()
         assert len(AssignmentSubmission) == 2
         assert [SOURCE_SYSTEM, SOURCE_SYSTEM] == [
-            x["SourceSystem"] for x in AssignmentSubmission
+            x["sourcesystem"] for x in AssignmentSubmission
         ]
         assert ["B123456", "B234567"] == [
-            x["SourceSystemIdentifier"] for x in AssignmentSubmission
+            x["sourcesystemidentifier"] for x in AssignmentSubmission
         ]
-        assert [None, None] == [x["DeletedAt"] for x in AssignmentSubmission]
+        assert [None, None] == [x["deletedat"] for x in AssignmentSubmission]

@@ -15,32 +15,32 @@ SOURCE_SYSTEM = "BestLMS"
 def insert_record(connection: Connection, ss_identifier: str, source_system: str):
     connection.execute(
         f"""
-    INSERT INTO lms.LMSSystemActivity
-           (SourceSystemIdentifier
-           ,SourceSystem
-           ,LMSUserIdentifier
-           ,ActivityType
-           ,ActivityDateTime
-           ,ActivityStatus
-           ,ParentSourceSystemIdentifier
-           ,ActivityTimeInMinutes
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,DeletedAt
-           ,CreateDate
-           ,LastModifiedDate)
-     VALUES
+    insert into lms.lmssystemactivity
+           (sourcesystemidentifier
+           ,sourcesystem
+           ,lmsuseridentifier
+           ,activitytype
+           ,activitydatetime
+           ,activitystatus
+           ,parentsourcesystemidentifier
+           ,activitytimeinminutes
+           ,sourcecreatedate
+           ,sourcelastmodifieddate
+           ,deletedat
+           ,createdate
+           ,lastmodifieddate)
+     values
            ('{ss_identifier}'
            ,'{source_system}'
            ,1
            ,'sign-in'
            ,'2021-01-01 00:00:00'
            ,'active'
-           ,NULL
-           ,NULL
-           ,NULL
-           ,NULL
-           ,NULL
+           ,null
+           ,null
+           ,null
+           ,null
+           ,null
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
            )
@@ -64,10 +64,10 @@ def describe_when_a_record_is_missing_in_the_csv():
 
         # assert - B234567 has been soft deleted
         LMSSystemActivity = connection.execute(
-            "SELECT SourceSystemIdentifier from lms.LMSSystemActivity WHERE DeletedAt IS NOT NULL"
+            "select sourcesystemidentifier from lms.lmssystemactivity where deletedat is not null"
         ).fetchall()
         assert len(LMSSystemActivity) == 1
-        assert LMSSystemActivity[0]["SourceSystemIdentifier"] == "B234567"
+        assert LMSSystemActivity[0]["sourcesystemidentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
@@ -86,13 +86,13 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
 
         # assert - records are unchanged
         LMSSystemActivity = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSSystemActivity"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmssystemactivity order by sourcesystemidentifier"
         ).fetchall()
         assert len(LMSSystemActivity) == 2
         assert [SOURCE_SYSTEM, "FirstLMS"] == [
-            x["SourceSystem"] for x in LMSSystemActivity
+            x["sourcesystem"] for x in LMSSystemActivity
         ]
         assert ["B123456", "F234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSSystemActivity
+            x["sourcesystemidentifier"] for x in LMSSystemActivity
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSSystemActivity]
+        assert [None, None] == [x["deletedat"] for x in LMSSystemActivity]

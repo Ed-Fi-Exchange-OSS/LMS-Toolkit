@@ -10,46 +10,11 @@ from tests_integration_pgsql.pgsql_e2e_helper import (
     insert_section,
     insert_user,
     main_arguments,
+    insert_user_section_association
 )
 
 CSV_PATH = "tests_integration_sql/e2e_section_associations/data"
 SOURCE_SYSTEM = "BestLMS"
-
-
-def insert_record(
-    connection: Connection,
-    ss_identifier: str,
-    source_system: str,
-    section_identifier: int,
-    user_identifier: int,
-):
-    connection.execute(
-        f"""
-    INSERT INTO lms.LMSUserLMSSectionAssociation
-           (LMSSectionIdentifier
-           ,LMSUserIdentifier
-           ,SourceSystemIdentifier
-           ,SourceSystem
-           ,EnrollmentStatus
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,CreateDate
-           ,LastModifiedDate
-           ,DeletedAt)
-     VALUES
-           ({section_identifier}
-           ,{user_identifier}
-           ,'{ss_identifier}'
-           ,'{source_system}'
-           ,'Active'
-           ,NULL
-           ,NULL
-           ,'2021-01-01 00:00:00'
-           ,'2021-01-01 00:00:00'
-           ,NULL
-           )
-"""
-    )
 
 
 def describe_when_a_record_is_missing_in_the_csv():
@@ -59,21 +24,23 @@ def describe_when_a_record_is_missing_in_the_csv():
         adapter, connection = test_pgsql_db
 
         # arrange - note csv file has only B123456
-        insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
-        insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
+        user_identifier = 10
+        insert_user(connection, "U123456", SOURCE_SYSTEM, user_identifier)
+        section_identifier = 10
+        insert_section(connection, "B098765", SOURCE_SYSTEM, section_identifier)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "B234567", SOURCE_SYSTEM, 1, 1)
+        insert_user_section_association(connection, "B123456", SOURCE_SYSTEM, 10, user_identifier, section_identifier)
+        insert_user_section_association(connection, "B234567", SOURCE_SYSTEM, 11, user_identifier, section_identifier)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - B234567 has been soft deleted
         LMSUserLMSSectionAssociation = connection.execute(
-            "SELECT SourceSystemIdentifier from lms.LMSUserLMSSectionAssociation WHERE DeletedAt IS NOT NULL"
+            "select sourcesystemidentifier from lms.lmsuserlmssectionassociation where deletedat is not null"
         ).fetchall()
         assert len(LMSUserLMSSectionAssociation) == 1
-        assert LMSUserLMSSectionAssociation[0]["SourceSystemIdentifier"] == "B234567"
+        assert LMSUserLMSSectionAssociation[0]["sourcesystemidentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
@@ -81,30 +48,34 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
         test_pgsql_db: Tuple[SqlLmsOperations, Connection]
     ):
         adapter, connection = test_pgsql_db
-        insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
-        insert_user(connection, "U123456", "FirstLMS", 2)
+        user_identifier_1 = 10
+        insert_user(connection, "U123456", SOURCE_SYSTEM, user_identifier_1)
+        user_identifier_2 = 11
+        insert_user(connection, "U123456", "FirstLMS", user_identifier_2)
 
-        insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
-        insert_section(connection, "F098765", "FirstLMS", 2)
+        section_identifier_1 = 10
+        insert_section(connection, "B098765", SOURCE_SYSTEM, section_identifier_1)
+        section_identifier_2 = 11
+        insert_section(connection, "F098765", "FirstLMS", section_identifier_2)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "F234567", "FirstLMS", 2, 2)
+        insert_user_section_association(connection, "B123456", SOURCE_SYSTEM, 11, user_identifier_1, section_identifier_1)
+        insert_user_section_association(connection, "F234567", "FirstLMS", 12, user_identifier_2, section_identifier_2)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
         LMSUserLMSSectionAssociation = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSUserLMSSectionAssociation"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmsuserlmssectionassociation order by sourcesystemidentifier"
         ).fetchall()
         assert len(LMSUserLMSSectionAssociation) == 2
         assert [SOURCE_SYSTEM, "FirstLMS"] == [
-            x["SourceSystem"] for x in LMSUserLMSSectionAssociation
+            x["sourcesystem"] for x in LMSUserLMSSectionAssociation
         ]
         assert ["B123456", "F234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSUserLMSSectionAssociation
+            x["sourcesystemidentifier"] for x in LMSUserLMSSectionAssociation
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSUserLMSSectionAssociation]
+        assert [None, None] == [x["deletedat"] for x in LMSUserLMSSectionAssociation]
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
@@ -112,26 +83,29 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
         test_pgsql_db: Tuple[SqlLmsOperations, Connection]
     ):
         adapter, connection = test_pgsql_db
-        insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
+        user_identifier = 10
+        insert_user(connection, "U123456", SOURCE_SYSTEM, user_identifier)
 
-        insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
-        insert_section(connection, "B109876", SOURCE_SYSTEM, 2)
+        section_identifier_1 = 11
+        insert_section(connection, "B098765", SOURCE_SYSTEM, section_identifier_1)
+        section_identifier_2 = 12
+        insert_section(connection, "B109876", SOURCE_SYSTEM, section_identifier_2)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "B234567", SOURCE_SYSTEM, 2, 1)
+        insert_user_section_association(connection, "B123456", SOURCE_SYSTEM, 11, user_identifier, section_identifier_1)
+        insert_user_section_association(connection, "B234567", SOURCE_SYSTEM, 12, user_identifier, section_identifier_2)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
         LMSUserLMSSectionAssociation = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSUserLMSSectionAssociation"
+            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmsuserlmssectionassociation order by sourcesystemidentifier"
         ).fetchall()
         assert len(LMSUserLMSSectionAssociation) == 2
         assert [SOURCE_SYSTEM, SOURCE_SYSTEM] == [
-            x["SourceSystem"] for x in LMSUserLMSSectionAssociation
+            x["sourcesystem"] for x in LMSUserLMSSectionAssociation
         ]
         assert ["B123456", "B234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSUserLMSSectionAssociation
+            x["sourcesystemidentifier"] for x in LMSUserLMSSectionAssociation
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSUserLMSSectionAssociation]
+        assert [None, None] == [x["deletedat"] for x in LMSUserLMSSectionAssociation]

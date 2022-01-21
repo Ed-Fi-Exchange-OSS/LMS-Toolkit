@@ -8,7 +8,7 @@ from edfi_lms_ds_loader.helpers.argparser import MainArguments
 from tests_integration_pgsql.conftest import Settings
 
 
-def main_arguments(adapter: SqlLmsOperations, csv_path: str) -> MainArguments:
+def main_arguments(operations_adapter: SqlLmsOperations, csv_path: str) -> MainArguments:
     args = MainArguments(
         csv_path,
         "postgresql",
@@ -19,10 +19,10 @@ def main_arguments(adapter: SqlLmsOperations, csv_path: str) -> MainArguments:
         False,
         False,
     )
-    args.build_pgsql_adapter(Settings.user, Settings.password)
+    args.db_adapter = operations_adapter.db_adapter
 
     # monkey patch the test adapter
-    args.get_db_operations_adapter = lambda: adapter  # type: ignore
+    args.get_db_operations_adapter = lambda: operations_adapter  # type: ignore
     return args
 
 
@@ -43,21 +43,22 @@ def insert_user(
     # insert a required user with LMSUserIdentifier = 1
     connection.execute(
         f"""
-    INSERT INTO lms.LMSUser
-           (LMSUserIdentifier
-           ,SourceSystemIdentifier
-           ,SourceSystem
-           ,UserRole
-           ,SISUserIdentifier
-           ,LocalUserIdentifier
-           ,Name
-           ,EmailAddress
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,CreateDate
-           ,LastModifiedDate
-           ,DeletedAt)
-     VALUES
+    insert into lms.lmsuser
+           (lmsuseridentifier
+           ,sourcesystemidentifier
+           ,sourcesystem
+           ,userrole
+           ,sisuseridentifier
+           ,localuseridentifier
+           ,name
+           ,emailaddress
+           ,sourcecreatedate
+           ,sourcelastmodifieddate
+           ,createdate
+           ,lastmodifieddate
+           ,deletedat)
+        overriding system value
+     values
            ({identifier}
            ,'{ss_identifier}'
            ,'{source_system}'
@@ -66,15 +67,15 @@ def insert_user(
            ,'{ss_identifier}'
            ,'{ss_identifier}'
            ,'{ss_identifier}'
-           ,NULL
-           ,NULL
+           ,null
+           ,null
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
-           ,NULL
+           ,null
            )
 """
     )
-    reset_identity_sequence_number(connection, "lms.LMSUser", "LMSUserIdentifier")
+    reset_identity_sequence_number(connection, "lms.lmsuser", "lmsuseridentifier")
 
 
 def insert_section(
@@ -82,21 +83,22 @@ def insert_section(
 ):
     connection.execute(
         f"""
-    INSERT INTO lms.LMSSection
-           (LMSSectionIdentifier
-           ,SourceSystemIdentifier
-           ,SourceSystem
-           ,SISSectionIdentifier
-           ,Title
-           ,SectionDescription
-           ,Term
-           ,LMSSectionStatus
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,CreateDate
-           ,LastModifiedDate
-           ,DeletedAt)
-     VALUES
+    insert into lms.lmssection
+           (lmssectionidentifier
+           ,sourcesystemidentifier
+           ,sourcesystem
+           ,sissectionidentifier
+           ,title
+           ,sectiondescription
+           ,term
+           ,lmssectionstatus
+           ,sourcecreatedate
+           ,sourcelastmodifieddate
+           ,createdate
+           ,lastmodifieddate
+           ,deletedat)
+        overriding system value
+     values
            ({identifier}
            ,'{ss_identifier}'
            ,'{source_system}'
@@ -105,15 +107,15 @@ def insert_section(
            ,'{ss_identifier}'
            ,'{ss_identifier}'
            ,'Archived'
-           ,NULL
-           ,NULL
+           ,null
+           ,null
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
-           ,NULL
+           ,null
            )
 """
     )
-    reset_identity_sequence_number(connection, "lms.LMSSection", "LMSSectionIdentifier")
+    reset_identity_sequence_number(connection, "lms.lmssection", "lmssectionidentifier")
 
 
 def insert_assignment(
@@ -125,28 +127,29 @@ def insert_assignment(
 ):
     connection.execute(
         f"""
-    INSERT INTO lms.Assignment
-           (AssignmentIdentifier
-           ,SourceSystemIdentifier
-           ,SourceSystem
-           ,LMSSectionIdentifier
-           ,Title
-           ,AssignmentCategory
-           ,AssignmentDescription
-           ,StartDateTime
-           ,EndDateTime
-           ,DueDateTime
-           ,MaxPoints
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,CreateDate
-           ,LastModifiedDate
-           ,DeletedAt)
-     VALUES
+    insert into lms.assignment
+           (assignmentidentifier
+           ,sourcesystemidentifier
+           ,sourcesystem
+           ,lmssectionidentifier
+           ,title
+           ,assignmentcategory
+           ,assignmentdescription
+           ,startdatetime
+           ,enddatetime
+           ,duedatetime
+           ,maxpoints
+           ,sourcecreatedate
+           ,sourcelastmodifieddate
+           ,createdate
+           ,lastmodifieddate
+           ,deletedat)
+        overriding system value
+     values
            ({identifier}
            ,'{ss_identifier}'
            ,'{source_system}'
-           ,'{section_identifier}
+           ,'{section_identifier}'
            ,'{ss_identifier}'
            ,'online_upload'
            ,'{ss_identifier}'
@@ -154,15 +157,15 @@ def insert_assignment(
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
            ,100
-           ,NULL
-           ,NULL
+           ,null
+           ,null
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
-           ,NULL
+           ,null
            )
 """
     )
-    reset_identity_sequence_number(connection, "lms.Assignment", "AssignmentIdentifier")
+    reset_identity_sequence_number(connection, "lms.assignment", "assignmentidentifier")
 
 
 def insert_user_section_association(
@@ -175,35 +178,36 @@ def insert_user_section_association(
 ):
     connection.execute(
         f"""
-    INSERT INTO lms.LMSUserLMSSectionAssociation
-           (LMSUserLMSSectionAssociationIdentifier
-           ,LMSSectionIdentifier
-           ,LMSUserIdentifier
-           ,SourceSystemIdentifier
-           ,SourceSystem
-           ,EnrollmentStatus
-           ,SourceCreateDate
-           ,SourceLastModifiedDate
-           ,CreateDate
-           ,LastModifiedDate
-           ,DeletedAt)
-     VALUES
+    insert into lms.lmsuserlmssectionassociation
+           (lmsuserlmssectionassociationidentifier
+           ,lmssectionidentifier
+           ,lmsuseridentifier
+           ,sourcesystemidentifier
+           ,sourcesystem
+           ,enrollmentstatus
+           ,sourcecreatedate
+           ,sourcelastmodifieddate
+           ,createdate
+           ,lastmodifieddate
+           ,deletedat)
+        overriding system value
+     values
            ({identifier}
-           ,'{section_identifier}
-           ,'{user_identifier}
+           ,'{section_identifier}'
+           ,'{user_identifier}'
            ,'{ss_identifier}'
            ,'{source_system}'
-           ,'Active'
-           ,NULL
-           ,NULL
+           ,'active'
+           ,null
+           ,null
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
-           ,NULL
+           ,null
            )
 """
     )
     reset_identity_sequence_number(
         connection,
-        "lms.LMSUserLMSSectionAssociation",
-        "LMSUserLMSSectionAssociationIdentifier",
+        "lms.lmsuserlmssectionassociation",
+        "lmsuserlmssectionassociationidentifier",
     )
