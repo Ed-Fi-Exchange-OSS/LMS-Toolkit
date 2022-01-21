@@ -31,7 +31,7 @@ insert into
     lms.{lower_table}
 ({lower_column_string}
 )
-select{lower_column_string}
+select {lower_column_string}
 from
     lms.stg_{lower_table} as stg
 where
@@ -215,7 +215,7 @@ def copy_updates_to_production(table: str, update_columns: str) -> str:
     return f"""
 update
     lms.{lower_table}
-set{lower_update_columns}
+set {lower_update_columns}
 from
     lms.{lower_table} t
 inner join

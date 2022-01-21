@@ -224,7 +224,7 @@ def describe_when_uploading_extractor_files() -> None:
             sections_call = mocks["upload_file"].call_args_list[0][0]
             assert sections_call[0] is mocks["get_db_operations_adapter"]
             assert sections_call[1] is dfs["users"]
-            assert sections_call[2] == "LMSUser"
+            assert sections_call[2] == "lmsuser"
 
         def it_uploads_sections(mocker, fixture) -> None:
             mocks, dfs = fixture
@@ -234,7 +234,7 @@ def describe_when_uploading_extractor_files() -> None:
             sections_call = mocks["upload_file"].call_args_list[2][0]
             assert sections_call[0] is mocks["get_db_operations_adapter"]
             assert sections_call[1] is dfs["sections"]
-            assert sections_call[2] == "LMSSection"
+            assert sections_call[2] == "lmssection"
 
         def it_uploads_assignments(mocker, fixture) -> None:
             mocks, dfs = fixture
