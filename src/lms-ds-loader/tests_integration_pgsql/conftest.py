@@ -129,5 +129,6 @@ def test_pgsql_db(
 
     # Initialize monkey-patched adapter with a dummy engine, doesn't need a real one now
     adapter: SqlLmsOperations = SqlLmsOperations(MagicMock())
+    adapter.engine = DbEngine.POSTGRESQL
 
     return (adapter, pgsql_connection)
