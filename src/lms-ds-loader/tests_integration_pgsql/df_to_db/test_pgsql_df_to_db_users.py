@@ -49,26 +49,26 @@ def describe_when_a_user_is_updated():
 
             # assert - staging table is correct
             stg_LMSUser = connection.execute(
-                "SELECT Name, UserRole from lms.stg_LMSUser"
+                "select name, userrole from lms.stg_lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(stg_LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in stg_LMSUser]
+            assert USER_NAMES == [x["name"] for x in stg_LMSUser]
 
             # assert - user roles are correct in staging
             assert [ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE] == [
-                x["UserRole"] for x in stg_LMSUser
+                x["userrole"] for x in stg_LMSUser
             ]
 
             # assert - production table is correct
             LMSUser = connection.execute(
-                "SELECT Name, UserRole from lms.LMSUser"
+                "select name, userrole from lms.lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in LMSUser]
+            assert USER_NAMES == [x["name"] for x in LMSUser]
 
             # assert - user roles are correct in production
             assert [ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE, ORIGINAL_USER_ROLE] == [
-                x["UserRole"] for x in LMSUser
+                x["userrole"] for x in LMSUser
             ]
 
         def update_bob_user_role():
@@ -82,26 +82,26 @@ def describe_when_a_user_is_updated():
 
             # assert - staging table is loaded
             stg_LMSUser = connection.execute(
-                "SELECT Name, UserRole from lms.stg_LMSUser"
+                "select name, userrole from lms.stg_lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(stg_LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in stg_LMSUser]
+            assert USER_NAMES == [x["name"] for x in stg_LMSUser]
 
             # assert - user roles are correct in staging
             assert [ORIGINAL_USER_ROLE, UPDATED_USER_ROLE, ORIGINAL_USER_ROLE] == [
-                x["UserRole"] for x in stg_LMSUser
+                x["userrole"] for x in stg_LMSUser
             ]
 
             # assert - production table is loaded
             LMSUser = connection.execute(
-                "SELECT Name, UserRole from lms.LMSUser"
+                "select name, userrole from lms.lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in LMSUser]
+            assert USER_NAMES == [x["name"] for x in LMSUser]
 
             # assert - user roles are correct in production
             assert [ORIGINAL_USER_ROLE, UPDATED_USER_ROLE, ORIGINAL_USER_ROLE] == [
-                x["UserRole"] for x in LMSUser
+                x["userrole"] for x in LMSUser
             ]
 
         initial_upload()
@@ -122,18 +122,18 @@ def describe_when_a_user_goes_missing_then_reappears():
 
             # assert - staging table is correct
             stg_LMSUser = connection.execute(
-                "SELECT Name from lms.stg_LMSUser"
+                "select name from lms.stg_lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(stg_LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in stg_LMSUser]
+            assert USER_NAMES == [x["name"] for x in stg_LMSUser]
 
             # assert - production table is correct
             LMSUser = connection.execute(
-                "SELECT Name, DeletedAt from lms.LMSUser"
+                "select name, deletedat from lms.lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in LMSUser]
-            assert [None, None, None] == [x["DeletedAt"] for x in LMSUser]
+            assert USER_NAMES == [x["name"] for x in LMSUser]
+            assert [None, None, None] == [x["deletedat"] for x in LMSUser]
 
         def upload_with_bob_missing():
             # act
@@ -141,18 +141,18 @@ def describe_when_a_user_goes_missing_then_reappears():
 
             # assert - staging table doesn't have Bob
             stg_LMSUser = connection.execute(
-                "SELECT Name from lms.stg_LMSUser"
+                "select name from lms.stg_lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(stg_LMSUser) == 2
-            assert USER_NAMES_WITHOUT_BOB == [x["Name"] for x in stg_LMSUser]
+            assert USER_NAMES_WITHOUT_BOB == [x["name"] for x in stg_LMSUser]
 
             # assert - production table still has all three, with Bob soft deleted
             LMSUser = connection.execute(
-                "SELECT Name, DeletedAt from lms.LMSUser"
+                "select name, deletedat from lms.lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in LMSUser]
-            deleted_ats = [x["DeletedAt"] for x in LMSUser]
+            assert USER_NAMES == [x["name"] for x in LMSUser]
+            deleted_ats = [x["deletedat"] for x in LMSUser]
             assert deleted_ats[0] is None
             assert deleted_ats[1] is not None
             assert deleted_ats[2] is None
@@ -167,18 +167,18 @@ def describe_when_a_user_goes_missing_then_reappears():
 
             # assert - staging table has Bob
             stg_LMSUser = connection.execute(
-                "SELECT Name from lms.stg_LMSUser"
+                "select name from lms.stg_lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(stg_LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in stg_LMSUser]
+            assert USER_NAMES == [x["name"] for x in stg_LMSUser]
 
             # assert - production table still has all three, with Bob no longer soft deleted
             LMSUser = connection.execute(
-                "SELECT Name, DeletedAt from lms.LMSUser"
+                "select name, deletedat from lms.lmsuser order by sourcesystemidentifier"
             ).fetchall()
             assert len(LMSUser) == 3
-            assert USER_NAMES == [x["Name"] for x in LMSUser]
-            assert [None, None, None] == [x["DeletedAt"] for x in LMSUser]
+            assert USER_NAMES == [x["name"] for x in LMSUser]
+            assert [None, None, None] == [x["deletedat"] for x in LMSUser]
 
         initial_upload()
         upload_with_bob_missing()
