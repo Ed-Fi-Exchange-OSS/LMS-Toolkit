@@ -276,6 +276,7 @@ AND
             t.SourceSystem = stg.SourceSystem
     )
 AND
+    -- PostgreSQL self-join update statement needs to limit to the matching record
     lms.{table}.{table}Identifier = t.{table}Identifier
 AND
     t.DeletedAt IS NULL
@@ -287,17 +288,6 @@ AND
 def soft_delete_from_production_for_assignment_relation(
     table: str, source_system: str
 ) -> str:
-
-    # TODO LMS-444. This following fail or at least not work as intended because
-    # the table to update is not being joined to `t`. For discussion on how to
-    # join in an update statement:
-    # https://stackoverflow.com/questions/7869592/how-to-do-an-update-join-in-postgresql
-    # particularly note the point made by Nate Smith about joining on primary
-    # key. The way this code is structured (generic), we don't know the primary
-    # key at this point. So unless we can come up with another solution, we will
-    # have to modify the code below to accommodate for doing the correct primary
-    # key join based on the table in question.
-
     return f"""
 UPDATE
     lms.{table}
@@ -330,6 +320,9 @@ AND
             t.SourceSystem = stg.SourceSystem
     )
 AND
+    -- PostgreSQL self-join update statement needs to limit to the matching record
+    lms.{table}.{table}Identifier = t.{table}Identifier
+AND
     t.DeletedAt IS NULL
 AND
     t.SourceSystem = '{source_system}'
@@ -343,16 +336,16 @@ INSERT INTO lms.AssignmentSubmissionType (
     SubmissionType
 )
 SELECT
-    Assignment.AssignmentIdentifier,
-    stg_AssignmentSubmissionType.SubmissionType
+    lms.Assignment.AssignmentIdentifier,
+    lms.stg_AssignmentSubmissionType.SubmissionType
 FROM
-        lms.stg_AssignmentSubmissionType
+    lms.stg_AssignmentSubmissionType
     INNER JOIN
         lms.Assignment
     ON
-        stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
+        lms.stg_AssignmentSubmissionType.SourceSystem = lms.Assignment.SourceSystem
     AND
-        stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
+        lms.stg_AssignmentSubmissionType.SourceSystemIdentifier = lms.Assignment.SourceSystemIdentifier
 WHERE
     NOT EXISTS (
         SELECT
@@ -360,9 +353,9 @@ WHERE
         FROM
             lms.AssignmentSubmissionType
         WHERE
-            AssignmentIdentifier = Assignment.AssignmentIdentifier
+            AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
         AND
-            SubmissionType = stg_AssignmentSubmissionType.SubmissionType
+            SubmissionType = lms.stg_AssignmentSubmissionType.SubmissionType
     )
 """
 
@@ -378,7 +371,7 @@ FROM
 INNER JOIN
     lms.Assignment
 ON
-    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
+    lms.AssignmentSubmissionType.AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
 WHERE
     SourceSystem = '{source_system}'
 AND
@@ -396,9 +389,9 @@ AND
     )
 -- PostgreSQL self-join update statement needs to limit to the matching record
 AND
-    upd.AssignmentIdentifier = AssignmentSubmissionType.AssignmentIdentifier
+    upd.AssignmentIdentifier = lms.AssignmentSubmissionType.AssignmentIdentifier
 AND
-    upd.SubmissionType = AssignmentSubmissionType.SubmissionType
+    upd.SubmissionType = lms.AssignmentSubmissionType.SubmissionType
 """
 
 
@@ -413,7 +406,7 @@ FROM
 INNER JOIN
     lms.Assignment
 ON
-    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
+    lms.AssignmentSubmissionType.AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
 WHERE
     SourceSystem = '{source_system}'
 AND
@@ -423,17 +416,17 @@ AND
         FROM
             lms.stg_AssignmentSubmissionType
         WHERE
-            stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
+            lms.stg_AssignmentSubmissionType.SourceSystem = lms.Assignment.SourceSystem
         AND
-            stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
+            lms.stg_AssignmentSubmissionType.SourceSystemIdentifier = lms.Assignment.SourceSystemIdentifier
         AND
-            stg_AssignmentSubmissionType.SubmissionType = AssignmentSubmissionType.SubmissionType
+            lms.stg_AssignmentSubmissionType.SubmissionType = lms.AssignmentSubmissionType.SubmissionType
     )
 -- PostgreSQL self-join update statement needs to limit to the matching record
 AND
-    upd.AssignmentIdentifier = AssignmentSubmissionType.AssignmentIdentifier
+    upd.AssignmentIdentifier = lms.AssignmentSubmissionType.AssignmentIdentifier
 AND
-    upd.SubmissionType = AssignmentSubmissionType.SubmissionType
+    upd.SubmissionType = lms.AssignmentSubmissionType.SubmissionType
 """
 
 

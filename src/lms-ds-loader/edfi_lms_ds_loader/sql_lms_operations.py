@@ -41,11 +41,6 @@ class SqlLmsOperations:
         self.engine = engine
         if self.engine not in SUPPORTED_ENGINES:
             logger.error(f"The engine {self.engine} is not supported.")
-        # TODO: remove this message when we reach the full support for PG
-        if self.engine == DbEngine.POSTGRESQL:
-            logger.info(
-                f"The support for the engine {self.engine} is a work in progress," +
-                "some of the features may not be supported yet")
 
     def _exec(self, statement: str) -> int:
         """This is a wrapper function that will not be unit tested."""
