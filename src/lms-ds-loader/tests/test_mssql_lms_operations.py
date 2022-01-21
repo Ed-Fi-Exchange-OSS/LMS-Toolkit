@@ -293,7 +293,7 @@ SELECT
     Assignment.AssignmentIdentifier,
     stg_AssignmentSubmissionType.SubmissionType
 FROM
-        lms.stg_AssignmentSubmissionType
+    lms.stg_AssignmentSubmissionType
     INNER JOIN
         lms.Assignment
     ON
