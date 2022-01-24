@@ -76,14 +76,14 @@ where not exists (
     1
   from
     lms.{lower_table}
-
-
   where
     sourcesystemidentifier = stg.sourcesystemidentifier
   and
     sourcesystem = stg.sourcesystem
 )
 """
+
+
 def insert_new_records_to_production_for_assignment_and_user_relation(
     table: str, insert_columns: str, select_columns: str
 ) -> str:
@@ -126,6 +126,8 @@ where not exists (
     sourcesystem = stg.sourcesystem
 )
 """.lower()
+
+
 def insert_new_records_to_production_for_section_relation(
     table: str, insert_columns: str, select_columns: str
 ) -> str:
@@ -203,50 +205,49 @@ where not exists (
   and
     sourcesystem = stg.sourcesystem
 )
-
-
+"""
 
 
 def insert_new_records_to_production_for_attendance_events(
     insert_columns: str, select_columns: str
 ) -> str:
     return f"""
-INSERT INTO
-    lms.LMSUserAttendanceEvent
+insert into
+    lms.lmsuserattendanceevent
 (
-    LMSSectionIdentifier,
-    LMSUserIdentifier,
-    LMSUserLMSSectionAssociationIdentifier,{insert_columns}
+    lmssectionidentifier,
+    lmsuseridentifier,
+    lmsuserlmssectionassociationidentifier,{insert_columns}
 )
-SELECT
-    LMSSection.LMSSectionIdentifier,
-    LMSUser.LMSUserIdentifier,
-    LMSUserLMSSectionAssociation.LMSUserLMSSectionAssociationIdentifier,{select_columns}
-FROM
-    lms.stg_LMSUserAttendanceEvent as stg
-INNER JOIN
-    lms.LMSSection
-ON
-    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSSection.SourceSystem
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-INNER JOIN
-    lms.LMSUserLMSSectionAssociation
-ON
-    LMSUser.LMSUserIdentifier = LMSUserLMSSectionAssociation.LMSUserIdentifier
-AND
-    LMSSection.LMSSectionIdentifier = LMSUserLMSSectionAssociation.LMSSectionIdentifier
-WHERE NOT EXISTS (
-  SELECT
+select
+    lmssection.lmssectionidentifier,
+    lmsuser.lmsuseridentifier,
+    lmsuserlmssectionassociation.lmsuserlmssectionassociationidentifier,{select_columns}
+from
+    lms.stg_lmsuserattendanceevent as stg
+inner join
+    lms.lmssection
+on
+    stg.lmssectionsourcesystemidentifier = lmssection.sourcesystemidentifier
+and
+    stg.sourcesystem = lmssection.sourcesystem
+inner join
+    lms.lmsuser
+on
+    stg.lmsusersourcesystemidentifier = lmsuser.sourcesystemidentifier
+and
+    stg.sourcesystem = lmsuser.sourcesystem
+inner join
+    lms.lmsuserlmssectionassociation
+on
+    lmsuser.lmsuseridentifier = lmsuserlmssectionassociation.lmsuseridentifier
+and
+    lmssection.lmssectionidentifier = lmsuserlmssectionassociation.lmssectionidentifier
+where not exists (
+  select
     1
-  FROM
-    lms.LMSUserAttendanceEvent
+  from
+    lms.lmsuserattendanceevent
   where
     sourcesystemidentifier = stg.sourcesystemidentifier
   and
@@ -348,13 +349,13 @@ and
         and
             t.sourcesystem = stg.sourcesystem
     )
-AND
+and
     -- PostgreSQL self-join update statement needs to limit to the matching record
-    lms.{lower_table}.{lower_table}Identifier = t.{lower_table}Identifier
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
+    lms.{lower_table}.{lower_table}identifier = t.{lower_table}identifier
+and
+    t.deletedat is null
+and
+    t.sourcesystem = '{source_system}'
 """
 
 
@@ -394,13 +395,13 @@ and
         and
             t.sourcesystem = stg.sourcesystem
     )
-AND
+and
     -- PostgreSQL self-join update statement needs to limit to the matching record
-    lms.{lower_table}.{lower_table}Identifier = t.{lower_table}Identifier
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
+    lms.{lower_table}.{lower_table}identifier = t.{lower_table}identifier
+and
+    t.deletedat is null
+and
+    t.sourcesystem = '{source_system}'
 """
 
 
