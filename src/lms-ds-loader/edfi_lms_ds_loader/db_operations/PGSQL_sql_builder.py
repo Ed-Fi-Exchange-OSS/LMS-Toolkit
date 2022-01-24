@@ -76,14 +76,14 @@ where not exists (
     1
   from
     lms.{lower_table}
+
+
   where
     sourcesystemidentifier = stg.sourcesystemidentifier
   and
     sourcesystem = stg.sourcesystem
 )
 """
-
-
 def insert_new_records_to_production_for_assignment_and_user_relation(
     table: str, insert_columns: str, select_columns: str
 ) -> str:
