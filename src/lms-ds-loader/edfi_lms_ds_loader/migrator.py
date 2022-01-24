@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import List
 from collections import namedtuple
 
-from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
 
 from edfi_sql_adapter.sql_adapter import Adapter, Statement
@@ -48,25 +47,27 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     return statements
 
 
+def _migrationjournal_exists(adapter: Adapter) -> bool:
+    statement = """
+SELECT
+    COUNT(table_name)
+FROM
+    information_schema.tables
+WHERE
+    table_schema LIKE 'lms' AND
+    table_name = 'migrationjournal';
+"""
+    response = adapter.get_int(statement)
+    return bool(response == 1)
+
+
 def _script_has_been_run(adapter: Adapter, migration: str) -> bool:
-    try:
-        statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
-        response = adapter.get_int(statement)
+    if (not _migrationjournal_exists(adapter)):
+        return False
 
-        return bool(response == 1)
-    except ProgrammingError as error:
-        if (
-            # PostgreSLQ error
-            "psycopg2.errors.UndefinedTable" in error.args[0]
-            or
-            # SQL Server error
-            "Invalid object name" in error.args[0]
-        ):
-            # This means it is a fresh database where the migrationjournal table
-            # has not been installed yet.
-            return False
-
-        raise
+    statement = f"SELECT 1 FROM lms.migrationjournal WHERE script = '{migration}';"
+    response = adapter.get_int(statement)
+    return bool(response == 1)
 
 
 def _record_migration_in_journal(adapter: Adapter, migration: str) -> None:
