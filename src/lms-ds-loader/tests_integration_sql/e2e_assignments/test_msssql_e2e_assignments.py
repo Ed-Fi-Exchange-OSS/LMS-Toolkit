@@ -83,9 +83,7 @@ def describe_when_a_record_is_missing_in_the_csv():
 
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
-    def it_should_match_the_record(
-        test_mssql_db: Tuple[SqlLmsOperations, Connection]
-    ):
+    def it_should_match_the_record(test_mssql_db: Tuple[SqlLmsOperations, Connection]):
         adapter, connection = test_mssql_db
 
         insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
@@ -110,9 +108,7 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
-    def it_should_match_the_record(
-        test_mssql_db: Tuple[SqlLmsOperations, Connection]
-    ):
+    def it_should_match_the_record(test_mssql_db: Tuple[SqlLmsOperations, Connection]):
         adapter, connection = test_mssql_db
 
         insert_section(connection, "B098765", SOURCE_SYSTEM, 1)

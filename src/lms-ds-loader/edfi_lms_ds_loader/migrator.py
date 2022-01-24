@@ -31,7 +31,7 @@ def _get_file_names(engine: str) -> List[Migration]:
 
     with scandir(script_dir) as all_files:
         for file in all_files:
-            if file.path.endswith('.sql'):
+            if file.path.endswith(".sql"):
                 files.append(Migration(file.path, _get_migration_name(file.name)))
 
     files.sort()

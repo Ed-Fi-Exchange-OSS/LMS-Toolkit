@@ -126,8 +126,6 @@ where not exists (
     sourcesystem = stg.sourcesystem
 )
 """.lower()
-
-
 def insert_new_records_to_production_for_section_relation(
     table: str, insert_columns: str, select_columns: str
 ) -> str:
@@ -200,6 +198,55 @@ where not exists (
     1
   from
     lms.{lower_table}
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
+)
+
+
+
+
+def insert_new_records_to_production_for_attendance_events(
+    insert_columns: str, select_columns: str
+) -> str:
+    return f"""
+INSERT INTO
+    lms.LMSUserAttendanceEvent
+(
+    LMSSectionIdentifier,
+    LMSUserIdentifier,
+    LMSUserLMSSectionAssociationIdentifier,{insert_columns}
+)
+SELECT
+    LMSSection.LMSSectionIdentifier,
+    LMSUser.LMSUserIdentifier,
+    LMSUserLMSSectionAssociation.LMSUserLMSSectionAssociationIdentifier,{select_columns}
+FROM
+    lms.stg_LMSUserAttendanceEvent as stg
+INNER JOIN
+    lms.LMSSection
+ON
+    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSSection.SourceSystem
+INNER JOIN
+    lms.LMSUser
+ON
+    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
+AND
+    stg.SourceSystem = LMSUser.SourceSystem
+INNER JOIN
+    lms.LMSUserLMSSectionAssociation
+ON
+    LMSUser.LMSUserIdentifier = LMSUserLMSSectionAssociation.LMSUserIdentifier
+AND
+    LMSSection.LMSSectionIdentifier = LMSUserLMSSectionAssociation.LMSSectionIdentifier
+WHERE NOT EXISTS (
+  SELECT
+    1
+  FROM
+    lms.LMSUserAttendanceEvent
   where
     sourcesystemidentifier = stg.sourcesystemidentifier
   and

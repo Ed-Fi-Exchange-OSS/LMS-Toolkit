@@ -290,16 +290,16 @@ INSERT INTO lms.AssignmentSubmissionType (
     SubmissionType
 )
 SELECT
-    Assignment.AssignmentIdentifier,
-    stg_AssignmentSubmissionType.SubmissionType
+    lms.Assignment.AssignmentIdentifier,
+    lms.stg_AssignmentSubmissionType.SubmissionType
 FROM
     lms.stg_AssignmentSubmissionType
     INNER JOIN
         lms.Assignment
     ON
-        stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
+        lms.stg_AssignmentSubmissionType.SourceSystem = lms.Assignment.SourceSystem
     AND
-        stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
+        lms.stg_AssignmentSubmissionType.SourceSystemIdentifier = lms.Assignment.SourceSystemIdentifier
 WHERE
     NOT EXISTS (
         SELECT
@@ -307,9 +307,9 @@ WHERE
         FROM
             lms.AssignmentSubmissionType
         WHERE
-            AssignmentIdentifier = Assignment.AssignmentIdentifier
+            AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
         AND
-            SubmissionType = stg_AssignmentSubmissionType.SubmissionType
+            SubmissionType = lms.stg_AssignmentSubmissionType.SubmissionType
     )
 """
 
@@ -335,7 +335,7 @@ FROM
 INNER JOIN
     lms.Assignment
 ON
-    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
+    lms.AssignmentSubmissionType.AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
 WHERE
     SourceSystem = 'Canvas'
 AND
@@ -354,9 +354,7 @@ AND
 """
 
             # Act
-            SqlLmsOperations(Mock()).soft_delete_removed_submission_types(
-                source_system
-            )
+            SqlLmsOperations(Mock()).soft_delete_removed_submission_types(source_system)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -462,9 +460,9 @@ WHERE NOT EXISTS (
             exec_mock = mocker.patch.object(SqlLmsOperations, "_exec")
 
             # Act
-            SqlLmsOperations(Mock()).insert_new_records_to_production_for_section_relation(
-                TABLE, COLUMNS
-            )
+            SqlLmsOperations(
+                Mock()
+            ).insert_new_records_to_production_for_section_relation(TABLE, COLUMNS)
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -575,7 +573,9 @@ WHERE NOT EXISTS (
             # Act
             SqlLmsOperations(
                 Mock()
-            ).insert_new_records_to_production_for_section_and_user_relation(TABLE, COLUMNS)
+            ).insert_new_records_to_production_for_section_and_user_relation(
+                TABLE, COLUMNS
+            )
 
             # Assert
             exec_mock.assert_called_with(expected)
@@ -635,7 +635,9 @@ WHERE NOT EXISTS (
             # Act
             SqlLmsOperations(
                 Mock()
-            ).insert_new_records_to_production_for_assignment_and_user_relation(TABLE, COLUMNS)
+            ).insert_new_records_to_production_for_assignment_and_user_relation(
+                TABLE, COLUMNS
+            )
 
             # Assert
             exec_mock.assert_called_with(expected)

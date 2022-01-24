@@ -472,9 +472,7 @@ def describe_when_uploading_section_activities() -> None:
 
 def describe_when_uploading_system_activities() -> None:
     @pytest.fixture
-    @patch(
-        "edfi_lms_ds_loader.df_to_db.SqlLmsOperations.soft_delete_from_production"
-    )
+    @patch("edfi_lms_ds_loader.df_to_db.SqlLmsOperations.soft_delete_from_production")
     @patch(
         "edfi_lms_ds_loader.df_to_db.SqlLmsOperations.insert_new_records_to_production_for_user_relation"
     )
