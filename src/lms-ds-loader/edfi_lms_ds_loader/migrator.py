@@ -25,8 +25,8 @@ def _get_migration_name(migration_file: str) -> str:
     return Path(migration_file).stem
 
 
-def _get_file_names(adapter: Adapter) -> List[Migration]:
-    script_dir = path.join(path.dirname(__file__), "scripts", adapter.engine.name)
+def _get_file_names(engine: str) -> List[Migration]:
+    script_dir = path.join(path.dirname(__file__), "scripts", engine)
     files: List[Migration] = []
 
     with scandir(script_dir) as all_files:
@@ -102,7 +102,7 @@ def migrate(adapter: Adapter, engine: str = DbEngine.MSSQL) -> None:
     """
     logger.info("Begin database auto-migration...")
 
-    for migration in _get_file_names(adapter):
+    for migration in _get_file_names(engine):
         # The following block of code does not belong in _run_migration_script
         # because it will throw an exception if the migration journal does not
         # exist, and therefore is not appropriate when initializing the LMS

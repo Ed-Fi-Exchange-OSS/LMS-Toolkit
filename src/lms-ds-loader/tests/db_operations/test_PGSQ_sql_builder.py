@@ -21,8 +21,10 @@ from edfi_lms_ds_loader.db_operations.PGSQL_sql_builder import (
 def describe_when_truncate_stg_table_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
-        expected = f"TRUNCATE TABLE lms.stg_{table} RESTART IDENTITY;".strip()
+        table = "A_TABLE_FOR_TESTING"
+        expected = (
+            "truncate table lms.stg_a_table_for_testing restart identity;".strip()
+        )
 
         # Act
         sql = truncate_stg_table(table).strip()
@@ -34,9 +36,9 @@ def describe_when_truncate_stg_table_is_called():
 def describe_when_drop_staging_natural_key_index_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
+        table = "A_TABLE_FOR_TESTING"
         expected = (
-            f"DROP INDEX IF EXISTS lms.ix_stg_{table.lower()}_natural_key;".strip()
+            "drop index if exists lms.ix_stg_a_table_for_testing_natural_key;".strip()
         )
 
         # Act
@@ -49,8 +51,8 @@ def describe_when_drop_staging_natural_key_index_is_called():
 def describe_when_recreate_staging_natural_key_index_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
-        expected = f"CREATE INDEX ix_stg_{table}_natural_key ON lms.stg_{table} (SourceSystemIdentifier, SourceSystem, LastModifiedDate);"
+        table = "A_TABLE_FOR_TESTING"
+        expected = "create index ix_stg_a_table_for_testing_natural_key on lms.stg_a_table_for_testing (sourcesystemidentifier, sourcesystem, lastmodifieddate);"
 
         # Act
         sql = recreate_staging_natural_key_index(table)
@@ -62,26 +64,26 @@ def describe_when_recreate_staging_natural_key_index_is_called():
 def describe_when_insert_new_records_to_production_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
-        column_string = "columns"
-        expected = f"""
-INSERT INTO
-    lms.{table}
-({column_string}
+        table = "A_TABLE_FOR_TESTING"
+        column_string = "COLUMNS"
+        expected = """
+insert into
+    lms.a_table_for_testing
+(columns
 )
-SELECT{column_string}
-FROM
-    lms.stg_{table} as stg
-WHERE
-    NOT EXISTS (
-        SELECT
+select columns
+from
+    lms.stg_a_table_for_testing as stg
+where
+    not exists (
+        select
             1
-        FROM
-            lms.{table}
-        WHERE
-            SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            SourceSystem = stg.SourceSystem
+        from
+            lms.a_table_for_testing
+        where
+            sourcesystemidentifier = stg.sourcesystemidentifier
+        and
+            sourcesystem = stg.sourcesystem
     )
 """.strip()
 
@@ -95,34 +97,34 @@ WHERE
 def describe_when_insert_new_records_to_production_for_user_relation_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
-        insert_columns = "columns"
-        select_columns = "columns2"
-        expected = f"""
-INSERT INTO
-    lms.{table}
+        table = "A_TABLE_FOR_TESTING"
+        insert_columns = "insert_columns"
+        select_columns = "select_columns"
+        expected = """
+insert into
+    lms.a_table_for_testing
 (
-    LMSUserIdentifier,{insert_columns}
+    lmsuseridentifier,insert_columns
 )
-SELECT
-    LMSUser.LMSUserIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
+select
+    lmsuser.lmsuseridentifier,select_columns
+from
+    lms.stg_a_table_for_testing as stg
+inner join
+    lms.lmsuser
+on
+    stg.lmsusersourcesystemidentifier = lmsuser.sourcesystemidentifier
+and
+    stg.sourcesystem = lmsuser.sourcesystem
+where not exists (
+  select
     1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
+  from
+    lms.a_table_for_testing
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
 )
 """.strip()
 
@@ -138,34 +140,34 @@ WHERE NOT EXISTS (
 def describe_when_insert_new_records_to_production_for_section_relation_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
-        insert_columns = "columns"
-        select_columns = "columns2"
-        expected = f"""
-INSERT INTO
-    lms.{table}
+        table = "A_TABLE_FOR_TESTING"
+        insert_columns = "insert_columns"
+        select_columns = "select_columns"
+        expected = """
+insert into
+    lms.a_table_for_testing
 (
-    LMSSectionIdentifier,{insert_columns}
+    lmssectionidentifier,insert_columns
 )
-SELECT
-    LMSSection.LMSSectionIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSSection
-ON
-    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSSection.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
+select
+    lmssection.lmssectionidentifier,select_columns
+from
+    lms.stg_a_table_for_testing as stg
+inner join
+    lms.lmssection
+on
+    stg.lmssectionsourcesystemidentifier = lmssection.sourcesystemidentifier
+and
+    stg.sourcesystem = lmssection.sourcesystem
+where not exists (
+  select
     1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
+  from
+    lms.a_table_for_testing
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
 )
 """.strip()
 
@@ -181,42 +183,42 @@ WHERE NOT EXISTS (
 def describe_when_insert_new_records_to_production_for_section_and_user_relation_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
-        insert_columns = "columns"
-        select_columns = "columns2"
-        expected = f"""
-INSERT INTO
-    lms.{table}
+        table = "A_TABLE_FOR_TESTING"
+        insert_columns = "insert_columns"
+        select_columns = "select_columns"
+        expected = """
+insert into
+    lms.a_table_for_testing
 (
-    LMSSectionIdentifier,
-    LMSUserIdentifier,{insert_columns}
+    lmssectionidentifier,
+    lmsuseridentifier,insert_columns
 )
-SELECT
-    LMSSection.LMSSectionIdentifier,
-    LMSUser.LMSUserIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSSection
-ON
-    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSSection.SourceSystem
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
+select
+    lmssection.lmssectionidentifier,
+    lmsuser.lmsuseridentifier,select_columns
+from
+    lms.stg_a_table_for_testing as stg
+inner join
+    lms.lmssection
+on
+    stg.lmssectionsourcesystemidentifier = lmssection.sourcesystemidentifier
+and
+    stg.sourcesystem = lmssection.sourcesystem
+inner join
+    lms.lmsuser
+on
+    stg.lmsusersourcesystemidentifier = lmsuser.sourcesystemidentifier
+and
+    stg.sourcesystem = lmsuser.sourcesystem
+where not exists (
+  select
     1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
+  from
+    lms.a_table_for_testing
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
 )
 """.strip()
 
@@ -232,26 +234,26 @@ WHERE NOT EXISTS (
 def describe_when_copy_updates_to_production_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
-        update_columns = "columns"
-        expected = f"""
-UPDATE
-    lms.{table}
-SET{update_columns}
-FROM
-    lms.{table} t
-INNER JOIN
-    lms.stg_{table} as stg
-ON
-    t.SourceSystem = stg.SourceSystem
-AND
-    t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-AND
-    t.LastModifiedDate <> stg.LastModifiedDate
-WHERE
-    t.SourceSystemIdentifier = lms.{table}.SourceSystemIdentifier
-AND
-    t.SourceSystem = lms.{table}.SourceSystem
+        table = "A_TABLE_FOR_TESTING"
+        update_columns = "update_columns"
+        expected = """
+update
+    lms.a_table_for_testing
+set update_columns
+from
+    lms.a_table_for_testing t
+inner join
+    lms.stg_a_table_for_testing as stg
+on
+    t.sourcesystem = stg.sourcesystem
+and
+    t.sourcesystemidentifier = stg.sourcesystemidentifier
+and
+    t.lastmodifieddate <> stg.lastmodifieddate
+where
+    t.sourcesystemidentifier = lms.a_table_for_testing.sourcesystemidentifier
+and
+    t.sourcesystem = lms.a_table_for_testing.sourcesystem
 """.strip()
 
         # Act
@@ -264,34 +266,34 @@ AND
 def describe_when_soft_delete_from_production_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        table = "a_table_for_testing"
-        source_system = "sourcesystem"
-        expected = f"""
-UPDATE
-    lms.{table}
-SET
-    DeletedAt = Now()
-FROM
-    lms.{table} as t
-WHERE
-    NOT EXISTS (
-        SELECT
+        table = "A_TABLE_FOR_TESTING"
+        source_system = "sourcESystem"
+        expected = """
+update
+    lms.a_table_for_testing
+set
+    deletedat = now()
+from
+    lms.a_table_for_testing as t
+where
+    not exists (
+        select
             1
-        FROM
-            lms.stg_{table} as stg
-        WHERE
-            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            t.SourceSystem = stg.SourceSystem
+        from
+            lms.stg_a_table_for_testing as stg
+        where
+            t.sourcesystemidentifier = stg.sourcesystemidentifier
+        and
+            t.sourcesystem = stg.sourcesystem
     )
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
-AND
-    lms.{table}.SourceSystem = t.SourceSystem
-AND
-    lms.{table}.SourceSystemIdentifier= t.SourceSystemIdentifier
+and
+    t.deletedat is null
+and
+    t.sourcesystem = 'sourcESystem'
+and
+    lms.a_table_for_testing.sourcesystem = t.sourcesystem
+and
+    lms.a_table_for_testing.sourcesystemidentifier = t.sourcesystemidentifier
 """.strip()
 
         # Act
@@ -304,14 +306,14 @@ AND
 def describe_when_get_processed_files_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        resource_name = "a_resource_name"
-        expected = f"""
-SELECT
+        resource_name = "a_Resource_Name"
+        expected = """
+select
     fullpath
-FROM
-    lms.ProcessedFiles
-WHERE
-    ResourceName = '{resource_name}'
+from
+    lms.processedfiles
+where
+    resourcename = 'a_Resource_Name'
 """.strip()
 
         # Act
@@ -324,22 +326,22 @@ WHERE
 def describe_when_add_processed_file_is_called():
     def it_should_return_the_expected_sql():
         # Arrange
-        path = "the_path/"
-        resource_name = "a_resource_name"
+        path = "the_Path/"
+        resource_name = "a_Resource_Name"
         rows = 23
-        expected = f"""
-INSERT INTO
-    lms.ProcessedFiles
+        expected = """
+insert into
+    lms.processedfiles
 (
-    FullPath,
-    ResourceName,
-    NumberOfRows
+    fullpath,
+    resourcename,
+    numberofrows
 )
-VALUES
+values
 (
-    '{path}',
-    '{resource_name}',
-    {rows}
+    'the_Path/',
+    'a_Resource_Name',
+    23
 )
 """.strip()
 

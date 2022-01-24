@@ -33,6 +33,7 @@ twine = "^3.3.0"
 mypy = "^0.812"
 pytest-describe = "^1.0.0"
 sqlalchemy-stubs = "^0.4"
+SQLAlchemy-Utils = "^0.38.2"
 
 [build-system]
 requires = ["poetry>=0.12"]

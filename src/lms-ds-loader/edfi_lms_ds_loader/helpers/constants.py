@@ -12,12 +12,13 @@ class DbEngine:
 
 
 class Table:
-    USER = "LMSUser"
-    SECTION = "LMSSection"
-    ASSIGNMENT = "Assignment"
-    ASSIGNMENT_SUBMISSION_TYPES = "AssignmentSubmissionType"
-    ASSIGNMENT_SUBMISSION = "AssignmentSubmission"
-    SECTION_ASSOCIATION = "LMSUserLMSSectionAssociation"
-    SECTION_ACTIVITY = "LMSSectionActivity"
-    SYSTEM_ACTIVITY = "LMSSystemActivity"
-    ATTENDANCE = "LMSUserAttendanceEvent"
+    # Table names are all lower case for PostgreSQL compatibility
+    USER = "lmsuser"
+    SECTION = "lmssection"
+    ASSIGNMENT = "assignment"
+    ASSIGNMENT_SUBMISSION_TYPES = "assignmentsubmissiontype"
+    ASSIGNMENT_SUBMISSION = "assignmentsubmission"
+    SECTION_ASSOCIATION = "lmsuserlmssectionassociation"
+    SECTION_ACTIVITY = "lmssectionactivity"
+    SYSTEM_ACTIVITY = "lmssystemactivity"
+    ATTENDANCE = "lmsuserattendanceevent"

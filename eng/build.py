@@ -192,7 +192,7 @@ def _run_publish(exit_immediately: bool = True):
 
 def _run_ci_test():
     """
-    Calls the commands required for a continuous integration testing job.
+    Calls the commands required for a continuous unit testing, type-checking, and linting job.
     """
     _run_install(False)
     _run_coverage_html(False)
@@ -202,7 +202,7 @@ def _run_ci_test():
 
 def _run_ci_integration_test():
     """
-    Calls the commands required for a continuous integration integration testing job.
+    Calls the commands required for a continuous integration testing job.
     """
     _run_install(False)
     _run_integration_tests_on_github(False)

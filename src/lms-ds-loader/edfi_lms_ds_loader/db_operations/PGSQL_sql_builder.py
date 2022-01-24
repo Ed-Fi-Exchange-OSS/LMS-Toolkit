@@ -5,42 +5,45 @@
 
 
 def truncate_stg_table(table: str) -> str:
-    return f"TRUNCATE TABLE lms.stg_{table} RESTART IDENTITY;"
+    return f"truncate table lms.stg_{table} restart identity;".lower()
 
 
 def drop_staging_natural_key_index(table: str) -> str:
-    return f"DROP INDEX IF EXISTS lms.ix_stg_{table.lower()}_natural_key;"
+    return f"drop index if exists lms.ix_stg_{table}_natural_key;".lower()
 
 
 def recreate_staging_natural_key_index(table: str) -> str:
     lowercase_table = table.lower()
 
     return (
-        f"CREATE INDEX ix_stg_{lowercase_table}_natural_key ON lms.stg_{lowercase_table} (SourceSystemIdentifier, SourceSystem);"
+        f"create index ix_stg_{lowercase_table}_natural_key on lms.stg_{lowercase_table} (sourcesystemidentifier, sourcesystem);"
         if lowercase_table == "assignmentsubmissiontype"
-        else f"CREATE INDEX ix_stg_{lowercase_table}_natural_key ON lms.stg_{lowercase_table} (SourceSystemIdentifier, SourceSystem, LastModifiedDate);"
+        else f"create index ix_stg_{lowercase_table}_natural_key on lms.stg_{lowercase_table} (sourcesystemidentifier, sourcesystem, lastmodifieddate);"
     )
 
 
 def insert_new_records_to_production(table: str, column_string: str) -> str:
+    lower_table = table.lower()
+    lower_column_string = column_string.lower()
+
     return f"""
-INSERT INTO
-    lms.{table}
-({column_string}
+insert into
+    lms.{lower_table}
+({lower_column_string}
 )
-SELECT{column_string}
-FROM
-    lms.stg_{table} as stg
-WHERE
-    NOT EXISTS (
-        SELECT
+select {lower_column_string}
+from
+    lms.stg_{lower_table} as stg
+where
+    not exists (
+        select
             1
-        FROM
-            lms.{table}
-        WHERE
-            SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            SourceSystem = stg.SourceSystem
+        from
+            lms.{lower_table}
+        where
+            sourcesystemidentifier = stg.sourcesystemidentifier
+        and
+            sourcesystem = stg.sourcesystem
     )
 """
 
@@ -48,31 +51,35 @@ WHERE
 def insert_new_records_to_production_for_user_relation(
     table: str, insert_columns: str, select_columns: str
 ) -> str:
+    lower_table = table.lower()
+    lower_insert_columns = insert_columns.lower()
+    lower_select_columns = select_columns.lower()
+
     return f"""
-INSERT INTO
-    lms.{table}
+insert into
+    lms.{lower_table}
 (
-    LMSUserIdentifier,{insert_columns}
+    lmsuseridentifier,{lower_insert_columns}
 )
-SELECT
-    LMSUser.LMSUserIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
+select
+    lmsuser.lmsuseridentifier,{lower_select_columns}
+from
+    lms.stg_{lower_table} as stg
+inner join
+    lms.lmsuser
+on
+    stg.lmsusersourcesystemidentifier = lmsuser.sourcesystemidentifier
+and
+    stg.sourcesystem = lmsuser.sourcesystem
+where not exists (
+  select
     1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
+  from
+    lms.{lower_table}
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
 )
 """
 
@@ -80,71 +87,79 @@ WHERE NOT EXISTS (
 def insert_new_records_to_production_for_assignment_and_user_relation(
     table: str, insert_columns: str, select_columns: str
 ) -> str:
+    lower_table = table.lower()
+    lower_insert_columns = insert_columns.lower()
+    lower_select_columns = select_columns.lower()
+
     return f"""
-INSERT INTO
-    lms.{table}
+insert into
+    lms.{lower_table}
 (
-    AssignmentIdentifier,
-    LMSUserIdentifier,{insert_columns}
+    assignmentidentifier,
+    lmsuseridentifier,{lower_insert_columns}
 )
-SELECT
-    Assignment.AssignmentIdentifier,
-    LMSUser.LMSUserIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.Assignment
-ON
-    stg.AssignmentSourceSystemIdentifier = Assignment.SourceSystemIdentifier
-AND
-    stg.SourceSystem = Assignment.SourceSystem
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
+select
+    assignment.assignmentidentifier,
+    lmsuser.lmsuseridentifier,{lower_select_columns}
+from
+    lms.stg_{lower_table} as stg
+inner join
+    lms.assignment
+on
+    stg.assignmentsourcesystemidentifier = assignment.sourcesystemidentifier
+and
+    stg.sourcesystem = assignment.sourcesystem
+inner join
+    lms.lmsuser
+on
+    stg.lmsusersourcesystemidentifier = lmsuser.sourcesystemidentifier
+and
+    stg.sourcesystem = lmsuser.sourcesystem
+where not exists (
+  select
     1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
+  from
+    lms.{lower_table}
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
 )
-"""
+""".lower()
 
 
 def insert_new_records_to_production_for_section_relation(
     table: str, insert_columns: str, select_columns: str
 ) -> str:
+    lower_table = table.lower()
+    lower_insert_columns = insert_columns.lower()
+    lower_select_columns = select_columns.lower()
+
     return f"""
-INSERT INTO
-    lms.{table}
+insert into
+    lms.{lower_table}
 (
-    LMSSectionIdentifier,{insert_columns}
+    lmssectionidentifier,{lower_insert_columns}
 )
-SELECT
-    LMSSection.LMSSectionIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSSection
-ON
-    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSSection.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
+select
+    lmssection.lmssectionidentifier,{lower_select_columns}
+from
+    lms.stg_{lower_table} as stg
+inner join
+    lms.lmssection
+on
+    stg.lmssectionsourcesystemidentifier = lmssection.sourcesystemidentifier
+and
+    stg.sourcesystem = lmssection.sourcesystem
+where not exists (
+  select
     1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
+  from
+    lms.{lower_table}
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
 )
 """
 
@@ -152,132 +167,143 @@ WHERE NOT EXISTS (
 def insert_new_records_to_production_for_section_and_user_relation(
     table: str, insert_columns: str, select_columns: str
 ) -> str:
+    lower_table = table.lower()
+    lower_insert_columns = insert_columns.lower()
+    lower_select_columns = select_columns.lower()
+
     return f"""
-INSERT INTO
-    lms.{table}
+insert into
+    lms.{lower_table}
 (
-    LMSSectionIdentifier,
-    LMSUserIdentifier,{insert_columns}
+    lmssectionidentifier,
+    lmsuseridentifier,{lower_insert_columns}
 )
-SELECT
-    LMSSection.LMSSectionIdentifier,
-    LMSUser.LMSUserIdentifier,{select_columns}
-FROM
-    lms.stg_{table} as stg
-INNER JOIN
-    lms.LMSSection
-ON
-    stg.LMSSectionSourceSystemIdentifier = LMSSection.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSSection.SourceSystem
-INNER JOIN
-    lms.LMSUser
-ON
-    stg.LMSUserSourceSystemIdentifier = LMSUser.SourceSystemIdentifier
-AND
-    stg.SourceSystem = LMSUser.SourceSystem
-WHERE NOT EXISTS (
-  SELECT
+select
+    lmssection.lmssectionidentifier,
+    lmsuser.lmsuseridentifier,{lower_select_columns}
+from
+    lms.stg_{lower_table} as stg
+inner join
+    lms.lmssection
+on
+    stg.lmssectionsourcesystemidentifier = lmssection.sourcesystemidentifier
+and
+    stg.sourcesystem = lmssection.sourcesystem
+inner join
+    lms.lmsuser
+on
+    stg.lmsusersourcesystemidentifier = lmsuser.sourcesystemidentifier
+and
+    stg.sourcesystem = lmsuser.sourcesystem
+where not exists (
+  select
     1
-  FROM
-    lms.{table}
-  WHERE
-    SourceSystemIdentifier = stg.SourceSystemIdentifier
-  AND
-    SourceSystem = stg.SourceSystem
+  from
+    lms.{lower_table}
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
 )
 """
 
 
 def copy_updates_to_production(table: str, update_columns: str) -> str:
+    lower_table = table.lower()
+    lower_update_columns = update_columns.lower()
+
     return f"""
-UPDATE
-    lms.{table}
-SET{update_columns}
-FROM
-    lms.{table} t
-INNER JOIN
-    lms.stg_{table} as stg
-ON
-    t.SourceSystem = stg.SourceSystem
-AND
-    t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-AND
-    t.LastModifiedDate <> stg.LastModifiedDate
-WHERE
-    t.SourceSystemIdentifier = lms.{table}.SourceSystemIdentifier
-AND
-    t.SourceSystem = lms.{table}.SourceSystem
+update
+    lms.{lower_table}
+set {lower_update_columns}
+from
+    lms.{lower_table} t
+inner join
+    lms.stg_{lower_table} as stg
+on
+    t.sourcesystem = stg.sourcesystem
+and
+    t.sourcesystemidentifier = stg.sourcesystemidentifier
+and
+    t.lastmodifieddate <> stg.lastmodifieddate
+where
+    t.sourcesystemidentifier = lms.{lower_table}.sourcesystemidentifier
+and
+    t.sourcesystem = lms.{lower_table}.sourcesystem
 """
 
 
 def soft_delete_from_production(table: str, source_system: str) -> str:
+    lower_table = table.lower()
+
     return f"""
-UPDATE
-    lms.{table}
-SET
-    DeletedAt = Now()
-FROM
-    lms.{table} as t
-WHERE
-    NOT EXISTS (
-        SELECT
+update
+    lms.{lower_table}
+set
+    deletedat = now()
+from
+    lms.{lower_table} as t
+where
+    not exists (
+        select
             1
-        FROM
-            lms.stg_{table} as stg
-        WHERE
-            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            t.SourceSystem = stg.SourceSystem
+        from
+            lms.stg_{lower_table} as stg
+        where
+            t.sourcesystemidentifier = stg.sourcesystemidentifier
+        and
+            t.sourcesystem = stg.sourcesystem
     )
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
-AND
-    lms.{table}.SourceSystem = t.SourceSystem
-AND
-    lms.{table}.SourceSystemIdentifier= t.SourceSystemIdentifier
+and
+    t.deletedat is null
+and
+    t.sourcesystem = '{source_system}'
+and
+    lms.{lower_table}.sourcesystem = t.sourcesystem
+and
+    lms.{lower_table}.sourcesystemidentifier = t.sourcesystemidentifier
 """
 
 
 def soft_delete_from_production_for_section_relation(
     table: str, source_system: str
 ) -> str:
+    lower_table = table.lower()
+
     return f"""
-UPDATE
-    lms.{table}
-SET
-    DeletedAt = now()
-FROM
-    lms.{table} as t
-WHERE
-    t.LMSSectionIdentifier IN (
-        SELECT
-            s.LMSSectionIdentifier
-        FROM
-           lms.LMSSection as s
-        INNER JOIN
-            lms.stg_{table} as stg
-        ON
-            stg.LMSSectionSourceSystemIdentifier = s.SourceSystemIdentifier
-        AND
-            stg.SourceSystem = s.SourceSystem
+update
+    lms.{lower_table}
+set
+    deletedat = now()
+from
+    lms.{lower_table} as t
+where
+    t.lmssectionidentifier in (
+        select
+            s.lmssectionidentifier
+        from
+           lms.lmssection as s
+        inner join
+            lms.stg_{lower_table} as stg
+        on
+            stg.lmssectionsourcesystemidentifier = s.sourcesystemidentifier
+        and
+            stg.sourcesystem = s.sourcesystem
     )
-AND
-    NOT EXISTS (
-        SELECT
+and
+    not exists (
+        select
             1
-        FROM
-            lms.stg_{table} as stg
-        WHERE
-            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            t.SourceSystem = stg.SourceSystem
+        from
+            lms.stg_{lower_table} as stg
+        where
+            t.sourcesystemidentifier = stg.sourcesystemidentifier
+        and
+            t.sourcesystem = stg.sourcesystem
     )
 AND
     -- PostgreSQL self-join update statement needs to limit to the matching record
-    lms.{table}.{table}Identifier = t.{table}Identifier
+    lms.{lower_table}.{lower_table}Identifier = t.{lower_table}Identifier
 AND
     t.DeletedAt IS NULL
 AND
@@ -288,40 +314,42 @@ AND
 def soft_delete_from_production_for_assignment_relation(
     table: str, source_system: str
 ) -> str:
+    lower_table = table.lower()
+
     return f"""
-UPDATE
-    lms.{table}
-SET
-    DeletedAt = now()
-FROM
-    lms.{table} as t
-WHERE
-    t.AssignmentIdentifier IN (
-        SELECT
-            a.AssignmentIdentifier
-        FROM
-           lms.Assignment as a
-        INNER JOIN
-            lms.stg_{table} as stg
-        ON
-            stg.AssignmentSourceSystemIdentifier = a.SourceSystemIdentifier
-        AND
-            stg.SourceSystem = a.SourceSystem
+update
+    lms.{lower_table}
+set
+    deletedat = now()
+from
+    lms.{lower_table} as t
+where
+    t.assignmentidentifier in (
+        select
+            a.assignmentidentifier
+        from
+           lms.assignment as a
+        inner join
+            lms.stg_{lower_table} as stg
+        on
+            stg.assignmentsourcesystemidentifier = a.sourcesystemidentifier
+        and
+            stg.sourcesystem = a.sourcesystem
     )
-AND
-    NOT EXISTS (
-        SELECT
+and
+    not exists (
+        select
             1
-        FROM
-            lms.stg_{table} as stg
-        WHERE
-            t.SourceSystemIdentifier = stg.SourceSystemIdentifier
-        AND
-            t.SourceSystem = stg.SourceSystem
+        from
+            lms.stg_{lower_table} as stg
+        where
+            t.sourcesystemidentifier = stg.sourcesystemidentifier
+        and
+            t.sourcesystem = stg.sourcesystem
     )
 AND
     -- PostgreSQL self-join update statement needs to limit to the matching record
-    lms.{table}.{table}Identifier = t.{table}Identifier
+    lms.{lower_table}.{lower_table}Identifier = t.{lower_table}Identifier
 AND
     t.DeletedAt IS NULL
 AND
@@ -331,126 +359,126 @@ AND
 
 def insert_new_submission_types() -> str:
     return """
-INSERT INTO lms.AssignmentSubmissionType (
-    AssignmentIdentifier,
-    SubmissionType
+insert into lms.assignmentsubmissiontype (
+    assignmentidentifier,
+    submissiontype
 )
-SELECT
-    lms.Assignment.AssignmentIdentifier,
-    lms.stg_AssignmentSubmissionType.SubmissionType
-FROM
-    lms.stg_AssignmentSubmissionType
-    INNER JOIN
-        lms.Assignment
-    ON
-        lms.stg_AssignmentSubmissionType.SourceSystem = lms.Assignment.SourceSystem
-    AND
-        lms.stg_AssignmentSubmissionType.SourceSystemIdentifier = lms.Assignment.SourceSystemIdentifier
-WHERE
-    NOT EXISTS (
-        SELECT
+select
+    lms.assignment.assignmentidentifier,
+    lms.stg_assignmentsubmissiontype.submissiontype
+from
+    lms.stg_assignmentsubmissiontype
+    inner join
+        lms.assignment
+    on
+        lms.stg_assignmentsubmissiontype.sourcesystem = lms.assignment.sourcesystem
+    and
+        lms.stg_assignmentsubmissiontype.sourcesystemidentifier = lms.assignment.sourcesystemidentifier
+where
+    not exists (
+        select
             1
-        FROM
-            lms.AssignmentSubmissionType
-        WHERE
-            AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
-        AND
-            SubmissionType = lms.stg_AssignmentSubmissionType.SubmissionType
+        from
+            lms.assignmentsubmissiontype
+        where
+            assignmentidentifier = lms.assignment.assignmentidentifier
+        and
+            submissiontype = lms.stg_assignmentsubmissiontype.submissiontype
     )
 """
 
 
 def soft_delete_removed_submission_types(source_system: str) -> str:
     return f"""
-UPDATE
-    lms.AssignmentSubmissionType as upd
-SET
-    DeletedAt = now()
-FROM
-    lms.AssignmentSubmissionType
-INNER JOIN
-    lms.Assignment
-ON
-    lms.AssignmentSubmissionType.AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
-WHERE
-    SourceSystem = '{source_system}'
-AND
-    NOT EXISTS (
-        SELECT
+update
+    lms.assignmentsubmissiontype as upd
+set
+    deletedat = now()
+from
+    lms.assignmentsubmissiontype
+inner join
+    lms.assignment
+on
+    lms.assignmentsubmissiontype.assignmentidentifier = lms.assignment.assignmentidentifier
+where
+    sourcesystem = '{source_system}'
+and
+    not exists (
+        select
             1
-        FROM
-            lms.stg_AssignmentSubmissionType
-        WHERE
-            stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
-        AND
-            stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
-        AND
-            stg_AssignmentSubmissionType.SubmissionType = AssignmentSubmissionType.SubmissionType
+        from
+            lms.stg_assignmentsubmissiontype
+        where
+            stg_assignmentsubmissiontype.sourcesystem = assignment.sourcesystem
+        and
+            stg_assignmentsubmissiontype.sourcesystemidentifier = assignment.sourcesystemidentifier
+        and
+            stg_assignmentsubmissiontype.submissiontype = assignmentsubmissiontype.submissiontype
     )
--- PostgreSQL self-join update statement needs to limit to the matching record
-AND
-    upd.AssignmentIdentifier = lms.AssignmentSubmissionType.AssignmentIdentifier
-AND
-    upd.SubmissionType = lms.AssignmentSubmissionType.SubmissionType
+-- postgresql self-join update statement needs to limit to the matching record
+and
+    upd.assignmentidentifier = lms.assignmentsubmissiontype.assignmentidentifier
+and
+    upd.submissiontype = lms.assignmentsubmissiontype.submissiontype
 """
 
 
 def unsoft_delete_returned_submission_types(source_system: str) -> str:
     return f"""
-UPDATE
-    lms.AssignmentSubmissionType as upd
-SET
-    DeletedAt = NULL
-FROM
-    lms.AssignmentSubmissionType
-INNER JOIN
-    lms.Assignment
-ON
-    lms.AssignmentSubmissionType.AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
-WHERE
-    SourceSystem = '{source_system}'
-AND
-    EXISTS (
-        SELECT
+update
+    lms.assignmentsubmissiontype as upd
+set
+    deletedat = null
+from
+    lms.assignmentsubmissiontype
+inner join
+    lms.assignment
+on
+    lms.assignmentsubmissiontype.assignmentidentifier = lms.assignment.assignmentidentifier
+where
+    sourcesystem = '{source_system}'
+and
+    exists (
+        select
             1
-        FROM
-            lms.stg_AssignmentSubmissionType
-        WHERE
-            lms.stg_AssignmentSubmissionType.SourceSystem = lms.Assignment.SourceSystem
-        AND
-            lms.stg_AssignmentSubmissionType.SourceSystemIdentifier = lms.Assignment.SourceSystemIdentifier
-        AND
-            lms.stg_AssignmentSubmissionType.SubmissionType = lms.AssignmentSubmissionType.SubmissionType
+        from
+            lms.stg_assignmentsubmissiontype
+        where
+            lms.stg_assignmentsubmissiontype.sourcesystem = lms.assignment.sourcesystem
+        and
+            lms.stg_assignmentsubmissiontype.sourcesystemidentifier = lms.assignment.sourcesystemidentifier
+        and
+            lms.stg_assignmentsubmissiontype.submissiontype = lms.assignmentsubmissiontype.submissiontype
     )
--- PostgreSQL self-join update statement needs to limit to the matching record
-AND
-    upd.AssignmentIdentifier = lms.AssignmentSubmissionType.AssignmentIdentifier
-AND
-    upd.SubmissionType = lms.AssignmentSubmissionType.SubmissionType
+-- postgresql self-join update statement needs to limit to the matching record
+and
+    upd.assignmentidentifier = lms.assignmentsubmissiontype.assignmentidentifier
+and
+    upd.submissiontype = lms.assignmentsubmissiontype.submissiontype
 """
 
 
 def get_processed_files(resource_name: str) -> str:
     return f"""
-SELECT
+select
     fullpath
-FROM
-    lms.ProcessedFiles
-WHERE
-    ResourceName = '{resource_name}'
+from
+    lms.processedfiles
+where
+    resourcename = '{resource_name}'
 """
 
 
 def add_processed_file(path: str, resource_name: str, rows: int) -> str:
     return f"""
-INSERT INTO
-    lms.ProcessedFiles
+insert into
+    lms.processedfiles
 (
-    FullPath,
-    ResourceName,
-    NumberOfRows
+    fullpath,
+    resourcename,
+    numberofrows
 )
-VALUES
+values
 (
     '{path}',
     '{resource_name}',
