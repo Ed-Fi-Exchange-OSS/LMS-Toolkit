@@ -12,14 +12,17 @@ from sqlalchemy.engine.base import Connection, Transaction
 from edfi_lms_ds_loader.migrator import migrate
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 
-from edfi_sql_adapter.sql_adapter import Adapter, create_mssql_adapter_with_integrated_security
+from edfi_sql_adapter.sql_adapter import (
+    Adapter,
+    create_mssql_adapter_with_integrated_security,
+)
 
 
 def _new_mssql_adapter() -> Adapter:
     # TODO: create method for injecting these values, for test
     return create_mssql_adapter_with_integrated_security(
-            "localhost", "test_integration_lms_toolkit", 1433, False, False
-        )
+        "localhost", "test_integration_lms_toolkit", 1433, False, False
+    )
 
 
 @pytest.fixture(scope="session")
@@ -61,9 +64,7 @@ def test_mssql_db(
         return 0
 
     # New version of insert_into_staging using our transaction
-    def replace_insert_into_staging(
-        self: SqlLmsOperations, df: DataFrame, table: str
-    ):
+    def replace_insert_into_staging(self: SqlLmsOperations, df: DataFrame, table: str):
         df.to_sql(
             f"stg_{table}",
             con=mssql_connection,

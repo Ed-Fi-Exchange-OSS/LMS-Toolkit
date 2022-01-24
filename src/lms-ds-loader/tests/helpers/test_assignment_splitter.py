@@ -128,7 +128,9 @@ def describe_given_there_are_no_assignments() -> None:
 
         return assignments_df, submission_types_df
 
-    def it_should_create_empty_assignments_DataFrame(when_splitting_the_assignments) -> None:
+    def it_should_create_empty_assignments_DataFrame(
+        when_splitting_the_assignments,
+    ) -> None:
         df, _ = when_splitting_the_assignments
 
         assert df.empty
@@ -170,7 +172,9 @@ def describe_given_one_canvas_assignment_with_no_submission_types() -> None:
         assert row["CreateDate"] == "2021-03-11"
         assert row["LastModifiedDate"] == "2021-03-12"
 
-    def it_should_return_an_empty_submission_type_DataFrame(when_splitting_the_assignments) -> None:
+    def it_should_return_an_empty_submission_type_DataFrame(
+        when_splitting_the_assignments,
+    ) -> None:
         _, df = when_splitting_the_assignments
 
         assert df.empty

@@ -68,9 +68,7 @@ def describe_when_a_record_is_missing_in_the_csv():
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
-    def it_should_match_the_record(
-        test_mssql_db: Tuple[SqlLmsOperations, Connection]
-    ):
+    def it_should_match_the_record(test_mssql_db: Tuple[SqlLmsOperations, Connection]):
         adapter, connection = test_mssql_db
 
         # arrange - note csv file has only B123456 from BestLMS

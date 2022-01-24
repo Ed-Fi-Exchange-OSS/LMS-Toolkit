@@ -208,6 +208,54 @@ where not exists (
 """
 
 
+def insert_new_records_to_production_for_attendance_events(
+    insert_columns: str, select_columns: str
+) -> str:
+    return f"""
+insert into
+    lms.lmsuserattendanceevent
+(
+    lmssectionidentifier,
+    lmsuseridentifier,
+    lmsuserlmssectionassociationidentifier,{insert_columns}
+)
+select
+    lmssection.lmssectionidentifier,
+    lmsuser.lmsuseridentifier,
+    lmsuserlmssectionassociation.lmsuserlmssectionassociationidentifier,{select_columns}
+from
+    lms.stg_lmsuserattendanceevent as stg
+inner join
+    lms.lmssection
+on
+    stg.lmssectionsourcesystemidentifier = lmssection.sourcesystemidentifier
+and
+    stg.sourcesystem = lmssection.sourcesystem
+inner join
+    lms.lmsuser
+on
+    stg.lmsusersourcesystemidentifier = lmsuser.sourcesystemidentifier
+and
+    stg.sourcesystem = lmsuser.sourcesystem
+inner join
+    lms.lmsuserlmssectionassociation
+on
+    lmsuser.lmsuseridentifier = lmsuserlmssectionassociation.lmsuseridentifier
+and
+    lmssection.lmssectionidentifier = lmsuserlmssectionassociation.lmssectionidentifier
+where not exists (
+  select
+    1
+  from
+    lms.lmsuserattendanceevent
+  where
+    sourcesystemidentifier = stg.sourcesystemidentifier
+  and
+    sourcesystem = stg.sourcesystem
+)
+"""
+
+
 def copy_updates_to_production(table: str, update_columns: str) -> str:
     lower_table = table.lower()
     lower_update_columns = update_columns.lower()
@@ -301,13 +349,13 @@ and
         and
             t.sourcesystem = stg.sourcesystem
     )
-AND
+and
     -- PostgreSQL self-join update statement needs to limit to the matching record
-    lms.{lower_table}.{lower_table}Identifier = t.{lower_table}Identifier
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
+    lms.{lower_table}.{lower_table}identifier = t.{lower_table}identifier
+and
+    t.deletedat is null
+and
+    t.sourcesystem = '{source_system}'
 """
 
 
@@ -347,13 +395,13 @@ and
         and
             t.sourcesystem = stg.sourcesystem
     )
-AND
+and
     -- PostgreSQL self-join update statement needs to limit to the matching record
-    lms.{lower_table}.{lower_table}Identifier = t.{lower_table}Identifier
-AND
-    t.DeletedAt IS NULL
-AND
-    t.SourceSystem = '{source_system}'
+    lms.{lower_table}.{lower_table}identifier = t.{lower_table}identifier
+and
+    t.deletedat is null
+and
+    t.sourcesystem = '{source_system}'
 """
 
 

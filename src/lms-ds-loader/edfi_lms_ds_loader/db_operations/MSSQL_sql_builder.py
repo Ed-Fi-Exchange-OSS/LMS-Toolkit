@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+
 def truncate_stg_table(table: str) -> str:
     return f"TRUNCATE TABLE lms.stg_{table};"
 
@@ -39,9 +40,8 @@ WHERE
 
 
 def insert_new_records_to_production_for_user_relation(
-        table: str,
-        insert_columns: str,
-        select_columns: str) -> str:
+    table: str, insert_columns: str, select_columns: str
+) -> str:
     return f"""
 INSERT INTO
     lms.{table}
@@ -72,9 +72,8 @@ WHERE NOT EXISTS (
 
 
 def insert_new_records_to_production_for_section_relation(
-        table: str,
-        insert_columns: str,
-        select_columns: str) -> str:
+    table: str, insert_columns: str, select_columns: str
+) -> str:
     return f"""
 INSERT INTO
     lms.{table}
@@ -105,9 +104,8 @@ WHERE NOT EXISTS (
 
 
 def insert_new_records_to_production_for_section_and_user_relation(
-        table: str,
-        insert_columns: str,
-        select_columns: str) -> str:
+    table: str, insert_columns: str, select_columns: str
+) -> str:
     return f"""
 INSERT INTO
     lms.{table}
@@ -146,9 +144,8 @@ WHERE NOT EXISTS (
 
 
 def insert_new_records_to_production_for_assignment_and_user_relation(
-        table: str,
-        insert_columns: str,
-        select_columns: str) -> str:
+    table: str, insert_columns: str, select_columns: str
+) -> str:
     return f"""
 INSERT INTO
     lms.{table}
@@ -187,8 +184,8 @@ WHERE NOT EXISTS (
 
 
 def insert_new_records_to_production_for_attendance_events(
-        insert_columns: str,
-        select_columns: str) -> str:
+    insert_columns: str, select_columns: str
+) -> str:
     return f"""
 INSERT INTO
     lms.LMSUserAttendanceEvent
@@ -234,9 +231,7 @@ WHERE NOT EXISTS (
 """
 
 
-def copy_updates_to_production(
-        table: str,
-        update_columns: str) -> str:
+def copy_updates_to_production(table: str, update_columns: str) -> str:
     return f"""
 UPDATE
     t
@@ -254,9 +249,7 @@ AND
 """
 
 
-def soft_delete_from_production(
-        table: str,
-        source_system: str) -> str:
+def soft_delete_from_production(table: str, source_system: str) -> str:
     return f"""
 UPDATE
     t
@@ -283,8 +276,8 @@ AND
 
 
 def soft_delete_from_production_for_section_relation(
-        table: str,
-        source_system: str) -> str:
+    table: str, source_system: str
+) -> str:
     return f"""
 UPDATE
     t
@@ -324,8 +317,8 @@ AND
 
 
 def soft_delete_from_production_for_assignment_relation(
-        table: str,
-        source_system: str) -> str:
+    table: str, source_system: str
+) -> str:
     return f"""
 UPDATE
     t
@@ -371,16 +364,16 @@ INSERT INTO lms.AssignmentSubmissionType (
     SubmissionType
 )
 SELECT
-    Assignment.AssignmentIdentifier,
-    stg_AssignmentSubmissionType.SubmissionType
+    lms.Assignment.AssignmentIdentifier,
+    lms.stg_AssignmentSubmissionType.SubmissionType
 FROM
     lms.stg_AssignmentSubmissionType
     INNER JOIN
         lms.Assignment
     ON
-        stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
+        lms.stg_AssignmentSubmissionType.SourceSystem = lms.Assignment.SourceSystem
     AND
-        stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
+        lms.stg_AssignmentSubmissionType.SourceSystemIdentifier = lms.Assignment.SourceSystemIdentifier
 WHERE
     NOT EXISTS (
         SELECT
@@ -388,9 +381,9 @@ WHERE
         FROM
             lms.AssignmentSubmissionType
         WHERE
-            AssignmentIdentifier = Assignment.AssignmentIdentifier
+            AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
         AND
-            SubmissionType = stg_AssignmentSubmissionType.SubmissionType
+            SubmissionType = lms.stg_AssignmentSubmissionType.SubmissionType
     )
 """
 
@@ -406,7 +399,7 @@ FROM
 INNER JOIN
     lms.Assignment
 ON
-    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
+    lms.AssignmentSubmissionType.AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
 WHERE
     SourceSystem = '{source_system}'
 AND
@@ -436,7 +429,7 @@ FROM
 INNER JOIN
     lms.Assignment
 ON
-    AssignmentSubmissionType.AssignmentIdentifier = Assignment.AssignmentIdentifier
+    lms.AssignmentSubmissionType.AssignmentIdentifier = lms.Assignment.AssignmentIdentifier
 WHERE
     SourceSystem = '{source_system}'
 AND
@@ -446,11 +439,11 @@ AND
         FROM
             lms.stg_AssignmentSubmissionType
         WHERE
-            stg_AssignmentSubmissionType.SourceSystem = Assignment.SourceSystem
+            lms.stg_AssignmentSubmissionType.SourceSystem = lms.Assignment.SourceSystem
         AND
-            stg_AssignmentSubmissionType.SourceSystemIdentifier = Assignment.SourceSystemIdentifier
+            lms.stg_AssignmentSubmissionType.SourceSystemIdentifier = lms.Assignment.SourceSystemIdentifier
         AND
-            stg_AssignmentSubmissionType.SubmissionType = AssignmentSubmissionType.SubmissionType
+            lms.stg_AssignmentSubmissionType.SubmissionType = lms.AssignmentSubmissionType.SubmissionType
     )
 """
 

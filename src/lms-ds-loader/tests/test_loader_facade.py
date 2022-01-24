@@ -100,7 +100,7 @@ def describe_when_uploading_extractor_files() -> None:
             fake_df_attendance_events = pd.DataFrame([{"date": "c"}])
             mocker.patch(
                 "edfi_lms_file_utils.file_reader.read_attendance_events_file",
-                return_value=fake_df_attendance_events
+                return_value=fake_df_attendance_events,
             )
 
             mock_upload_file = mocker.patch("edfi_lms_ds_loader.df_to_db.upload_file")
@@ -145,7 +145,7 @@ def describe_when_uploading_extractor_files() -> None:
                 "section_activities": fake_df_section_activities,
                 "system_activities": fake_df_system_activities,
                 "assignment_submissions": fake_df_assignment_submissions,
-                "attendance_events": fake_df_attendance_events
+                "attendance_events": fake_df_attendance_events,
             }
 
             file_repository_users_mock = Mock(return_value=["fileOne", "fileTwo"])
@@ -199,12 +199,10 @@ def describe_when_uploading_extractor_files() -> None:
                 file_repository_system_activities_mock,
             )
 
-            file_repository_attendance_mock = Mock(
-                return_value=["file17", "file18"]
-            )
+            file_repository_attendance_mock = Mock(return_value=["file17", "file18"])
             mocker.patch(
                 "edfi_lms_file_utils.file_repository.get_attendance_events_paths",
-                file_repository_attendance_mock
+                file_repository_attendance_mock,
             )
 
             # Act
@@ -216,7 +214,7 @@ def describe_when_uploading_extractor_files() -> None:
         def it_runs_migrations(mocker, fixture) -> None:
             mocks, _ = fixture
 
-            mocks["migrate"].assert_called_once_with(mocks["get_adapter"], 'mssql')
+            mocks["migrate"].assert_called_once_with(mocks["get_adapter"], "mssql")
 
         def it_uploads_users(mocker, fixture) -> None:
             mocks, dfs = fixture
