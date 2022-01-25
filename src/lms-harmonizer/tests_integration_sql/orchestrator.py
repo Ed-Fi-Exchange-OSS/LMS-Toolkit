@@ -90,6 +90,7 @@ def _edfi_script_path(script_name: str) -> str:
             "..",
             "utils",
             "ods-core-sql-5.2",
+            "mssql",
             script_name,
         )
     )
