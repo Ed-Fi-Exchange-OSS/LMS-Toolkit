@@ -7,13 +7,13 @@
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List
 import pyodbc
-from tests_integration_mssql.server_config import ServerConfig
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
 
 
 class MSSqlConnection(object):
-    config: ServerConfig
+    config: MssqlServerConfig
 
-    def __init__(self, config: ServerConfig):
+    def __init__(self, config: MssqlServerConfig):
         self.config = config
 
     @contextmanager

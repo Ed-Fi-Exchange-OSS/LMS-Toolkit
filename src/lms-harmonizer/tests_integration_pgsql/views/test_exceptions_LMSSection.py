@@ -3,26 +3,26 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from tests_integration_pgsql.postgresql_loader import (
+from tests_integration_pgsql.pgsql_loader import (
     insert_lms_section,
     insert_edfi_section,
     insert_lms_section_deleted,
 )
-from tests_integration_pgsql.postgresql_connection import PostgresqlConnection, query
-from tests_integration_pgsql.server_config import ServerConfig
-from tests_integration_pgsql.orchestrator import run_harmonizer
+from tests_integration_pgsql.pgsql_connection import PgsqlConnection, query
+from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
+from tests_integration_pgsql.pgsql_orchestrator import run_harmonizer
 
 
 SOURCE_SYSTEM = "Canvas"
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_return_no_exceptions(test_db_config: ServerConfig):
+    def it_should_return_no_exceptions(test_db_config: PgsqlServerConfig):
         # act
         run_harmonizer(test_db_config)
 
         # Assert
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
                 "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
@@ -35,9 +35,9 @@ def describe_when_lms_and_ods_tables_have_no_matches():
     SIS_ID_1 = "sis_id_1"
     SIS_ID_2 = "sis_id_2"
 
-    def it_should_return_exceptions(test_db_config: ServerConfig):
+    def it_should_return_exceptions(test_db_config: PgsqlServerConfig):
         # arrange
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section(connection, SIS_ID_1, SOURCE_SYSTEM)
             insert_lms_section(connection, SIS_ID_2, SOURCE_SYSTEM)
             insert_edfi_section(connection, "not_matching_sis_id_1")
@@ -47,7 +47,7 @@ def describe_when_lms_and_ods_tables_have_no_matches():
         run_harmonizer(test_db_config)
 
         # assert
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
                 "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
@@ -62,9 +62,9 @@ def describe_when_lms_and_ods_tables_have_a_match():
     SIS_ID = "sis_id"
     SECTION_ID = "10000000-0000-0000-0000-000000000000"
 
-    def it_should_return_no_exceptions(test_db_config: ServerConfig):
+    def it_should_return_no_exceptions(test_db_config: PgsqlServerConfig):
         # arrange
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section(connection, SIS_ID, SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_ID, SECTION_ID)
 
@@ -72,7 +72,7 @@ def describe_when_lms_and_ods_tables_have_a_match():
         run_harmonizer(test_db_config)
 
         # assert
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
                 "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
@@ -85,9 +85,9 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
     SECTION_ID = "10000000-0000-0000-0000-000000000000"
     SIS_ID = "sis_id"
 
-    def it_should_return_no_exceptions(test_db_config: ServerConfig):
+    def it_should_return_no_exceptions(test_db_config: PgsqlServerConfig):
         # arrange
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section_deleted(connection, SIS_ID, SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_ID, SECTION_ID)
 
@@ -95,7 +95,7 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
         run_harmonizer(test_db_config)
 
         # assert
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
                 "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
@@ -109,9 +109,9 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
     SIS_ID = "sis_id"
     NOT_MATCHING_SIS_ID = "not_matching_sis_id"
 
-    def it_should_return_one_exception(test_db_config: ServerConfig):
+    def it_should_return_one_exception(test_db_config: PgsqlServerConfig):
         # arrange
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section(connection, SIS_ID, SOURCE_SYSTEM)  # Matching section
             insert_edfi_section(connection, SIS_ID, SECTION_ID)  # Matching section
 
@@ -126,7 +126,7 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
         run_harmonizer(test_db_config)
 
         # assert
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
                 "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",

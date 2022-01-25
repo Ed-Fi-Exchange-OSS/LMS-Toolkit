@@ -18,8 +18,8 @@ from tests_integration_mssql.mssql_loader import (
     insert_lmsx_assignmentsubmissionstatus_descriptor,
 )
 from tests_integration_mssql.mssql_connection import MSSqlConnection, query
-from tests_integration_mssql.server_config import ServerConfig
-from tests_integration_mssql.orchestrator import run_harmonizer
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
+from tests_integration_mssql.mssql_orchestrator import run_harmonizer
 from edfi_lms_harmonizer.helpers.constants import SOURCE_SYSTEM
 
 
@@ -36,7 +36,7 @@ def submission_descriptor_namespace_for(source_system: str) -> str:
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # act
         run_harmonizer(test_db_config)
         # assert - no errors
@@ -53,7 +53,7 @@ def describe_when_there_are_assignment_submissions_to_insert():
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_insert_the_submissions_successfully(
-        test_db_config: ServerConfig, source_system: str
+        test_db_config: MssqlServerConfig, source_system: str
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -134,7 +134,7 @@ def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_sou
     SUBMISSION_TEST_LMS_IDENTIFIER = 99
     UNKNOWN_SOURCE_SYSTEM = "Unknown"
 
-    def it_should_not_insert_the_submissions(test_db_config: ServerConfig):
+    def it_should_not_insert_the_submissions(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
@@ -218,7 +218,7 @@ def describe_when_there_are_assignment_submissions_to_update():
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_update_the_submissions_successfully(
-        test_db_config: ServerConfig, source_system: str
+        test_db_config: MssqlServerConfig, source_system: str
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -305,7 +305,7 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_not_insert_the_submissions(
-        test_db_config: ServerConfig, source_system: str
+        test_db_config: MssqlServerConfig, source_system: str
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -383,7 +383,7 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_not_insert_any_submissions(
-        test_db_config: ServerConfig, source_system: str
+        test_db_config: MssqlServerConfig, source_system: str
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -463,7 +463,7 @@ def describe_when_there_are_past_assignments_without_submissions():
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_create_missing_submissions_for_associated_students(
-            test_db_config: ServerConfig, source_system: str):
+            test_db_config: MssqlServerConfig, source_system: str):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
@@ -544,7 +544,7 @@ def describe_when_there_are_future_assignments_without_submissions():
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_create_missing_submissions_for_associated_students(
-            test_db_config: ServerConfig, source_system: str):
+            test_db_config: MssqlServerConfig, source_system: str):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 

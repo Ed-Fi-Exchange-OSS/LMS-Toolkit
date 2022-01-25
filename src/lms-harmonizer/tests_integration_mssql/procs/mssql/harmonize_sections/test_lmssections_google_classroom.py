@@ -9,22 +9,22 @@ from tests_integration_mssql.mssql_loader import (
     insert_edfi_section,
 )
 from tests_integration_mssql.mssql_connection import MSSqlConnection, query
-from tests_integration_mssql.server_config import ServerConfig
-from tests_integration_mssql.orchestrator import run_harmonizer
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
+from tests_integration_mssql.mssql_orchestrator import run_harmonizer
 
 
 SOURCE_SYSTEM = "Google"
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # act
         run_harmonizer(test_db_config)
         # assert - no errors
 
 
 def describe_when_lms_and_ods_tables_have_no_matches():
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section(connection, "sis_id_1", SOURCE_SYSTEM)
@@ -47,7 +47,7 @@ def describe_when_lms_and_ods_tables_have_a_match():
     SIS_ID = "sis_id"
     SECTION_ID = "10000000-0000-0000-0000-000000000000"
 
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section(connection, SIS_ID, SOURCE_SYSTEM)
@@ -67,7 +67,7 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
     SECTION_ID = "10000000-0000-0000-0000-000000000000"
     SIS_ID = "sis_id"
 
-    def it_should_ignore_the_deleted_record(test_db_config: ServerConfig):
+    def it_should_ignore_the_deleted_record(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section_deleted(connection, SIS_ID, SOURCE_SYSTEM)
@@ -88,7 +88,7 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
     SIS_ID = "sis_id"
     NOT_MATCHING_SIS_ID = "not_matching_sis_id"
 
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section(connection, SIS_ID, SOURCE_SYSTEM)  # Matching section

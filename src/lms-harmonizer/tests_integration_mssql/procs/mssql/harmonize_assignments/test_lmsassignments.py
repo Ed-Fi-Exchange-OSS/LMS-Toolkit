@@ -17,8 +17,8 @@ from tests_integration_mssql.mssql_loader import (
     COURSE_CODE,
 )
 from tests_integration_mssql.mssql_connection import MSSqlConnection, query
-from tests_integration_mssql.server_config import ServerConfig
-from tests_integration_mssql.orchestrator import run_harmonizer
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
+from tests_integration_mssql.mssql_orchestrator import run_harmonizer
 from edfi_lms_harmonizer.helpers.constants import SOURCE_SYSTEM, SOURCE_SYSTEM_NAMESPACE
 
 
@@ -34,7 +34,7 @@ def descriptor_namespace_for(source_system: str) -> str:
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # act
         run_harmonizer(test_db_config)
         # assert - no errors
@@ -43,7 +43,7 @@ def describe_when_lms_and_ods_tables_are_both_empty():
 def describe_when_lms_and_ods_tables_have_no_section_matches():
     @pytest.mark.parametrize("source_system,source_namspace", SOURCE_SYSTEMS)
     def it_should_run_successfully(
-        test_db_config: ServerConfig, source_system: str, source_namspace: str
+        test_db_config: MssqlServerConfig, source_system: str, source_namspace: str
     ):
         section_id_1 = "sis_id_1"
         section_id_2 = "sis_id_2"
@@ -75,7 +75,7 @@ def describe_when_there_are_assignments_to_insert():
 
     @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
     def it_should_run_successfully(
-        test_db_config: ServerConfig, source_system: str, source_namespace: str
+        test_db_config: MssqlServerConfig, source_system: str, source_namespace: str
     ):
         descriptor_namespace = descriptor_namespace_for(source_system)
         category_descriptor_id = 1
@@ -163,7 +163,7 @@ def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system(
     ASSIGNMENT_CATEGORY = "test_category"
     UNKNOWN_SOURCE_SYSTEM = "Unknown"
 
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
 
@@ -212,7 +212,7 @@ def describe_when_there_are_assignments_to_update():
 
     @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
     def it_should_update_existing_assignments(
-        test_db_config: ServerConfig, source_system: str, source_namespace: str
+        test_db_config: MssqlServerConfig, source_system: str, source_namespace: str
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -265,7 +265,7 @@ def describe_when_there_are_assignments_to_delete():
 
     @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
     def it_should_update_existing_assignments(
-        test_db_config: ServerConfig, source_system: str, source_namespace: str
+        test_db_config: MssqlServerConfig, source_system: str, source_namespace: str
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:

@@ -6,11 +6,11 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class ServerConfig:
-    useintegratedsecurity: str
+class PgsqlServerConfig:
     server: str
     port: str
     db_name: str
     username: str
     password: str
     skip_teardown: bool
+    psql_cli: str

@@ -5,7 +5,7 @@
 
 import subprocess
 import os
-from tests_integration_mssql.server_config import ServerConfig
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
 from typing import List
 
 
@@ -29,7 +29,7 @@ def _run(command: List[str]):
         raise Exception("Command failed %d %a %a" % (result.returncode, stdout, stderr))
 
 
-def run_harmonizer(config: ServerConfig):
+def run_harmonizer(config: MssqlServerConfig):
     login: List[str] = (
         ["--useintegratedsecurity"]
         if config.useintegratedsecurity == "true"
@@ -52,7 +52,7 @@ def run_harmonizer(config: ServerConfig):
     )
 
 
-def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
+def _sqlcmd_parameters_from(config: MssqlServerConfig) -> List[str]:
     login: List[str] = (
         ["-E"]
         if config.useintegratedsecurity == "true"
@@ -62,11 +62,11 @@ def _sqlcmd_parameters_from(config: ServerConfig) -> List[str]:
     return ["-S", f"{config.server},{config.port}", *login]
 
 
-def _execute_sql_against_master(config: ServerConfig, sql: str):
+def _execute_sql_against_master(config: MssqlServerConfig, sql: str):
     _run(["sqlcmd", "-b", *_sqlcmd_parameters_from(config), "-Q", sql])
 
 
-def _execute_sql_file_against_database(config: ServerConfig, filename: str):
+def _execute_sql_file_against_database(config: MssqlServerConfig, filename: str):
     _run(
         [
             "sqlcmd",
@@ -96,7 +96,7 @@ def _edfi_script_path(script_name: str) -> str:
     )
 
 
-def _load_edfi_scripts(config: ServerConfig):
+def _load_edfi_scripts(config: MssqlServerConfig):
     _execute_sql_file_against_database(config, _edfi_script_path("0010-Schemas.sql"))
     _execute_sql_file_against_database(config, _edfi_script_path("0020-Tables.sql"))
     # Note - intentionally not running foreign key scripts
@@ -120,7 +120,7 @@ def _lms_extension_script_path(script_name: str) -> str:
     )
 
 
-def _load_lms_extension_scripts(config: ServerConfig):
+def _load_lms_extension_scripts(config: MssqlServerConfig):
     _execute_sql_file_against_database(
         config,
         _lms_extension_script_path("0010-EXTENSION-LMSX-Schemas.sql"),
@@ -132,7 +132,7 @@ def _load_lms_extension_scripts(config: ServerConfig):
     # Note - intentionally not running foreign key scripts
 
 
-def _load_ordered_scripts(config: ServerConfig, script_path: str):
+def _load_ordered_scripts(config: MssqlServerConfig, script_path: str):
     files_in_path: List[str] = [
         f
         for f in os.listdir(script_path)
@@ -161,11 +161,11 @@ def _lms_migration_script_path() -> str:
     )
 
 
-def _load_lms_migration_scripts(config: ServerConfig):
+def _load_lms_migration_scripts(config: MssqlServerConfig):
     _load_ordered_scripts(config, _lms_migration_script_path())
 
 
-def create_snapshot(config: ServerConfig):
+def create_snapshot(config: MssqlServerConfig):
     temp_filename: str = os.path.join(os.getcwd(), "temp_harmonizer_snapshot")
     _execute_sql_against_master(
         config,
@@ -176,13 +176,13 @@ def create_snapshot(config: ServerConfig):
     )
 
 
-def delete_snapshot(config: ServerConfig):
+def delete_snapshot(config: MssqlServerConfig):
     _execute_sql_against_master(
         config, "DROP DATABASE IF EXISTS temp_harmonizer_snapshot"
     )
 
 
-def restore_snapshot(config: ServerConfig):
+def restore_snapshot(config: MssqlServerConfig):
     _execute_sql_against_master(
         config,
         f"ALTER DATABASE {config.db_name} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;"
@@ -192,7 +192,7 @@ def restore_snapshot(config: ServerConfig):
     )
 
 
-def initialize_database(config: ServerConfig):
+def initialize_database(config: MssqlServerConfig):
     _execute_sql_against_master(
         config,
         "DROP DATABASE IF EXISTS temp_harmonizer_snapshot;"

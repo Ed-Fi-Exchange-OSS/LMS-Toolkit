@@ -5,12 +5,12 @@
 from typing import Iterator
 from os import environ
 import pytest
-from tests_integration_pgsql.orchestrator import (
+from tests_integration_pgsql.pgsql_orchestrator import (
     delete_snapshot,
     initialize_database,
     TEMPORARY_DATABASE,
 )
-from tests_integration_pgsql.server_config import ServerConfig
+from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 
 
 def pytest_addoption(parser):
@@ -63,8 +63,8 @@ def pytest_addoption(parser):
     )
 
 
-def _server_config_from(request) -> ServerConfig:
-    return ServerConfig(
+def _server_config_from(request) -> PgsqlServerConfig:
+    return PgsqlServerConfig(
         server=request.config.getoption("--server"),
         port=request.config.getoption("--port"),
         db_name=request.config.getoption("--dbname"),
@@ -76,12 +76,12 @@ def _server_config_from(request) -> ServerConfig:
 
 
 @pytest.fixture(scope="session")
-def postgresql_db_config(request) -> Iterator[ServerConfig]:
+def postgresql_db_config(request) -> Iterator[PgsqlServerConfig]:
     """
     Fixture that wraps an engine to use with snapshot
     creation and deletion
     """
-    config: ServerConfig = _server_config_from(request)
+    config: PgsqlServerConfig = _server_config_from(request)
     initialize_database(config)
 
     yield config
@@ -90,7 +90,7 @@ def postgresql_db_config(request) -> Iterator[ServerConfig]:
 
 
 @pytest.fixture(autouse=True)
-def test_db_config(mssql_db_config: ServerConfig, request) -> ServerConfig:
+def test_db_config(mssql_db_config: PgsqlServerConfig, request) -> PgsqlServerConfig:
     """
     Fixture that takes the wrapped engine and passes it along, while
     providing a finalizer hook to rollback via snapshotting after each test.

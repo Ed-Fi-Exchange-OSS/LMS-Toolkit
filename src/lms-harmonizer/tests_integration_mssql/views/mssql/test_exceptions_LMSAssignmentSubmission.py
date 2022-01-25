@@ -16,8 +16,8 @@ from tests_integration_mssql.mssql_loader import (
     insert_lmsx_assignmentsubmissionstatus_descriptor,
 )
 from tests_integration_mssql.mssql_connection import MSSqlConnection, query
-from tests_integration_mssql.server_config import ServerConfig
-from tests_integration_mssql.orchestrator import run_harmonizer
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
+from tests_integration_mssql.mssql_orchestrator import run_harmonizer
 
 
 SOURCE_SYSTEM = 'Canvas'
@@ -39,7 +39,7 @@ def submission_descriptor_namespace_for(source_system: str) -> str:
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_return_zero(test_db_config: ServerConfig):
+    def it_should_return_zero(test_db_config: MssqlServerConfig):
         result = None
         # act
         run_harmonizer(test_db_config)
@@ -60,7 +60,7 @@ def describe_when_there_are_submissions_in_ods_and_lms():
     SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
     def it_should_return_zero(
-        test_db_config: ServerConfig
+        test_db_config: MssqlServerConfig
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -136,7 +136,7 @@ def describe_when_there_are_submissions_in_lms_only():
     SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
     def it_should_return_the_count_of_exceptions_not_in_zero(
-        test_db_config: ServerConfig
+        test_db_config: MssqlServerConfig
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:

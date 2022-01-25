@@ -4,13 +4,13 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 from typing import Iterator
 import pytest
-from tests_integration_mssql.orchestrator import (
+from tests_integration_mssql.mssql_orchestrator import (
     create_snapshot,
     delete_snapshot,
     initialize_database,
     restore_snapshot,
 )
-from tests_integration_mssql.server_config import ServerConfig
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
 
 
 def pytest_addoption(parser):
@@ -59,8 +59,8 @@ def pytest_addoption(parser):
     )
 
 
-def _server_config_from(request) -> ServerConfig:
-    return ServerConfig(
+def _server_config_from(request) -> MssqlServerConfig:
+    return MssqlServerConfig(
         useintegratedsecurity=request.config.getoption("--useintegratedsecurity"),
         server=request.config.getoption("--server"),
         port=request.config.getoption("--port"),
@@ -72,12 +72,12 @@ def _server_config_from(request) -> ServerConfig:
 
 
 @pytest.fixture(scope="session")
-def mssql_db_config(request) -> Iterator[ServerConfig]:
+def mssql_db_config(request) -> Iterator[MssqlServerConfig]:
     """
     Fixture that wraps an engine to use with snapshot
     creation and deletion
     """
-    config: ServerConfig = _server_config_from(request)
+    config: MssqlServerConfig = _server_config_from(request)
     initialize_database(config)
     create_snapshot(config)
 
@@ -87,7 +87,7 @@ def mssql_db_config(request) -> Iterator[ServerConfig]:
 
 
 @pytest.fixture(autouse=True)
-def test_db_config(mssql_db_config: ServerConfig, request) -> ServerConfig:
+def test_db_config(mssql_db_config: MssqlServerConfig, request) -> MssqlServerConfig:
     """
     Fixture that takes the wrapped engine and passes it along, while
     providing a finalizer hook to rollback via snapshotting after each test.

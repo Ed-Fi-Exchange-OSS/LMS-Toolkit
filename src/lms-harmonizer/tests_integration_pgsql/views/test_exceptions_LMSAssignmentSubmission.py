@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from tests_integration_pgsql.postgresql_loader import (
+from tests_integration_pgsql.pgsql_loader import (
     insert_edfi_student,
     insert_lms_assignment,
     insert_lms_section,
@@ -15,9 +15,9 @@ from tests_integration_pgsql.postgresql_loader import (
     insert_lms_user,
     insert_lmsx_assignmentsubmissionstatus_descriptor,
 )
-from tests_integration_pgsql.postgresql_connection import PostgresqlConnection, query
-from tests_integration_pgsql.server_config import ServerConfig
-from tests_integration_pgsql.orchestrator import run_harmonizer
+from tests_integration_pgsql.pgsql_connection import PgsqlConnection, query
+from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
+from tests_integration_pgsql.pgsql_orchestrator import run_harmonizer
 
 
 SOURCE_SYSTEM = 'Canvas'
@@ -39,11 +39,11 @@ def submission_descriptor_namespace_for(source_system: str) -> str:
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_return_zero(test_db_config: ServerConfig):
+    def it_should_return_zero(test_db_config: PgsqlServerConfig):
         result = None
         # act
         run_harmonizer(test_db_config)
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             result = query(connection, QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS)
 
         # assert - no errors
@@ -60,10 +60,10 @@ def describe_when_there_are_submissions_in_ods_and_lms():
     SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
     def it_should_return_zero(
-        test_db_config: ServerConfig
+        test_db_config: PgsqlServerConfig
     ):
         # arrange
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
 
             insert_descriptor(
                 connection, descriptor_namespace_for(SOURCE_SYSTEM), ASSIGNMENT_CATEGORY
@@ -120,7 +120,7 @@ def describe_when_there_are_submissions_in_ods_and_lms():
         run_harmonizer(test_db_config)
 
         # assert
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             result = query(connection, QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS)
 
         result[0]['count'] == 0
@@ -136,10 +136,10 @@ def describe_when_there_are_submissions_in_lms_only():
     SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
     def it_should_return_the_count_of_exceptions_not_in_zero(
-        test_db_config: ServerConfig
+        test_db_config: PgsqlServerConfig
     ):
         # arrange
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
 
             insert_descriptor(
                 connection, descriptor_namespace_for(SOURCE_SYSTEM), ASSIGNMENT_CATEGORY
@@ -194,11 +194,11 @@ def describe_when_there_are_submissions_in_lms_only():
         # act
         result = None
         run_harmonizer(test_db_config)
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             connection.execute("delete from lmsx.assignmentsubmission")
 
         # assert
-        with PostgresqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             result = query(connection, QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS)
 
         result[0]['count'] == 1

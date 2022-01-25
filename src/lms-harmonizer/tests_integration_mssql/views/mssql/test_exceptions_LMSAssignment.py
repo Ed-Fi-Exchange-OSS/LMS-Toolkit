@@ -12,8 +12,8 @@ from tests_integration_mssql.mssql_loader import (
     insert_lmsx_assignmentcategory_descriptor,
 )
 from tests_integration_mssql.mssql_connection import MSSqlConnection, query
-from tests_integration_mssql.server_config import ServerConfig
-from tests_integration_mssql.orchestrator import run_harmonizer
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
+from tests_integration_mssql.mssql_orchestrator import run_harmonizer
 
 
 SOURCE_SYSTEM = 'Canvas'
@@ -31,7 +31,7 @@ def descriptor_namespace_for(source_system: str) -> str:
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_return_zero(test_db_config: ServerConfig):
+    def it_should_return_zero(test_db_config: MssqlServerConfig):
         result = None
         # act
         run_harmonizer(test_db_config)
@@ -48,7 +48,7 @@ def describe_when_there_are_inserted_assignments():
     ASSIGNMENT_CATEGORY = "test_category"
 
     def it_should_return_zero_when_there_are_no_exceptions(
-        test_db_config: ServerConfig
+        test_db_config: MssqlServerConfig
     ):
         descriptor_namespace = descriptor_namespace_for(SOURCE_SYSTEM)
         category_descriptor_id = 1
@@ -91,7 +91,7 @@ def describe_when_there_are_inserted_assignments():
         assert result[0]['count'] == 0
 
     def it_should_return_one_exception_when_theres_one_exception(
-        test_db_config: ServerConfig
+        test_db_config: MssqlServerConfig
     ):
         descriptor_namespace = descriptor_namespace_for(SOURCE_SYSTEM)
         category_descriptor_id = 1
@@ -144,7 +144,7 @@ def describe_when_there_are_deleted_assignments():
     ASSIGNMENT_CATEGORY = "test_category"
 
     def it_should_not_count_it_as_an_exception(
-        test_db_config: ServerConfig
+        test_db_config: MssqlServerConfig
     ):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:

@@ -6,7 +6,7 @@
 import subprocess
 from os import environ, path, listdir
 from platform import uname
-from tests_integration_pgsql.server_config import ServerConfig
+from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 from typing import List
 
 
@@ -14,7 +14,7 @@ TEMPORARY_DATABASE = "harmonizer_temp"
 
 
 # TODO: consider unifying some of this code between the two test libraries.
-def _run(config: ServerConfig, command: List[str]):
+def _run(config: PgsqlServerConfig, command: List[str]):
 
     command_as_string: str = " ".join(command)
     print(f"\033[95m{command_as_string}\033[0m")
@@ -41,7 +41,7 @@ def _run(config: ServerConfig, command: List[str]):
         raise Exception("Command failed %d %a %a" % (result.returncode, stdout, stderr))
 
 
-def run_harmonizer(config: ServerConfig):
+def run_harmonizer(config: PgsqlServerConfig):
     _run(
         config,
         [
@@ -65,7 +65,7 @@ def run_harmonizer(config: ServerConfig):
     )
 
 
-def _psql_parameters_from(config: ServerConfig) -> List[str]:
+def _psql_parameters_from(config: PgsqlServerConfig) -> List[str]:
     return [
         "-b",  # Print failed SQL commands to standard error output.
         "-h",
@@ -78,14 +78,14 @@ def _psql_parameters_from(config: ServerConfig) -> List[str]:
     ]
 
 
-def _execute_sql_against_master(config: ServerConfig, sql: str):
+def _execute_sql_against_master(config: PgsqlServerConfig, sql: str):
     _run(
         config,
         [config.psql_cli, *_psql_parameters_from(config), "-d", "postgres" "-c", sql],
     )
 
 
-def _execute_sql_file_against_database(config: ServerConfig, filename: str):
+def _execute_sql_file_against_database(config: PgsqlServerConfig, filename: str):
     _run(
         config,
         [
@@ -114,7 +114,7 @@ def _edfi_script_path(script_name: str) -> str:
     )
 
 
-def _load_edfi_scripts(config: ServerConfig):
+def _load_edfi_scripts(config: PgsqlServerConfig):
     _execute_sql_file_against_database(config, _edfi_script_path("0010-Schemas.sql"))
     _execute_sql_file_against_database(config, _edfi_script_path("0020-Tables.sql"))
     # Note - intentionally not running foreign key scripts
@@ -138,7 +138,7 @@ def _lms_extension_script_path(script_name: str) -> str:
     )
 
 
-def _load_lms_extension_scripts(config: ServerConfig):
+def _load_lms_extension_scripts(config: PgsqlServerConfig):
     _execute_sql_file_against_database(
         config,
         _lms_extension_script_path("0010-EXTENSION-LMSX-Schemas.sql"),
@@ -150,7 +150,7 @@ def _load_lms_extension_scripts(config: ServerConfig):
     # Note - intentionally not running foreign key scripts
 
 
-def _load_ordered_scripts(config: ServerConfig, script_path: str):
+def _load_ordered_scripts(config: PgsqlServerConfig, script_path: str):
     files_in_path: List[str] = [
         f
         for f in listdir(script_path)
@@ -179,11 +179,11 @@ def _lms_migration_script_path() -> str:
     )
 
 
-def _load_lms_migration_scripts(config: ServerConfig):
+def _load_lms_migration_scripts(config: PgsqlServerConfig):
     _load_ordered_scripts(config, _lms_migration_script_path())
 
 
-def delete_snapshot(config: ServerConfig):
+def delete_snapshot(config: PgsqlServerConfig):
     _execute_sql_against_master(config, "drop database if exists {TEMPORARY_DATABASE}")
 
 
@@ -193,7 +193,7 @@ def _create_temporary_db_from_template(config):
     )
 
 
-def initialize_database(config: ServerConfig):
+def initialize_database(config: PgsqlServerConfig):
     _execute_sql_against_master(
         config,
         "drop database if exists {config.db_name};"

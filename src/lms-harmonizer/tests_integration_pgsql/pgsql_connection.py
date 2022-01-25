@@ -7,13 +7,13 @@
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List
 import pyodbc
-from tests_integration_pgsql.server_config import ServerConfig
+from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 
 
-class PostgresqlConnection(object):
-    config: ServerConfig
+class PgsqlConnection(object):
+    config: PgsqlServerConfig
 
-    def __init__(self, config: ServerConfig):
+    def __init__(self, config: PgsqlServerConfig):
         self.config = config
 
     @contextmanager

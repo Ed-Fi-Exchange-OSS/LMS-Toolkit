@@ -9,15 +9,15 @@ from tests_integration_mssql.mssql_loader import (
     insert_edfi_student,
 )
 from tests_integration_mssql.mssql_connection import MSSqlConnection, query
-from tests_integration_mssql.server_config import ServerConfig
-from tests_integration_mssql.orchestrator import run_harmonizer
+from tests_integration_mssql.mssql_server_config import MssqlServerConfig
+from tests_integration_mssql.mssql_orchestrator import run_harmonizer
 
 
 SOURCE_SYSTEM = "Schoology"
 
 
 def describe_when_lms_and_ods_tables_have_no_matches():
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_user(connection, "sis_id_1", "e1@e.com", SOURCE_SYSTEM)
@@ -41,7 +41,7 @@ def describe_when_lms_and_ods_tables_have_a_match():
     SIS_ID = "sis_id"
     UNIQUE_ID = f"{SIS_ID}1"
 
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_user(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
@@ -62,7 +62,7 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
     SIS_ID = "sis_id"
     UNIQUE_ID = f"{SIS_ID}1"
 
-    def it_should_ignore_the_deleted_record(test_db_config: ServerConfig):
+    def it_should_ignore_the_deleted_record(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_user_deleted(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
@@ -84,7 +84,7 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
     UNIQUE_ID = f"{SIS_ID}1"
     NOT_MATCHING_SIS_ID = "not_matching_sis_id"
 
-    def it_should_run_successfully(test_db_config: ServerConfig):
+    def it_should_run_successfully(test_db_config: MssqlServerConfig):
         # arrange
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_user(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
