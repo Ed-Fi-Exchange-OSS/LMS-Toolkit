@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from tests_integration_sql.mssql_loader import (
+from tests_integration_mssql.mssql_loader import (
     insert_edfi_student,
     insert_lms_assignment,
     insert_lms_section,
@@ -15,9 +15,9 @@ from tests_integration_sql.mssql_loader import (
     insert_lms_user,
     insert_lmsx_assignmentsubmissionstatus_descriptor,
 )
-from tests_integration_sql.mssql_connection import MSSqlConnection, query
-from tests_integration_sql.server_config import ServerConfig
-from tests_integration_sql.orchestrator import run_harmonizer
+from tests_integration_mssql.mssql_connection import MSSqlConnection, query
+from tests_integration_mssql.server_config import ServerConfig
+from tests_integration_mssql.orchestrator import run_harmonizer
 
 
 SOURCE_SYSTEM = 'Canvas'

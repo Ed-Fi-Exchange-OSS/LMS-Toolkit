@@ -7,7 +7,7 @@
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List
 import pyodbc
-from tests_integration_sql.server_config import ServerConfig
+from tests_integration_mssql.server_config import ServerConfig
 
 
 class MSSqlConnection(object):

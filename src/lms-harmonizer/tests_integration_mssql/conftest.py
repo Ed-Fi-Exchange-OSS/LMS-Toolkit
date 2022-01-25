@@ -4,13 +4,13 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 from typing import Iterator
 import pytest
-from tests_integration_sql.orchestrator import (
+from tests_integration_mssql.orchestrator import (
     create_snapshot,
     delete_snapshot,
     initialize_database,
     restore_snapshot,
 )
-from tests_integration_sql.server_config import ServerConfig
+from tests_integration_mssql.server_config import ServerConfig
 
 
 def pytest_addoption(parser):

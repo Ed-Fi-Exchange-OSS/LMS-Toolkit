@@ -5,7 +5,7 @@
 
 import subprocess
 import os
-from tests_integration_sql.server_config import ServerConfig
+from tests_integration_mssql.server_config import ServerConfig
 from typing import List
 
 
