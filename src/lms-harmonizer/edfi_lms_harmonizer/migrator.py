@@ -74,7 +74,9 @@ from
     information_schema.tables
 where
     table_schema like 'lms' and
-    table_name = 'MigrationJournal_Harmonizer';
+    -- First option covers SQL Server if set to case sensitive mode,
+    -- second option covers PostgreSQL
+    table_name in ('MigrationJournal_Harmonizer', 'migrationjournal_harmonizer');
 """
     response = adapter.get_int(statement)
     return bool(response == 1)
