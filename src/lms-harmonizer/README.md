@@ -76,6 +76,7 @@ Supported parameters:
 
 | Description                 | Required            | Command Line Argument                   | Environment Variable        |
 | --------------------------- | ------------------- | --------------------------------------- | --------------------------- |
+| DB Engine                   | no                  | `-g` or `--engine` (mssql | postgresql) | DB_ENGINE                   |
 | DB Server                   | yes                 | `-s` or `--server`                      | DB_SERVER                   |
 | DB Port                     | no (default: 1433)  | `--port`                                | DB_PORT                     |
 | DB Name                     | yes                 | `-d` or `--dbname`                      | DB_NAME                     |

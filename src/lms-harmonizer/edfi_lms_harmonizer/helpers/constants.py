@@ -16,3 +16,8 @@ class SOURCE_SYSTEM_NAMESPACE:
     GOOGLE = "uri://google.com/classroom"
     SCHOOLOGY = "uri://schoology.com"
     CANVAS = "uri://instructure.com/canvas"
+
+
+class DB_ENGINE:
+    MSSQL = "mssql"
+    POSTGRESQL = "postgresql"

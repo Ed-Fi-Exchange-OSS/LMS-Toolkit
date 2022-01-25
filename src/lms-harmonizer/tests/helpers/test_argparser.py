@@ -8,6 +8,7 @@ from typing import List
 import pytest
 
 from edfi_lms_harmonizer.helpers.argparser import parse_main_arguments, MainArguments
+from edfi_lms_harmonizer.helpers.constants import DB_ENGINE
 
 PATH = "./lms_udm_files"
 SERVER = "localhost"
@@ -22,7 +23,7 @@ def _server_args() -> List[str]:
     return ["--server", SERVER]
 
 
-def port_args() -> List[str]:
+def _port_args() -> List[str]:
     return ["--port", str(PORT)]
 
 
@@ -52,6 +53,14 @@ def _encrypt_args() -> List[str]:
 
 def _trust_certificate_args() -> List[str]:
     return ["--trust-certificate"]
+
+
+def _engine_mssql() -> List[str]:
+    return ["--engine", DB_ENGINE.MSSQL]
+
+
+def _engine_postgresql() -> List[str]:
+    return ["--engine", DB_ENGINE.POSTGRESQL]
 
 
 def _assert_no_messages(capsys) -> None:
@@ -143,7 +152,7 @@ def describe_given_optional_port_is_provided() -> None:
             *_server_args(),
             *_db_name_args(),
             *_integrated_security_arg(),
-            *port_args(),
+            *_port_args(),
         ]
 
         parsed = parse_main_arguments(args)
@@ -226,7 +235,8 @@ def describe_given_engine_mssql() -> None:
             *_db_name_args(),
             *_username_args(),
             *_password_args(),
-            *port_args(),
+            *_port_args(),
+            *_engine_mssql(),
         ]
 
         # Act
@@ -285,3 +295,52 @@ def describe_given_engine_mssql() -> None:
 
             assert parsed is not None, "No arguments detected"
             assert parsed.log_level == "DEBUG"
+
+
+def describe_given_engine_postgresql() -> None:
+    @pytest.fixture
+    def fixture(capsys) -> MainArguments:
+        # Arrange
+        args = [
+            *_server_args(),
+            *_db_name_args(),
+            *_username_args(),
+            *_password_args(),
+            *_port_args(),
+            *_engine_postgresql(),
+        ]
+
+        # Act
+        parsed = parse_main_arguments(args)
+
+        _assert_no_messages(capsys)
+
+        return parsed
+
+    def it_should_set_server_name_in_the_connection_string(
+        fixture: MainArguments,
+    ) -> None:
+        assert SERVER in str(fixture.get_adapter().engine.url)
+
+    def it_should_set_port_in_the_connection_string(fixture: MainArguments) -> None:
+        assert str(PORT) in str(fixture.get_adapter().engine.url)
+
+    def it_should_set_database_name_in_the_connection_string(
+        fixture: MainArguments,
+    ) -> None:
+        assert DB_NAME in str(fixture.get_adapter().engine.url)
+
+    def it_should_set_username_in_the_connection_string(
+        fixture: MainArguments,
+    ) -> None:
+        assert USERNAME in str(fixture.get_adapter().engine.url)
+
+    def it_should_set_password_in_the_connection_string(
+        fixture: MainArguments,
+    ) -> None:
+        assert PASSWORD in str(fixture.get_adapter().engine.url)
+
+    def it_should_be_PostgreSQL_connection_string(
+        fixture: MainArguments,
+    ) -> None:
+        assert "postgresql://" in str(fixture.get_adapter().engine.url)
