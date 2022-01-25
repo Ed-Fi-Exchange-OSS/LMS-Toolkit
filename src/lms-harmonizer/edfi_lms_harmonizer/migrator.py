@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from os import path
+from os import path, scandir
 from typing import List
 
 from sqlalchemy.exc import ProgrammingError
@@ -15,30 +15,23 @@ from edfi_sql_adapter.sql_adapter import Adapter, Statement
 
 logger = logging.getLogger(__name__)
 
-MIGRATION_SCRIPTS = [
-    # CAUTION: these scripts will run in order from "top to bottom", so it is
-    # critical to maintain the script order at all times.
-    "0001_initialize_lms_database",
-    "0002_harmonize_lmsuser_canvas",
-    "0003_harmonize_lmsuser_schoology",
-    "0004_harmonize_lmsuser_google-classroom",
-    "0005_harmonize_lmssection_canvas",
-    "0006_harmonize_lmssection_google_classroom",
-    "0007_harmonize_lmssection_schoology",
-    "0008_view_exceptions_LMSSection",
-    "0009_view_exceptions_LMSUser",
-    "0010_harmonize_assignment",
-    "0011_harmonize_assignment_submissions",
-    "0012_view_missing_assignment_category_descriptors",
-    "0013_view_missing_assignmentsubmission_status_descriptors",
-    "0014_view_assignment_submissions_exceptions",
-    "0015_view_assignments_exceptions",
-]
+
+SCHEMA_SCRIPT_NAME = "0001_initialize_lms_database.sql"
 
 
-def _get_script_path(adapter: Adapter, script_name: str) -> str:
-    script_dir = path.join(path.dirname(__file__), "scripts", adapter.engine.name)
-    return path.join(script_dir, script_name)
+def _get_scripts_dir(engine: str) -> str:
+    return path.join(path.dirname(__file__), "scripts", engine)
+
+
+def _get_scripts(scripts_dir: str) -> List[str]:
+    with scandir(scripts_dir) as entries:
+        return sorted(
+            [
+                entry.path
+                for entry in entries
+                if entry.is_file() and entry.name.endswith(".sql") and not entry.name == SCHEMA_SCRIPT_NAME
+            ]
+        )
 
 
 def _read_statements_from_file(full_path: str) -> List[str]:
@@ -50,31 +43,24 @@ def _read_statements_from_file(full_path: str) -> List[str]:
     return statements
 
 
+def _migration_name(migration: str) -> str:
+    return path.split(migration)[-1].split(".")[0].lower()
+
+
 def _script_has_been_run(adapter: Adapter, migration: str) -> bool:
-    try:
-        statement = f"SELECT 1 FROM lms.MigrationJournal_Harmonizer WHERE script = '{migration}';"
-        response = adapter.get_int(statement)
+    migration_name = _migration_name(migration)
+    statement = f"select 1 from lms.migrationjournal_harmonizer where script = '{migration_name}';"
+    response = adapter.get_int(statement)
 
-        return bool(response == 1)
-    except ProgrammingError as error:
-        if (
-            # PostgreSLQ error
-            "psycopg2.errors.UndefinedTable" in error.args[0]
-            or
-            # SQL Server error
-            "Invalid object name" in error.args[0]
-        ):
-            # This means it is a fresh database where the migrationjournal table
-            # has not been installed yet.
-            return False
-
-        raise
+    return bool(response == 1)
 
 
 def _record_migration_in_journal(adapter: Adapter, migration: str) -> None:
+    migration_name = _migration_name(migration)
+
     statement = Statement(
-        f"INSERT INTO lms.MigrationJournal_Harmonizer (script) values ('{migration}');",
-        "Updating migration journal table"
+        f"insert into lms.migrationjournal_harmonizer (script) values ('{migration_name}');",
+        "Updating migration journal table",
     )
 
     adapter.execute([statement])
@@ -82,24 +68,23 @@ def _record_migration_in_journal(adapter: Adapter, migration: str) -> None:
 
 def _lms_migration_journal_exists(adapter: Adapter) -> bool:
     statement = """
-SELECT CASE WHEN EXISTS
-    (SELECT *
-     FROM INFORMATION_SCHEMA.TABLES
-     WHERE TABLE_SCHEMA = 'lms'
-     AND TABLE_NAME = 'MigrationJournal_Harmonizer')
-THEN 1 ELSE 0 END
-""".strip()
-
-    return adapter.get_int(statement) == 1
+select
+    count(table_name)
+from
+    information_schema.tables
+where
+    table_schema like 'lms' and
+    table_name = 'MigrationJournal_Harmonizer';
+"""
+    response = adapter.get_int(statement)
+    return bool(response == 1)
 
 
 def _run_migration_script(adapter: Adapter, migration: str) -> None:
 
     logger.debug(f"Running migration {migration}...")
 
-    migration_script = _get_script_path(adapter, f"{migration}.sql")
-
-    statements = _read_statements_from_file(migration_script)
+    statements = _read_statements_from_file(migration)
     adapter.execute_script(statements)
 
     _record_migration_in_journal(adapter, migration)
@@ -107,7 +92,14 @@ def _run_migration_script(adapter: Adapter, migration: str) -> None:
     logger.debug(f"Done with migration {migration}.")
 
 
-def migrate(adapter: Adapter) -> None:
+def _initialize_migrations(scripts_dir: str, adapter: Adapter):
+    logger.debug("Creating schema and migration table...")
+
+    migration = path.join(scripts_dir, SCHEMA_SCRIPT_NAME)
+    _run_migration_script(adapter, migration)
+
+
+def migrate(engine: str, adapter: Adapter) -> None:
     """
     Runs database migration scripts for installing LMS table schema into the
     destination database.
@@ -119,10 +111,12 @@ def migrate(adapter: Adapter) -> None:
     """
     logger.info("Begin database auto-migration...")
 
-    if not _lms_migration_journal_exists(adapter):
-        _run_migration_script(adapter, "0001_initialize_lms_database")
+    scripts_dir = _get_scripts_dir(engine)
 
-    for migration in MIGRATION_SCRIPTS:
+    if not _lms_migration_journal_exists(adapter):
+        _initialize_migrations(scripts_dir, adapter)
+
+    for migration in _get_scripts(scripts_dir):
         # The following block of code does not belong in _run_migration_script
         # because it will throw an exception if the migration journal does not
         # exist, and therefore is not appropriate when initializing the LMS

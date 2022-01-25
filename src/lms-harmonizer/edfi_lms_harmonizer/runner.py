@@ -38,7 +38,7 @@ def run(arguments: MainArguments) -> None:
     logger.info("Starting the Ed-Fi LMS Harmonizer")
 
     adapter = arguments.get_adapter()
-    migrate(adapter)
+    migrate(arguments.engine, adapter)
 
     exceptions_report_directory = arguments.exceptions_report_directory
 
@@ -53,3 +53,4 @@ def run(arguments: MainArguments) -> None:
     print_summary(adapter)
 
     logger.info("Finishing the Ed-Fi LMS Harmonizer")
+

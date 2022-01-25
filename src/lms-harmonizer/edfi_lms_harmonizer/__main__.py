@@ -37,7 +37,11 @@ def main() -> None:
     _configure_logging(arguments)
     error_tracker: ErrorHandler = ErrorHandler()
 
-    run(arguments)
+    try:
+        run(arguments)
+    except Exception as error:
+        logger.error(error)
+        print(error.__traceback__(), file=sys.stderr)
 
     if error_tracker.fired:
         print(
