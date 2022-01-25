@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from configargparse import ArgParser  # type: ignore
 
-from .constants import LOG_LEVELS
+from .constants import LOG_LEVELS, DB_ENGINE
 from edfi_sql_adapter import sql_adapter
 
 
@@ -26,6 +26,7 @@ class MainArguments:
 
     log_level: str
     exceptions_report_directory: Optional[str]
+    engine: str
     server: str
     db_name: str
     port: int
@@ -38,9 +39,8 @@ class MainArguments:
     def _get_sql_server_port(self) -> int:
         return 1433 if not self.port or self.port == 0 else self.port
 
-    # For future use
-    # def _get_pgsql_server_port(self) -> int:
-    #     return 5432 if not self.port or self.port == 0 else self.port
+    def _get_pgsql_server_port(self) -> int:
+        return 5432 if not self.port or self.port == 0 else self.port
 
     def build_mssql_adapter(self, username: str, password: str) -> None:
         self.adapter = sql_adapter.create_mssql_adapter(
@@ -60,6 +60,11 @@ class MainArguments:
             self._get_sql_server_port(),
             self.encrypt,
             self.trust_certificate,
+        )
+
+    def build_postgresql_adapter(self, username: str, password: str) -> None:
+        self.adapter = sql_adapter.create_postgresql_adapter(
+            username, password, self.server, self.db_name, self._get_pgsql_server_port()
         )
 
     def get_adapter(self) -> sql_adapter.Adapter:
@@ -164,14 +169,23 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         "--encrypt",
         help="Encrypt the connection to the database.",
         action="store_true",
-        env_var="ENCRYPT_SQL_CONNECTION"
+        env_var="ENCRYPT_SQL_CONNECTION",
     )
     parser.add(  # type: ignore
         "-t",
         "--trust-certificate",
         help="When encrypting connections, trust the server certificate. Useful for localhost debugging with a self-signed certificate. USE WITH CAUTION.",
         action="store_true",
-        env_var="TRUST_SERVER_CERTIFICATE"
+        env_var="TRUST_SERVER_CERTIFICATE",
+    )
+    parser.add(  # type: ignore
+        "-g",  # because 'e' and 'n' are already taken (；′⌒`)
+        "--engine",
+        help="Database engine: mssql for Microsoft SQL Server, or postgresql for PostgreSQL.",
+        choices=[DB_ENGINE.MSSQL, DB_ENGINE.POSTGRESQL],
+        default=DB_ENGINE.MSSQL,
+        type=str,
+        env_var="DB_ENGINE",
     )
 
     args_parsed = parser.parse_args(args_in)
@@ -185,6 +199,7 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
     arguments = MainArguments(
         args_parsed.log_level,
         args_parsed.exceptions_report_directory,
+        args_parsed.engine,
         args_parsed.server,
         args_parsed.dbname,
         args_parsed.port,
@@ -192,12 +207,15 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         args_parsed.trust_certificate,
     )
 
-    if args_parsed.useintegratedsecurity:
-        arguments.build_mssql_adapter_with_integrated_security()
+    if arguments.engine == DB_ENGINE.MSSQL:
+        if args_parsed.useintegratedsecurity:
+            arguments.build_mssql_adapter_with_integrated_security()
+        else:
+            arguments.build_mssql_adapter(
+                args_parsed.username,
+                args_parsed.password,
+            )
     else:
-        arguments.build_mssql_adapter(
-            args_parsed.username,
-            args_parsed.password,
-        )
+        arguments.build_postgresql_adapter(args_parsed.username, args_parsed.password)
 
     return arguments
