@@ -58,19 +58,18 @@ this repository and modify the stored procedures to fit alternate logic.
 ## Getting Started
 
 1. Requires Python 3.9+ and Poetry.
-1. Requires that you have the ODS/API Suite 3, Version 5.2 and have [installed the
+1. Requires that you have the ODS/API Suite 3, Version 5.2 or Version 5.3 and have [installed the
    Ed-Fi-LMS extension](../../docs/installing-the-extension.md).
-1. Manually install the stored procedures and views used by the Harmonizer
-   (NOTE: the development team is exploring automation options) into your ODS
-   database. These are in
-   [extension/EdFi.Ods.Extensions.LMSX/Artifacts/LMS-Harmonizer](../../extension/EdFi.Ods.Extensions.LMSX/Artifacts/LMS-Harmonizer)
 1. Install required Python packages:
 
    ```bash
    poetry install
    ```
 
-## Configuration
+1. Create a `.env` file, or plan to pass all [configuration](#configuration) via
+   command line arguments. See [.env.example](.env.example).
+
+### Configuration
 
 Supported parameters:
 
@@ -99,7 +98,7 @@ Supported parameters:
 \** If using integrated security, DB Username and password won't be required,
 otherwise they are required.
 
-## Running the Tool
+### Running the Tool
 
 For detailed help, execute `poetry run python edfi_lms_harmonizer -h`.
 
