@@ -3,26 +3,33 @@
 -- The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 -- See the LICENSE and NOTICES files in the project root for more information.
 
-create or replace procedure lms.harmonize_lmsuser_canvas()
+create or replace procedure lms.harmonize_lmsuser_google_classroom()
 language SQL
 as $$
 
     update
         lms.lmsuser
     set
-        edfistudentid = edfistudent.id
+        edfistudentid = s.id
     from
-        lms.lmsuser u
+        edfi.student s
+
     inner join
-        edfi.student edfistudent
+        edfi.studenteducationorganizationassociationelectronicmail sem
     on
-        u.sisuseridentifier = edfistudent.studentuniqueid
+        s.studentusi = sem.studentusi
+
+    inner join
+        lms.lmsuser u
+    on
+        sem.electronicmailaddress = u.emailaddress
+
     where
         lms.lmsuser.sourcesystemidentifier = u.sourcesystemidentifier
     and
         lms.lmsuser.sourcesystem = u.sourcesystem
     and
-        u.sourcesystem = 'Canvas'
+        u.sourcesystem = 'Google'
     and
         u.edfistudentid is null
 	and
