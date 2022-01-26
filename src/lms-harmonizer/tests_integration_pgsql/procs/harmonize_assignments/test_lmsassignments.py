@@ -4,7 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import pytest
-from tests_integration_mssql.mssql_loader import (
+from tests_integration_pgsql.pgsql_loader import (
     insert_lms_assignment,
     insert_lms_section,
     insert_edfi_section,
@@ -16,9 +16,9 @@ from tests_integration_mssql.mssql_loader import (
     SESSION_NAME,
     COURSE_CODE,
 )
-from tests_integration_mssql.mssql_connection import MSSqlConnection, query
-from tests_integration_mssql.mssql_server_config import MssqlServerConfig
-from tests_integration_mssql.mssql_orchestrator import run_harmonizer
+from tests_integration_pgsql.pgsql_connection import PgsqlConnection, query
+from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
+from tests_integration_pgsql.pgsql_orchestrator import run_harmonizer
 from edfi_lms_harmonizer.helpers.constants import SOURCE_SYSTEM, SOURCE_SYSTEM_NAMESPACE
 
 
@@ -34,7 +34,7 @@ def descriptor_namespace_for(source_system: str) -> str:
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_run_successfully(test_db_config: MssqlServerConfig):
+    def it_should_run_successfully(test_db_config: PgsqlServerConfig):
         # act
         run_harmonizer(test_db_config)
         # assert - no errors
@@ -43,13 +43,13 @@ def describe_when_lms_and_ods_tables_are_both_empty():
 def describe_when_lms_and_ods_tables_have_no_section_matches():
     @pytest.mark.parametrize("source_system,source_namspace", SOURCE_SYSTEMS)
     def it_should_run_successfully(
-        test_db_config: MssqlServerConfig, source_system: str, source_namspace: str
+        test_db_config: PgsqlServerConfig, source_system: str, source_namspace: str
     ):
         section_id_1 = "sis_id_1"
         section_id_2 = "sis_id_2"
 
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_section(connection, section_id_1, source_system)
             insert_lms_section(connection, section_id_2, source_system)
             insert_edfi_section(connection, "not_matching_sis_id_1")
@@ -59,10 +59,10 @@ def describe_when_lms_and_ods_tables_have_no_section_matches():
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSSection = query(
                 connection,
-                "SELECT AssignmentIdentifier from [lmsx].[Assignment]",
+                "select assignmentidentifier from lmsx.assignment",
             )
 
             assert len(LMSSection) == 0
@@ -75,7 +75,7 @@ def describe_when_there_are_assignments_to_insert():
 
     @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
     def it_should_run_successfully(
-        test_db_config: MssqlServerConfig, source_system: str, source_namespace: str
+        test_db_config: PgsqlServerConfig, source_system: str, source_namespace: str
     ):
         descriptor_namespace = descriptor_namespace_for(source_system)
         category_descriptor_id = 1
@@ -83,7 +83,7 @@ def describe_when_there_are_assignments_to_insert():
         section_identifier = 1
 
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
 
             insert_descriptor(connection, descriptor_namespace, ASSIGNMENT_CATEGORY)
             insert_lmsx_assignmentcategory_descriptor(
@@ -96,8 +96,8 @@ def describe_when_there_are_assignments_to_insert():
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(
@@ -112,48 +112,48 @@ def describe_when_there_are_assignments_to_insert():
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            result = query(connection, "SELECT * from [lmsx].[Assignment]")
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+            result = query(connection, "select * from lmsx.assignment")
 
         assert len(result) == 1, "There should be one result."
 
         LMSAssignment = result[0]
 
         assert (
-            LMSAssignment["AssignmentIdentifier"] == ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER
+            LMSAssignment["assignmentidentifier"] == ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER
         ), "It should map the assignment identifier"
 
         # We know the id of the descriptors based in the order how they are inserted.
         assert (
-            int(LMSAssignment["LMSSourceSystemDescriptorId"])
+            int(LMSAssignment["lmssourcesystemdescriptorid"])
             == source_system_descriptor_id
         ), "It should map the SourceSystem descriptor"
 
         assert (
-            int(LMSAssignment["AssignmentCategoryDescriptorId"])
+            int(LMSAssignment["assignmentcategorydescriptorid"])
             == category_descriptor_id
         ), "It should map the assignment category descriptor"
 
         assert (
-            LMSAssignment["SectionIdentifier"] == SIS_SECTION_ID
+            LMSAssignment["sectionidentifier"] == SIS_SECTION_ID
         ), "It should map the section identifier"
 
         assert (
-            LMSAssignment["LocalCourseCode"] == COURSE_CODE
+            LMSAssignment["localcoursecode"] == COURSE_CODE
         ), "It should map the local course code"
 
         assert (
-            LMSAssignment["SessionName"] == SESSION_NAME
+            LMSAssignment["sessionname"] == SESSION_NAME
         ), "It should map the SessionName"
 
         assert (
-            int(LMSAssignment["SchoolYear"]) == SCHOOL_YEAR
+            int(LMSAssignment["schoolyear"]) == SCHOOL_YEAR
         ), "It should map the SchoolYear"
 
-        assert int(LMSAssignment["SchoolId"]) == SCHOOL_ID, "It should map the SchoolId"
+        assert int(LMSAssignment["schoolid"]) == SCHOOL_ID, "It should map the SchoolId"
 
         assert (
-            LMSAssignment["Namespace"] == source_namespace
+            LMSAssignment["namespace"] == source_namespace
         ), "It should map the Namespace"
 
 
@@ -163,9 +163,9 @@ def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system(
     ASSIGNMENT_CATEGORY = "test_category"
     UNKNOWN_SOURCE_SYSTEM = "Unknown"
 
-    def it_should_run_successfully(test_db_config: MssqlServerConfig):
+    def it_should_run_successfully(test_db_config: PgsqlServerConfig):
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
 
             insert_descriptor(
                 connection,
@@ -184,8 +184,8 @@ def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system(
             insert_lms_section(connection, SIS_SECTION_ID, UNKNOWN_SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(
@@ -200,8 +200,8 @@ def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system(
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignment = query(connection, "SELECT * from [lmsx].[Assignment]")
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignment = query(connection, "select * from lmsx.assignment")
             assert len(LMSAssignment) == 0
 
 
@@ -212,10 +212,10 @@ def describe_when_there_are_assignments_to_update():
 
     @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
     def it_should_update_existing_assignments(
-        test_db_config: MssqlServerConfig, source_system: str, source_namespace: str
+        test_db_config: PgsqlServerConfig, source_system: str, source_namespace: str
     ):
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_descriptor(
                 connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
             )
@@ -229,8 +229,8 @@ def describe_when_there_are_assignments_to_update():
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(
@@ -243,19 +243,19 @@ def describe_when_there_are_assignments_to_update():
 
         run_harmonizer(test_db_config)
 
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             connection.execute(
-                "UPDATE LMS.ASSIGNMENT SET TITLE = 'AN UPDATED TITLE', LastModifiedDate = GETDATE()"
+                "update lms.assignment set title = 'an updated title', lastmodifieddate = now()"
             )
 
         # act
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignment = query(connection, "SELECT Title from [lmsx].[Assignment]")
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignment = query(connection, "select title from lmsx.assignment")
             assert len(LMSAssignment) == 1
-            assert LMSAssignment[0]["Title"] == "AN UPDATED TITLE"
+            assert LMSAssignment[0]["title"] == "AN UPDATED TITLE"
 
 
 def describe_when_there_are_assignments_to_delete():
@@ -265,10 +265,10 @@ def describe_when_there_are_assignments_to_delete():
 
     @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
     def it_should_update_existing_assignments(
-        test_db_config: MssqlServerConfig, source_system: str, source_namespace: str
+        test_db_config: PgsqlServerConfig, source_system: str, source_namespace: str
     ):
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_descriptor(
                 connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
             )
@@ -282,8 +282,8 @@ def describe_when_there_are_assignments_to_delete():
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(
@@ -296,15 +296,15 @@ def describe_when_there_are_assignments_to_delete():
 
         run_harmonizer(test_db_config)
 
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             connection.execute(
-                "UPDATE LMS.ASSIGNMENT SET TITLE = 'AN UPDATED TITLE', LastModifiedDate = GETDATE(), DeletedAt = GETDATE()"
+                "update lms.assignment set title = 'an updated title', lastmodifieddate = now(), deletedat = now()"
             )
 
         # act
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignment = query(connection, "SELECT Title from [lmsx].[Assignment]")
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignment = query(connection, "select title from lmsx.assignment")
             assert len(LMSAssignment) == 0
