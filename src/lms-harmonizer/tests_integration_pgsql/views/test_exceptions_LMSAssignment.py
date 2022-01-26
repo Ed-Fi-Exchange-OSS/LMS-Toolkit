@@ -19,9 +19,9 @@ from tests_integration_pgsql.pgsql_orchestrator import run_harmonizer
 SOURCE_SYSTEM = 'Canvas'
 
 QUERY_FOR_ASSIGNMENT_EXCEPTIONS = """
-SELECT
+select
     count(*) as count
-FROM
+from
     lmsx.assignments_exceptions
 """
 
@@ -69,8 +69,8 @@ def describe_when_there_are_inserted_assignments():
             insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section lmit 1)"""
             )
 
             insert_lms_assignment(
@@ -112,8 +112,8 @@ def describe_when_there_are_inserted_assignments():
             insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section lmit 1)"""
             )
 
             insert_lms_assignment(
@@ -128,7 +128,7 @@ def describe_when_there_are_inserted_assignments():
         run_harmonizer(test_db_config)
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             connection.execute(
-                """DELETE FROM LMSX.ASSIGNMENT"""
+                """delete from lmsx.assignment"""
             )
 
         # assert
@@ -161,8 +161,8 @@ def describe_when_there_are_deleted_assignments():
             insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section lmit 1)"""
             )
 
             insert_lms_assignment(
@@ -177,7 +177,7 @@ def describe_when_there_are_deleted_assignments():
 
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             connection.execute(
-                "UPDATE LMS.ASSIGNMENT SET LastModifiedDate = GETDATE(), DeletedAt = GETDATE()"
+                "update lms.assignment set lastmodifieddate = now(), deletedat = now()"
             )
 
         # act

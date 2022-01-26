@@ -85,8 +85,8 @@ def describe_when_there_are_submissions_in_ods_and_lms():
             insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             assignment_id = insert_lms_assignment(
@@ -100,8 +100,8 @@ def describe_when_there_are_submissions_in_ods_and_lms():
             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, SOURCE_SYSTEM)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
 
             insert_lms_assignment_submissions(
@@ -161,8 +161,8 @@ def describe_when_there_are_submissions_in_lms_only():
             insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             assignment_id = insert_lms_assignment(
@@ -176,8 +176,8 @@ def describe_when_there_are_submissions_in_lms_only():
             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, SOURCE_SYSTEM)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
 
             insert_lms_assignment_submissions(

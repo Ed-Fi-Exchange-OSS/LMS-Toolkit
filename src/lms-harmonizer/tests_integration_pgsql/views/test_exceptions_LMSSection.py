@@ -25,7 +25,7 @@ def describe_when_lms_and_ods_tables_are_both_empty():
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
+                "select sourcesystemidentifier from lmsx.exceptions_lmssection",
             )
 
             assert len(exceptions) == 0
@@ -50,12 +50,12 @@ def describe_when_lms_and_ods_tables_have_no_matches():
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
+                "select sourcesystemidentifier from lmsx.exceptions_lmssection",
             )
 
             assert len(exceptions) == 2
-            assert exceptions[0]["SourceSystemIdentifier"] == SIS_ID_1
-            assert exceptions[1]["SourceSystemIdentifier"] == SIS_ID_2
+            assert exceptions[0]["sourcesystemidentifier"] == SIS_ID_1
+            assert exceptions[1]["sourcesystemidentifier"] == SIS_ID_2
 
 
 def describe_when_lms_and_ods_tables_have_a_match():
@@ -75,7 +75,7 @@ def describe_when_lms_and_ods_tables_have_a_match():
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
+                "select sourcesystemidentifier from lmsx.exceptions_lmssection",
             )
 
             assert len(exceptions) == 0
@@ -98,7 +98,7 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
+                "select sourcesystemidentifier from lmsx.exceptions_lmssection",
             )
 
             assert len(exceptions) == 0
@@ -129,8 +129,8 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             exceptions = query(
                 connection,
-                "SELECT SourceSystemIdentifier FROM lmsx.exceptions_LMSSection",
+                "select sourcesystemidentifier from lmsx.exceptions_lmssection",
             )
 
             assert len(exceptions) == 1
-            assert exceptions[0]["SourceSystemIdentifier"] == NOT_MATCHING_SIS_ID
+            assert exceptions[0]["sourcesystemidentifier"] == NOT_MATCHING_SIS_ID
