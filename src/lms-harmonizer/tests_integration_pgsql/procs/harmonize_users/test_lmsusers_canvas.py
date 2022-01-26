@@ -3,30 +3,30 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from tests_integration_mssql.mssql_loader import (
+from tests_integration_pgsql.pgsql_loader import (
     insert_lms_user,
     insert_lms_user_deleted,
     insert_edfi_student,
 )
-from tests_integration_mssql.mssql_connection import MSSqlConnection, query
-from tests_integration_mssql.mssql_server_config import MssqlServerConfig
-from tests_integration_mssql.mssql_orchestrator import run_harmonizer
+from tests_integration_pgsql.pgsql_connection import PgsqlConnection, query
+from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
+from tests_integration_pgsql.pgsql_orchestrator import run_harmonizer
 
 
 SOURCE_SYSTEM = "Canvas"
 
 
 def describe_when_lms_and_ods_tables_are_both_empty():
-    def it_should_run_successfully(test_db_config: MssqlServerConfig):
+    def it_should_run_successfully(test_db_config: PgsqlServerConfig):
         # act
         run_harmonizer(test_db_config)
         # assert - no errors
 
 
 def describe_when_lms_and_ods_tables_have_no_matches():
-    def it_should_run_successfully(test_db_config: MssqlServerConfig):
+    def it_should_run_successfully(test_db_config: PgsqlServerConfig):
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_user(connection, "sis_id_1", "e1@e.com", SOURCE_SYSTEM)
             insert_lms_user(connection, "sis_id_2", "e2@e.com", SOURCE_SYSTEM)
             insert_edfi_student(connection, "not_matching_sis_id_1")
@@ -36,11 +36,11 @@ def describe_when_lms_and_ods_tables_have_no_matches():
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSUser = query(connection, "SELECT EdFiStudentId from lms.LMSUser")
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSUser = query(connection, "select edfistudentid from lms.lmsuser")
             assert len(LMSUser) == 2
-            assert LMSUser[0]["EdFiStudentId"] is None
-            assert LMSUser[1]["EdFiStudentId"] is None
+            assert LMSUser[0]["edfistudentid"] is None
+            assert LMSUser[1]["edfistudentid"] is None
 
 
 def describe_when_lms_and_ods_tables_have_a_match():
@@ -48,9 +48,9 @@ def describe_when_lms_and_ods_tables_have_a_match():
     SIS_ID = "sis_id"
     UNIQUE_ID = f"{SIS_ID}1"
 
-    def it_should_run_successfully(test_db_config: MssqlServerConfig):
+    def it_should_run_successfully(test_db_config: PgsqlServerConfig):
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_user(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
             insert_edfi_student(connection, UNIQUE_ID, STUDENT_ID)
 
@@ -58,10 +58,10 @@ def describe_when_lms_and_ods_tables_have_a_match():
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSUser = query(connection, "SELECT EdFiStudentId from lms.LMSUser")
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSUser = query(connection, "select edfistudentid from lms.lmsuser")
             assert len(LMSUser) == 1
-            assert LMSUser[0]["EdFiStudentId"] == STUDENT_ID
+            assert LMSUser[0]["edfistudentid"] == STUDENT_ID
 
 
 def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
@@ -69,9 +69,9 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
     SIS_ID = "sis_id"
     UNIQUE_ID = f"{SIS_ID}1"
 
-    def it_should_ignore_the_deleted_record(test_db_config: MssqlServerConfig):
+    def it_should_ignore_the_deleted_record(test_db_config: PgsqlServerConfig):
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_user_deleted(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
             insert_edfi_student(connection, UNIQUE_ID, STUDENT_ID)
 
@@ -79,10 +79,10 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSUser = query(connection, "SELECT EdFiStudentId from lms.LMSUser")
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSUser = query(connection, "select edfistudentid from lms.lmsuser")
             assert len(LMSUser) == 1
-            assert LMSUser[0]["EdFiStudentId"] is None
+            assert LMSUser[0]["edfistudentid"] is None
 
 
 def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
@@ -91,9 +91,9 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
     UNIQUE_ID = f"{SIS_ID}1"
     NOT_MATCHING_SIS_ID = "not_matching_sis_id"
 
-    def it_should_run_successfully(test_db_config: MssqlServerConfig):
+    def it_should_run_successfully(test_db_config: PgsqlServerConfig):
         # arrange
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_lms_user(connection, SIS_ID, "e1@e.com", SOURCE_SYSTEM)
             insert_edfi_student(connection, UNIQUE_ID, STUDENT_ID)
 
@@ -104,13 +104,13 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
         run_harmonizer(test_db_config)
 
         # assert
-        with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSUser = query(
                 connection,
-                "SELECT EdFiStudentId, SourceSystemIdentifier from lms.LMSUser",
+                "select edfistudentid, sourcesystemidentifier from lms.lmsuser",
             )
             assert len(LMSUser) == 2
-            assert LMSUser[0]["SourceSystemIdentifier"] == SIS_ID
-            assert LMSUser[0]["EdFiStudentId"] == STUDENT_ID
-            assert LMSUser[1]["SourceSystemIdentifier"] == NOT_MATCHING_SIS_ID
-            assert LMSUser[1]["EdFiStudentId"] is None
+            assert LMSUser[0]["sourcesystemidentifier"] == SIS_ID
+            assert LMSUser[0]["edfistudentid"] == STUDENT_ID
+            assert LMSUser[1]["sourcesystemidentifier"] == NOT_MATCHING_SIS_ID
+            assert LMSUser[1]["edfistudentid"] is None
