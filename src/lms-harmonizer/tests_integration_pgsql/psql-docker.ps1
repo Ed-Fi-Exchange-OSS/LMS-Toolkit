@@ -34,19 +34,23 @@ param(
     [string]
     $d,
 
-    # psql's argument for a SQL command. Only use of from [$c, $f].
+    # psql's argument for a SQL command. Only use of [$c, $f].
     [string]
     $c = "",
 
     # psql's argument for an input file containing SQL commands
     [string]
-    $f = ""
+    $f = "",
+
+    # psql's argument for suppressing prompt for password
+    [switch]
+    $w
 )
 
 $command = "psql -h $h -p $p -U $U -d $d"
 
 if ($env:PGPASSWORD.Length -gt 0) {
-    $command = "export PGPPASSWORD='$env:PGPASSWORD' && $command"
+    $command = "export PGPASSWORD='$env:PGPASSWORD' && $command"
 }
 
 if ($b) {
