@@ -110,7 +110,7 @@ def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
                 "select edfistudentid, sourcesystemidentifier from lms.lmsuser",
             )
             assert len(LMSUser) == 2
-            assert LMSUser[0]["sourcesystemidentifier"] == SIS_ID
-            assert LMSUser[0]["edfistudentid"] == STUDENT_ID
-            assert LMSUser[1]["sourcesystemidentifier"] == NOT_MATCHING_SIS_ID
-            assert LMSUser[1]["edfistudentid"] is None
+            assert LMSUser[0]["sourcesystemidentifier"] == NOT_MATCHING_SIS_ID
+            assert LMSUser[0]["edfistudentid"] is None
+            assert LMSUser[1]["sourcesystemidentifier"] == SIS_ID
+            assert LMSUser[1]["edfistudentid"] == STUDENT_ID

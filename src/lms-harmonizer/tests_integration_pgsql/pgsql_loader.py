@@ -146,7 +146,7 @@ def insert_edfi_student_with_usi(
 ):
     connection.execute(
         f"""
-insert into edfi.[student]
+insert into edfi.student
            (studentusi
            ,personaltitleprefix
            ,firstname
