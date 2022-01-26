@@ -18,7 +18,7 @@ def describe_when_harmonizing_users() -> None:
         adapter = MagicMock(spec=Adapter)
 
         # Act
-        harmonize_users(adapter)
+        harmonize_users("mssql", adapter)
 
         # Prepare for assertions
         return adapter
@@ -69,7 +69,7 @@ def describe_when_harmonizing_assignments() -> None:
         adapter = MagicMock(spec=Adapter)
 
         # Act
-        harmonize_assignments(adapter)
+        harmonize_assignments("postgresql", adapter)
 
         # Prepare for assertions
         return adapter
@@ -98,7 +98,7 @@ def describe_when_harmonizing_assignment_submissions() -> None:
         adapter = MagicMock(spec=Adapter)
 
         # Act
-        harmonize_assignment_submissions(adapter)
+        harmonize_assignment_submissions("postgresql", adapter)
 
         # Prepare for assertions
         return adapter
