@@ -42,10 +42,10 @@ def run(arguments: MainArguments) -> None:
 
     exceptions_report_directory = arguments.exceptions_report_directory
 
-    harmonize_users(adapter)
-    harmonize_sections(adapter)
-    harmonize_assignments(adapter)
-    harmonize_assignment_submissions(adapter)
+    harmonize_users(arguments.engine, adapter)
+    harmonize_sections(arguments.engine, adapter)
+    harmonize_assignments(arguments.engine, adapter)
+    harmonize_assignment_submissions(arguments.engine, adapter)
 
     if exceptions_report_directory is not None:
         create_exception_reports(adapter, exceptions_report_directory)
