@@ -53,4 +53,3 @@ def run(arguments: MainArguments) -> None:
     print_summary(adapter)
 
     logger.info("Finishing the Ed-Fi LMS Harmonizer")
-

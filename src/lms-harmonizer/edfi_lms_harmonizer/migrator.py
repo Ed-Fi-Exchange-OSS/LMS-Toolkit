@@ -7,7 +7,6 @@ import logging
 from os import path, scandir
 from typing import List
 
-from sqlalchemy.exc import ProgrammingError
 from sqlparse import split
 
 from edfi_sql_adapter.sql_adapter import Adapter, Statement
