@@ -157,154 +157,154 @@ def describe_when_there_are_assignments_to_insert():
         ), "It should map the Namespace"
 
 
-def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-    UNKNOWN_SOURCE_SYSTEM = "Unknown"
+# def describe_when_there_are_assignments_to_insert_from_an_unknown_source_system():
+#     SIS_SECTION_ID = "sis_section_id"
+#     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+#     ASSIGNMENT_CATEGORY = "test_category"
+#     UNKNOWN_SOURCE_SYSTEM = "Unknown"
 
-    def it_should_run_successfully(test_db_config: PgsqlServerConfig):
-        # arrange
-        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+#     def it_should_run_successfully(test_db_config: PgsqlServerConfig):
+#         # arrange
+#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
 
-            insert_descriptor(
-                connection,
-                descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM),
-                ASSIGNMENT_CATEGORY,
-            )
-            insert_lmsx_assignmentcategory_descriptor(connection, 1)
+#             insert_descriptor(
+#                 connection,
+#                 descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM),
+#                 ASSIGNMENT_CATEGORY,
+#             )
+#             insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
-            insert_descriptor(
-                connection,
-                descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM),
-                UNKNOWN_SOURCE_SYSTEM,
-            )
-            insert_lmsx_sourcesystem_descriptor(connection, 2)
+#             insert_descriptor(
+#                 connection,
+#                 descriptor_namespace_for(UNKNOWN_SOURCE_SYSTEM),
+#                 UNKNOWN_SOURCE_SYSTEM,
+#             )
+#             insert_lmsx_sourcesystem_descriptor(connection, 2)
 
-            insert_lms_section(connection, SIS_SECTION_ID, UNKNOWN_SOURCE_SYSTEM)
-            insert_edfi_section(connection, SIS_SECTION_ID)
-            connection.execute(
-                """update lms.lmssection set
-                    edfisectionid = (select id from edfi.section limit 1)"""
-            )
+#             insert_lms_section(connection, SIS_SECTION_ID, UNKNOWN_SOURCE_SYSTEM)
+#             insert_edfi_section(connection, SIS_SECTION_ID)
+#             connection.execute(
+#                 """update lms.lmssection set
+#                     edfisectionid = (select id from edfi.section limit 1)"""
+#             )
 
-            insert_lms_assignment(
-                connection,
-                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
-                UNKNOWN_SOURCE_SYSTEM,
-                1,
-                ASSIGNMENT_CATEGORY,
-            )
+#             insert_lms_assignment(
+#                 connection,
+#                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+#                 UNKNOWN_SOURCE_SYSTEM,
+#                 1,
+#                 ASSIGNMENT_CATEGORY,
+#             )
 
-        # act
-        run_harmonizer(test_db_config)
+#         # act
+#         run_harmonizer(test_db_config)
 
-        # assert
-        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignment = query(connection, "select * from lmsx.assignment")
-            assert len(LMSAssignment) == 0
-
-
-def describe_when_there_are_assignments_to_update():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-
-    @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
-    def it_should_update_existing_assignments(
-        test_db_config: PgsqlServerConfig, source_system: str, source_namespace: str
-    ):
-        # arrange
-        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            insert_descriptor(
-                connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
-            )
-            insert_lmsx_assignmentcategory_descriptor(connection, 1)
-
-            insert_descriptor(
-                connection, descriptor_namespace_for(source_system), source_system
-            )
-            insert_lmsx_sourcesystem_descriptor(connection, 2)
-
-            insert_lms_section(connection, SIS_SECTION_ID, source_system)
-            insert_edfi_section(connection, SIS_SECTION_ID)
-            connection.execute(
-                """update lms.lmssection set
-                    edfisectionid = (select id from edfi.section limit 1)"""
-            )
-
-            insert_lms_assignment(
-                connection,
-                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
-                source_system,
-                1,
-                ASSIGNMENT_CATEGORY,
-            )
-
-        run_harmonizer(test_db_config)
-
-        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            connection.execute(
-                "update lms.assignment set title = 'an updated title', lastmodifieddate = now()"
-            )
-
-        # act
-        run_harmonizer(test_db_config)
-
-        # assert
-        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignment = query(connection, "select title from lmsx.assignment")
-            assert len(LMSAssignment) == 1
-            assert LMSAssignment[0]["title"] == "AN UPDATED TITLE"
+#         # assert
+#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+#             LMSAssignment = query(connection, "select * from lmsx.assignment")
+#             assert len(LMSAssignment) == 0
 
 
-def describe_when_there_are_assignments_to_delete():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
+# def describe_when_there_are_assignments_to_update():
+#     SIS_SECTION_ID = "sis_section_id"
+#     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+#     ASSIGNMENT_CATEGORY = "test_category"
 
-    @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
-    def it_should_update_existing_assignments(
-        test_db_config: PgsqlServerConfig, source_system: str, source_namespace: str
-    ):
-        # arrange
-        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            insert_descriptor(
-                connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
-            )
-            insert_lmsx_assignmentcategory_descriptor(connection, 1)
+#     @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
+#     def it_should_update_existing_assignments(
+#         test_db_config: PgsqlServerConfig, source_system: str, source_namespace: str
+#     ):
+#         # arrange
+#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+#             insert_descriptor(
+#                 connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
+#             )
+#             insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
-            insert_descriptor(
-                connection, descriptor_namespace_for(source_system), source_system
-            )
-            insert_lmsx_sourcesystem_descriptor(connection, 2)
+#             insert_descriptor(
+#                 connection, descriptor_namespace_for(source_system), source_system
+#             )
+#             insert_lmsx_sourcesystem_descriptor(connection, 2)
 
-            insert_lms_section(connection, SIS_SECTION_ID, source_system)
-            insert_edfi_section(connection, SIS_SECTION_ID)
-            connection.execute(
-                """update lms.lmssection set
-                    edfisectionid = (select id from edfi.section limit 1)"""
-            )
+#             insert_lms_section(connection, SIS_SECTION_ID, source_system)
+#             insert_edfi_section(connection, SIS_SECTION_ID)
+#             connection.execute(
+#                 """update lms.lmssection set
+#                     edfisectionid = (select id from edfi.section limit 1)"""
+#             )
 
-            insert_lms_assignment(
-                connection,
-                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
-                source_system,
-                1,
-                ASSIGNMENT_CATEGORY,
-            )
+#             insert_lms_assignment(
+#                 connection,
+#                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+#                 source_system,
+#                 1,
+#                 ASSIGNMENT_CATEGORY,
+#             )
 
-        run_harmonizer(test_db_config)
+#         run_harmonizer(test_db_config)
 
-        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            connection.execute(
-                "update lms.assignment set title = 'an updated title', lastmodifieddate = now(), deletedat = now()"
-            )
+#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+#             connection.execute(
+#                 "update lms.assignment set title = 'an updated title', lastmodifieddate = now()"
+#             )
 
-        # act
-        run_harmonizer(test_db_config)
+#         # act
+#         run_harmonizer(test_db_config)
 
-        # assert
-        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            LMSAssignment = query(connection, "select title from lmsx.assignment")
-            assert len(LMSAssignment) == 0
+#         # assert
+#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+#             LMSAssignment = query(connection, "select title from lmsx.assignment")
+#             assert len(LMSAssignment) == 1
+#             assert LMSAssignment[0]["title"] == "AN UPDATED TITLE"
+
+
+# def describe_when_there_are_assignments_to_delete():
+#     SIS_SECTION_ID = "sis_section_id"
+#     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+#     ASSIGNMENT_CATEGORY = "test_category"
+
+#     @pytest.mark.parametrize("source_system,source_namespace", SOURCE_SYSTEMS)
+#     def it_should_update_existing_assignments(
+#         test_db_config: PgsqlServerConfig, source_system: str, source_namespace: str
+#     ):
+#         # arrange
+#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+#             insert_descriptor(
+#                 connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
+#             )
+#             insert_lmsx_assignmentcategory_descriptor(connection, 1)
+
+#             insert_descriptor(
+#                 connection, descriptor_namespace_for(source_system), source_system
+#             )
+#             insert_lmsx_sourcesystem_descriptor(connection, 2)
+
+#             insert_lms_section(connection, SIS_SECTION_ID, source_system)
+#             insert_edfi_section(connection, SIS_SECTION_ID)
+#             connection.execute(
+#                 """update lms.lmssection set
+#                     edfisectionid = (select id from edfi.section limit 1)"""
+#             )
+
+#             insert_lms_assignment(
+#                 connection,
+#                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+#                 source_system,
+#                 1,
+#                 ASSIGNMENT_CATEGORY,
+#             )
+
+#         run_harmonizer(test_db_config)
+
+#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+#             connection.execute(
+#                 "update lms.assignment set title = 'an updated title', lastmodifieddate = now(), deletedat = now()"
+#             )
+
+#         # act
+#         run_harmonizer(test_db_config)
+
+#         # assert
+#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+#             LMSAssignment = query(connection, "select title from lmsx.assignment")
+#             assert len(LMSAssignment) == 0

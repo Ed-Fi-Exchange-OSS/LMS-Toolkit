@@ -70,7 +70,7 @@ def describe_when_there_are_inserted_assignments():
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
                 """update lms.lmssection set
-                    edfisectionid = (select id from edfi.section lmit 1)"""
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(
@@ -113,7 +113,7 @@ def describe_when_there_are_inserted_assignments():
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
                 """update lms.lmssection set
-                    edfisectionid = (select id from edfi.section lmit 1)"""
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(
@@ -162,7 +162,7 @@ def describe_when_there_are_deleted_assignments():
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
                 """update lms.lmssection set
-                    edfisectionid = (select id from edfi.section lmit 1)"""
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(

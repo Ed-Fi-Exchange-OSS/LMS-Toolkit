@@ -299,7 +299,7 @@ insert into edfi.section
         ,'{SESSION_NAME}'
         ,'2021-01-01 00:00:00'
         ,'{sis_id}'
-        {f",{uid}" if uid is not None else ",(select md5(random()::text || random()::text)::uuid)"}
+        {f",'{uid}'::uuid" if uid is not None else ",(select md5(random()::text || random()::text)::uuid)"}
         )
 """
     )
@@ -396,6 +396,7 @@ def insert_edfi_section_association(
     connection.execute(
         f"""
 insert into edfi.studentsectionassociation (
+    id,
     begindate,
     localcoursecode,
     schoolid,
@@ -403,16 +404,18 @@ insert into edfi.studentsectionassociation (
     sectionidentifier,
     sessionname,
     studentusi)
-select top 1
+select
+    (select md5(random()::text || random()::text)::uuid),
     now() begindate,
     localcoursecode,
     schoolid,
     schoolyear,
     sectionidentifier,
     sessionname,
-    (select top 1 studentusi from edfi.student where studentuniqueid = '{student_id}') as studentusi
+    (select studentusi from edfi.student where studentuniqueid = '{student_id}' limit 1) as studentusi
 from edfi.section
 where sectionidentifier = '{section_identifier}'
+limit 1
     """)
 
 
