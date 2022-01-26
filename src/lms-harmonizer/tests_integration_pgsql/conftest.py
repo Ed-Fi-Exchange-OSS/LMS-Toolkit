@@ -6,9 +6,10 @@ from typing import Iterator
 from os import environ
 import pytest
 from tests_integration_pgsql.pgsql_orchestrator import (
+    create_snapshot,
     delete_snapshot,
     initialize_database,
-    TEMPORARY_DATABASE,
+    restore_snapshot,
 )
 from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 
@@ -39,13 +40,13 @@ def pytest_addoption(parser):
         "--username",
         action="store",
         default=environ.get("DB_USER", "postgres"),
-        help="Database username when not using integrated security",
+        help="Database username",
     )
     parser.addoption(
         "--password",
         action="store",
         default=environ.get("PGPASSWORD", ""),
-        help="Database user password, when not using integrated security",
+        help="Database user password",
     )
     parser.addoption(
         "--skip-teardown",
@@ -71,7 +72,7 @@ def _server_config_from(request) -> PgsqlServerConfig:
         username=request.config.getoption("--username"),
         password=request.config.getoption("--password"),
         skip_teardown=request.config.getoption("--skip-teardown"),
-        psql_cli=request.config.getoption("--psql"),
+        psql_cli=request.config.getoption("--psql_cli"),
     )
 
 
@@ -83,6 +84,7 @@ def postgresql_db_config(request) -> Iterator[PgsqlServerConfig]:
     """
     config: PgsqlServerConfig = _server_config_from(request)
     initialize_database(config)
+    create_snapshot(config)
 
     yield config
 
@@ -90,17 +92,17 @@ def postgresql_db_config(request) -> Iterator[PgsqlServerConfig]:
 
 
 @pytest.fixture(autouse=True)
-def test_db_config(mssql_db_config: PgsqlServerConfig, request) -> PgsqlServerConfig:
+def test_db_config(postgresql_db_config: PgsqlServerConfig, request) -> PgsqlServerConfig:
     """
     Fixture that takes the wrapped engine and passes it along, while
-    providing a finalizer hook to rollback via snapshotting after each test.
+    providing a finalizer hook to rollback via template after each test.
     """
 
-    # Rollback via snapshotting in finalizer when test is done
-    # def finalizer():
-    #     restore_snapshot(mssql_db_config)
+    # Rollback via template in finalizer when test is done
+    def finalizer():
+        restore_snapshot(postgresql_db_config)
 
-    # if not mssql_db_config.skip_teardown:
-    #     request.addfinalizer(finalizer)
+    if not postgresql_db_config.skip_teardown:
+        request.addfinalizer(finalizer)
 
-    return mssql_db_config
+    return postgresql_db_config

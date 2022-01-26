@@ -10,10 +10,10 @@ from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 from typing import List
 
 
-TEMPORARY_DATABASE = "harmonizer_temp"
+SNAPSHOT_DATABASE = "temp_harmonizer_snapshot"
 
 
-# TODO: consider unifying some of this code between the two test libraries.
+# TODO: consider unifying some of this code between this and mssql test library
 def _run(config: PgsqlServerConfig, command: List[str]):
 
     command_as_string: str = " ".join(command)
@@ -74,14 +74,14 @@ def _psql_parameters_from(config: PgsqlServerConfig) -> List[str]:
         config.port,
         "-U",
         config.username,
-        "",
     ]
 
 
+# Only one SQL command can run at a time. psql does not return error codes to verify success
 def _execute_sql_against_master(config: PgsqlServerConfig, sql: str):
     _run(
         config,
-        [config.psql_cli, *_psql_parameters_from(config), "-d", "postgres" "-c", sql],
+        [config.psql_cli, *_psql_parameters_from(config), "-d", "postgres", "-c", sql],
     )
 
 
@@ -183,29 +183,34 @@ def _load_lms_migration_scripts(config: PgsqlServerConfig):
     _load_ordered_scripts(config, _lms_migration_script_path())
 
 
-def delete_snapshot(config: PgsqlServerConfig):
-    _execute_sql_against_master(config, "drop database if exists {TEMPORARY_DATABASE}")
-
-
-def _create_temporary_db_from_template(config):
+def create_snapshot(config: PgsqlServerConfig):
+    _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
     _execute_sql_against_master(
-        config, f"create database {TEMPORARY_DATABASE} from template {config.db_name}"
+         config, f"create database {config.db_name} with template {SNAPSHOT_DATABASE};",
     )
+
+
+def delete_snapshot(config: PgsqlServerConfig):
+    _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
+    _execute_sql_against_master(config, f"drop database if exists {SNAPSHOT_DATABASE};")
+
+
+def restore_snapshot(config: PgsqlServerConfig):
+    create_snapshot(config)
 
 
 def initialize_database(config: PgsqlServerConfig):
-    _execute_sql_against_master(
-        config,
-        "drop database if exists {config.db_name};"
-        f"drop database if exists {TEMPORARY_DATABASE};"
-        f"create database {config.db_name};",
-    )
+    _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
+    _execute_sql_against_master(config, f"drop database if exists {SNAPSHOT_DATABASE};")
+    _execute_sql_against_master(config, f"create database {config.db_name};")
+
     # These commands are loading scripts into a template database
     _load_edfi_scripts(config)
     _load_lms_extension_scripts(config)
     _load_lms_migration_scripts(config)
 
-    # Now we create a temporary database from the template, so that
-    # we can easily tear it down and create another from the template
-    # later on.
-    _create_temporary_db_from_template(config)
+    # Copy the initialized database to the snapshot for future templating
+    _execute_sql_against_master(
+        config,
+        f"create database {SNAPSHOT_DATABASE} with template {config.db_name};",
+    )

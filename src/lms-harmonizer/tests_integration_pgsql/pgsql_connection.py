@@ -18,11 +18,9 @@ class PgsqlConnection(object):
 
     @contextmanager
     def pyodbc_conn(self) -> Iterator[pyodbc.Connection]:
-
-        # TODO: change to postgresql connection string
         connection: pyodbc.Connection = pyodbc.connect(
-                f"DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={self.config.server},{self.config.port};DATABASE={self.config.db_name};UID={self.config.username};PWD={self.config.password};"
-            )
+            f"Driver={{PostgreSQL ANSI}};Server={self.config.server};Port={self.config.port};Database={self.config.db_name};Uid={self.config.username};Pwd={self.config.password};"
+        )
 
         connection.autocommit = True
 

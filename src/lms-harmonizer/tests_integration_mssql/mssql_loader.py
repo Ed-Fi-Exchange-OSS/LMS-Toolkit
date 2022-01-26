@@ -393,7 +393,7 @@ INSERT INTO [lmsx].[Assignment]
 def insert_edfi_section_association(
         connection: Connection,
         section_identifier: str,
-        studentId: str):
+        student_id: str):
     connection.execute(
         f"""
 insert into edfi.StudentSectionAssociation (
@@ -411,7 +411,7 @@ select top 1
     schoolyear,
     sectionidentifier,
     sessionname,
-    (select top 1 studentUSI from edfi.student where StudentUniqueId = N'{studentId}') as StudentUSI
+    (select top 1 studentUSI from edfi.student where StudentUniqueId = N'{student_id}') as StudentUSI
 from edfi.section
 WHERE SectionIdentifier = N'{section_identifier}'
     """)

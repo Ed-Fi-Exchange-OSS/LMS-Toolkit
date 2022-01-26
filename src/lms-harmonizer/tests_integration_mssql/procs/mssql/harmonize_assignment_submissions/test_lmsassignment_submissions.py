@@ -78,8 +78,8 @@ def describe_when_there_are_assignment_submissions_to_insert():
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             assignment_id = insert_lms_assignment(
@@ -93,8 +93,8 @@ def describe_when_there_are_assignment_submissions_to_insert():
             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
 
             insert_lms_assignment_submissions(
@@ -114,12 +114,12 @@ def describe_when_there_are_assignment_submissions_to_insert():
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSAssignmentSubmission = query(
-                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+                connection, "select * from lmsx.assignmentsubmission"
             )
 
             assert len(LMSAssignmentSubmission) == 1
             assert (
-                LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"]
+                LMSAssignmentSubmission[0]["assignmentsubmissionidentifier"]
                 == SUBMISSION_TEST_IDENTIFIER
             )
 
@@ -162,8 +162,8 @@ def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_sou
             insert_lms_section(connection, SIS_SECTION_ID, UNKNOWN_SOURCE_SYSTEM)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             assignment_id = insert_lms_assignment(
@@ -179,8 +179,8 @@ def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_sou
             )
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
 
             insert_lms_assignment_submissions(
@@ -200,7 +200,7 @@ def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_sou
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSAssignmentSubmission = query(
-                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+                connection, "select * from lmsx.assignmentsubmission"
             )
 
             assert len(LMSAssignmentSubmission) == 0
@@ -243,8 +243,8 @@ def describe_when_there_are_assignment_submissions_to_update():
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             assignment_id = insert_lms_assignment(
@@ -258,8 +258,8 @@ def describe_when_there_are_assignment_submissions_to_update():
             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
 
             insert_lms_assignment_submissions(
@@ -277,9 +277,9 @@ def describe_when_there_are_assignment_submissions_to_update():
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             connection.execute(
                 f"""
-                UPDATE LMS.ASSIGNMENTSUBMISSION SET
-                    GRADE=N'{SUBMISSION_GRADE}',
-                    LASTMODIFIEDDATE=GETDATE()"""
+                update lms.assignmentsubmission set
+                    grade='{SUBMISSION_GRADE}',
+                    lastmodifieddate=now()"""
             )  # In the first insert it is set to 0
 
         # act
@@ -288,10 +288,10 @@ def describe_when_there_are_assignment_submissions_to_update():
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSAssignmentSubmission = query(
-                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+                connection, "select * from lmsx.assignmentsubmission"
             )
 
-            assert LMSAssignmentSubmission[0]["Grade"] == SUBMISSION_GRADE
+            assert LMSAssignmentSubmission[0]["grade"] == SUBMISSION_GRADE
 
 
 def describe_when_there_are_assignment_submissions_for_deleted_assignments():
@@ -330,8 +330,8 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             assignment_id = insert_lms_assignment(
@@ -345,8 +345,8 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
 
             insert_lms_assignment_submissions(
@@ -366,7 +366,7 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSAssignmentSubmission = query(
-                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+                connection, "select * from lmsx.assignmentsubmission"
             )
 
             assert len(LMSAssignmentSubmission) == 0
@@ -408,8 +408,8 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             assignment_id = insert_lms_assignment(
@@ -423,8 +423,8 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
 
             insert_lms_assignment_submissions(
@@ -439,7 +439,7 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
             )
 
             run_harmonizer(test_db_config)
-            connection.execute("update lms.assignment set deletedat = GETDATE()")
+            connection.execute("update lms.assignment set deletedat = now()")
 
         # act
         run_harmonizer(test_db_config)
@@ -447,7 +447,7 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSAssignmentSubmission = query(
-                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+                connection, "select * from lmsx.assignmentsubmission"
             )
 
             assert len(LMSAssignmentSubmission) == 0
@@ -494,8 +494,8 @@ def describe_when_there_are_past_assignments_without_submissions():
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(
@@ -510,8 +510,8 @@ def describe_when_there_are_past_assignments_without_submissions():
             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
             insert_edfi_section_association(
                 connection,
@@ -525,7 +525,7 @@ def describe_when_there_are_past_assignments_without_submissions():
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSAssignmentSubmission = query(
-                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+                connection, "select * from lmsx.assignmentsubmission"
             )
             # We are only interested in creating missing submissions for Schoology
             if (source_system == "Schoology"):
@@ -575,8 +575,8 @@ def describe_when_there_are_future_assignments_without_submissions():
             insert_lms_section(connection, SIS_SECTION_ID, source_system)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
-                """UPDATE LMS.LMSSECTION SET
-                    EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
             )
 
             insert_lms_assignment(
@@ -590,8 +590,8 @@ def describe_when_there_are_future_assignments_without_submissions():
             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
             insert_edfi_student(connection, USER_SIS_ID)
             connection.execute(
-                """UPDATE LMS.LMSUSER SET
-                    EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
             )
             insert_edfi_section_association(
                 connection,
@@ -605,7 +605,7 @@ def describe_when_there_are_future_assignments_without_submissions():
         # assert
         with MSSqlConnection(test_db_config).pyodbc_conn() as connection:
             LMSAssignmentSubmission = query(
-                connection, "SELECT * from [lmsx].[AssignmentSubmission]"
+                connection, "select * from lmsx.assignmentsubmission"
             )
             # We are only creating records for Schoology
             if (source_system == "Schoology"):
