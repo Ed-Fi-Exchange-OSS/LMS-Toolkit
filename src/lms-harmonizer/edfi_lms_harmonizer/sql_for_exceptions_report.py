@@ -3,64 +3,64 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-QUERY_FOR_SECTIONS = "SELECT * FROM lmsx.exceptions_LMSSection"
+QUERY_FOR_SECTIONS = "select * from lmsx.exceptions_lmssection"
 
 QUERY_FOR_SECTION_SUMMARY = """
-SELECT
-    COUNT(1) as UnmatchedCount
-FROM
-    lmsx.exceptions_LMSSection
+select
+    count(1) as unmatchedcount
+from
+    lmsx.exceptions_lmssection
     """
 
-QUERY_FOR_USERS = "SELECT * FROM lmsx.exceptions_LMSUser"
+QUERY_FOR_USERS = "select * from lmsx.exceptions_lmsuser"
 
 QUERY_FOR_USERS_SUMMARY = """
-SELECT
-    COUNT(1) as UnmatchedCount
-FROM
-    lmsx.exceptions_LMSUser
+select
+    count(1) as unmatchedcount
+from
+    lmsx.exceptions_lmsuser
     """
 
 QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS = """
-SELECT
-    distinct AssignmentCategory as MissingValue,
-    'AssignmentCategoryDescriptor' as Descriptor,
-    'uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/' + SourceSystem as Namespace
-FROM lmsx.missing_assignment_category_descriptors
+select
+    distinct assignmentcategory as missingvalue,
+    'assignmentcategorydescriptor' as descriptor,
+    'uri://ed-fi.org/edfilms/assignmentcategorydescriptor/' + sourcesystem as namespace
+from lmsx.missing_assignment_category_descriptors
 """
 
 QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY = """
-SELECT
-    count(distinct AssignmentCategory)
-FROM
+select
+    count(distinct assignmentcategory)
+from
     lmsx.missing_assignment_category_descriptors
     """
 
 QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS = """
-SELECT
-    distinct SubmissionStatus as MissingValue,
-    'SubmissionStatusDescriptor' as Descriptor,
-    'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + SourceSystem as Namespace
-FROM lmsx.missing_assignment_submission_status_descriptors
+select
+    distinct submissionstatus as missingvalue,
+    'submissionstatusdescriptor' as descriptor,
+    'uri://ed-fi.org/edfilms/submissionstatusdescriptor/' + sourcesystem as namespace
+from lmsx.missing_assignment_submission_status_descriptors
 """
 
 QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY = """
-SELECT
-    count(distinct SubmissionStatus)
-FROM
+select
+    count(distinct submissionstatus)
+from
     lmsx.missing_assignment_submission_status_descriptors
     """
 
 QUERY_FOR_ASSIGNMENT_EXCEPTIONS = """
-SELECT
+select
     count(*)
-FROM
+from
     lmsx.assignments_exceptions
     """
 
 QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS = """
-SELECT
+select
     count(*)
-FROM
+from
     lmsx.assignment_submissions_exceptions
     """

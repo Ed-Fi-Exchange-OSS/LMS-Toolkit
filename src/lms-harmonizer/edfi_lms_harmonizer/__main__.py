@@ -32,12 +32,18 @@ def _configure_logging(arguments: MainArguments) -> None:
 
 
 def main() -> None:
+    global logger
+
     load_dotenv()
     arguments = parse_main_arguments(sys.argv[1:])
     _configure_logging(arguments)
     error_tracker: ErrorHandler = ErrorHandler()
 
-    run(arguments)
+    try:
+        run(arguments)
+    except Exception as error:
+        logger.error(error)
+        print(error.__traceback__, file=sys.stderr)
 
     if error_tracker.fired:
         print(

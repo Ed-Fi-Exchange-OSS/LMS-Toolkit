@@ -29,9 +29,12 @@ class MainArguments:
     engine: str
     server: str
     db_name: str
+    username: str
+    password: str
     port: int
     encrypt: bool = False
     trust_certificate: bool = False
+    useintegratedsecurity: bool = False
 
     def __post_init__(self) -> None:
         self.adapter: sql_adapter.Adapter
@@ -42,10 +45,18 @@ class MainArguments:
     def _get_pgsql_server_port(self) -> int:
         return 5432 if not self.port or self.port == 0 else self.port
 
-    def build_mssql_adapter(self, username: str, password: str) -> None:
+    def _assert_credentials(self, username: str, password: str) -> None:
+        if username is None:
+            raise RuntimeError("No database username was provided.")
+        if password is None:
+            raise RuntimeError("No database password was provided.")
+
+    def build_mssql_adapter(self) -> None:
+        self._assert_credentials(self.username, self.password)
+
         self.adapter = sql_adapter.create_mssql_adapter(
-            username,
-            password,
+            self.username,
+            self.password,
             self.server,
             self.db_name,
             self._get_sql_server_port(),
@@ -62,12 +73,23 @@ class MainArguments:
             self.trust_certificate,
         )
 
-    def build_postgresql_adapter(self, username: str, password: str) -> None:
+    def build_postgresql_adapter(self) -> None:
+        self._assert_credentials(self.username, self.password)
+
         self.adapter = sql_adapter.create_postgresql_adapter(
-            username, password, self.server, self.db_name, self._get_pgsql_server_port()
+            self.username, self.password, self.server, self.db_name, self._get_pgsql_server_port()
         )
 
     def get_adapter(self) -> sql_adapter.Adapter:
+        if not hasattr(self, 'adapter'):
+            if self.engine == DB_ENGINE.MSSQL:
+                if self.useintegratedsecurity:
+                    self.build_mssql_adapter_with_integrated_security()
+                else:
+                    self.build_mssql_adapter()
+            else:
+                self.build_postgresql_adapter()
+
         return self.adapter
 
 
@@ -202,20 +224,12 @@ def parse_main_arguments(args_in: List[str]) -> MainArguments:
         args_parsed.engine,
         args_parsed.server,
         args_parsed.dbname,
+        args_parsed.username,
+        args_parsed.password,
         args_parsed.port,
         args_parsed.encrypt,
         args_parsed.trust_certificate,
+        args_parsed.useintegratedsecurity
     )
-
-    if arguments.engine == DB_ENGINE.MSSQL:
-        if args_parsed.useintegratedsecurity:
-            arguments.build_mssql_adapter_with_integrated_security()
-        else:
-            arguments.build_mssql_adapter(
-                args_parsed.username,
-                args_parsed.password,
-            )
-    else:
-        arguments.build_postgresql_adapter(args_parsed.username, args_parsed.password)
 
     return arguments
