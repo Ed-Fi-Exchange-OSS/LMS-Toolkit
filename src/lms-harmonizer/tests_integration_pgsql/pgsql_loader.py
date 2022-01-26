@@ -167,6 +167,7 @@ insert into edfi.[student]
            ,createdate
            ,lastmodifieddate
            ,id)
+overriding system value
      values
            ({student_usi}
            ,NULL
@@ -289,7 +290,7 @@ insert into edfi.section
         sessionname,
         lastmodifieddate,
         sectionidentifier
-        {',id' if uid is not None else ''})
+        ,id)
      values
         (
         '{COURSE_CODE}'
@@ -298,7 +299,7 @@ insert into edfi.section
         ,'{SESSION_NAME}'
         ,'2021-01-01 00:00:00'
         ,'{sis_id}'
-        {f",{uid}" if uid is not None else ''}
+        {f",{uid}" if uid is not None else ",(select md5(random()::text || random()::text)::uuid)"}
         )
 """
     )
@@ -312,13 +313,15 @@ insert into edfi.descriptor
         namespace,
         codevalue,
         shortdescription,
-        description)
+        description,
+        id)
      values
         (
             '{namespace}',
             '{value}',
             '{value}',
-            '{value}'
+            '{value}',
+            (select md5(random()::text || random()::text)::uuid)
         )
 """
     )
@@ -458,7 +461,7 @@ insert into lms.assignment
 
 def insert_lms_assignment_submissions(
     connection: Connection,
-    lms_assignmen_identifier: int,
+    lms_assignment_identifier: int,
     source_system_identifier: str,
     lms_assignment_id: int,
     lms_user_identifier: int,
@@ -487,9 +490,10 @@ insert into lms.assignmentsubmission
         ,lastmodifieddate
         ,deletedat
     )
+overriding system value
 values
     (
-        {lms_assignmen_identifier},
+        {lms_assignment_identifier},
         '{source_system_identifier}',
         '{source_system}',
         {lms_assignment_id},

@@ -42,86 +42,86 @@ def describe_when_lms_and_ods_tables_are_both_empty():
         # assert - no errors
 
 
-# def describe_when_there_are_assignment_submissions_to_insert():
-#     SIS_SECTION_ID = "sis_section_id"
-#     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-#     ASSIGNMENT_CATEGORY = "test_category"
-#     ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
-#     USER_SIS_ID = "test_sis_id"
-#     SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
-#     SUBMISSION_TEST_LMS_IDENTIFIER = 99
+def describe_when_there_are_assignment_submissions_to_insert():
+    SIS_SECTION_ID = "sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+    ASSIGNMENT_CATEGORY = "test_category"
+    ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
+    USER_SIS_ID = "test_sis_id"
+    SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 99
 
-#     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
-#     def it_should_insert_the_submissions_successfully(
-#         test_db_config: PgsqlServerConfig, source_system: str
-#     ):
-#         # arrange
-#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+    @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
+    def it_should_insert_the_submissions_successfully(
+        test_db_config: PgsqlServerConfig, source_system: str
+    ):
+        # arrange
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
 
-#             insert_descriptor(
-#                 connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
-#             )
-#             insert_lmsx_assignmentcategory_descriptor(connection, 1)
+            insert_descriptor(
+                connection, descriptor_namespace_for(source_system), ASSIGNMENT_CATEGORY
+            )
+            insert_lmsx_assignmentcategory_descriptor(connection, 1)
 
-#             insert_descriptor(
-#                 connection, descriptor_namespace_for(source_system), source_system
-#             )
-#             insert_lmsx_sourcesystem_descriptor(connection, 2)
+            insert_descriptor(
+                connection, descriptor_namespace_for(source_system), source_system
+            )
+            insert_lmsx_sourcesystem_descriptor(connection, 2)
 
-#             insert_descriptor(
-#                 connection,
-#                 submission_descriptor_namespace_for(source_system),
-#                 ASSIGNMENT_SUBMISSION_STATUS,
-#             )
-#             insert_lmsx_assignmentsubmissionstatus_descriptor(connection, 3)
+            insert_descriptor(
+                connection,
+                submission_descriptor_namespace_for(source_system),
+                ASSIGNMENT_SUBMISSION_STATUS,
+            )
+            insert_lmsx_assignmentsubmissionstatus_descriptor(connection, 3)
 
-#             insert_lms_section(connection, SIS_SECTION_ID, source_system)
-#             insert_edfi_section(connection, SIS_SECTION_ID)
-#             connection.execute(
-#                 """UPDATE LMS.LMSSECTION SET
-#                     EdFiSectionId = (SELECT TOP 1 ID FROM EDFI.SECTION)"""
-#             )
+            insert_lms_section(connection, SIS_SECTION_ID, source_system)
+            insert_edfi_section(connection, SIS_SECTION_ID)
+            connection.execute(
+                """update lms.lmssection set
+                    edfisectionid = (select id from edfi.section limit 1)"""
+            )
 
-#             assignment_id = insert_lms_assignment(
-#                 connection,
-#                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
-#                 source_system,
-#                 1,
-#                 ASSIGNMENT_CATEGORY,
-#             )
+            assignment_id = insert_lms_assignment(
+                connection,
+                ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
+                source_system,
+                1,
+                ASSIGNMENT_CATEGORY,
+            )
 
-#             insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
-#             insert_edfi_student(connection, USER_SIS_ID)
-#             connection.execute(
-#                 """UPDATE LMS.LMSUSER SET
-#                     EdFiStudentId = (SELECT TOP 1 ID FROM EDFI.Student)"""
-#             )
+            insert_lms_user(connection, USER_SIS_ID, USER_TEST_EMAIL, source_system)
+            insert_edfi_student(connection, USER_SIS_ID)
+            connection.execute(
+                """update lms.lmsuser set
+                    edfistudentid = (select id from edfi.student limit 1)"""
+            )
 
-#             insert_lms_assignment_submissions(
-#                 connection,
-#                 SUBMISSION_TEST_LMS_IDENTIFIER,
-#                 SUBMISSION_TEST_IDENTIFIER,
-#                 assignment_id,
-#                 1,
-#                 ASSIGNMENT_SUBMISSION_STATUS,
-#                 source_system,
-#                 False,
-#             )
+            insert_lms_assignment_submissions(
+                connection,
+                SUBMISSION_TEST_LMS_IDENTIFIER,
+                SUBMISSION_TEST_IDENTIFIER,
+                assignment_id,
+                1,
+                ASSIGNMENT_SUBMISSION_STATUS,
+                source_system,
+                False,
+            )
 
-#         # act
-#         run_harmonizer(test_db_config)
+        # act
+        run_harmonizer(test_db_config)
 
-#         # assert
-#         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-#             LMSAssignmentSubmission = query(
-#                 connection, "SELECT * from [lmsx].[AssignmentSubmission]"
-#             )
+        # assert
+        with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
+            LMSAssignmentSubmission = query(
+                connection, "select * from lmsx.assignmentsubmission"
+            )
 
-#             assert len(LMSAssignmentSubmission) == 1
-#             assert (
-#                 LMSAssignmentSubmission[0]["AssignmentSubmissionIdentifier"]
-#                 == SUBMISSION_TEST_IDENTIFIER
-#             )
+            assert len(LMSAssignmentSubmission) == 1
+            assert (
+                LMSAssignmentSubmission[0]["assignmentsubmissionidentifier"]
+                == SUBMISSION_TEST_IDENTIFIER
+            )
 
 
 # def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_source_system():
