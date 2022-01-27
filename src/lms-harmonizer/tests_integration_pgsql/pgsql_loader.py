@@ -299,7 +299,7 @@ insert into edfi.section
         ,'{SESSION_NAME}'
         ,'2021-01-01 00:00:00'
         ,'{sis_id}'
-        {f",{uid}" if uid is not None else ",(select md5(random()::text || random()::text)::uuid)"}
+        {f",'{uid}'" if uid is not None else ",(select md5(random()::text || random()::text)::uuid)"}
         )
 """
     )

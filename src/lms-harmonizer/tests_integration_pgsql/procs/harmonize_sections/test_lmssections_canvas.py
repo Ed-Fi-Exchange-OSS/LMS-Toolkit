@@ -42,7 +42,7 @@ def describe_when_harmonizing_canvas_sections():
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
                 LMSSection = query(
                     connection,
-                    "select edfisectionid from lms.lmssection where sourcesystemidentifier in ('{SIS_ID_1}','{SIS_ID_2}'",
+                    f"select edfisectionid from lms.lmssection where sourcesystemidentifier in ('{SIS_ID_1}','{SIS_ID_2}')",
                 )
 
                 assert len(LMSSection) == 2
@@ -66,7 +66,7 @@ def describe_when_harmonizing_canvas_sections():
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
                 LMSSection = query(
                     connection,
-                    "select edfisectionid from lms.lmssection where sourcesystemidentifier = '{SIS_ID}'",
+                    f"select edfisectionid from lms.lmssection where sourcesystemidentifier = '{SIS_ID}'",
                 )
                 assert len(LMSSection) == 1
                 assert LMSSection[0]["edfisectionid"] == SECTION_ID
@@ -88,7 +88,7 @@ def describe_when_harmonizing_canvas_sections():
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
                 LMSSection = query(
                     connection,
-                    "select edfisectionid from lms.lmssection where sourcesystemidentifier = '{SIS_ID}'",
+                    f"select edfisectionid from lms.lmssection where sourcesystemidentifier = '{SIS_ID}'",
                 )
                 assert len(LMSSection) == 1
                 assert LMSSection[0]["edfisectionid"] is None
@@ -101,7 +101,9 @@ def describe_when_harmonizing_canvas_sections():
         def it_should_run_successfully(test_db_config: PgsqlServerConfig):
             # arrange
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-                insert_lms_section(connection, SIS_ID, SOURCE_SYSTEM)  # Matching section
+                insert_lms_section(
+                    connection, SIS_ID, SOURCE_SYSTEM
+                )  # Matching section
                 insert_edfi_section(connection, SIS_ID, SECTION_ID)  # Matching section
 
                 insert_lms_section(
@@ -109,7 +111,7 @@ def describe_when_harmonizing_canvas_sections():
                 )  # Not matching section
                 insert_edfi_section(
                     connection,
-                    "also_not_matching_sis_id where sourcesystemidentifier = '{SIS_ID}'",
+                    "also_not_matching_sis_id_4",
                 )  # Not matching section
 
             # act
@@ -119,10 +121,14 @@ def describe_when_harmonizing_canvas_sections():
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
                 LMSSection = query(
                     connection,
-                    "select edfisectionid, sissectionidentifier from lms.lmssection where sourcesystemidentifier in ('{SIS_ID}','{NOT_MATCHING_SIS_ID}')",
+                    (
+                        f"select edfisectionid, sissectionidentifier from lms.lmssection where "
+                        f"sourcesystemidentifier in ('{SIS_ID}','{NOT_MATCHING_SIS_ID}') "
+                        f"order by sissectionidentifier"
+                    ),
                 )
                 assert len(LMSSection) == 2
-                assert LMSSection[0]["sissectionidentifier"] == SIS_ID
-                assert LMSSection[0]["edfisectionid"] == SECTION_ID
-                assert LMSSection[1]["sissectionidentifier"] == NOT_MATCHING_SIS_ID
-                assert LMSSection[1]["edfisectionid"] is None
+                assert LMSSection[1]["sissectionidentifier"] == SIS_ID
+                assert LMSSection[1]["edfisectionid"] == SECTION_ID
+                assert LMSSection[0]["sissectionidentifier"] == NOT_MATCHING_SIS_ID
+                assert LMSSection[0]["edfisectionid"] is None

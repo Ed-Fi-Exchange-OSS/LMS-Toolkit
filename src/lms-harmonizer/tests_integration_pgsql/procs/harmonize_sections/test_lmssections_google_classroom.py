@@ -42,7 +42,7 @@ def describe_when_harmonizing_google_sections():
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
                 LMSSection = query(
                     connection,
-                    "select edfisectionid from lms.lmssection where sourcesystemidentifier in ('{SIS_ID_1}','{SIS_ID_2}'",
+                    f"select edfisectionid from lms.lmssection where sourcesystemidentifier in ('{SIS_ID_1}','{SIS_ID_2}')",
                 )
 
                 assert len(LMSSection) == 2
@@ -66,13 +66,13 @@ def describe_when_harmonizing_google_sections():
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
                 LMSSection = query(
                     connection,
-                    "select edfisectionid from lms.lmssection where sourcesystemidentifier = '{SIS_ID}'",
+                    f"select edfisectionid from lms.lmssection where sourcesystemidentifier = '{SIS_ID}'",
                 )
                 assert len(LMSSection) == 1
                 assert LMSSection[0]["edfisectionid"] == SECTION_ID
 
     def describe_given_lms_and_ods_tables_have_a_match_to_deleted_record():
-        SECTION_ID = "2C3000000-0000-0000-0000-000000000000"
+        SECTION_ID = "2C300000-0000-0000-0000-000000000000"
         SIS_ID = "g_sis_id_3"
 
         def it_should_ignore_the_deleted_record(test_db_config: PgsqlServerConfig):
@@ -88,7 +88,7 @@ def describe_when_harmonizing_google_sections():
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
                 LMSSection = query(
                     connection,
-                    "select edfisectionid from lms.lmssection where sourcesystemidentifier = '{SIS_ID}'",
+                    f"select edfisectionid from lms.lmssection where sourcesystemidentifier = '{SIS_ID}'",
                 )
                 assert len(LMSSection) == 1
                 assert LMSSection[0]["edfisectionid"] is None
@@ -118,10 +118,14 @@ def describe_when_harmonizing_google_sections():
             with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
                 LMSSection = query(
                     connection,
-                    "select edfisectionid, sissectionidentifier from lms.lmssection where sourcesystemidentifier in ('{SIS_ID}','{NOT_MATCHING_SIS_ID}')",
+                    (
+                        f"select edfisectionid, sissectionidentifier from lms.lmssection where "
+                        f"sourcesystemidentifier in ('{SIS_ID}','{NOT_MATCHING_SIS_ID}') "
+                        f"order by sissectionidentifier"
+                    ),
                 )
                 assert len(LMSSection) == 2
-                assert LMSSection[0]["sissectionidentifier"] == SIS_ID
-                assert LMSSection[0]["edfisectionid"] == SECTION_ID
-                assert LMSSection[1]["sissectionidentifier"] == NOT_MATCHING_SIS_ID
-                assert LMSSection[1]["edfisectionid"] is None
+                assert LMSSection[1]["sissectionidentifier"] == SIS_ID
+                assert LMSSection[1]["edfisectionid"] == SECTION_ID
+                assert LMSSection[0]["sissectionidentifier"] == NOT_MATCHING_SIS_ID
+                assert LMSSection[0]["edfisectionid"] is None
