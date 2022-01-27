@@ -42,71 +42,71 @@ declare begin
 		on edfistudent.id = lmsuser.edfistudentid
     where lmssubmission.sourcesystem = _sourcesystem;
 
-	-- if _sourcesystem = 'Schoology'
-	-- then
-	-- 	insert into all_submissions
-	-- 	select distinct
-	-- 		format(
-	-- 			'%s#%s#%s',
-	-- 			lmssection.sourcesystemidentifier,
-	-- 			lmsxassignment.assignmentidentifier,
-	-- 			lmsstudent.sourcesystemidentifier
-	-- 		) as sourcesystemidentifier,
-	-- 		edfisectionassociation.studentusi,
-	-- 		lmsxassignment.assignmentidentifier,
-	-- 		case when lmsxassignment.duedatetime < now() then
-	-- 			latesubmissionstatusdescriptor.descriptorid
-	-- 		else
-	-- 			upcomingsubmissionstatusdescriptor.descriptorid
-	-- 		end,
-	-- 		null as submissiondatetime,
-	-- 		null as earnedpoints,
-	-- 		null as grade,
-	-- 		now() as createdate,
-	-- 		now() as lastmodifieddate,
-	-- 		null as deletedat
+	if _sourcesystem = 'Schoology'
+	then
+		insert into all_submissions
+		select distinct
+			format(
+				'%s#%s#%s',
+				lmssection.sourcesystemidentifier,
+				lmsxassignment.assignmentidentifier,
+				lmsstudent.sourcesystemidentifier
+			) as sourcesystemidentifier,
+			edfisectionassociation.studentusi,
+			lmsxassignment.assignmentidentifier,
+			case when lmsxassignment.duedatetime < now() then
+				latesubmissionstatusdescriptor.descriptorid
+			else
+				upcomingsubmissionstatusdescriptor.descriptorid
+			end,
+			null::timestamp as submissiondatetime,
+			null::integer as earnedpoints,
+			null as grade,
+			now() as createdate,
+			now() as lastmodifieddate,
+			null::timestamp as deletedat
 
-	-- 	from edfi.studentsectionassociation edfisectionassociation
-	-- 	inner join lmsx.assignment lmsxassignment
-	-- 		on edfisectionassociation.sectionidentifier = lmsxassignment.sectionidentifier
-	-- 	inner join lms.assignment lmsassignment
-	-- 		on lmsassignment.sourcesystemidentifier = lmsxassignment.assignmentidentifier
-	-- 	inner join edfi.student edfistudent
-	-- 		on edfistudent.studentusi = edfisectionassociation.studentusi
-	-- 	inner join lms.lmsuser lmsstudent
-	-- 		on lmsstudent.edfistudentid = edfistudent.id
-	-- 	inner join edfi.section edfisection
-	-- 		-- The LMS Harmonizer requires that SectionIdentifier be unique, thus it is
-	-- 		-- safe in this scenario to ignore the other natural key elements in this join.
-	-- 		on edfisection.sectionidentifier = edfisectionassociation.sectionidentifier
-	-- 	inner join lms.lmssection lmssection
-	-- 		on lmssection.edfisectionid = edfisection.id
-	-- 	left join lateral (
-	-- 		select
-	-- 			submsisionstatusdescriptor.descriptorid
-	-- 		from
-	-- 			edfi.descriptor submsisionstatusdescriptor
-	-- 		where
-	-- 			submsisionstatusdescriptor.namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
-	-- 		and
-	-- 			submsisionstatusdescriptor.codevalue = 'missing'
-	-- 	) as latesubmissionstatusdescriptor
-	-- 	left join lateral (
-	-- 		select
-	-- 			submsisionstatusdescriptor.descriptorid
-	-- 		from
-	-- 			edfi.descriptor submsisionstatusdescriptor
-	-- 		where
-	-- 			submsisionstatusdescriptor.namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
-	-- 		AND
-	-- 			submsisionstatusdescriptor.codevalue = 'Upcoming'
-	-- 	) as upcomingsubmissionstatusdescriptor
-	-- 	where not exists (
-	-- 		select 1 from lms.assignmentsubmission lmssubmission where lmssubmission.assignmentidentifier = lmsassignment.assignmentidentifier
-	-- 			and lmssubmission.lmsuseridentifier = lmsstudent.lmsuseridentifier
-	-- 	)
-	-- 	and (edfisectionassociation.enddate is null or edfisectionassociation.enddate > lmsassignment.duedatetime);
-	-- end if;
+		from edfi.studentsectionassociation edfisectionassociation
+		inner join lmsx.assignment lmsxassignment
+			on edfisectionassociation.sectionidentifier = lmsxassignment.sectionidentifier
+		inner join lms.assignment lmsassignment
+			on lmsassignment.sourcesystemidentifier = lmsxassignment.assignmentidentifier
+		inner join edfi.student edfistudent
+			on edfistudent.studentusi = edfisectionassociation.studentusi
+		inner join lms.lmsuser lmsstudent
+			on lmsstudent.edfistudentid = edfistudent.id
+		inner join edfi.section edfisection
+			-- The LMS Harmonizer requires that SectionIdentifier be unique, thus it is
+			-- safe in this scenario to ignore the other natural key elements in this join.
+			on edfisection.sectionidentifier = edfisectionassociation.sectionidentifier
+		inner join lms.lmssection lmssection
+			on lmssection.edfisectionid = edfisection.id
+		left join lateral (
+			select
+				submsisionstatusdescriptor.descriptorid
+			from
+				edfi.descriptor submsisionstatusdescriptor
+			where
+				submsisionstatusdescriptor.namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
+			and
+				submsisionstatusdescriptor.codevalue = 'missing'
+		) as latesubmissionstatusdescriptor on true
+		left join lateral (
+			select
+				submsisionstatusdescriptor.descriptorid
+			from
+				edfi.descriptor submsisionstatusdescriptor
+			where
+				submsisionstatusdescriptor.namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
+			AND
+				submsisionstatusdescriptor.codevalue = 'Upcoming'
+		) as upcomingsubmissionstatusdescriptor on true
+		where not exists (
+			select 1 from lms.assignmentsubmission lmssubmission where lmssubmission.assignmentidentifier = lmsassignment.assignmentidentifier
+				and lmssubmission.lmsuseridentifier = lmsstudent.lmsuseridentifier
+		)
+		and (edfisectionassociation.enddate is null or edfisectionassociation.enddate > lmsassignment.duedatetime);
+	end if;
 
 	insert into lmsx.assignmentsubmission(
 		assignmentsubmissionidentifier,
