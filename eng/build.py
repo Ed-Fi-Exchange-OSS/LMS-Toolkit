@@ -95,7 +95,7 @@ def _run_integration_tests_on_github(exit_immediately: bool = True):
             "poetry",
             "run",
             "pytest",
-            "tests_integration_sql",
+            "tests_integration_mssql",
             "--useintegratedsecurity=false",
             "--username=sa",
             # Hardcoded password matches temporary SQL Server

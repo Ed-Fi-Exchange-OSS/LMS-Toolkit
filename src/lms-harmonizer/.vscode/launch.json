@@ -22,9 +22,19 @@
         {
             "name": "Python: Debug Tests",
             "type": "python",
-            "request": "test",
+            "request": "launch",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "Python: Current File As Test",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "console": "integratedTerminal",
+            "args": [
+                "${file}"
+            ]
         }
     ]
 }
