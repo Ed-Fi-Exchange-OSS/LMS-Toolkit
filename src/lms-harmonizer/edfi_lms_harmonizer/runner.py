@@ -37,19 +37,22 @@ def run(arguments: MainArguments) -> None:
 
     logger.info("Starting the Ed-Fi LMS Harmonizer")
 
-    adapter = arguments.get_adapter()
-    migrate(arguments.engine, adapter)
+    try:
+        adapter = arguments.get_adapter()
+        migrate(arguments.engine, adapter)
 
-    exceptions_report_directory = arguments.exceptions_report_directory
+        exceptions_report_directory = arguments.exceptions_report_directory
 
-    harmonize_users(arguments.engine, adapter)
-    harmonize_sections(arguments.engine, adapter)
-    harmonize_assignments(arguments.engine, adapter)
-    harmonize_assignment_submissions(arguments.engine, adapter)
+        harmonize_users(arguments.engine, adapter)
+        harmonize_sections(arguments.engine, adapter)
+        harmonize_assignments(arguments.engine, adapter)
+        harmonize_assignment_submissions(arguments.engine, adapter)
 
-    if exceptions_report_directory is not None:
-        create_exception_reports(adapter, exceptions_report_directory)
+        if exceptions_report_directory is not None:
+            create_exception_reports(adapter, exceptions_report_directory)
 
-    print_summary(adapter)
+        print_summary(adapter)
 
-    logger.info("Finishing the Ed-Fi LMS Harmonizer")
+        logger.info("Finishing the Ed-Fi LMS Harmonizer")
+    finally:
+        arguments.get_adapter().engine.dispose()
