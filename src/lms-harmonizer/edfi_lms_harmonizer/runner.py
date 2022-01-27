@@ -5,6 +5,7 @@
 
 import logging
 from edfi_lms_harmonizer.migrator import migrate
+from edfi_lms_harmonizer.helpers.constants import DB_ENGINE
 from edfi_lms_harmonizer.helpers.argparser import MainArguments
 from edfi_lms_harmonizer.exceptions_reports import (
     create_exception_reports,
@@ -43,13 +44,15 @@ def run(arguments: MainArguments) -> None:
     exceptions_report_directory = arguments.exceptions_report_directory
 
     harmonize_users(arguments.engine, adapter)
-    harmonize_sections(arguments.engine, adapter)
-    harmonize_assignments(arguments.engine, adapter)
-    harmonize_assignment_submissions(arguments.engine, adapter)
 
-    if exceptions_report_directory is not None:
-        create_exception_reports(adapter, exceptions_report_directory)
+    if arguments.engine == DB_ENGINE.MSSQL:
+        harmonize_sections(arguments.engine, adapter)
+        harmonize_assignments(arguments.engine, adapter)
+        harmonize_assignment_submissions(arguments.engine, adapter)
 
-    print_summary(adapter)
+        if exceptions_report_directory is not None:
+            create_exception_reports(adapter, exceptions_report_directory)
+
+        print_summary(adapter)
 
     logger.info("Finishing the Ed-Fi LMS Harmonizer")

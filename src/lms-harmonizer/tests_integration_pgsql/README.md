@@ -8,7 +8,7 @@ The integration tests require a PostgreSQL database to run. If you do not have a
 local PostgreSQL instance, you can start one up in
 [docker](../../../eng/docker). Database initialization requires that you have
 the `psql` command available in your command path or in a configuration setting
-(`psql`).
+(`psql_cli`).
 
 ## Command Line Examples
 
@@ -44,3 +44,10 @@ Supported parameters:
 | DB Password                | `--password`           | PGPASSWORD           | _none_                          |
 | Skip the database teardown | `--skip-teardown True` | SKIP_TEARDOWN        | False                           |
 | Full path to `psql`        | `--psql_cli`           | PSQL_CLI             | psql (assuming in shell's path) |
+
+## PowerShell Script for psql
+
+When running with Docker on a Windows host, you can use [psql-docker.ps1](psql-docker.ps1)
+as a substitute for the real `psql` command. It proxies relevant command arguments
+into the running Docker container, and copies any required files into the container
+for execution. To use this, set `PSQL_CLI=powershell ./psql-docker.ps1`.

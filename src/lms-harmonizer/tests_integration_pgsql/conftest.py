@@ -5,6 +5,8 @@
 from typing import Iterator
 from os import environ
 import pytest
+from dotenv import load_dotenv
+
 from tests_integration_pgsql.pgsql_orchestrator import (
     create_snapshot,
     delete_snapshot,
@@ -12,6 +14,8 @@ from tests_integration_pgsql.pgsql_orchestrator import (
     restore_snapshot,
 )
 from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
+
+load_dotenv()
 
 
 def pytest_addoption(parser):
@@ -45,7 +49,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--password",
         action="store",
-        default=environ.get("PGPASSWORD", ""),
+        default=environ.get("DB_PASSWORD", ""),
         help="Database user password",
     )
     parser.addoption(
