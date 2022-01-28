@@ -43,17 +43,17 @@ def describe_when_lms_and_ods_tables_are_both_empty():
 
 
 def describe_when_there_are_inserted_assignments():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
+    SIS_SECTION_ID = "1_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "1_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "1_test_category"
 
     def it_should_return_zero_when_there_are_no_exceptions(
         test_db_config: PgsqlServerConfig
     ):
         descriptor_namespace = descriptor_namespace_for(SOURCE_SYSTEM)
-        category_descriptor_id = 1
-        source_system_descriptor_id = 2
-        section_identifier = 1
+        category_descriptor_id = 1111
+        source_system_descriptor_id = 1112
+        section_identifier = 1111
 
         # arrange
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -94,9 +94,9 @@ def describe_when_there_are_inserted_assignments():
         test_db_config: PgsqlServerConfig
     ):
         descriptor_namespace = descriptor_namespace_for(SOURCE_SYSTEM)
-        category_descriptor_id = 1
-        source_system_descriptor_id = 2
-        section_identifier = 1
+        category_descriptor_id = 2221
+        source_system_descriptor_id = 2222
+        section_identifier = 2221
 
         # arrange
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
@@ -139,9 +139,9 @@ def describe_when_there_are_inserted_assignments():
 
 
 def describe_when_there_are_deleted_assignments():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
+    SIS_SECTION_ID = "3_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "3_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "3_test_category"
 
     def it_should_not_count_it_as_an_exception(
         test_db_config: PgsqlServerConfig

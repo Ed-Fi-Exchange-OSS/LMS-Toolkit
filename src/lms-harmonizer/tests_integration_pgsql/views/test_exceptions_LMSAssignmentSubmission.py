@@ -51,13 +51,13 @@ def describe_when_lms_and_ods_tables_are_both_empty():
 
 
 def describe_when_there_are_submissions_in_ods_and_lms():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-    ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
-    USER_SIS_ID = "test_sis_id"
-    SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
-    SUBMISSION_TEST_LMS_IDENTIFIER = 99
+    SIS_SECTION_ID = "1_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "1_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "1_test_category"
+    ASSIGNMENT_SUBMISSION_STATUS = "1_test_submission_status"
+    USER_SIS_ID = "1_test_sis_id"
+    SUBMISSION_TEST_IDENTIFIER = "1_submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 199
 
     def it_should_return_zero(
         test_db_config: PgsqlServerConfig
@@ -127,13 +127,13 @@ def describe_when_there_are_submissions_in_ods_and_lms():
 
 
 def describe_when_there_are_submissions_in_lms_only():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-    ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
-    USER_SIS_ID = "test_sis_id"
-    SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
-    SUBMISSION_TEST_LMS_IDENTIFIER = 99
+    SIS_SECTION_ID = "2_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "2_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "2_test_category"
+    ASSIGNMENT_SUBMISSION_STATUS = "2_test_submission_status"
+    USER_SIS_ID = "2_test_sis_id"
+    SUBMISSION_TEST_IDENTIFIER = "2_submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 299
 
     def it_should_return_the_count_of_exceptions_not_in_zero(
         test_db_config: PgsqlServerConfig

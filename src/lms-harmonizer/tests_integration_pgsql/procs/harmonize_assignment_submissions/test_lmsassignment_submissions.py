@@ -43,13 +43,13 @@ def describe_when_lms_and_ods_tables_are_both_empty():
 
 
 def describe_when_there_are_assignment_submissions_to_insert():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-    ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
-    USER_SIS_ID = "test_sis_id"
-    SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
-    SUBMISSION_TEST_LMS_IDENTIFIER = 99
+    SIS_SECTION_ID = "1_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "1_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "1_test_category"
+    ASSIGNMENT_SUBMISSION_STATUS = "1_test_submission_status"
+    USER_SIS_ID = "1_test_sis_id"
+    SUBMISSION_TEST_IDENTIFIER = "1_submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 199
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_insert_the_submissions_successfully(
@@ -125,14 +125,14 @@ def describe_when_there_are_assignment_submissions_to_insert():
 
 
 def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_source_system():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-    ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
-    USER_SIS_ID = "test_sis_id"
-    SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
-    SUBMISSION_TEST_LMS_IDENTIFIER = 99
-    UNKNOWN_SOURCE_SYSTEM = "Unknown"
+    SIS_SECTION_ID = "2_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "2_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "2_test_category"
+    ASSIGNMENT_SUBMISSION_STATUS = "2_test_submission_status"
+    USER_SIS_ID = "2_test_sis_id"
+    SUBMISSION_TEST_IDENTIFIER = "2_submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 299
+    UNKNOWN_SOURCE_SYSTEM = "2_Unknown"
 
     def it_should_not_insert_the_submissions(test_db_config: PgsqlServerConfig):
         # arrange
@@ -207,13 +207,13 @@ def describe_when_there_are_assignment_submissions_to_insert_from_an_unknown_sou
 
 
 def describe_when_there_are_assignment_submissions_to_update():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-    ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
-    USER_SIS_ID = "test_sis_id"
-    SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
-    SUBMISSION_TEST_LMS_IDENTIFIER = 99
+    SIS_SECTION_ID = "3_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "3_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "3_test_category"
+    ASSIGNMENT_SUBMISSION_STATUS = "3_test_submission_status"
+    USER_SIS_ID = "3_test_sis_id"
+    SUBMISSION_TEST_IDENTIFIER = "3_submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 399
     SUBMISSION_GRADE = "85"
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
@@ -295,13 +295,13 @@ def describe_when_there_are_assignment_submissions_to_update():
 
 
 def describe_when_there_are_assignment_submissions_for_deleted_assignments():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-    ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
-    USER_SIS_ID = "test_sis_id"
-    SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
-    SUBMISSION_TEST_LMS_IDENTIFIER = 99
+    SIS_SECTION_ID = "4_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "4_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "4_test_category"
+    ASSIGNMENT_SUBMISSION_STATUS = "4_test_submission_status"
+    USER_SIS_ID = "4_test_sis_id"
+    SUBMISSION_TEST_IDENTIFIER = "4_submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 499
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_not_insert_the_submissions(
@@ -373,13 +373,13 @@ def describe_when_there_are_assignment_submissions_for_deleted_assignments():
 
 
 def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_deleted():
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
-    ASSIGNMENT_CATEGORY = "test_category"
-    ASSIGNMENT_SUBMISSION_STATUS = "test_submission_status"
-    USER_SIS_ID = "test_sis_id"
-    SUBMISSION_TEST_IDENTIFIER = "submission_test_identifier"
-    SUBMISSION_TEST_LMS_IDENTIFIER = 99
+    SIS_SECTION_ID = "5_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "5_assignment_identifier"
+    ASSIGNMENT_CATEGORY = "5_test_category"
+    ASSIGNMENT_SUBMISSION_STATUS = "5_test_submission_status"
+    USER_SIS_ID = "5_test_sis_id"
+    SUBMISSION_TEST_IDENTIFIER = "5_submission_test_identifier"
+    SUBMISSION_TEST_LMS_IDENTIFIER = 599
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_not_insert_any_submissions(
@@ -454,12 +454,12 @@ def describe_when_there_are_lmsx_assignment_submissions_and_lms_assignment_is_de
 
 
 def describe_when_there_are_past_assignments_without_submissions():
-    ASSIGNMENT_CATEGORY = "test_category"
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+    ASSIGNMENT_CATEGORY = "6_test_category"
+    SIS_SECTION_ID = "6_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "6_assignment_identifier"
     ASSIGNMENT_SUBMISSION_STATUS_MISSING = "missing"  # the stored procedure looks for a descriptor with codevalue = missing
-    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "Upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
-    USER_SIS_ID = "test_sis_id"
+    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
+    USER_SIS_ID = "6_test_sis_id"
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_create_missing_submissions_for_associated_students(
@@ -535,12 +535,12 @@ def describe_when_there_are_past_assignments_without_submissions():
 
 
 def describe_when_there_are_future_assignments_without_submissions():
-    ASSIGNMENT_CATEGORY = "test_category"
-    SIS_SECTION_ID = "sis_section_id"
-    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
+    ASSIGNMENT_CATEGORY = "7_test_category"
+    SIS_SECTION_ID = "7_sis_section_id"
+    ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "7_assignment_identifier"
     ASSIGNMENT_SUBMISSION_STATUS_MISSING = "missing"  # the stored procedure looks for a descriptor with codevalue = missing
-    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "Upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
-    USER_SIS_ID = "test_sis_id"
+    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
+    USER_SIS_ID = "7_test_sis_id"
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
     def it_should_create_missing_submissions_for_associated_students(

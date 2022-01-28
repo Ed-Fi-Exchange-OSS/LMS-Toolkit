@@ -32,8 +32,8 @@ def describe_when_lms_and_ods_tables_are_both_empty():
 
 
 def describe_when_lms_and_ods_tables_have_no_matches():
-    SIS_ID_1 = "e+sis_id_1"
-    SIS_ID_2 = "e+sis_id_2"
+    SIS_ID_1 = "e+sis_id_1_a"
+    SIS_ID_2 = "e+sis_id_1_b"
 
     def it_should_return_exceptions(test_db_config: PgsqlServerConfig):
         # arrange
@@ -59,8 +59,8 @@ def describe_when_lms_and_ods_tables_have_no_matches():
 
 
 def describe_when_lms_and_ods_tables_have_a_match():
-    SIS_ID = "e+sis_id"
-    SECTION_ID = "10000000-0000-0000-0000-000000000001"
+    SIS_ID = "e+sis_id_2"
+    SECTION_ID = "10000000-0000-0000-0000-000000000002"
 
     def it_should_return_no_exceptions(test_db_config: PgsqlServerConfig):
         # arrange
@@ -82,8 +82,8 @@ def describe_when_lms_and_ods_tables_have_a_match():
 
 
 def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
-    SECTION_ID = "10000000-0000-0000-0000-000000000002"
-    SIS_ID = "e+sis_id"
+    SECTION_ID = "10000000-0000-0000-0000-000000000003"
+    SIS_ID = "e+sis_id_3"
 
     def it_should_return_no_exceptions(test_db_config: PgsqlServerConfig):
         # arrange
@@ -105,9 +105,9 @@ def describe_when_lms_and_ods_tables_have_a_match_to_deleted_record():
 
 
 def describe_when_lms_and_ods_tables_have_one_match_and_one_not_match():
-    SECTION_ID = "10000000-0000-0000-0000-000000000003"
-    SIS_ID = "e+sis_id"
-    NOT_MATCHING_SIS_ID = "e+not_matching_sis_id"
+    SECTION_ID = "10000000-0000-0000-0000-000000000004"
+    SIS_ID = "e+sis_id_4"
+    NOT_MATCHING_SIS_ID = "e+not_matching_sis_id_4"
 
     def it_should_return_one_exception(test_db_config: PgsqlServerConfig):
         # arrange
