@@ -43,6 +43,7 @@ def pytest_addoption(parser):
     )
     parser.addoption(
         "--useintegratedsecurity",
+        type=bool,
         action="store",
         default=environ.get("USE_INTEGRATED_SECURITY", True),
         help="Use Integrated Security for the database connection",

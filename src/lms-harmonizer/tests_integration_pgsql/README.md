@@ -39,9 +39,9 @@ Supported parameters:
 | -------------------------- | ---------------------- | -------------------- | ------------------------------- |
 | DB Server                  | `--server`             | DB_SERVER            | localhost                       |
 | DB Port                    | `--port`               | DB_PORT              | 5432                            |
-| DB Name                    | `--dbname`             | DB_NAME              | test_harmonizer_lms_toolkit     |
+| DB Name                    | `--db_name`            | DB_NAME              | test_harmonizer_lms_toolkit     |
 | DB Username                | `--username`           | DB_USER              | postgres                        |
-| DB Password                | `--password`           | PGPASSWORD           | _none_                          |
+| DB Password                | `--password`           | DB_PASSWORD          | _none_                          |
 | Skip the database teardown | `--skip-teardown True` | SKIP_TEARDOWN        | False                           |
 | Full path to `psql`        | `--psql_cli`           | PSQL_CLI             | psql (assuming in shell's path) |
 
