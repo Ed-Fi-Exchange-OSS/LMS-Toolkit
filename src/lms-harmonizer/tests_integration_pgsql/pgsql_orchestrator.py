@@ -152,9 +152,7 @@ def _load_lms_extension_scripts(config: PgsqlServerConfig):
 
 def _load_ordered_scripts(config: PgsqlServerConfig, script_path: str):
     files_in_path: List[str] = [
-        f
-        for f in listdir(script_path)
-        if path.isfile(path.join(script_path, f))
+        f for f in listdir(script_path) if path.isfile(path.join(script_path, f))
     ]
     scripts: List[str] = list(
         map(lambda script: path.join(script_path, script), files_in_path)
@@ -186,7 +184,8 @@ def _load_lms_migration_scripts(config: PgsqlServerConfig):
 def create_snapshot(config: PgsqlServerConfig):
     _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
     _execute_sql_against_master(
-         config, f"create database {config.db_name} with template {SNAPSHOT_DATABASE};",
+        config,
+        f"create database {config.db_name} with template {SNAPSHOT_DATABASE};",
     )
 
 
