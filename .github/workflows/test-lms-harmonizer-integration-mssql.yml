@@ -38,7 +38,7 @@ jobs:
         MSSQL_INTEGRATED_SECURITY: False
     steps:
       - name: Start Docker for SQL Server
-        run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=$SA_PASSWORD' -e 'MSSQL_PID=Developer' -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
+        run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=${{ env.SA_PASSWORD }}' -e 'MSSQL_PID=Developer' -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
 
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
@@ -71,7 +71,7 @@ jobs:
         run: echo "/opt/mssql-tools/bin" >> $GITHUB_PATH
 
       - name: Wait for SQL Server
-        run: timeout 30s bash -c 'until sqlcmd -l 30 -S localhost -U sa -P $SA_PASSWORD -h-1 -V1 -Q "SET NOCOUNT ON SELECT @@servername"; do sleep 5; done'
+        run: timeout 30s bash -c 'until sqlcmd -l 30 -S localhost -U sa -P ${{ env.SA_PASSWORD}} -h-1 -V1 -Q "SET NOCOUNT ON SELECT @@servername"; do sleep 5; done'
 
       - name: Run CI Integration Task
-        run: python ./eng/build.py ci:integration-test:mssql $PACKAGE_NAME
+        run: python ./eng/build.py ci:integration-test:mssql ${{ env.PACKAGE_NAME }}
