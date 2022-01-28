@@ -110,7 +110,7 @@ def _run_mssql_tests(exit_immediately: bool = True):
             *credentials,
             f"--server={os.getenv('MSSQL_HOST', 'localhost')}",
             f"--port={os.getenv('MSSQL_PORT', 1433)}",
-            f"--db_name={os.getenv('DB_NAME', 'integration_tests')}"
+            f"--db_name={os.getenv('DB_NAME', 'test_integration_lms_toolkit')}"
         ],
         exit_immediately,
     )
@@ -127,7 +127,7 @@ def _run_pgsql_tests(exit_immediately: bool = True):
             f"--username={os.getenv('PGSQL_USER','postgres')}",
             f"--password={os.getenv('PGSQL_PASSWORD', 'postgres')}",
             f"--port={os.getenv('PGSQL_PORT', 5432)}",
-            f"--db_name={os.getenv('DB_NAME', 'integration_tests')}",
+            f"--db_name={os.getenv('DB_NAME', 'test_integration_lms_toolkit')}",
             f"--psql_cli={os.getenv('PSQL_CLI','psql')}"
         ],
         exit_immediately,
