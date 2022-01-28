@@ -85,4 +85,4 @@ jobs:
       - name: Run CI Integration Task
         run: python ./eng/build.py ci:integration-test:pgsql $PACKAGE_NAME
         env:
-            PGSQL_PASSWORD: ${{ PGPASSWORD }}
+            PGSQL_PASSWORD: $PGPASSWORD
