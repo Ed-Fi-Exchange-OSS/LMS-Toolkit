@@ -189,8 +189,14 @@ def _load_lms_migration_scripts(config: PgsqlServerConfig):
     _load_ordered_scripts(config, _lms_migration_script_path())
 
 
-def create_snapshot(config: PgsqlServerConfig):
-    _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
+def _drop_database(config: PgsqlServerConfig, db_name: str) -> None:
+    sql = f"select pg_terminate_backend(pid) from pg_stat_activity where pid != pg_backend_pid() and datname = '{db_name}';"
+    _execute_sql_against_master(config, sql)
+    _execute_sql_against_master(config, f"drop database if exists {db_name};")
+
+
+def create_from_snapshot(config: PgsqlServerConfig):
+    _drop_database(config, config.db_name)
     _execute_sql_against_master(
         config,
         f"create database {config.db_name} with template {SNAPSHOT_DATABASE};",
@@ -198,17 +204,16 @@ def create_snapshot(config: PgsqlServerConfig):
 
 
 def delete_snapshot(config: PgsqlServerConfig):
-    _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
-    _execute_sql_against_master(config, f"drop database if exists {SNAPSHOT_DATABASE};")
+    _drop_database(config, SNAPSHOT_DATABASE)
 
 
 def restore_snapshot(config: PgsqlServerConfig):
-    create_snapshot(config)
+    create_from_snapshot(config)
 
 
 def initialize_database(config: PgsqlServerConfig):
-    _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
-    _execute_sql_against_master(config, f"drop database if exists {SNAPSHOT_DATABASE};")
+    _drop_database(config, config.db_name)
+    delete_snapshot(config)
     _execute_sql_against_master(config, f"create database {config.db_name};")
 
     # These commands are loading scripts into a template database

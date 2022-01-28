@@ -8,7 +8,7 @@ import pytest
 from dotenv import load_dotenv
 
 from tests_integration_pgsql.pgsql_orchestrator import (
-    create_snapshot,
+    create_from_snapshot,
     delete_snapshot,
     initialize_database,
     restore_snapshot,
@@ -88,7 +88,7 @@ def postgresql_db_config(request) -> Iterator[PgsqlServerConfig]:
     """
     config: PgsqlServerConfig = _server_config_from(request)
     initialize_database(config)
-    create_snapshot(config)
+    create_from_snapshot(config)
 
     yield config
 
