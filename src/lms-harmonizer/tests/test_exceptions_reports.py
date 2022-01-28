@@ -13,6 +13,7 @@ from unittest import TestCase
 from edfi_sql_adapter.sql_adapter import Adapter
 
 from edfi_lms_harmonizer import exceptions_reports
+from edfi_lms_harmonizer.helpers.constants import DB_ENGINE
 
 
 class When_getting_the_summary_report(TestCase):
@@ -176,7 +177,7 @@ def describe_when_writing_exception_reports() -> None:
         pd.read_sql = Mock(side_effect=[df_sections, df_users, df_assignments, df_submissions])
 
         # Act
-        exceptions_reports.create_exception_reports(Mock(), OUTPUT_DIR)
+        exceptions_reports.create_exception_reports(DB_ENGINE.MSSQL, Mock(), OUTPUT_DIR)
 
     def it_should_create_the_output_directory(given_there_are_exceptions, fs) -> None:
         assert os.path.exists(OUTPUT_DIR)
