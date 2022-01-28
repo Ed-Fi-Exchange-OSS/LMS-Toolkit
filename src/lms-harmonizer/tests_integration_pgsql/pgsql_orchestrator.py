@@ -81,7 +81,15 @@ def _psql_parameters_from(config: PgsqlServerConfig) -> List[str]:
 def _execute_sql_against_master(config: PgsqlServerConfig, sql: str):
     _run(
         config,
-        [config.psql_cli, *_psql_parameters_from(config), "-d", "postgres", "-c", sql],
+        [
+            config.psql_cli,
+            *_psql_parameters_from(config),
+            "-d",
+            "postgres",
+            "-c",
+            # the PowerShell scripts wants quoting here, but that fails for real psql
+            sql if config.psql_cli == "psql" else f"'{sql}'",
+        ],
     )
 
 
