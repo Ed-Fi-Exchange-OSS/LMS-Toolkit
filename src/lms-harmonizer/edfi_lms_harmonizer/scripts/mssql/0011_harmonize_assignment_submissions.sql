@@ -81,29 +81,30 @@ BEGIN
 			ON lmssection.EdFiSectionId = edfisection.Id
 		CROSS APPLY (
 			SELECT
-				submsisionstatusdescriptor.DescriptorId
+				submissionstatusdescriptor.DescriptorId
 			FROM
-				edfi.Descriptor submsisionstatusdescriptor
+				edfi.Descriptor submissionstatusdescriptor
 			WHERE
-				submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
+				submissionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + @SourceSystem
 			AND
-				submsisionstatusdescriptor.CodeValue = 'missing'
+				submissionstatusdescriptor.CodeValue = 'missing'
 		) as latesubmissionstatusdescriptor
 		CROSS APPLY (
 			SELECT
-				submsisionstatusdescriptor.DescriptorId
+				submissionstatusdescriptor.DescriptorId
 			FROM
-				edfi.Descriptor submsisionstatusdescriptor
+				edfi.Descriptor submissionstatusdescriptor
 			WHERE
-				submsisionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
+				submissionstatusdescriptor.Namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' + @SourceSystem
 			AND
-				submsisionstatusdescriptor.CodeValue = 'Upcoming'
+				submissionstatusdescriptor.CodeValue = 'Upcoming'
 		) as upcomingsubmissionstatusdescriptor
 		WHERE NOT EXISTS (
 			SELECT 1 FROM lms.AssignmentSubmission lmssubmission WHERE lmssubmission.AssignmentIdentifier = lmsassignment.AssignmentIdentifier
 				AND lmssubmission.LMSUserIdentifier = lmsstudent.LMSUserIdentifier
 		)
 		AND (edfisectionassociation.EndDate IS NULL OR edfisectionassociation.EndDate > lmsassignment.DueDateTime)
+        AND lmsassignment.SourceSystem = @SourceSystem
 	END
 
 	INSERT INTO LMSX.AssignmentSubmission(

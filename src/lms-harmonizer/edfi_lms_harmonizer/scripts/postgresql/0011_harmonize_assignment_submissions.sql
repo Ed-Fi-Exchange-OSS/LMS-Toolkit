@@ -9,7 +9,7 @@ declare begin
 
     create extension if not exists "pgcrypto";
 
-	create temp table all_submissions as
+	create temp table all_submissions on commit drop as
 	select
 		lmssubmission.sourcesystemidentifier,
 		edfistudent.studentusi,
@@ -81,31 +81,32 @@ declare begin
 			on edfisection.sectionidentifier = edfisectionassociation.sectionidentifier
 		inner join lms.lmssection lmssection
 			on lmssection.edfisectionid = edfisection.id
-		left join lateral (
+		inner join lateral (
 			select
-				submsisionstatusdescriptor.descriptorid
+				submissionstatusdescriptor.descriptorid
 			from
-				edfi.descriptor submsisionstatusdescriptor
+				edfi.descriptor submissionstatusdescriptor
 			where
-				submsisionstatusdescriptor.namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
+				submissionstatusdescriptor.namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' || _sourcesystem
 			and
-				submsisionstatusdescriptor.codevalue = 'missing'
+				submissionstatusdescriptor.codevalue = 'missing'
 		) as latesubmissionstatusdescriptor on true
-		left join lateral (
+		inner join lateral (
 			select
-				submsisionstatusdescriptor.descriptorid
+				submissionstatusdescriptor.descriptorid
 			from
-				edfi.descriptor submsisionstatusdescriptor
+				edfi.descriptor submissionstatusdescriptor
 			where
-				submsisionstatusdescriptor.namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/Schoology'
-			AND
-				submsisionstatusdescriptor.codevalue = 'Upcoming'
+				submissionstatusdescriptor.namespace = 'uri://ed-fi.org/edfilms/SubmissionStatusDescriptor/' || _sourcesystem
+			and
+				submissionstatusdescriptor.codevalue = 'Upcoming'
 		) as upcomingsubmissionstatusdescriptor on true
 		where not exists (
 			select 1 from lms.assignmentsubmission lmssubmission where lmssubmission.assignmentidentifier = lmsassignment.assignmentidentifier
 				and lmssubmission.lmsuseridentifier = lmsstudent.lmsuseridentifier
 		)
-		and (edfisectionassociation.enddate is null or edfisectionassociation.enddate > lmsassignment.duedatetime);
+		and (edfisectionassociation.enddate is null or edfisectionassociation.enddate > lmsassignment.duedatetime)
+		and lmsassignment.sourcesystem = _sourcesystem;
 	end if;
 
 	insert into lmsx.assignmentsubmission(
@@ -152,8 +153,6 @@ declare begin
 	delete from lmsx.assignmentsubmission
 	where lmsx.assignmentsubmission.assignmentsubmissionidentifier in
 		(select lmssubmission.sourcesystemidentifier from lms.assignmentsubmission lmssubmission where lmssubmission.deletedat is not null);
-
-    drop table all_submissions;
 
 end;
 

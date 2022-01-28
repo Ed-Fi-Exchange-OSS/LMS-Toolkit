@@ -458,7 +458,7 @@ def describe_when_there_are_past_assignments_without_submissions():
     SIS_SECTION_ID = "sis_section_id"
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
     ASSIGNMENT_SUBMISSION_STATUS_MISSING = "missing"  # the stored procedure looks for a descriptor with codevalue = missing
-    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
+    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "Upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
     USER_SIS_ID = "test_sis_id"
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
@@ -528,7 +528,7 @@ def describe_when_there_are_past_assignments_without_submissions():
                 connection, "SELECT * from [lmsx].[AssignmentSubmission]"
             )
             # We are only interested in creating missing submissions for Schoology
-            if (source_system == "Schoology"):
+            if (source_system == SOURCE_SYSTEM.SCHOOLOGY):
                 assert len(LMSAssignmentSubmission) == 1
             else:
                 assert len(LMSAssignmentSubmission) == 0
@@ -539,7 +539,7 @@ def describe_when_there_are_future_assignments_without_submissions():
     SIS_SECTION_ID = "sis_section_id"
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "assignment_identifier"
     ASSIGNMENT_SUBMISSION_STATUS_MISSING = "missing"  # the stored procedure looks for a descriptor with codevalue = missing
-    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
+    ASSIGNMENT_SUBMISSION_STATUS_UPCOMING = "Upcoming"  # the stored procedure also needs a descriptor with codevalue = Upcoming
     USER_SIS_ID = "test_sis_id"
 
     @pytest.mark.parametrize("source_system", SOURCE_SYSTEMS)
@@ -608,7 +608,7 @@ def describe_when_there_are_future_assignments_without_submissions():
                 connection, "SELECT * from [lmsx].[AssignmentSubmission]"
             )
             # We are only creating records for Schoology
-            if (source_system == "Schoology"):
+            if (source_system == SOURCE_SYSTEM.SCHOOLOGY):
                 assert len(LMSAssignmentSubmission) == 1
             else:
                 assert len(LMSAssignmentSubmission) == 0
