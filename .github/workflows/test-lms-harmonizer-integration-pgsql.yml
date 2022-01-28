@@ -39,7 +39,7 @@ jobs:
       postgres:
         image: postgres:12
         env:
-          POSTGRES_PASSWORD: ${{ PGPASSWORD }}
+          POSTGRES_PASSWORD: $PGPASSWORD
         ports:
           - 5432:5432
 
@@ -83,6 +83,6 @@ jobs:
         run: sudo crudini --set --existing /etc/odbcinst.ini "PostgreSQL ANSI" Driver /usr/lib/x86_64-linux-gnu/odbc/psqlodbca.so
 
       - name: Run CI Integration Task
-        run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}
+        run: python ./eng/build.py ci:integration-test:pgsql $PACKAGE_NAME
         env:
             PGSQL_PASSWORD: ${{ PGPASSWORD }}
