@@ -121,7 +121,7 @@ poetry run python edfi_lms_ds_loader \
 ### Database-Enabled Integration Tests
 
 This package contains SQL Server-integrated tests, in addition to the standard
-unit tests. The specialized tests are in the `tests_integration_sql` directory
+unit tests. The specialized tests are in the `tests_integration_mssql` directory
 and they will run automatically if you call `pytest` with no arguments.
 
 Before running the tests, create an empty SQL Server database named
@@ -130,7 +130,7 @@ test_integration_lms_toolkit"`. This is required to run the SQL Server
 integration pytests.
 
 To run only the _unit tests_: `poetry run pytest tests`. To run only the
-integration tests, `poetry run pytest tests_integration_sql`.
+integration tests, `poetry run pytest tests_integration_mssql`.
 
 #### Docker
 
