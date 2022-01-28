@@ -6,13 +6,13 @@ from typing import Tuple
 from sqlalchemy.engine.base import Connection
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.loader_facade import run_loader
-from tests_integration_pgsql.pgsql_e2e_helper import (
+from tests_integration_mssql.mssql_e2e_helper import (
     insert_section,
     insert_user,
     main_arguments,
 )
 
-CSV_PATH = "tests_integration_mssql/e2e_section_activities/data"
+CSV_PATH = "tests_integration_mssql/e2e_section_associations/data"
 SOURCE_SYSTEM = "BestLMS"
 
 
@@ -25,36 +25,28 @@ def insert_record(
 ):
     connection.execute(
         f"""
-    insert into lms.lmssectionactivity
-           (sourcesystemidentifier
-           ,sourcesystem
-           ,lmsuseridentifier
-           ,lmssectionidentifier
-           ,activitytype
-           ,activitydatetime
-           ,activitystatus
-           ,parentsourcesystemidentifier
-           ,activitytimeinminutes
-           ,sourcecreatedate
-           ,sourcelastmodifieddate
-           ,deletedat
-           ,createdate
-           ,lastmodifieddate)
-     values
-           ('{ss_identifier}'
-           ,'{source_system}'
-           ,'{user_identifier}'
-           ,'{section_identifier}'
-           ,'discussion'
-           ,'2021-01-01 00:00:00'
-           ,'published'
-           ,null
-           ,100
-           ,null
-           ,null
-           ,null
-           ,'2021-01-01 00:00:00'
-           ,'2021-01-01 00:00:00'
+    INSERT INTO [lms].[LMSUserLMSSectionAssociation]
+           ([LMSSectionIdentifier]
+           ,[LMSUserIdentifier]
+           ,[SourceSystemIdentifier]
+           ,[SourceSystem]
+           ,[EnrollmentStatus]
+           ,[SourceCreateDate]
+           ,[SourceLastModifiedDate]
+           ,[CreateDate]
+           ,[LastModifiedDate]
+           ,[DeletedAt])
+     VALUES
+           ({section_identifier}
+           ,{user_identifier}
+           ,N'{ss_identifier}'
+           ,N'{source_system}'
+           ,N'Active'
+           ,NULL
+           ,NULL
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           ,CAST(N'2021-01-01 00:00:00' AS DateTime)
+           ,NULL
            )
 """
     )
@@ -62,9 +54,9 @@ def insert_record(
 
 def describe_when_a_record_is_missing_in_the_csv():
     def it_should_soft_delete_the_record(
-        test_pgsql_db: Tuple[SqlLmsOperations, Connection]
+        test_mssql_db: Tuple[SqlLmsOperations, Connection]
     ):
-        adapter, connection = test_pgsql_db
+        adapter, connection = test_mssql_db
 
         # arrange - note csv file has only B123456
         insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
@@ -77,18 +69,16 @@ def describe_when_a_record_is_missing_in_the_csv():
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - B234567 has been soft deleted
-        LMSSectionActivity = connection.execute(
-            "select sourcesystemidentifier from lms.lmssectionactivity where deletedat is not null"
+        LMSUserLMSSectionAssociation = connection.execute(
+            "SELECT SourceSystemIdentifier from lms.LMSUserLMSSectionAssociation WHERE DeletedAt IS NOT NULL"
         ).fetchall()
-        assert len(LMSSectionActivity) == 1
-        assert LMSSectionActivity[0]["sourcesystemidentifier"] == "B234567"
+        assert len(LMSUserLMSSectionAssociation) == 1
+        assert LMSUserLMSSectionAssociation[0]["SourceSystemIdentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
-    def it_should_match_the_record(
-        test_pgsql_db: Tuple[SqlLmsOperations, Connection]
-    ):
-        adapter, connection = test_pgsql_db
+    def it_should_match_the_record(test_mssql_db: Tuple[SqlLmsOperations, Connection]):
+        adapter, connection = test_mssql_db
         insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
         insert_user(connection, "U123456", "FirstLMS", 2)
 
@@ -102,24 +92,22 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
-        LMSSectionActivity = connection.execute(
-            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmssectionactivity order by sourcesystemidentifier"
+        LMSUserLMSSectionAssociation = connection.execute(
+            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSUserLMSSectionAssociation"
         ).fetchall()
-        assert len(LMSSectionActivity) == 2
+        assert len(LMSUserLMSSectionAssociation) == 2
         assert [SOURCE_SYSTEM, "FirstLMS"] == [
-            x["sourcesystem"] for x in LMSSectionActivity
+            x["SourceSystem"] for x in LMSUserLMSSectionAssociation
         ]
         assert ["B123456", "F234567"] == [
-            x["sourcesystemidentifier"] for x in LMSSectionActivity
+            x["SourceSystemIdentifier"] for x in LMSUserLMSSectionAssociation
         ]
-        assert [None, None] == [x["deletedat"] for x in LMSSectionActivity]
+        assert [None, None] == [x["DeletedAt"] for x in LMSUserLMSSectionAssociation]
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
-    def it_should_match_the_record(
-        test_pgsql_db: Tuple[SqlLmsOperations, Connection]
-    ):
-        adapter, connection = test_pgsql_db
+    def it_should_match_the_record(test_mssql_db: Tuple[SqlLmsOperations, Connection]):
+        adapter, connection = test_mssql_db
         insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
 
         insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
@@ -132,14 +120,14 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
-        LMSSectionActivity = connection.execute(
-            "select sourcesystem, sourcesystemidentifier, deletedat from lms.lmssectionactivity order by sourcesystemidentifier"
+        LMSUserLMSSectionAssociation = connection.execute(
+            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSUserLMSSectionAssociation"
         ).fetchall()
-        assert len(LMSSectionActivity) == 2
+        assert len(LMSUserLMSSectionAssociation) == 2
         assert [SOURCE_SYSTEM, SOURCE_SYSTEM] == [
-            x["sourcesystem"] for x in LMSSectionActivity
+            x["SourceSystem"] for x in LMSUserLMSSectionAssociation
         ]
         assert ["B123456", "B234567"] == [
-            x["sourcesystemidentifier"] for x in LMSSectionActivity
+            x["SourceSystemIdentifier"] for x in LMSUserLMSSectionAssociation
         ]
-        assert [None, None] == [x["deletedat"] for x in LMSSectionActivity]
+        assert [None, None] == [x["DeletedAt"] for x in LMSUserLMSSectionAssociation]
