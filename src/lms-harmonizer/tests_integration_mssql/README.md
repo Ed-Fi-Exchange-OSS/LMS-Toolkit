@@ -15,7 +15,7 @@ switches from the harmonizer itself.
 
 Note that all values have defaults, and one difference from the harmonizer is
 that integrated security is true by default. DB Username and DB Password
-are ignored when intergrated security is set to true.
+are ignored when integrated security is set to true.
 
 ## Examples
 
@@ -35,12 +35,12 @@ are ignored when intergrated security is set to true.
 
 Supported parameters:
 
-| Description | Command Line Argument | Default |
-| ----------- | --------------------- | ------- |
-| DB Server | `--server` | localhost |
-| DB Port | `--port` | 1433 |
-| DB Name | `--dbname` | test_harmonizer_lms_toolkit |
-| Use integrated security | `--useintegratedsecurity` | true |
-| DB Username | `--username` | localuser |
-| DB Password | `--password` | localpassword |
-| Skip the database teardown | `--skip-teardown True` | False |
+| Description                | Command Line Argument     | Environment Variable    | Default                     |
+| -------------------------- | ------------------------- | ----------------------- | --------------------------- |
+| DB Server                  | `--server`                | DB_SERVER               | localhost                   |
+| DB Port                    | `--port`                  | DB_PORT                 | 1433                        |
+| DB Name                    | `--db_name`               | DB_NAME                 | test_harmonizer_lms_toolkit |
+| Use integrated security    | `--useintegratedsecurity` | USE_INTEGRATED_SECURITY | true                        |
+| DB Username                | `--username`              | DB_USER                 | localuser                   |
+| DB Password                | `--password`              | DB_PASSWORD             | localpassword               |
+| Skip the database teardown | `--skip-teardown True`    | SKIP_TEARDOWN           | False                       |

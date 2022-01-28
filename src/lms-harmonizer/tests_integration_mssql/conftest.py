@@ -3,7 +3,11 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 from typing import Iterator
+from os import environ
+
 import pytest
+from dotenv import load_dotenv
+
 from tests_integration_mssql.mssql_orchestrator import (
     create_snapshot,
     delete_snapshot,
@@ -11,6 +15,8 @@ from tests_integration_mssql.mssql_orchestrator import (
     restore_snapshot,
 )
 from tests_integration_mssql.mssql_server_config import MssqlServerConfig
+
+load_dotenv()
 
 
 def pytest_addoption(parser):
@@ -24,37 +30,40 @@ def pytest_addoption(parser):
         help="Database server name or IP address",
     )
     parser.addoption(
-        "--port", action="store", default="1433", help="Database server port number"
+        "--port",
+        action="store",
+        default=environ.get("DB_PORT", 1433),
+        help="Database server port number",
     )
     parser.addoption(
-        "--dbname",
+        "--db_name",
         action="store",
-        default="test_harmonizer_lms_toolkit",
+        default=environ.get("DB_NAME", "test_harmonizer_lms_toolkit"),
         help="Name of the test database",
     )
     parser.addoption(
         "--useintegratedsecurity",
         action="store",
-        default="true",
+        default=environ.get("USE_INTEGRATED_SECURITY", True),
         help="Use Integrated Security for the database connection",
     )
     parser.addoption(
         "--username",
         action="store",
-        default="localuser",
+        default=environ.get("DB_USER", "sa"),
         help="Database username when not using integrated security",
     )
     parser.addoption(
         "--password",
         action="store",
-        default="localpassword",
+        default=environ.get("DB_PASSWORD", ""),
         help="Database user password, when not using integrated security",
     )
     parser.addoption(
         "--skip-teardown",
         type=bool,
         action="store",
-        default=False,
+        default=environ.get("SKIP_TEARDOWN", False),
         help="Skip the teardown of the database. Potentially useful for debugging.",
     )
 
@@ -64,10 +73,10 @@ def _server_config_from(request) -> MssqlServerConfig:
         useintegratedsecurity=request.config.getoption("--useintegratedsecurity"),
         server=request.config.getoption("--server"),
         port=request.config.getoption("--port"),
-        db_name=request.config.getoption("--dbname"),
+        db_name=request.config.getoption("--db_name"),
         username=request.config.getoption("--username"),
         password=request.config.getoption("--password"),
-        skip_teardown=request.config.getoption("--skip-teardown")
+        skip_teardown=request.config.getoption("--skip-teardown"),
     )
 
 
