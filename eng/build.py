@@ -26,6 +26,8 @@ def _display_help():
 * build
 * publish
 * ci:test
+* ci:integration-test:mssql
+* ci:integration-test:pgsql
 * ci:publish
 
 For example, to run unit tests with code coverage, optimized for TeamCity
@@ -89,33 +91,44 @@ def _run_tests(exit_immediately: bool = True):
     )
 
 
-def _run_mssql_tests_on_github(exit_immediately: bool = True):
+def _run_mssql_tests(exit_immediately: bool = True):
+
+    credentials = list()
+    if os.getenv('MSSQL_INTEGRATED_SECURITY', True) is True:
+        credentials.append("--useintegratedsecurity=true")
+    else:
+        credentials.append("--useintegratedsecurity=false")
+        credentials.append(f"--username={os.getenv('MSSQL_USER', 'sa')}")
+        credentials.append(f"--password={os.getenv('MSSQL_PASSWORD', 'abcdefgh1!')}")
+
     _run_command(
         [
             "poetry",
             "run",
             "pytest",
             "tests_integration_mssql",
-            "--useintegratedsecurity=false",
-            "--username=sa",
-            # Hardcoded password matches temporary SQL Server
-            # Docker container instance
-            "--password=abcdefgh1!",
+            *credentials,
+            f"--server={os.getenv('MSSQL_HOST', 'localhost')}",
+            f"--port={os.getenv('MSSQL_PORT', 1433)}",
+            f"--db_name={os.getenv('DB_NAME', 'integration_tests')}"
         ],
         exit_immediately,
     )
 
 
-def _run_pgsql_tests_on_github(exit_immediately: bool = True):
+def _run_pgsql_tests(exit_immediately: bool = True):
     _run_command(
         [
             "poetry",
             "run",
             "pytest",
             "tests_integration_pgsql/",
-            "--server=localhost",
-            "--username=postgres",
-            "--password=postgres",
+            f"--server={os.getenv('PGSQL_HOST', 'localhost')}",
+            f"--username={os.getenv('PGSQL_USER','postgres')}",
+            f"--password={os.getenv('PGSQL_PASSWORD', 'postgres')}",
+            f"--port={os.getenv('PGSQL_PORT', 5432)}",
+            f"--db_name={os.getenv('DB_NAME', 'integration_tests')}",
+            f"--psql_cli={os.getenv('PSQL_CLI','psql')}"
         ],
         exit_immediately,
     )
@@ -220,7 +233,7 @@ def _run_ci_mssql_test():
     Calls the commands required for a continuous integration testing job.
     """
     _run_install(False)
-    _run_mssql_tests_on_github(False)
+    _run_mssql_tests(False)
 
 
 def _run_ci_pgsql_test():
@@ -228,7 +241,7 @@ def _run_ci_pgsql_test():
     Calls the commands required for a continuous integration testing job.
     """
     _run_install(False)
-    _run_pgsql_tests_on_github(False)
+    _run_pgsql_tests(False)
 
 
 def _run_ci_publish():
