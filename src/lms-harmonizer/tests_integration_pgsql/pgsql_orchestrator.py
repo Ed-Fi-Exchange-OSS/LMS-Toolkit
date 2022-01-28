@@ -6,11 +6,9 @@
 import subprocess
 from os import environ, path, listdir
 from platform import uname
+from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 from typing import List
 
-from edfi_lms_harmonizer.helpers.argparser import parse_main_arguments
-from edfi_lms_harmonizer.runner import run
-from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 
 SNAPSHOT_DATABASE = "temp_harmonizer_snapshot"
 
@@ -44,27 +42,31 @@ def _run(config: PgsqlServerConfig, command: List[str]):
 
 
 def run_harmonizer(config: PgsqlServerConfig):
-    args_in = [
-        "--server",
-        config.server,
-        "--port",
-        config.port,
-        "--dbname",
-        config.db_name,
-        "--username",
-        config.username,
-        "--password",
-        config.password,
-        "--engine",
-        "postgresql",
-    ]
-    args_parsed = parse_main_arguments(args_in)
-    run(args_parsed)
+    _run(
+        config,
+        [
+            "poetry",
+            "run",
+            "python",
+            "edfi_lms_harmonizer",
+            "--server",
+            config.server,
+            "--port",
+            config.port,
+            "--dbname",
+            config.db_name,
+            "--username",
+            config.username,
+            "--password",
+            config.password,
+            "--engine",
+            "postgresql",
+        ],
+    )
 
 
 def _psql_parameters_from(config: PgsqlServerConfig) -> List[str]:
     return [
-        "-w",  # Never issue a password prompt.
         "-b",  # Print failed SQL commands to standard error output.
         "-h",
         config.server,
@@ -79,7 +81,7 @@ def _psql_parameters_from(config: PgsqlServerConfig) -> List[str]:
 def _execute_sql_against_master(config: PgsqlServerConfig, sql: str):
     _run(
         config,
-        [config.psql_cli, *_psql_parameters_from(config), "-d", "postgres", "-c", f"'{sql}'"],
+        [config.psql_cli, *_psql_parameters_from(config), "-d", "postgres", "-c", sql],
     )
 
 

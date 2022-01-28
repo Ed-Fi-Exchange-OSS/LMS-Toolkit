@@ -18,27 +18,18 @@ logger = logging.getLogger(__name__)
 
 
 def _generate_call_to_stored_procedure(
-    engine: str, procedure: str, parameters: dict[str, str] = dict()
+    engine: str, procedure: str, namespace: str = None, source_system: str = None
 ) -> str:
     if engine == DB_ENGINE.MSSQL:
         statement = f"EXEC lms.{procedure}"
-        for key, value in parameters.items():
-            statement += f" @{key}='{value}',"
-
-        return statement[:-1] if statement.endswith(',') else statement
+        if namespace is not None or source_system is not None:
+            statement += f" @Namespace='{namespace}', @SourceSystem='{source_system}'"
+        return statement
 
     statement = f"call lms.{procedure}("
-    for key, value in parameters.items():
-        statement += f" {key} => '{value}',"
-
-    return (statement[:-1] if statement.endswith(',') else statement) + ");"
-
-
-def _create_parameters(namespace: str, source_system: str) -> dict[str, str]:
-    return {
-        "Namespace": namespace,
-        "SourceSystem": source_system,
-    }
+    if namespace is not None and source_system is not None:
+        statement += f" _namespace => '{namespace}',  _sourcesystem => '{source_system}'"
+    return statement + ")"
 
 
 @catch_exceptions
@@ -97,9 +88,8 @@ def harmonize_assignments(engine: str, adapter: Adapter) -> None:
             _generate_call_to_stored_procedure(
                 engine,
                 "harmonize_assignment",
-                _create_parameters(
-                    SOURCE_SYSTEM_NAMESPACE.CANVAS, SOURCE_SYSTEM.CANVAS
-                ),
+                SOURCE_SYSTEM_NAMESPACE.CANVAS,
+                SOURCE_SYSTEM.CANVAS,
             ),
             "Harmonizing Canvas LMS Assignments.",
         ),
@@ -107,9 +97,8 @@ def harmonize_assignments(engine: str, adapter: Adapter) -> None:
             _generate_call_to_stored_procedure(
                 engine,
                 "harmonize_assignment",
-                _create_parameters(
-                    SOURCE_SYSTEM_NAMESPACE.GOOGLE, SOURCE_SYSTEM.GOOGLE
-                ),
+                SOURCE_SYSTEM_NAMESPACE.GOOGLE,
+                SOURCE_SYSTEM.GOOGLE,
             ),
             "Harmonizing Google Classroom LMS Assignments.",
         ),
@@ -117,9 +106,8 @@ def harmonize_assignments(engine: str, adapter: Adapter) -> None:
             _generate_call_to_stored_procedure(
                 engine,
                 "harmonize_assignment",
-                _create_parameters(
-                    SOURCE_SYSTEM_NAMESPACE.SCHOOLOGY, SOURCE_SYSTEM.SCHOOLOGY
-                ),
+                SOURCE_SYSTEM_NAMESPACE.SCHOOLOGY,
+                SOURCE_SYSTEM.SCHOOLOGY
             ),
             "Harmonizing Schoology LMS Assignments.",
         ),
@@ -136,9 +124,8 @@ def harmonize_assignment_submissions(engine: str, adapter: Adapter) -> None:
             _generate_call_to_stored_procedure(
                 engine,
                 "harmonize_assignment_submissions",
-                _create_parameters(
-                    SOURCE_SYSTEM_NAMESPACE.CANVAS, SOURCE_SYSTEM.CANVAS
-                ),
+                SOURCE_SYSTEM_NAMESPACE.CANVAS,
+                SOURCE_SYSTEM.CANVAS,
             ),
             "Harmonizing Canvas LMS Assignment Submissions.",
         ),
@@ -146,9 +133,8 @@ def harmonize_assignment_submissions(engine: str, adapter: Adapter) -> None:
             _generate_call_to_stored_procedure(
                 engine,
                 "harmonize_assignment_submissions",
-                _create_parameters(
-                    SOURCE_SYSTEM_NAMESPACE.GOOGLE, SOURCE_SYSTEM.GOOGLE
-                ),
+                SOURCE_SYSTEM_NAMESPACE.GOOGLE,
+                SOURCE_SYSTEM.GOOGLE,
             ),
             "Harmonizing Google Classroom LMS Assignment Submissions.",
         ),
@@ -156,9 +142,8 @@ def harmonize_assignment_submissions(engine: str, adapter: Adapter) -> None:
             _generate_call_to_stored_procedure(
                 engine,
                 "harmonize_assignment_submissions",
-                _create_parameters(
-                    SOURCE_SYSTEM_NAMESPACE.SCHOOLOGY, SOURCE_SYSTEM.SCHOOLOGY
-                ),
+                SOURCE_SYSTEM_NAMESPACE.SCHOOLOGY,
+                SOURCE_SYSTEM.SCHOOLOGY,
             ),
             "Harmonizing Schoology LMS Assignment Submissions.",
         ),
