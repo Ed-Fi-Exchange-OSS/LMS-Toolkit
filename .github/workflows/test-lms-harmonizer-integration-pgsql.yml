@@ -7,16 +7,20 @@ name: LMS Harmonizer - PostgreSQL Tests
 on:
   pull_request:
     paths:
-      - 'src/lms-ds-loader/**'
       - 'src/lms-harmonizer/**'
-      - 'utils/**/*.sql'
-      - 'extension/**/*.sql'
+      # Why is there a dependency on the lms-ds-loader? Because we need
+      # the Harmonizer relies on the database tables that are controlled
+      # by the lms-ds-loader.
+      - 'src/lms-ds-loader/**/postgresql/*.sql'
+      # This folder contains copies of the SQL for the core ODS
+      - 'utils/**/postgresql/*.sql'
+      - 'extension/**/PgSql/Structure/Ods/*.sql'
   push:
     paths:
-      - 'src/lms-ds-loader/**'
       - 'src/lms-harmonizer/**'
-      - 'utils/**/*.sql'
-      - 'extension/**/*.sql'
+      - 'src/lms-ds-loader/**/postgresql/*.sql'
+      - 'utils/**/postgresql/*.sql'
+      - 'extension/**/PgSql/Structure/Ods/*.sql'
     branches:
       - main
   workflow_dispatch:
@@ -30,15 +34,15 @@ jobs:
         SRC_DIR: src/lms-harmonizer
         LOCK_FILE: src/lms-harmonizer/poetry.lock
         PGPASSWORD: postgres
-        
+
     services:
       postgres:
         image: postgres:12
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: ${{ PGPASSWORD }}
         ports:
           - 5432:5432
-        
+
     steps:
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
@@ -80,3 +84,5 @@ jobs:
 
       - name: Run CI Integration Task
         run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}
+        env:
+            PGSQL_PASSWORD: ${{ PGPASSWORD }}
