@@ -31,11 +31,11 @@ def pytest_addoption(parser):
     parser.addoption(
         "--port",
         action="store",
-        default=environ.get("DB_PORT", "5432"),
+        default=environ.get("DB_PORT", 5432),
         help="Database server port number",
     )
     parser.addoption(
-        "--dbname",
+        "--db_name",
         action="store",
         default=environ.get("DB_NAME", "test_harmonizer_lms_toolkit"),
         help="Name of the test database",
@@ -72,7 +72,7 @@ def _server_config_from(request) -> PgsqlServerConfig:
     return PgsqlServerConfig(
         server=request.config.getoption("--server"),
         port=request.config.getoption("--port"),
-        db_name=request.config.getoption("--dbname"),
+        db_name=request.config.getoption("--db_name"),
         username=request.config.getoption("--username"),
         password=request.config.getoption("--password"),
         skip_teardown=request.config.getoption("--skip-teardown"),
