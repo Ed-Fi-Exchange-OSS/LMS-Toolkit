@@ -21,11 +21,19 @@ from
     lmsx.exceptions_lmsuser
     """
 
-QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS = """
+QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_MSSQL = """
 select
     distinct assignmentcategory as missingvalue,
     'assignmentcategorydescriptor' as descriptor,
     'uri://ed-fi.org/edfilms/assignmentcategorydescriptor/' + sourcesystem as namespace
+from lmsx.missing_assignment_category_descriptors
+"""
+
+QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_POSTGRESQL = """
+select
+    distinct assignmentcategory as missingvalue,
+    'assignmentcategorydescriptor' as descriptor,
+    'uri://ed-fi.org/edfilms/assignmentcategorydescriptor/' || sourcesystem as namespace
 from lmsx.missing_assignment_category_descriptors
 """
 
@@ -36,11 +44,19 @@ from
     lmsx.missing_assignment_category_descriptors
     """
 
-QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS = """
+QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_MSSQL = """
 select
     distinct submissionstatus as missingvalue,
     'submissionstatusdescriptor' as descriptor,
     'uri://ed-fi.org/edfilms/submissionstatusdescriptor/' + sourcesystem as namespace
+from lmsx.missing_assignment_submission_status_descriptors
+"""
+
+QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_POSTGRESQL = """
+select
+    distinct submissionstatus as missingvalue,
+    'submissionstatusdescriptor' as descriptor,
+    'uri://ed-fi.org/edfilms/submissionstatusdescriptor/' || sourcesystem as namespace
 from lmsx.missing_assignment_submission_status_descriptors
 """
 

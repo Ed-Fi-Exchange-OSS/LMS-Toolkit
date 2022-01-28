@@ -49,7 +49,7 @@ def run(arguments: MainArguments) -> None:
         harmonize_assignment_submissions(arguments.engine, adapter)
 
         if exceptions_report_directory is not None:
-            create_exception_reports(adapter, exceptions_report_directory)
+            create_exception_reports(arguments.engine, adapter, exceptions_report_directory)
 
         print_summary(adapter)
 
