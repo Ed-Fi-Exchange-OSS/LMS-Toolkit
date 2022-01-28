@@ -46,7 +46,7 @@ def insert_lms_user(
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
            ,NULL
-           )
+           ) on conflict do nothing
 """
     )
 
@@ -82,7 +82,7 @@ def insert_lms_user_deleted(
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
            ,'2021-01-02 00:00:00'
-           )
+           ) on conflict do nothing
 """
     )
 
@@ -134,7 +134,7 @@ insert into edfi.student
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
            ,'{id}'
-           )
+           ) on conflict do nothing
 """
     )
 
@@ -189,7 +189,7 @@ overriding system value
            ,'2021-01-01 00:00:00'
            ,'2021-01-01 00:00:00'
            ,'{id}'
-           );
+           ) on conflict do nothing;
 """
     )
 
@@ -217,7 +217,7 @@ insert into edfi.studenteducationorganizationassociationelectronicmail\
            ,NULL
            ,NULL
            ,'2021-01-01 00:00:00'
-           )
+           ) on conflict do nothing
 """
     )
 
@@ -244,7 +244,7 @@ def insert_lms_section(connection: Connection, sis_identifier: str, source_syste
         ,'2021-01-01 00:00:00'
         ,'2021-01-01 00:00:00'
         ,'2021-01-01 00:00:00'
-        )
+        ) on conflict do nothing
 """
     )
 
@@ -274,7 +274,7 @@ def insert_lms_section_deleted(
         ,now()
         ,now()
         ,now()
-        )
+        ) on conflict do nothing
 """
     )
 
@@ -300,7 +300,7 @@ insert into edfi.section
         ,'2021-01-01 00:00:00'
         ,'{sis_id}'
         {f",'{uid}'::uuid" if uid is not None else ",(select md5(random()::text || random()::text)::uuid)"}
-        )
+        ) on conflict do nothing
 """
     )
 
@@ -322,7 +322,7 @@ insert into edfi.descriptor
             '{value}',
             '{value}',
             (select md5(random()::text || random()::text)::uuid)
-        )
+        ) on conflict do nothing
 """
     )
 
@@ -332,7 +332,7 @@ def insert_lmsx_sourcesystem_descriptor(connection: Connection, id: int):
         f"""
 insert into lmsx.lmssourcesystemdescriptor
     (lmssourcesystemdescriptorid)
-     values ( {str(id)} )
+     values ( {str(id)} ) on conflict do nothing
 """
     )
 
@@ -342,7 +342,7 @@ def insert_lmsx_assignmentcategory_descriptor(connection: Connection, id: int):
         f"""
 insert into lmsx.assignmentcategorydescriptor
     (assignmentcategorydescriptorid)
-     values ( {str(id)} )
+     values ( {str(id)} ) on conflict do nothing
 """
     )
 
@@ -384,7 +384,7 @@ insert into lmsx.assignment
         'Local course code test',
         'session name test',
         {SCHOOL_YEAR}
-     )
+     ) on conflict do nothing
 """
     )
 
@@ -414,8 +414,7 @@ select
     sessionname,
     (select studentusi from edfi.student where studentuniqueid = '{student_id}' limit 1) as studentusi
 from edfi.section
-where sectionidentifier = '{section_identifier}'
-limit 1
+where sectionidentifier = '{section_identifier}' limit 1 on conflict do nothing
     """)
 
 
@@ -454,7 +453,7 @@ insert into lms.assignment
         now(),
         now()
         { ",now() - interval '1 year'" if past_due_date else "" }
-     )
+     ) on conflict do nothing
 """
     )
     result: Cursor = connection.execute("select lastval()")
@@ -510,7 +509,7 @@ values
         now(),
         now(),
         {'now()' if isDeleted else 'NULL'}
-    );
+    ) on conflict do nothing;
 """
     )
 
@@ -520,6 +519,6 @@ def insert_lmsx_assignmentsubmissionstatus_descriptor(connection: Connection, id
         f"""
 insert into lmsx.submissionstatusdescriptor
     (submissionstatusdescriptorid)
-     values ( {str(id)} )
+     values ( {str(id)} ) on conflict do nothing
 """
     )
