@@ -1,0 +1,82 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
+name: LMS Harmonizer - PostgreSQL Tests
+on:
+  pull_request:
+    paths:
+      - 'src/lms-ds-loader/**'
+      - 'src/lms-harmonizer/**'
+      - 'utils/**/*.sql'
+      - 'extension/**/*.sql'
+  push:
+    paths:
+      - 'src/lms-ds-loader/**'
+      - 'src/lms-harmonizer/**'
+      - 'utils/**/*.sql'
+      - 'extension/**/*.sql'
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  integration-test-pgsql-lms-harmonizer:
+    name: Run PostgreSQL integration tests
+    runs-on: ubuntu-20.04
+    env:
+        PACKAGE_NAME: lms-harmonizer
+        SRC_DIR: src/lms-harmonizer
+        LOCK_FILE: src/lms-harmonizer/poetry.lock
+        PGPASSWORD: postgres
+        
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+
+      - name: Install Python 3.9
+        uses: actions/setup-python@3105fb18c05ddd93efea5f9e0bef7a03a6e9e7df
+        with:
+          python-version: '3.9.x'
+
+      - name: Install Poetry
+        uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
+
+      - name: Get virtual env path
+        id: venv-path
+        run: |
+            poetry env use python
+            echo "::set-output name=dir::$(poetry env info -p)"
+        working-directory: ${{ env.SRC_DIR }}
+
+      - name: Setup Dependency Caching
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        id: cache-venv
+        with:
+          path: ${{ steps.venv-path.outputs.dir }}
+          key: ${{ runner.os }}-poetry-${{ hashFiles(env.LOCK_FILE) }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client odbc-postgresql crudini
+
+      - name: Wait for PostgreSQL and install pgcrypto
+        run: timeout 30s bash -c 'until psql -d postgres -h localhost -p 5432 -U postgres -c "create extension if not exists pgcrypto"; do sleep 5; done'
+
+      - name: Update ODBC ini file
+        run: sudo crudini --set --existing /etc/odbcinst.ini "PostgreSQL ANSI" Driver /usr/lib/x86_64-linux-gnu/odbc/psqlodbca.so
+
+      - name: Run CI Integration Task
+        run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}

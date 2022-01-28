@@ -3,7 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-name: LMS Harmonizer - Integration Tests
+name: LMS Harmonizer - SQL Server Tests
 on:
   pull_request:
     paths:
@@ -22,15 +22,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  integration-test-lms-harmonizer:
-    name: Run integration tests
+  integration-test-mssql-lms-harmonizer:
+    name: Run SQL Server integration tests
     runs-on: ubuntu-20.04
     env:
         PACKAGE_NAME: lms-harmonizer
         SRC_DIR: src/lms-harmonizer
         LOCK_FILE: src/lms-harmonizer/poetry.lock
     steps:
-        # Do first to give SQL Server time to start up
       - name: Start Docker for SQL Server
         run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=abcdefgh1!' -e 'MSSQL_PID=Developer' -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
 
@@ -68,4 +67,4 @@ jobs:
         run: timeout 30s bash -c 'until sqlcmd -l 30 -S localhost -U sa -P abcdefgh1! -h-1 -V1 -Q "SET NOCOUNT ON SELECT @@servername"; do sleep 5; done'
 
       - name: Run CI Integration Task
-        run: python ./eng/build.py ci:integration-test ${{ env.PACKAGE_NAME }}
+        run: python ./eng/build.py ci:integration-test:mssql ${{ env.PACKAGE_NAME }}

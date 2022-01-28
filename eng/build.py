@@ -89,7 +89,7 @@ def _run_tests(exit_immediately: bool = True):
     )
 
 
-def _run_integration_tests_on_github(exit_immediately: bool = True):
+def _run_mssql_tests_on_github(exit_immediately: bool = True):
     _run_command(
         [
             "poetry",
@@ -101,6 +101,21 @@ def _run_integration_tests_on_github(exit_immediately: bool = True):
             # Hardcoded password matches temporary SQL Server
             # Docker container instance
             "--password=abcdefgh1!",
+        ],
+        exit_immediately,
+    )
+
+
+def _run_pgsql_tests_on_github(exit_immediately: bool = True):
+    _run_command(
+        [
+            "poetry",
+            "run",
+            "pytest",
+            "tests_integration_pgsql/",
+            "--server=localhost",
+            "--username=postgres",
+            "--password=postgres",
         ],
         exit_immediately,
     )
@@ -200,12 +215,20 @@ def _run_ci_test():
     _run_lint(True)
 
 
-def _run_ci_integration_test():
+def _run_ci_mssql_test():
     """
     Calls the commands required for a continuous integration testing job.
     """
     _run_install(False)
-    _run_integration_tests_on_github(False)
+    _run_mssql_tests_on_github(False)
+
+
+def _run_ci_pgsql_test():
+    """
+    Calls the commands required for a continuous integration testing job.
+    """
+    _run_install(False)
+    _run_pgsql_tests_on_github(False)
 
 
 def _run_ci_publish():
@@ -237,7 +260,9 @@ if __name__ == "__main__":
         "build": _run_build,
         "publish": _run_publish,
         "ci:test": _run_ci_test,
-        "ci:integration-test": _run_ci_integration_test,
+        "ci:integration-test": _run_ci_mssql_test,
+        "ci:integration-test:mssql": _run_ci_mssql_test,
+        "ci:integration-test:pgsql": _run_ci_pgsql_test,
         "ci:publish": _run_ci_publish,
     }
 
