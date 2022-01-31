@@ -309,18 +309,21 @@ insert into edfi.section
     )
 
 
-def insert_descriptor(connection: Connection, namespace: str, value: str):
+def insert_descriptor(connection: Connection, namespace: str, value: str, descriptor_id: int):
     connection.execute(
         f"""
 insert into edfi.descriptor
         (
+        descriptorid,
         namespace,
         codevalue,
         shortdescription,
         description,
         id)
+overriding system value
      values
         (
+            {descriptor_id},
             '{namespace}',
             '{value}',
             '{value}',

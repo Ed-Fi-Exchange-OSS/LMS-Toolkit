@@ -23,6 +23,8 @@ select
     count(*) as count
 from
     lmsx.assignments_exceptions
+where
+    sourcesystemidentifier =
 """
 
 
@@ -30,7 +32,7 @@ def descriptor_namespace_for(source_system: str) -> str:
     return f"uri://ed-fi.org/edfilms/AssignmentCategoryDescriptor/{source_system}"
 
 
-def describe_when_lms_and_ods_tables_are_both_empty():
+def describe_when_lms_and_ods_tables_are_both_empty_qqq():
     def it_should_return_zero(test_db_config: PgsqlServerConfig):
         result = None
         # act
@@ -58,15 +60,15 @@ def describe_when_there_are_inserted_assignments():
         # arrange
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
 
-            insert_descriptor(connection, descriptor_namespace, ASSIGNMENT_CATEGORY)
+            insert_descriptor(connection, descriptor_namespace, ASSIGNMENT_CATEGORY, category_descriptor_id)
             insert_lmsx_assignmentcategory_descriptor(
                 connection, category_descriptor_id
             )
 
-            insert_descriptor(connection, descriptor_namespace, SOURCE_SYSTEM)
+            insert_descriptor(connection, descriptor_namespace, SOURCE_SYSTEM, source_system_descriptor_id)
             insert_lmsx_sourcesystem_descriptor(connection, source_system_descriptor_id)
 
-            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
+            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM, section_identifier)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
                 """update lms.lmssection set
@@ -86,7 +88,7 @@ def describe_when_there_are_inserted_assignments():
 
         # assert
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            result = query(connection, QUERY_FOR_ASSIGNMENT_EXCEPTIONS)
+            result = query(connection, f"{QUERY_FOR_ASSIGNMENT_EXCEPTIONS} '{ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER}'")
 
         assert result[0]['count'] == 0
 
@@ -101,15 +103,15 @@ def describe_when_there_are_inserted_assignments():
         # arrange
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
 
-            insert_descriptor(connection, descriptor_namespace, ASSIGNMENT_CATEGORY)
+            insert_descriptor(connection, descriptor_namespace, ASSIGNMENT_CATEGORY, category_descriptor_id)
             insert_lmsx_assignmentcategory_descriptor(
                 connection, category_descriptor_id
             )
 
-            insert_descriptor(connection, descriptor_namespace, SOURCE_SYSTEM)
+            insert_descriptor(connection, descriptor_namespace, SOURCE_SYSTEM, source_system_descriptor_id)
             insert_lmsx_sourcesystem_descriptor(connection, source_system_descriptor_id)
 
-            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
+            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM, section_identifier)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
                 """update lms.lmssection set
@@ -133,7 +135,7 @@ def describe_when_there_are_inserted_assignments():
 
         # assert
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            result = query(connection, QUERY_FOR_ASSIGNMENT_EXCEPTIONS)
+            result = query(connection, f"{QUERY_FOR_ASSIGNMENT_EXCEPTIONS} '{ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER}'")
 
         assert result[0]['count'] == 1
 
@@ -142,6 +144,9 @@ def describe_when_there_are_deleted_assignments():
     SIS_SECTION_ID = "3_sis_section_id"
     ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER = "3_assignment_identifier"
     ASSIGNMENT_CATEGORY = "3_test_category"
+    SECTION_IDENTIFIER = 333333
+    ASSIGNMENT_CATEGORY_DESCRIPTOR_ID = 3331
+    SOURCE_SYSTEM_DESCRIPTOR_ID = 3332
 
     def it_should_not_count_it_as_an_exception(
         test_db_config: PgsqlServerConfig
@@ -149,16 +154,16 @@ def describe_when_there_are_deleted_assignments():
         # arrange
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
             insert_descriptor(
-                connection, descriptor_namespace_for(SOURCE_SYSTEM), ASSIGNMENT_CATEGORY
+                connection, descriptor_namespace_for(SOURCE_SYSTEM), ASSIGNMENT_CATEGORY, ASSIGNMENT_CATEGORY_DESCRIPTOR_ID
             )
-            insert_lmsx_assignmentcategory_descriptor(connection, 1)
+            insert_lmsx_assignmentcategory_descriptor(connection, ASSIGNMENT_CATEGORY_DESCRIPTOR_ID)
 
             insert_descriptor(
-                connection, descriptor_namespace_for(SOURCE_SYSTEM), SOURCE_SYSTEM
+                connection, descriptor_namespace_for(SOURCE_SYSTEM), SOURCE_SYSTEM, SOURCE_SYSTEM_DESCRIPTOR_ID
             )
-            insert_lmsx_sourcesystem_descriptor(connection, 2)
+            insert_lmsx_sourcesystem_descriptor(connection, SOURCE_SYSTEM_DESCRIPTOR_ID)
 
-            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM)
+            insert_lms_section(connection, SIS_SECTION_ID, SOURCE_SYSTEM, SECTION_IDENTIFIER)
             insert_edfi_section(connection, SIS_SECTION_ID)
             connection.execute(
                 """update lms.lmssection set
@@ -169,7 +174,7 @@ def describe_when_there_are_deleted_assignments():
                 connection,
                 ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER,
                 SOURCE_SYSTEM,
-                1,
+                SECTION_IDENTIFIER,
                 ASSIGNMENT_CATEGORY,
             )
 
@@ -185,6 +190,6 @@ def describe_when_there_are_deleted_assignments():
 
         # assert
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            result = query(connection, QUERY_FOR_ASSIGNMENT_EXCEPTIONS)
+            result = query(connection, f"{QUERY_FOR_ASSIGNMENT_EXCEPTIONS} '{ASSIGNMENT_SOURCE_SYSTEM_IDENTIFIER}'")
 
         assert result[0]['count'] == 0

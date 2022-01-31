@@ -7,12 +7,17 @@ import subprocess
 from os import environ, path, listdir
 from platform import uname
 import re
+from tempfile import tempdir
 
 from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 from typing import List
 
 
 SNAPSHOT_DATABASE = "temp_harmonizer_snapshot"
+
+
+def _is_windows() -> bool:
+    return uname().system == "Windows"
 
 
 # TODO: consider unifying some of this code between this and mssql test library
@@ -57,7 +62,7 @@ def run_harmonizer(config: PgsqlServerConfig):
     # However, the command ends up being piped... and pipes end up requiring
     # triple escaping: ^^^ or \\\.
     pattern = r"([~`#$&*()\\|[\]{};'\"<>/?!])"
-    escape_char = "^^^" if uname().system == "Windows" else "\\\\\\"
+    escape_char = "^^^" if _is_windows() else "\\\\\\"
     replace = rf"{escape_char}\1"
 
     password = re.sub(pattern, replace, config.password)
@@ -107,7 +112,7 @@ def _execute_sql_against_master(config: PgsqlServerConfig, sql: str):
             "-d",
             "postgres",
             "-c",
-            sql,
+            f"'{sql}'" if _is_windows() else sql,
         ],
     )
 
@@ -214,7 +219,7 @@ def _drop_database(config: PgsqlServerConfig, db_name: str) -> None:
     _execute_sql_against_master(config, f"drop database if exists {db_name};")
 
 
-def create_from_snapshot(config: PgsqlServerConfig):
+def _create_from_snapshot(config: PgsqlServerConfig):
     _drop_database(config, config.db_name)
     _execute_sql_against_master(
         config,
@@ -222,26 +227,24 @@ def create_from_snapshot(config: PgsqlServerConfig):
     )
 
 
-def delete_snapshot(config: PgsqlServerConfig):
+def drop_snapshot(config: PgsqlServerConfig):
     _drop_database(config, SNAPSHOT_DATABASE)
 
 
 def restore_snapshot(config: PgsqlServerConfig):
-    create_from_snapshot(config)
+    _create_from_snapshot(config)
 
 
 def initialize_database(config: PgsqlServerConfig):
-    _drop_database(config, config.db_name)
-    delete_snapshot(config)
-    _execute_sql_against_master(config, f"create database {config.db_name};")
+    test_db = config.db_name
 
-    # These commands are loading scripts into a template database
+    drop_snapshot(config)
+
+    _execute_sql_against_master(config, f"create database {SNAPSHOT_DATABASE};")
+    config.db_name = SNAPSHOT_DATABASE
     _load_edfi_scripts(config)
     _load_lms_extension_scripts(config)
     _load_lms_migration_scripts(config)
 
-    # Copy the initialized database to the snapshot for future templating
-    _execute_sql_against_master(
-        config,
-        f"create database {SNAPSHOT_DATABASE} with template {config.db_name};",
-    )
+    config.db_name = test_db
+    _create_from_snapshot(config)

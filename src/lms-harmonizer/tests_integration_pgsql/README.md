@@ -47,7 +47,10 @@ Supported parameters:
 
 ## PowerShell Script for psql
 
-When running with Docker on a Windows host, you can use [psql-docker.ps1](psql-docker.ps1)
-as a substitute for the real `psql` command. It proxies relevant command arguments
-into the running Docker container, and copies any required files into the container
-for execution. To use this, set `PSQL_CLI=powershell ./psql-docker.ps1`.
+When running with Docker on a Windows host, you can use
+[psql-docker.ps1](psql-docker.ps1) as a substitute for the real `psql` command.
+It proxies relevant command arguments into the running Docker container, and
+copies any required files into the container for execution. To use this, set
+`PSQL_CLI=powershell c:/<full path>/psql-docker.ps1`. The test process runs the
+command in a new process, therefore the command above must have the _complete
+path_ to the script.
