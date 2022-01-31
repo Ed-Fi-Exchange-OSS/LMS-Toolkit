@@ -64,7 +64,7 @@ if ($f.Length -gt 0) {
     $command += " -f /opt/temp.sql"
 }
 else {
-    $command += " -c '$c'"
+    $command += " -c $c"
 }
 
 &docker exec $ContainerName /bin/bash -c "$command"
