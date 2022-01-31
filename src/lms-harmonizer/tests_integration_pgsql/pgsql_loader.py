@@ -222,11 +222,12 @@ insert into edfi.studenteducationorganizationassociationelectronicmail\
     )
 
 
-def insert_lms_section(connection: Connection, sis_identifier: str, source_system: str):
+def insert_lms_section(connection: Connection, sis_identifier: str, source_system: str, section_identifier: int):
     connection.execute(
         f"""
     insert into lms.lmssection
         (
+        lmssectionidentifier,
         sourcesystemidentifier,
         sourcesystem,
         sissectionidentifier,
@@ -234,9 +235,12 @@ def insert_lms_section(connection: Connection, sis_identifier: str, source_syste
         sourcecreatedate,
         sourcelastmodifieddate,
         createdate,
-        lastmodifieddate)
+        lastmodifieddate
+    )
+    overriding system value
     values
-        ('{sis_identifier}'
+        ({section_identifier}
+        ,'{sis_identifier}'
         ,'{source_system}'
         ,'{sis_identifier}'
         ,'section title'
