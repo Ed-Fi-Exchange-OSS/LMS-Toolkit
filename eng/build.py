@@ -34,6 +34,24 @@ For example, to run unit tests with code coverage, optimized for TeamCity
 output, on utility `lms-ds-loader`:
 
 > ./build.py coverage:xml lms-ds-loader
+
+When running the integration tests, use environment variables to inject
+database settings. Relevant environment variables, with default values shown:
+
+* SQL Server
+  * MSSQL_INTEGRATED_SECURITY = True; or set to False
+  * MSSQL_USER = "sa"; only used if MSSQL_INTEGRATED_SECURITY is False
+  * MSSQL_PASSWORD = ""; will fail if you don't set it
+  * MSSQL_HOST = "localhost"
+  * MSSQL_PORT = 1433
+  * DB_NAME = "test_integration_lms_toolkit"
+* PostgreSQL
+  * PGSQL_HOST = "localhost"
+  * PGSQL_USER = "postgres
+  * PGSQL_PASSWORD = "postgres"
+  * PGSQL_PORT = 5432
+  * DB_NAME = "test_integration_lms_toolkit"
+  * PSQL_CLI = "psql"; can change to use exact path to psql executable
 """
     print(message)
     exit(-1)
@@ -43,10 +61,7 @@ def _run_command(command: List[str], exit_immediately: bool = True):
 
     print("\033[95m" + " ".join(command) + "\033[0m")
 
-    # Some system configurations on Windows-based CI servers have trouble
-    # finding poetry, others do not. Explicitly calling "cmd /c" seems to help,
-    # though unsure why.
-
+    # On Windows, must run inside of cmd.exe in order to get the user's $PATH.
     if os.name == "nt":
         # All versions of Windows are "nt"
         command = ["cmd", "/c", *command]
@@ -99,7 +114,7 @@ def _run_mssql_tests(exit_immediately: bool = True):
     else:
         credentials.append("--useintegratedsecurity=false")
         credentials.append(f"--username={os.getenv('MSSQL_USER', 'sa')}")
-        credentials.append(f"--password={os.getenv('MSSQL_PASSWORD', 'abcdefgh1!')}")
+        credentials.append(f"--password={os.getenv('MSSQL_PASSWORD', '')}")
 
     _run_command(
         [
