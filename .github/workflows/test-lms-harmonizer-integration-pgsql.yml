@@ -99,6 +99,7 @@ jobs:
           PGSQL_HOST: localhost
           # get randomly assigned published port
           PGSQL_PORT: ${{ job.services.postgres.ports[5432] }}
+          PGSQL_USER: postgres
 
     #   - name: Run CI Integration Task
     #     run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}
