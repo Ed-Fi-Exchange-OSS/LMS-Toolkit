@@ -87,6 +87,9 @@ jobs:
       - name: Update ODBC ini file
         run: sudo crudini --set --existing /etc/odbcinst.ini "PostgreSQL ANSI" Driver /usr/lib/x86_64-linux-gnu/odbc/psqlodbca.so
 
+      - name: Testing access to PostgreSQL
+        run: psql -b -h localhost -p 5432 -U postgres -d postgres -c "select version()"
+
       - name: Run CI Integration Task
         run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}
         env:
