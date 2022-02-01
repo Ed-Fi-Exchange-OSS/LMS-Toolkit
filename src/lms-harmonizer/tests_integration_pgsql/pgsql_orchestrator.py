@@ -6,11 +6,17 @@
 import subprocess
 from os import environ, path, listdir
 from platform import uname
+import re
+
 from tests_integration_pgsql.pgsql_server_config import PgsqlServerConfig
 from typing import List
 
 
 SNAPSHOT_DATABASE = "temp_harmonizer_snapshot"
+
+
+def _is_windows() -> bool:
+    return uname().system == "Windows"
 
 
 # TODO: consider unifying some of this code between this and mssql test library
@@ -38,17 +44,36 @@ def _run(config: PgsqlServerConfig, command: List[str]):
     stdout, stderr = result.communicate()
 
     if result.returncode != 0:
-        raise Exception("Command failed %d %a %a" % (result.returncode, stdout, stderr))
+        raise Exception(
+            "Command failed %d %a %a. Offending command: <<%a>>"
+            % (result.returncode, stdout, stderr, command_as_string)
+        )
 
 
 def run_harmonizer(config: PgsqlServerConfig):
+    harmonizer_path = path.abspath(
+        path.join(path.dirname(__file__), "..", "edfi_lms_harmonizer")
+    )
+
+    # The following command runs in Popen, which calls the OS shell (cmd.exe,
+    # sh, bash, etc.). The password could have special characters in it that
+    # would have meaning to the OS shell. Those characters need to be escaped
+    # with the OS-specific escape character: ^ for Windows, and \ for Linux.
+    # However, the command ends up being piped... and pipes end up requiring
+    # triple escaping: ^^^ or \\\.
+    pattern = r"([~`#$&*()\\|[\]{};'\"<>/?!])"
+    escape_char = "^^^" if _is_windows() else "\\\\\\"
+    replace = rf"{escape_char}\1"
+
+    password = re.sub(pattern, replace, config.password)
+
     _run(
         config,
         [
             "poetry",
             "run",
             "python",
-            "edfi_lms_harmonizer",
+            harmonizer_path,
             "--server",
             config.server,
             "--port",
@@ -58,7 +83,7 @@ def run_harmonizer(config: PgsqlServerConfig):
             "--username",
             config.username,
             "--password",
-            config.password,
+            password,
             "--engine",
             "postgresql",
         ],
