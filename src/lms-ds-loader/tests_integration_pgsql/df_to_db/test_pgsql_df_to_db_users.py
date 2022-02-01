@@ -115,7 +115,7 @@ def describe_when_a_user_goes_missing_then_reappears():
     def it_should_soft_delete_then_restore(
         test_pgsql_db: Tuple[SqlLmsOperations, Connection, ConnectionSettings]
     ):
-        adapter, connection,_ = test_pgsql_db
+        adapter, connection, _ = test_pgsql_db
 
         def initial_upload():
             # act

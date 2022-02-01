@@ -6,7 +6,7 @@
 from dataclasses import dataclass
 from os import environ
 
-from typing import Iterable, Tuple, Optional
+from typing import Iterable, Tuple
 import pytest
 from unittest.mock import MagicMock
 from pandas import DataFrame
