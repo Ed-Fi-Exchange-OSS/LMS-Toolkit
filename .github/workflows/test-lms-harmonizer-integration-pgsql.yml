@@ -90,10 +90,18 @@ jobs:
       - name: Update ODBC ini file
         run: sudo crudini --set --existing /etc/odbcinst.ini "PostgreSQL ANSI" Driver /usr/lib/x86_64-linux-gnu/odbc/psqlodbca.so
 
-      - name: Run CI Integration Task
-        run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}
+      - name: Directly invoke the LMS Harmonizer PGSQL tests
+        run: poetry run pytest tests_integration_pgsql -s -k section_summary_without_error --server=$PGSQL_HOST --username=$PGSQL_USER --port=$PGSQL_PORT --dbname=test_integration_lms_toolkit
+        working-directory: src/lms-harmonizer
         env:
-          PGSQL_PASSWORD: ${{ env.PGPASSWORD }}
           PGSQL_HOST: localhost
           # get randomly assigned published port
           PGSQL_PORT: ${{ job.services.postgres.ports[5432] }}
+
+    #   - name: Run CI Integration Task
+    #     run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}
+    #     env:
+    #       PGSQL_PASSWORD: ${{ env.PGPASSWORD }}
+    #       PGSQL_HOST: localhost
+    #       # get randomly assigned published port
+    #       PGSQL_PORT: ${{ job.services.postgres.ports[5432] }}

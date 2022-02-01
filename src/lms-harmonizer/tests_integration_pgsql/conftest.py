@@ -49,7 +49,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--password",
         action="store",
-        default=environ.get("DB_PASSWORD", ""),
+        default=environ.get("DB_PASSWORD", environ.get("PGPASSWORD", "postgres")),
         help="Database user password",
     )
     parser.addoption(
@@ -87,6 +87,9 @@ def postgresql_db_config(request) -> Iterator[PgsqlServerConfig]:
     creation and deletion
     """
     config: PgsqlServerConfig = _server_config_from(request)
+
+    print("-------------->>>>>>>>", config)
+
     initialize_database(config)
     create_snapshot(config)
 
