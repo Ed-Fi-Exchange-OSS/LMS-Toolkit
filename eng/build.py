@@ -133,10 +133,6 @@ def _run_mssql_tests(exit_immediately: bool = True):
 
 def _run_pgsql_tests(exit_immediately: bool = True):
     _run_command(
-        ["pg_lsclusters"],
-        exit_immediately=False,
-    )
-    _run_command(
         [
             "psql",
             "-b",
@@ -159,10 +155,13 @@ def _run_pgsql_tests(exit_immediately: bool = True):
             "run",
             "pytest",
             "tests_integration_pgsql/",
+            "-s",
+            "-k",
+            "it_runs_query_for_section_summary_without_error",
             f"--server={os.getenv('PGSQL_HOST', 'localhost')}",
             f"--username={os.getenv('PGSQL_USER','postgres')}",
             f"--password={os.getenv('PGSQL_PASSWORD', 'postgres')}",
-            f"--port={os.getenv('PGSQL_PORT', 5432)}",
+            f"--port={os.getenv('PGSQL_PORT', '5432')}",
             f"--dbname={os.getenv('DB_NAME', 'test_integration_lms_toolkit')}",
             f"--psql_cli={os.getenv('PSQL_CLI','psql')}",
         ],
