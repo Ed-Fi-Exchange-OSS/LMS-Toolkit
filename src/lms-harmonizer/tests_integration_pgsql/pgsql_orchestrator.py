@@ -25,9 +25,6 @@ def _run(config: PgsqlServerConfig, command: List[str]):
     command_as_string: str = " ".join(command)
     print(f"\033[95m{command_as_string}\033[0m")
 
-    # TODO: make sure that .pgpass file can be used instead, since postgresql doesn't recommend
-    # using an environment variable, and .pgpass is the only other option for unattended
-    # execution of `psql`
     env = environ.copy()
     env["PGPASSWORD"] = config.password
 

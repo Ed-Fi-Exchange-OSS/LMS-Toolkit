@@ -41,13 +41,20 @@ Supported parameters:
 | DB Port                    | `--port`               | DB_PORT              | 5432                            |
 | DB Name                    | `--dbname`             | DB_NAME              | test_harmonizer_lms_toolkit     |
 | DB Username                | `--username`           | DB_USER              | postgres                        |
-| DB Password                | `--password`           | PGPASSWORD           | _none_                          |
+| DB Password                | `--password`           | DB_PASSWORD          | _none_                          |
 | Skip the database teardown | `--skip-teardown True` | SKIP_TEARDOWN        | False                           |
 | Full path to `psql`        | `--psql_cli`           | PSQL_CLI             | psql (assuming in shell's path) |
 
-## PowerShell Script for psql
+## PostgreSQL Client Tools and Docker
 
-When running with Docker on a Windows host, you can use [psql-docker.ps1](psql-docker.ps1)
-as a substitute for the real `psql` command. It proxies relevant command arguments
-into the running Docker container, and copies any required files into the container
-for execution. To use this, set `PSQL_CLI=powershell ./psql-docker.ps1`.
+The host needs to have the PostgreSQL client tools, in particularly the `psql`
+command. If you are running PostgreSQL inside of a Docker container or on a
+remote computer, you may not want to download and install PostgreSQL. For
+Windows, the Ed-Fi Alliance has created a NuGet package containing the client
+tools. This is used in the Ed-Fi ODS/API build process, and it can be useful
+here. [Download from Azure
+Artifacts](https://dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging?_a=package&feed=EdFi&package=PostgreSQL.Binaries&protocolType=NuGet&version=12.2.314),
+then open the downloaded file as a zip file (it may help to rename it with
+extension ".zip" instead of ".nupkg"). Copy the files from the zip to somewhere
+on disk, and then put the path to the unzipped folder into your system path _or_
+manually using the `--psql_cli <full path to psql.exe>`.
