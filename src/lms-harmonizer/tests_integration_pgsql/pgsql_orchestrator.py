@@ -25,13 +25,6 @@ def _run(config: PgsqlServerConfig, command: List[str]):
     command_as_string: str = " ".join(command)
     print(f"\033[95m{command_as_string}\033[0m")
 
-    # Some system configurations on Windows-based CI servers have trouble
-    # finding poetry, others do not. Explicitly calling "cmd /c" seems to help,
-    # though unsure why. Using `uname` instead of `os.name` because it correctly
-    # recognizes Windows Subsystem for Linux (whereas `os.name` reports "nt").
-    if uname().system == "Windows":
-        command = ["cmd", "/c", *command]
-
     # TODO: make sure that .pgpass file can be used instead, since postgresql doesn't recommend
     # using an environment variable, and .pgpass is the only other option for unattended
     # execution of `psql`
@@ -39,7 +32,7 @@ def _run(config: PgsqlServerConfig, command: List[str]):
     env["PGPASSWORD"] = config.password
 
     result = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, shell=True
     )
     stdout, stderr = result.communicate()
 
