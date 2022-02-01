@@ -9,13 +9,13 @@ from edfi_sql_adapter.sql_adapter import create_postgresql_adapter
 
 from edfi_lms_harmonizer.helpers.constants import DB_ENGINE
 from edfi_lms_harmonizer.sql_for_exceptions_report import (
-    QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS,
+    QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_POSTGRESQL,
     QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY,
     QUERY_FOR_ASSIGNMENT_EXCEPTIONS,
     QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS,
     QUERY_FOR_SECTION_SUMMARY,
     QUERY_FOR_SECTIONS,
-    QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS,
+    QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_POSTGRESQL,
     QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY,
     QUERY_FOR_USERS_SUMMARY,
 )
@@ -69,7 +69,7 @@ def describe_when_printing_summary_report():
         test_db_config: PgsqlServerConfig, setup_harmonizer: Adapter
     ):
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            query(connection, QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS)
+            query(connection, QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_POSTGRESQL)
 
     def it_runs_query_for_assignment_category_descriptors_summary_without_error(
         test_db_config: PgsqlServerConfig, setup_harmonizer: Adapter
@@ -81,7 +81,7 @@ def describe_when_printing_summary_report():
         test_db_config: PgsqlServerConfig, setup_harmonizer: Adapter
     ):
         with PgsqlConnection(test_db_config).pyodbc_conn() as connection:
-            query(connection, QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS)
+            query(connection, QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_POSTGRESQL)
 
     def it_runs_query_for_submission_status_descriptors_summary_without_error(
         test_db_config: PgsqlServerConfig, setup_harmonizer: Adapter
