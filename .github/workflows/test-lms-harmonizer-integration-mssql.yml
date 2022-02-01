@@ -36,7 +36,7 @@ jobs:
         LOCK_FILE: src/lms-harmonizer/poetry.lock
         SA_PASSWORD: abcdefgh1!
         MSSQL_INTEGRATED_SECURITY: False
-        MSSQL_PASSWORD: $SA_PASSWORD
+        MSSQL_PASSWORD: abcdefgh1!
     steps:
       - name: Start Docker for SQL Server
         run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=${{ env.SA_PASSWORD }}' -e 'MSSQL_PID=Developer' -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
