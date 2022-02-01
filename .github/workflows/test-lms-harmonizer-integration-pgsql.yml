@@ -40,6 +40,8 @@ jobs:
         image: postgres:12
         env:
           POSTGRES_PASSWORD: ${{ env.PGPASSWORD }}
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -80,7 +82,7 @@ jobs:
           sudo apt-get install --yes postgresql-client odbc-postgresql crudini
 
       - name: Wait for PostgreSQL and install pgcrypto
-        run: timeout 30s bash -c 'until psql -d postgres -h postgres -p 5432 -U postgres -c "create extension if not exists pgcrypto"; do sleep 5; done'
+        run: timeout 30s bash -c 'until psql -d postgres -h localhost -p 5432 -U postgres -c "create extension if not exists pgcrypto"; do sleep 5; done'
 
       - name: Update ODBC ini file
         run: sudo crudini --set --existing /etc/odbcinst.ini "PostgreSQL ANSI" Driver /usr/lib/x86_64-linux-gnu/odbc/psqlodbca.so
@@ -89,4 +91,4 @@ jobs:
         run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}
         env:
             PGSQL_PASSWORD: ${{ env.PGPASSWORD }}
-            PGSQL_HOST: postgres
+            PGSQL_HOST: localhost
