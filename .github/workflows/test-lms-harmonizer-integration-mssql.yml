@@ -3,36 +3,42 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-name: LMS Harmonizer - Integration Tests
+name: LMS Harmonizer - SQL Server Tests
 on:
   pull_request:
     paths:
-      - 'src/lms-ds-loader/**'
       - 'src/lms-harmonizer/**'
-      - 'utils/**/*.sql'
-      - 'extension/**/*.sql'
+      # Why is there a dependency on the lms-ds-loader? Because we need
+      # the Harmonizer relies on the database tables that are controlled
+      # by the lms-ds-loader.
+      - 'src/lms-ds-loader/**/mssql/*.sql'
+      # This folder contains copies of the SQL for the core ODS
+      - 'utils/**/mssql/*.sql'
+      # And this one contains the SQL for the LMSX extension
+      - 'extension/**/MsSql/Structure/Ods/*.sql'
   push:
     paths:
-      - 'src/lms-ds-loader/**'
       - 'src/lms-harmonizer/**'
-      - 'utils/**/*.sql'
-      - 'extension/**/*.sql'
+      - 'src/lms-ds-loader/**/mssql/*.sql'
+      - 'utils/**/mssql/*.sql'
+      - 'extension/**/MsSql/Structure/Ods/*.sql'
     branches:
       - main
   workflow_dispatch:
 
 jobs:
-  integration-test-lms-harmonizer:
-    name: Run integration tests
+  integration-test-mssql-lms-harmonizer:
+    name: Run SQL Server integration tests
     runs-on: ubuntu-20.04
     env:
         PACKAGE_NAME: lms-harmonizer
         SRC_DIR: src/lms-harmonizer
         LOCK_FILE: src/lms-harmonizer/poetry.lock
+        SA_PASSWORD: abcdefgh1!
+        MSSQL_INTEGRATED_SECURITY: False
     steps:
-        # Do first to give SQL Server time to start up
       - name: Start Docker for SQL Server
-        run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=abcdefgh1!' -e 'MSSQL_PID=Developer' -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
+        run: docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=${{ env.SA_PASSWORD }}' -e 'MSSQL_PID=Developer' -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
 
       - name: Checkout code
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
@@ -65,7 +71,7 @@ jobs:
         run: echo "/opt/mssql-tools/bin" >> $GITHUB_PATH
 
       - name: Wait for SQL Server
-        run: timeout 30s bash -c 'until sqlcmd -l 30 -S localhost -U sa -P abcdefgh1! -h-1 -V1 -Q "SET NOCOUNT ON SELECT @@servername"; do sleep 5; done'
+        run: timeout 30s bash -c 'until sqlcmd -l 30 -S localhost -U sa -P ${{ env.SA_PASSWORD}} -h-1 -V1 -Q "SET NOCOUNT ON SELECT @@servername"; do sleep 5; done'
 
       - name: Run CI Integration Task
-        run: python ./eng/build.py ci:integration-test ${{ env.PACKAGE_NAME }}
+        run: python ./eng/build.py ci:integration-test:mssql ${{ env.PACKAGE_NAME }}
