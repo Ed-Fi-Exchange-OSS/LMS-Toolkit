@@ -109,7 +109,7 @@ def _run_tests(exit_immediately: bool = True):
 def _run_mssql_tests(exit_immediately: bool = True):
 
     credentials = list()
-    if os.getenv('MSSQL_INTEGRATED_SECURITY', True) is True:
+    if os.getenv("MSSQL_INTEGRATED_SECURITY", True) is True:
         credentials.append("--useintegratedsecurity=true")
     else:
         credentials.append("--useintegratedsecurity=false")
@@ -125,13 +125,34 @@ def _run_mssql_tests(exit_immediately: bool = True):
             *credentials,
             f"--server={os.getenv('MSSQL_HOST', 'localhost')}",
             f"--port={os.getenv('MSSQL_PORT', 1433)}",
-            f"--dbname={os.getenv('DB_NAME', 'test_integration_lms_toolkit')}"
+            f"--dbname={os.getenv('DB_NAME', 'test_integration_lms_toolkit')}",
         ],
         exit_immediately,
     )
 
 
 def _run_pgsql_tests(exit_immediately: bool = True):
+    _run_command(
+        ["pg_lsclusters"],
+        exit_immediately=False,
+    )
+    _run_command(
+        [
+            "psql",
+            "-b",
+            "-h",
+            os.getenv("PGSQL_HOST", "localhost"),
+            "-p",
+            os.getenv("PGSQL_PORT", "5432"),
+            "-U",
+            os.getenv("PGSQL_USER", "postgres"),
+            "-d",
+            "postgres",
+            "-c",
+            "select version()",
+        ],
+        exit_immediately=False,
+    )
     _run_command(
         [
             "poetry",
@@ -143,7 +164,7 @@ def _run_pgsql_tests(exit_immediately: bool = True):
             f"--password={os.getenv('PGSQL_PASSWORD', 'postgres')}",
             f"--port={os.getenv('PGSQL_PORT', 5432)}",
             f"--dbname={os.getenv('DB_NAME', 'test_integration_lms_toolkit')}",
-            f"--psql_cli={os.getenv('PSQL_CLI','psql')}"
+            f"--psql_cli={os.getenv('PSQL_CLI','psql')}",
         ],
         exit_immediately,
     )
