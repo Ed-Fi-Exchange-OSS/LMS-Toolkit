@@ -176,7 +176,7 @@ def describe_when_writing_exception_reports() -> None:
         pd.read_sql = Mock(side_effect=[df_sections, df_users, df_assignments, df_submissions])
 
         # Act
-        exceptions_reports.create_exception_reports(Mock(), OUTPUT_DIR)
+        exceptions_reports.create_exception_reports("postgresql", Mock(), OUTPUT_DIR)
 
     def it_should_create_the_output_directory(given_there_are_exceptions, fs) -> None:
         assert os.path.exists(OUTPUT_DIR)
