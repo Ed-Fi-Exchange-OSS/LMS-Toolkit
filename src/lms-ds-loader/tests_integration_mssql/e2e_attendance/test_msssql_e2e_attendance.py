@@ -6,13 +6,14 @@ from typing import Tuple
 from sqlalchemy.engine.base import Connection
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.loader_facade import run_loader
-from tests_integration_sql.mssql_e2e_helper import (
+from tests_integration_mssql.mssql_e2e_helper import (
     insert_section,
     insert_user,
+    insert_user_section_association,
     main_arguments,
 )
 
-CSV_PATH = "tests_integration_sql/e2e_section_activities/data"
+CSV_PATH = "tests_integration_mssql/e2e_attendance/data"
 SOURCE_SYSTEM = "BestLMS"
 
 
@@ -22,19 +23,18 @@ def insert_record(
     source_system: str,
     section_identifier: int,
     user_identifier: int,
+    user_section_association_identifier: int,
 ):
     connection.execute(
         f"""
-    INSERT INTO [lms].[LMSSectionActivity]
+    INSERT INTO [lms].[LMSUserAttendanceEvent]
            ([SourceSystemIdentifier]
            ,[SourceSystem]
            ,[LMSUserIdentifier]
            ,[LMSSectionIdentifier]
-           ,[ActivityType]
-           ,[ActivityDateTime]
-           ,[ActivityStatus]
-           ,[ParentSourceSystemIdentifier]
-           ,[ActivityTimeInMinutes]
+           ,[LMSUserLMSSectionAssociationIdentifier]
+           ,[EventDate]
+           ,[AttendanceStatus]
            ,[SourceCreateDate]
            ,[SourceLastModifiedDate]
            ,[DeletedAt]
@@ -45,11 +45,9 @@ def insert_record(
            ,N'{source_system}'
            ,N'{user_identifier}'
            ,N'{section_identifier}'
-           ,N'Discussion'
+           ,N'{user_section_association_identifier}'
            ,CAST(N'2021-01-01 00:00:00' AS DateTime)
-           ,N'Published'
-           ,NULL
-           ,100
+           ,N'Active'
            ,NULL
            ,NULL
            ,NULL
@@ -69,19 +67,20 @@ def describe_when_a_record_is_missing_in_the_csv():
         # arrange - note csv file has only B123456
         insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
         insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
+        insert_user_section_association(connection, "UB123456", SOURCE_SYSTEM, 1, 1, 1)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "B234567", SOURCE_SYSTEM, 1, 1)
+        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1, 1)
+        insert_record(connection, "B234567", SOURCE_SYSTEM, 1, 1, 1)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - B234567 has been soft deleted
-        LMSSectionActivity = connection.execute(
-            "SELECT SourceSystemIdentifier from lms.LMSSectionActivity WHERE DeletedAt IS NOT NULL"
+        LMSUserAttendanceEvent = connection.execute(
+            "SELECT SourceSystemIdentifier from lms.LMSUserAttendanceEvent WHERE DeletedAt IS NOT NULL"
         ).fetchall()
-        assert len(LMSSectionActivity) == 1
-        assert LMSSectionActivity[0]["SourceSystemIdentifier"] == "B234567"
+        assert len(LMSUserAttendanceEvent) == 1
+        assert LMSUserAttendanceEvent[0]["SourceSystemIdentifier"] == "B234567"
 
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
@@ -93,24 +92,27 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
         insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
         insert_section(connection, "F098765", "FirstLMS", 2)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "F234567", "FirstLMS", 2, 2)
+        insert_user_section_association(connection, "UB123456", SOURCE_SYSTEM, 1, 1, 1)
+        insert_user_section_association(connection, "UF123456", SOURCE_SYSTEM, 2, 2, 2)
+
+        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1, 1)
+        insert_record(connection, "F234567", "FirstLMS", 2, 2, 2)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
-        LMSSectionActivity = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSSectionActivity"
+        LMSUserAttendanceEvent = connection.execute(
+            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSUserAttendanceEvent"
         ).fetchall()
-        assert len(LMSSectionActivity) == 2
+        assert len(LMSUserAttendanceEvent) == 2
         assert [SOURCE_SYSTEM, "FirstLMS"] == [
-            x["SourceSystem"] for x in LMSSectionActivity
+            x["SourceSystem"] for x in LMSUserAttendanceEvent
         ]
         assert ["B123456", "F234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSSectionActivity
+            x["SourceSystemIdentifier"] for x in LMSUserAttendanceEvent
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSSectionActivity]
+        assert [None, None] == [x["DeletedAt"] for x in LMSUserAttendanceEvent]
 
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
@@ -121,21 +123,24 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
         insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
         insert_section(connection, "B109876", SOURCE_SYSTEM, 2)
 
-        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1)
-        insert_record(connection, "B234567", SOURCE_SYSTEM, 2, 1)
+        insert_user_section_association(connection, "UB098765", SOURCE_SYSTEM, 1, 1, 1)
+        insert_user_section_association(connection, "UF109876", SOURCE_SYSTEM, 2, 1, 2)
+
+        insert_record(connection, "B123456", SOURCE_SYSTEM, 1, 1, 1)
+        insert_record(connection, "B234567", SOURCE_SYSTEM, 2, 1, 2)
 
         # act
         run_loader(main_arguments(adapter, CSV_PATH))
 
         # assert - records are unchanged
-        LMSSectionActivity = connection.execute(
-            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSSectionActivity"
+        LMSUserAttendanceEvent = connection.execute(
+            "SELECT SourceSystem, SourceSystemIdentifier, DeletedAt from lms.LMSUserAttendanceEvent"
         ).fetchall()
-        assert len(LMSSectionActivity) == 2
+        assert len(LMSUserAttendanceEvent) == 2
         assert [SOURCE_SYSTEM, SOURCE_SYSTEM] == [
-            x["SourceSystem"] for x in LMSSectionActivity
+            x["SourceSystem"] for x in LMSUserAttendanceEvent
         ]
         assert ["B123456", "B234567"] == [
-            x["SourceSystemIdentifier"] for x in LMSSectionActivity
+            x["SourceSystemIdentifier"] for x in LMSUserAttendanceEvent
         ]
-        assert [None, None] == [x["DeletedAt"] for x in LMSSectionActivity]
+        assert [None, None] == [x["DeletedAt"] for x in LMSUserAttendanceEvent]

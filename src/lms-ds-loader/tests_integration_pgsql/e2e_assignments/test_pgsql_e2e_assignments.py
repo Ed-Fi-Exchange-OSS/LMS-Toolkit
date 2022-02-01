@@ -12,7 +12,7 @@ from tests_integration_pgsql.pgsql_e2e_helper import (
     insert_assignment
 )
 
-CSV_PATH = "tests_integration_sql/e2e_assignments/data"
+CSV_PATH = "tests_integration_mssql/e2e_assignments/data"
 SOURCE_SYSTEM = "BestLMS"
 
 

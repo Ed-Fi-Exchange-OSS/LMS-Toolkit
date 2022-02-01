@@ -6,12 +6,12 @@ from typing import Tuple
 from sqlalchemy.engine.base import Connection
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.loader_facade import run_loader
-from tests_integration_sql.mssql_e2e_helper import (
+from tests_integration_mssql.mssql_e2e_helper import (
     insert_section,
     main_arguments,
 )
 
-CSV_PATH = "tests_integration_sql/e2e_assignments/data"
+CSV_PATH = "tests_integration_mssql/e2e_assignments/data"
 SOURCE_SYSTEM = "BestLMS"
 
 

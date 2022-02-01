@@ -13,7 +13,7 @@ from tests_integration_pgsql.pgsql_e2e_helper import (
     main_arguments,
 )
 
-CSV_PATH = "tests_integration_sql/e2e_attendance/data"
+CSV_PATH = "tests_integration_mssql/e2e_attendance/data"
 SOURCE_SYSTEM = "BestLMS"
 
 
