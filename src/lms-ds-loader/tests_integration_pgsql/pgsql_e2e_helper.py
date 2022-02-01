@@ -5,17 +5,19 @@
 from sqlalchemy.engine.base import Connection
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.helpers.argparser import MainArguments
-from tests_integration_pgsql.conftest import Settings
+from tests_integration_pgsql.conftest import ConnectionSettings
 
 
-def main_arguments(operations_adapter: SqlLmsOperations, csv_path: str) -> MainArguments:
+def main_arguments(
+    operations_adapter: SqlLmsOperations, csv_path: str, settings: ConnectionSettings
+) -> MainArguments:
     args = MainArguments(
         csv_path,
         "postgresql",
         "INFO",
-        Settings.host,
-        Settings.db,
-        Settings.port,
+        settings.host,
+        settings.db,
+        settings.port,
         False,
         False,
     )

@@ -161,3 +161,6 @@ service-account.json
 **/obj/
 .dtbcache.v2
 **/.vs/
+
+# pyenv
+.python-version

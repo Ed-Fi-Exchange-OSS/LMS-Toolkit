@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass()
 class PgsqlServerConfig:
     server: str
     port: str

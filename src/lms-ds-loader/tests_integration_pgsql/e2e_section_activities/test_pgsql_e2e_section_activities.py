@@ -11,8 +11,9 @@ from tests_integration_pgsql.pgsql_e2e_helper import (
     insert_user,
     main_arguments,
 )
+from tests_integration_pgsql.conftest import ConnectionSettings
 
-CSV_PATH = "tests_integration_sql/e2e_section_activities/data"
+CSV_PATH = "tests_integration_mssql/e2e_section_activities/data"
 SOURCE_SYSTEM = "BestLMS"
 
 
@@ -62,9 +63,9 @@ def insert_record(
 
 def describe_when_a_record_is_missing_in_the_csv():
     def it_should_soft_delete_the_record(
-        test_pgsql_db: Tuple[SqlLmsOperations, Connection]
+        test_pgsql_db: Tuple[SqlLmsOperations, Connection, ConnectionSettings]
     ):
-        adapter, connection = test_pgsql_db
+        adapter, connection, settings = test_pgsql_db
 
         # arrange - note csv file has only B123456
         insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
@@ -74,7 +75,7 @@ def describe_when_a_record_is_missing_in_the_csv():
         insert_record(connection, "B234567", SOURCE_SYSTEM, 1, 1)
 
         # act
-        run_loader(main_arguments(adapter, CSV_PATH))
+        run_loader(main_arguments(adapter, CSV_PATH, settings))
 
         # assert - B234567 has been soft deleted
         LMSSectionActivity = connection.execute(
@@ -86,9 +87,9 @@ def describe_when_a_record_is_missing_in_the_csv():
 
 def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
     def it_should_match_the_record(
-        test_pgsql_db: Tuple[SqlLmsOperations, Connection]
+        test_pgsql_db: Tuple[SqlLmsOperations, Connection, ConnectionSettings]
     ):
-        adapter, connection = test_pgsql_db
+        adapter, connection, settings = test_pgsql_db
         insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
         insert_user(connection, "U123456", "FirstLMS", 2)
 
@@ -99,7 +100,7 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
         insert_record(connection, "F234567", "FirstLMS", 2, 2)
 
         # act
-        run_loader(main_arguments(adapter, CSV_PATH))
+        run_loader(main_arguments(adapter, CSV_PATH, settings))
 
         # assert - records are unchanged
         LMSSectionActivity = connection.execute(
@@ -117,9 +118,9 @@ def describe_when_a_record_is_from_one_source_system_of_two_in_the_csv():
 
 def describe_when_a_record_is_from_one_source_system_in_the_csv():
     def it_should_match_the_record(
-        test_pgsql_db: Tuple[SqlLmsOperations, Connection]
+        test_pgsql_db: Tuple[SqlLmsOperations, Connection, ConnectionSettings]
     ):
-        adapter, connection = test_pgsql_db
+        adapter, connection, settings = test_pgsql_db
         insert_user(connection, "U123456", SOURCE_SYSTEM, 1)
 
         insert_section(connection, "B098765", SOURCE_SYSTEM, 1)
@@ -129,7 +130,7 @@ def describe_when_a_record_is_from_one_source_system_in_the_csv():
         insert_record(connection, "B234567", SOURCE_SYSTEM, 2, 1)
 
         # act
-        run_loader(main_arguments(adapter, CSV_PATH))
+        run_loader(main_arguments(adapter, CSV_PATH, settings))
 
         # assert - records are unchanged
         LMSSectionActivity = connection.execute(

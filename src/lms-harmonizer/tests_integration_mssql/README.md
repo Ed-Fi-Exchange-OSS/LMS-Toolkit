@@ -22,13 +22,13 @@ are ignored when intergrated security is set to true.
 1. Run integration tests with defaults:
 
    ```bash
-   poetry run pytest tests_integration_sql
+   poetry run pytest tests_integration_mssql
    ```
 
 1. Run integration tests with username/password security:
 
    ```bash
-   poetry run pytest tests_integration_sql --useintegratedsecurity=false --username=joe --password=p1234
+   poetry run pytest tests_integration_mssql --useintegratedsecurity=false --username=joe --password=p1234
    ```
 
 ## Configuration

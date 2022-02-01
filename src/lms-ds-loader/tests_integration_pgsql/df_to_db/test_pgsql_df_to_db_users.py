@@ -7,6 +7,7 @@ from pandas import DataFrame
 from sqlalchemy.engine.base import Connection
 from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_lms_ds_loader.df_to_db import upload_users
+from tests_integration_pgsql.conftest import ConnectionSettings
 
 USER_NAMES = ["Alice", "Bob", "Charlie"]
 ORIGINAL_USER_ROLE = "5"
@@ -39,9 +40,9 @@ def describe_when_a_user_is_updated():
     UPDATED_USER_ROLE = "55"
 
     def it_should_have_the_update_in_production(
-        test_pgsql_db: Tuple[SqlLmsOperations, Connection]
+        test_pgsql_db: Tuple[SqlLmsOperations, Connection, ConnectionSettings]
     ):
-        adapter, connection = test_pgsql_db
+        adapter, connection, _ = test_pgsql_db
 
         def initial_upload():
             # act
@@ -112,9 +113,9 @@ def describe_when_a_user_goes_missing_then_reappears():
     USER_NAMES_WITHOUT_BOB = ["Alice", "Charlie"]
 
     def it_should_soft_delete_then_restore(
-        test_pgsql_db: Tuple[SqlLmsOperations, Connection]
+        test_pgsql_db: Tuple[SqlLmsOperations, Connection, ConnectionSettings]
     ):
-        adapter, connection = test_pgsql_db
+        adapter, connection, _ = test_pgsql_db
 
         def initial_upload():
             # act

@@ -4,7 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Iterable, Tuple
+from os import environ
+
 import pytest
+from dotenv import load_dotenv
+
 from unittest.mock import MagicMock
 from pandas import DataFrame
 from sqlalchemy.engine.base import Connection, Transaction
@@ -15,23 +19,85 @@ from edfi_lms_ds_loader.sql_lms_operations import SqlLmsOperations
 from edfi_sql_adapter.sql_adapter import (
     Adapter,
     create_mssql_adapter_with_integrated_security,
+    create_mssql_adapter,
 )
 
+load_dotenv()
 
-def _new_mssql_adapter() -> Adapter:
-    # TODO: create method for injecting these values, for test
-    return create_mssql_adapter_with_integrated_security(
-        "localhost", "test_integration_lms_toolkit", 1433, False, False
+
+def pytest_addoption(parser):
+    """
+    Injects command line options mirroring the harmonizer itself
+    """
+    parser.addoption(
+        "--server",
+        action="store",
+        default="localhost",
+        help="Database server name or IP address",
+    )
+    parser.addoption(
+        "--port",
+        action="store",
+        default=environ.get("DB_PORT", 1433),
+        help="Database server port number",
+    )
+    parser.addoption(
+        "--dbname",
+        action="store",
+        default=environ.get("DB_NAME", "test_integration_lms_toolkit"),
+        help="Name of the test database",
+    )
+    parser.addoption(
+        "--useintegratedsecurity",
+        type=bool,
+        action="store",
+        default=environ.get("USE_INTEGRATED_SECURITY", True),
+        help="Use Integrated Security for the database connection",
+    )
+    parser.addoption(
+        "--username",
+        action="store",
+        default=environ.get("DB_USER", "sa"),
+        help="Database username when not using integrated security",
+    )
+    parser.addoption(
+        "--password",
+        action="store",
+        default=environ.get("DB_PASSWORD", ""),
+        help="Database user password, when not using integrated security",
+    )
+    parser.addoption(
+        "--skip-teardown",
+        type=bool,
+        action="store",
+        default=environ.get("SKIP_TEARDOWN", False),
+        help="Skip the teardown of the database. Potentially useful for debugging.",
     )
 
 
+def _new_mssql_adapter(request) -> Adapter:
+    use_integrated_security = request.config.getoption("--useintegratedsecurity")
+    server = request.config.getoption("--server")
+    port = request.config.getoption("--port")
+    db_name = request.config.getoption("--dbname")
+    username = request.config.getoption("--username")
+    password = request.config.getoption("--password")
+
+    if use_integrated_security is True:
+        return create_mssql_adapter_with_integrated_security(
+            server, db_name, port, False, False
+        )
+
+    return create_mssql_adapter(username, password, server, db_name, port)
+
+
 @pytest.fixture(scope="session")
-def mssql_connection() -> Iterable[Connection]:
+def mssql_connection(request) -> Iterable[Connection]:
     """
     Fixture that sets up a connection to use, and migrate the tables.
     Assumes existence of local SQLServer DB named 'test_integration_lms_toolkit'
     """
-    adapter = _new_mssql_adapter()
+    adapter = _new_mssql_adapter(request)
     migrate(adapter)
 
     connection = adapter.engine.connect()

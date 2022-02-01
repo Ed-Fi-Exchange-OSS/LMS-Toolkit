@@ -6,7 +6,7 @@
 from dataclasses import dataclass
 from os import environ
 
-from typing import Iterable, Tuple, Optional
+from typing import Iterable, Tuple
 import pytest
 from unittest.mock import MagicMock
 from pandas import DataFrame
@@ -26,27 +26,58 @@ from edfi_sql_adapter.sql_adapter import (
 load_dotenv()
 
 
-def _get_env_string(key: str, default: Optional[str] = None) -> str:
-    value = environ.get(key)
-    if value is None:
-        if default is None:
-            raise RuntimeError(
-                f"Environment variable {key} is not set and there is no default value."
-            )
-        return default
-
-    return value
-
-
-def _get_env_int(key: str, default: Optional[int]) -> int:
-    value = _get_env_string(key, str(default))
-
-    if not value.isdigit():
-        raise RuntimeError(
-            f"Invalid value {value} for environment variable {key}, which should be a number."
-        )
-
-    return int(value)
+def pytest_addoption(parser):
+    """
+    Injects command line options mirroring the harmonizer itself
+    """
+    parser.addoption(
+        "--server",
+        action="store",
+        default="localhost",
+        help="Database server name or IP address",
+    )
+    parser.addoption(
+        "--port",
+        action="store",
+        default=environ.get("DB_PORT", 1433),
+        help="Database server port number",
+    )
+    parser.addoption(
+        "--dbname",
+        action="store",
+        default=environ.get("DB_NAME", "test_integration_lms_toolkit"),
+        help="Name of the test database",
+    )
+    parser.addoption(
+        "--useintegratedsecurity",
+        type=bool,
+        action="store",
+        default=environ.get("USE_INTEGRATED_SECURITY", True),
+        help="Use Integrated Security for the database connection",
+    )
+    parser.addoption(
+        "--username",
+        action="store",
+        default=environ.get("DB_USER", "sa"),
+        help="Database username when not using integrated security",
+    )
+    parser.addoption(
+        "--password",
+        action="store",
+        default=environ.get("DB_PASSWORD", ""),
+        help="Database user password, when not using integrated security",
+    )
+    parser.addoption(
+        "--skip-teardown",
+        type=bool,
+        action="store",
+        default=environ.get("SKIP_TEARDOWN", False),
+        help="Skip the teardown of the database. Potentially useful for debugging.",
+    )
+    parser.addoption(
+        "--psql_cli",
+        help="This only exists for compatibility with the LMS Harmonizer"
+    )
 
 
 @dataclass
@@ -58,23 +89,34 @@ class ConnectionSettings:
     db: str
 
 
-Settings = ConnectionSettings(
-    _get_env_string("PGSQL_HOST", "localhost"),
-    _get_env_int("PGSQL_PORT", 5432),
-    _get_env_string("PGSQL_USER", "postgres"),
-    _get_env_string("PGSQL_PASSWORD"),
-    _get_env_string("DB_NAME", "postgres"),
-)
+Settings = None
+
+
+def GetSettings(request) -> ConnectionSettings:
+    global Settings
+
+    if Settings is None:
+        Settings = ConnectionSettings(
+            host=request.config.getoption("--server"),
+            port=request.config.getoption("--port"),
+            user=request.config.getoption("--username"),
+            password=request.config.getoption("--password"),
+            db=request.config.getoption("--dbname")
+        )
+
+    return Settings
 
 
 @pytest.fixture(scope="session")
-def pgsql_connection() -> Iterable[Connection]:
+def pgsql_connection(request) -> Iterable[Connection]:
     """
     Fixture that sets up a connection to use, and migrate the tables.
     Creates the test database if it does not yet exist.
     """
+    settings = GetSettings(request)
+
     adapter = create_postgresql_adapter(
-        Settings.user, Settings.password, Settings.host, Settings.db, Settings.port
+        settings.user, settings.password, settings.host, settings.db, settings.port
     )
 
     if not database_exists(adapter.engine.url):
@@ -90,7 +132,7 @@ def pgsql_connection() -> Iterable[Connection]:
 @pytest.fixture()
 def test_pgsql_db(
     pgsql_connection: Connection, request
-) -> Tuple[SqlLmsOperations, Connection]:
+) -> Tuple[SqlLmsOperations, Connection, ConnectionSettings]:
     """
     Fixture that takes the set-up connection and wraps in a transaction. Transaction
     will be rolled-back automatically after each test.
@@ -133,4 +175,4 @@ def test_pgsql_db(
     adapter: SqlLmsOperations = SqlLmsOperations(MagicMock())
     adapter.engine = DbEngine.POSTGRESQL
 
-    return (adapter, pgsql_connection)
+    return (adapter, pgsql_connection, GetSettings(request))

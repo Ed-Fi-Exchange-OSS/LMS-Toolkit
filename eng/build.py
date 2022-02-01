@@ -26,12 +26,32 @@ def _display_help():
 * build
 * publish
 * ci:test
+* ci:integration-test:mssql
+* ci:integration-test:pgsql
 * ci:publish
 
 For example, to run unit tests with code coverage, optimized for TeamCity
 output, on utility `lms-ds-loader`:
 
 > ./build.py coverage:xml lms-ds-loader
+
+When running the integration tests, use environment variables to inject
+database settings. Relevant environment variables, with default values shown:
+
+* SQL Server
+  * MSSQL_INTEGRATED_SECURITY = True; or set to False
+  * MSSQL_USER = "sa"; only used if MSSQL_INTEGRATED_SECURITY is False
+  * MSSQL_PASSWORD = ""; will fail if you don't set it
+  * MSSQL_HOST = "localhost"
+  * MSSQL_PORT = 1433
+  * DB_NAME = "test_integration_lms_toolkit"
+* PostgreSQL
+  * PGSQL_HOST = "localhost"
+  * PGSQL_USER = "postgres
+  * PGSQL_PASSWORD = "postgres"
+  * PGSQL_PORT = 5432
+  * DB_NAME = "test_integration_lms_toolkit"
+  * PSQL_CLI = "psql"; can change to use exact path to psql executable
 """
     print(message)
     exit(-1)
@@ -41,10 +61,7 @@ def _run_command(command: List[str], exit_immediately: bool = True):
 
     print("\033[95m" + " ".join(command) + "\033[0m")
 
-    # Some system configurations on Windows-based CI servers have trouble
-    # finding poetry, others do not. Explicitly calling "cmd /c" seems to help,
-    # though unsure why.
-
+    # On Windows, must run inside of cmd.exe in order to get the user's $PATH.
     if os.name == "nt":
         # All versions of Windows are "nt"
         command = ["cmd", "/c", *command]
@@ -89,18 +106,64 @@ def _run_tests(exit_immediately: bool = True):
     )
 
 
-def _run_integration_tests_on_github(exit_immediately: bool = True):
+def _run_mssql_tests(exit_immediately: bool = True):
+
+    credentials = list()
+    if os.getenv("MSSQL_INTEGRATED_SECURITY", True) is True:
+        credentials.append("--useintegratedsecurity=true")
+    else:
+        credentials.append("--useintegratedsecurity=false")
+        credentials.append(f"--username={os.getenv('MSSQL_USER', 'sa')}")
+        credentials.append(f"--password={os.getenv('MSSQL_PASSWORD', '')}")
+
     _run_command(
         [
             "poetry",
             "run",
             "pytest",
             "tests_integration_mssql",
-            "--useintegratedsecurity=false",
-            "--username=sa",
-            # Hardcoded password matches temporary SQL Server
-            # Docker container instance
-            "--password=abcdefgh1!",
+            *credentials,
+            f"--server={os.getenv('MSSQL_HOST', 'localhost')}",
+            f"--port={os.getenv('MSSQL_PORT', 1433)}",
+            f"--dbname={os.getenv('DB_NAME', 'test_integration_lms_toolkit')}",
+        ],
+        exit_immediately,
+    )
+
+
+def _run_pgsql_tests(exit_immediately: bool = True):
+    _run_command(
+        [
+            "psql",
+            "-b",
+            "-h",
+            os.getenv("PGSQL_HOST", "localhost"),
+            "-p",
+            os.getenv("PGSQL_PORT", "5432"),
+            "-U",
+            os.getenv("PGSQL_USER", "postgres"),
+            "-d",
+            "postgres",
+            "-c",
+            "select version()",
+        ],
+        exit_immediately=False,
+    )
+    _run_command(
+        [
+            "poetry",
+            "run",
+            "pytest",
+            "tests_integration_pgsql/",
+            "-s",
+            "-k",
+            "it_runs_query_for_section_summary_without_error",
+            f"--server={os.getenv('PGSQL_HOST', 'localhost')}",
+            f"--username={os.getenv('PGSQL_USER','postgres')}",
+            f"--password={os.getenv('PGSQL_PASSWORD', 'postgres')}",
+            f"--port={os.getenv('PGSQL_PORT', '5432')}",
+            f"--dbname={os.getenv('DB_NAME', 'test_integration_lms_toolkit')}",
+            f"--psql_cli={os.getenv('PSQL_CLI','psql')}",
         ],
         exit_immediately,
     )
@@ -200,12 +263,20 @@ def _run_ci_test():
     _run_lint(True)
 
 
-def _run_ci_integration_test():
+def _run_ci_mssql_test():
     """
     Calls the commands required for a continuous integration testing job.
     """
     _run_install(False)
-    _run_integration_tests_on_github(False)
+    _run_mssql_tests(False)
+
+
+def _run_ci_pgsql_test():
+    """
+    Calls the commands required for a continuous integration testing job.
+    """
+    _run_install(False)
+    _run_pgsql_tests(False)
 
 
 def _run_ci_publish():
@@ -237,7 +308,9 @@ if __name__ == "__main__":
         "build": _run_build,
         "publish": _run_publish,
         "ci:test": _run_ci_test,
-        "ci:integration-test": _run_ci_integration_test,
+        "ci:integration-test": _run_ci_mssql_test,
+        "ci:integration-test:mssql": _run_ci_mssql_test,
+        "ci:integration-test:pgsql": _run_ci_pgsql_test,
         "ci:publish": _run_ci_publish,
     }
 

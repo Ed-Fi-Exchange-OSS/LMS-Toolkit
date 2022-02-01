@@ -44,7 +44,7 @@ class When_getting_the_summary_report(TestCase):
             0,  # output for assignments
             0,  # output for submissions
             0,  # output for assignment type descriptor
-            0  # output for submission status descriptor
+            0,  # output for submission status descriptor
         ]
 
         # Act
@@ -64,7 +64,7 @@ class When_getting_the_summary_report(TestCase):
             0,  # output for assignments
             0,  # output for submissions
             0,  # output for assignment type descriptor
-            0  # output for submission status descriptor
+            0,  # output for submission status descriptor
         ]
 
         # Act
@@ -84,14 +84,16 @@ class When_getting_the_summary_report(TestCase):
             1,  # output for assignments
             0,  # output for submissions
             0,  # output for assignment type descriptor
-            0  # output for submission status descriptor
+            0,  # output for submission status descriptor
         ]
 
         # Act
         with self.assertLogs() as log:
             exceptions_reports.print_summary(adapter)
 
-        assert "There are 1 unmatched Assignments and 0 unmatched Submissions" in str(log.output)
+        assert "There are 1 unmatched Assignments and 0 unmatched Submissions" in str(
+            log.output
+        )
 
     def test_given_there_is_one_unmatched_submission_then_it_should_report_a_warning(
         self,
@@ -104,14 +106,16 @@ class When_getting_the_summary_report(TestCase):
             0,  # output for assignments
             1,  # output for submissions
             0,  # output for assignment type descriptor
-            0  # output for submission status descriptor
+            0,  # output for submission status descriptor
         ]
 
         # Act
         with self.assertLogs() as log:
             exceptions_reports.print_summary(adapter)
 
-        assert "There are 0 unmatched Assignments and 1 unmatched Submissions" in str(log.output)
+        assert "There are 0 unmatched Assignments and 1 unmatched Submissions" in str(
+            log.output
+        )
 
     def test_given_there_is_one_unmatched_assignment_type_descriptor_then_it_should_report_a_warning(
         self,
@@ -124,14 +128,17 @@ class When_getting_the_summary_report(TestCase):
             0,  # output for assignments
             0,  # output for submissions
             1,  # output for assignment type descriptor
-            0  # output for submission status descriptor
+            0,  # output for submission status descriptor
         ]
 
         # Act
         with self.assertLogs() as log:
             exceptions_reports.print_summary(adapter)
 
-        assert "There are 1 missing descriptors for Assignment Category and 0 missing descriptors for Submission Status" in str(log.output)
+        assert (
+            "There are 1 missing descriptors for Assignment Category and 0 missing descriptors for Submission Status"
+            in str(log.output)
+        )
 
     def test_given_there_is_one_unmatched_submission_status_descriptor_then_it_should_report_a_warning(
         self,
@@ -144,14 +151,17 @@ class When_getting_the_summary_report(TestCase):
             0,  # output for assignments
             0,  # output for submissions
             0,  # output for assignment type descriptor
-            1  # output for submission status descriptor
+            1,  # output for submission status descriptor
         ]
 
         # Act
         with self.assertLogs() as log:
             exceptions_reports.print_summary(adapter)
 
-        assert "There are 0 missing descriptors for Assignment Category and 1 missing descriptors for Submission Status" in str(log.output)
+        assert (
+            "There are 0 missing descriptors for Assignment Category and 1 missing descriptors for Submission Status"
+            in str(log.output)
+        )
 
 
 @pytest.fixture
@@ -173,10 +183,12 @@ def describe_when_writing_exception_reports() -> None:
         df_sections = pd.DataFrame([{"b": 2}])
         df_assignments = pd.DataFrame([{"c": 2}])
         df_submissions = pd.DataFrame([{"d": 2}])
-        pd.read_sql = Mock(side_effect=[df_sections, df_users, df_assignments, df_submissions])
+        pd.read_sql = Mock(
+            side_effect=[df_sections, df_users, df_assignments, df_submissions]
+        )
 
         # Act
-        exceptions_reports.create_exception_reports(Mock(), OUTPUT_DIR)
+        exceptions_reports.create_exception_reports("postgresql", Mock(), OUTPUT_DIR)
 
     def it_should_create_the_output_directory(given_there_are_exceptions, fs) -> None:
         assert os.path.exists(OUTPUT_DIR)
@@ -217,7 +229,9 @@ def describe_when_writing_exception_reports() -> None:
             contents = f.read()
             assert contents == "b\n2\n"
 
-    def it_should_create_the_descriptors_directory(given_there_are_exceptions, fs) -> None:
+    def it_should_create_the_descriptors_directory(
+        given_there_are_exceptions, fs
+    ) -> None:
         assert os.path.exists(os.path.join(OUTPUT_DIR, "descriptors"))
 
     def it_should_have_created_a_descriptors_csv_file(

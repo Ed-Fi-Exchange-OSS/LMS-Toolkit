@@ -115,10 +115,11 @@ poetry run python edfi_lms_harmonizer --server localhost --dbname lms_toolkit --
 
 1. Style check: `poetry run flake8`
 1. Static typing check: `poetry run mypy .`
-1. Run unit tests: `poetry run pytest`
-1. Run unit tests with code coverage: `poetry run coverage run -m pytest`
+1. Run unit tests: `poetry run pytest tests`
+1. Run unit tests with code coverage: `poetry run coverage run -m pytest tests`
 1. View code coverage: `poetry run coverage report`
-1. Run SQL integration tests: `poetry run pytest tests_integration_sql`
+1. Run SQL Server integration tests: `poetry run pytest tests_integration_mssql`
+1. Run PostgreSQL integration tests: `poetry run pytest tests_integration_pgsql`
 
 _Also see
 [build.py](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/blob/main/docs/build.md)_
@@ -126,12 +127,14 @@ for use of the build script.
 
 ### Integration Testing
 
-See [Integration test setup](./tests_integration_sql/README.md) for information on
+See Integration test setup instructions ([SQL
+Server](./tests_integration_mssql/README.md) |
+[PostgreSQL](./tests_integration_pgsql/README.md)) for information on
 configuring integration testing to work in various environments.
 
 ## Legal Information
 
-Copyright (c) 2021 Ed-Fi Alliance, LLC and contributors.
+Copyright (c) 2022 Ed-Fi Alliance, LLC and contributors.
 
 Licensed under the [Apache License, Version
 2.0](https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/blob/main/LICENSE) (the

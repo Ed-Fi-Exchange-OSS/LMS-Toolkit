@@ -12,17 +12,21 @@ import pandas as pd
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from edfi_sql_adapter.sql_adapter import Adapter
 from edfi_lms_harmonizer.sql_for_exceptions_report import (
-    QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS,
+    QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_MSSQL,
+    QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_POSTGRESQL,
     QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_SUMMARY,
     QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS,
     QUERY_FOR_ASSIGNMENT_EXCEPTIONS,
     QUERY_FOR_SECTION_SUMMARY,
     QUERY_FOR_SECTIONS,
-    QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS,
+    QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_MSSQL,
+    QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_POSTGRESQL,
     QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_SUMMARY,
     QUERY_FOR_USERS,
-    QUERY_FOR_USERS_SUMMARY
+    QUERY_FOR_USERS_SUMMARY,
 )
+from edfi_lms_harmonizer.helpers.constants import DB_ENGINE
+
 
 SECTIONS = "sections"
 USERS = "users"
@@ -56,12 +60,8 @@ def _print_summary_for_sections_and_users(adapter: Adapter) -> None:
 
 
 def _print_summary_for_assignments_and_submissions(adapter: Adapter) -> None:
-    assignments_count = adapter.get_int(
-        QUERY_FOR_ASSIGNMENT_EXCEPTIONS
-    )
-    submissions_count = adapter.get_int(
-        QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS
-    )
+    assignments_count = adapter.get_int(QUERY_FOR_ASSIGNMENT_EXCEPTIONS)
+    submissions_count = adapter.get_int(QUERY_FOR_ASSIGNMENT_SUBMISSION_EXCEPTIONS)
     if assignments_count > 0 or submissions_count > 0:
         logger.warning(
             f"There are {assignments_count} unmatched Assignments and"
@@ -99,7 +99,9 @@ def print_summary(adapter: Adapter) -> None:
 
 
 @catch_exceptions
-def create_exception_reports(adapter: Adapter, output_directory: str) -> None:
+def create_exception_reports(
+    engine: str, adapter: Adapter, output_directory: str
+) -> None:
     logger.info("Writing the Sections exception report")
     sections = pd.read_sql(QUERY_FOR_SECTIONS, adapter.engine)
     sections.to_csv(_get_file_path(output_directory, SECTIONS), index=False)
@@ -111,10 +113,18 @@ def create_exception_reports(adapter: Adapter, output_directory: str) -> None:
     logger.info(
         "Writing the Assignment Category and Submission Status missing descriptors report"
     )
-    assignment_cat = pd.read_sql(QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS, adapter.engine)
-    submission_status = pd.read_sql(
-        QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS, adapter.engine
-    )
+
+    assignment_cat_sql: str
+    submission_status_sql: str
+    if engine == DB_ENGINE.MSSQL:
+        assignment_cat_sql = QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_MSSQL
+        submission_status_sql = QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_MSSQL
+    else:
+        assignment_cat_sql = QUERY_FOR_ASSIGNMENT_CAT_DESCRIPTORS_POSTGRESQL
+        submission_status_sql = QUERY_FOR_SUBMISSION_STATUS_DESCRIPTORS_POSTGRESQL
+
+    assignment_cat = pd.read_sql(assignment_cat_sql, adapter.engine)
+    submission_status = pd.read_sql(submission_status_sql, adapter.engine)
     descriptors_report = pd.concat([assignment_cat, submission_status])
     descriptors_report.to_csv(
         _get_file_path(output_directory, DESCRIPTORS), index=False
