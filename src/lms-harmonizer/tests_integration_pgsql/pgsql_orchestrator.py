@@ -198,16 +198,22 @@ def _load_lms_migration_scripts(config: PgsqlServerConfig):
     _load_ordered_scripts(config, _lms_migration_script_path())
 
 
+def _drop_database(config: PgsqlServerConfig, db_name: str) -> None:
+    sql = f"select pg_terminate_backend(pid) from pg_stat_activity where pid != pg_backend_pid() and datname = '{db_name}';"
+    _execute_sql_against_master(config, sql)
+    _execute_sql_against_master(config, f"drop database if exists {db_name};")
+
+
 def create_snapshot(config: PgsqlServerConfig):
-    _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
+    _drop_database(config, config.db_name)
     _execute_sql_against_master(
          config, f"create database {config.db_name} with template {SNAPSHOT_DATABASE};",
     )
 
 
 def delete_snapshot(config: PgsqlServerConfig):
-    _execute_sql_against_master(config, f"drop database if exists {config.db_name};")
-    _execute_sql_against_master(config, f"drop database if exists {SNAPSHOT_DATABASE};")
+    _drop_database(config, config.db_name)
+    _drop_database(config, SNAPSHOT_DATABASE)
 
 
 def restore_snapshot(config: PgsqlServerConfig):
