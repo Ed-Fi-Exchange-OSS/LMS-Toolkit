@@ -41,7 +41,8 @@ jobs:
         env:
           POSTGRES_PASSWORD: ${{ env.PGPASSWORD }}
         ports:
-          - 5432:5432
+          # will assign a random free host port
+          - 5432/tcp
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -82,16 +83,17 @@ jobs:
           sudo apt-get install --yes postgresql-client odbc-postgresql crudini
 
       - name: Wait for PostgreSQL and install pgcrypto
-        run: timeout 30s bash -c 'until psql -d postgres -h localhost -p 5432 -U postgres -c "create extension if not exists pgcrypto"; do sleep 5; done'
+        run: timeout 30s bash -c 'until psql -h localhost -d postgres -p $PGSQL_PORT -U postgres -c "create extension if not exists pgcrypto"; do sleep 5; done'
+        env:
+          PGSQL_PORT: ${{ job.services.postgres.ports[5432] }}
 
       - name: Update ODBC ini file
         run: sudo crudini --set --existing /etc/odbcinst.ini "PostgreSQL ANSI" Driver /usr/lib/x86_64-linux-gnu/odbc/psqlodbca.so
 
-      - name: Testing access to PostgreSQL
-        run: psql -b -h localhost -p 5432 -U postgres -d postgres -c "select version()"
-
       - name: Run CI Integration Task
         run: python ./eng/build.py ci:integration-test:pgsql ${{ env.PACKAGE_NAME }}
         env:
-            PGSQL_PASSWORD: ${{ env.PGPASSWORD }}
-            PGSQL_HOST: postgres
+          PGSQL_PASSWORD: ${{ env.PGPASSWORD }}
+          PGSQL_HOST: localhost
+          # get randomly assigned published port
+          PGSQL_PORT: ${{ job.services.postgres.ports[5432] }}
