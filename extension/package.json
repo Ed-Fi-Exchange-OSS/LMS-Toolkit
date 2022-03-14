@@ -8,8 +8,10 @@
     "atom-metaed": "3.0.1-dev.5"
   },
   "scripts": {
-    "prep": "cp -r ./EdFi.Ods.Extensions.LMSX ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX",
+    "prep:lnx": "cp -r ./EdFi.Ods.Extensions.LMSX ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX",
+    "prep:win": "xcopy .\\EdFi.Ods.Extensions.LMSX ..\\..\\Ed-Fi-ODS-Implementation\\Application\\EdFi.Ods.Extensions.LMSX /S /I",
     "deploy": "node ./node_modules/@edfi/metaed-odsapi-deploy/dist/index.js --source ./node_modules/@edfi/ed-fi-model-3.3b --source ./EdFiLMSMetaEd --target ../../ --defaultPluginTechVersion 5.3.0",
-    "keep": "cp -r ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX/* EdFi.Ods.Extensions.LMSX"
+    "keep:lnx": "cp -r ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX/* EdFi.Ods.Extensions.LMSX",
+    "keep:win": "xcopy ..\\..\\Ed-Fi-ODS-Implementation\\Application\\EdFi.Ods.Extensions.LMSX\\* .\\EdFi.Ods.Extensions.LMSX /S"
   }
 }
