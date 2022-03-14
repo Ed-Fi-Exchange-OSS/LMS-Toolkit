@@ -106,6 +106,12 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
     Initdev
     ```
 
+When you run the Web API, look at the base endpoint, which has metadata about
+your installation. Confirm that LMSX is listed in the data models. If not seen,
+please review the steps above. Particularly check that you selected the correct
+"PackageVersion" in step 2, matching the version of code that you are building
+(5.2.x or 5.3.x).
+
 ### Dynamic Plugin Into Runtime
 
 1. Download the correct version of the `EdFi.Suite3.RestApi.Databases` NuGet
@@ -157,6 +163,15 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
    entry under `Scripts`, just as done in step 3 above.
 7. Restart the web site in IIS.
 
+## Client Authorization
+
+To access the LMSX resources, API Clients need to have the "LMS Vendor" or
+"Ed-Fi Sandbox" claimset that is created by the installation process. The "SIS
+Vendor" claimset, by default, is insufficient. To access the LMSX descriptors,
+the client will instead need the "Ed-Fi Sandbox" or the "Bootstrap Descriptors
+and EdOrgs" permission. See _Bulk-Loading Default Descriptors_ below for
+additional notes on how to create an API client key and secret.
+
 ## Loading Descriptors
 
 ### Manually Loading Descriptors
@@ -172,12 +187,15 @@ This automated upload utilize the API Client Bulk Load utility from the
 [Ed-Fi-ODS](https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS) repository.
 
 1. Acquire a key and secret for bulk upload:
-   1. If following the steps above:
+   1. Using Sandbox Admin:
       1. Open the `appsettings.development.json` file in Visual Studio, under
          the SandboxAdmin project
       1. Use the key and secret found there for either the minimal or populated template
-   1. If using something other than Sandbox mode, then use Admin App to create a
+   1. Using Admin App: If using something other than Sandbox mode, then use Admin App to create a
       new key and secret using the Sandbox or Descriptor Bootstrap claimset.
+   1. Direct database setup: see [How To: Configure
+      Key/Secret](https://techdocs.ed-fi.org/pages/viewpage.action?pageId=95260307);
+      the default uses claimset "SIS Vendor". Change this to "Ed-Fi Sandbox".
 1. Customize [LoadDescriptors.ps1](../extension/LoadDescriptors.ps1) by pasting your
    key and secret into it. * _caution: do not commit these changes to source control_
 1. Review other parameters in that script and adjust as necessary.
