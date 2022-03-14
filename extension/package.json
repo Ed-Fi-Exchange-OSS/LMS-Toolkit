@@ -1,0 +1,15 @@
+{
+  "name": "lmsx-extension-builder",
+  "version": "1.0.0",
+  "description": "Build and deploy for the LMSX extension",
+  "repository": "https://github.com/Ed-Fi-Alliance-OSS/LMS-Toolkit",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "atom-metaed": "3.0.1-dev.5"
+  },
+  "scripts": {
+    "prep": "cp -r ./EdFi.Ods.Extensions.LMSX ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX",
+    "deploy": "node ./node_modules/@edfi/metaed-odsapi-deploy/dist/index.js --source ./node_modules/@edfi/ed-fi-model-3.3b --source ./EdFiLMSMetaEd --target ../../ --defaultPluginTechVersion 5.3.0",
+    "keep": "cp -r ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX/* EdFi.Ods.Extensions.LMSX"
+  }
+}
