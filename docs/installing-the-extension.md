@@ -116,7 +116,7 @@ please review the steps above. Particularly check that you selected the correct
 
 1. Download the correct version of the `EdFi.Suite3.RestApi.Databases` NuGet
    package from [Ed-Fi on Azure
-   Artifacts](https://dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging?_a=package&feed=EdFi%40Release&package=EdFi.Suite3.RestApi.Databases&protocolType=NuGet&view=versions).
+   Artifacts](https://dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_artifacts/feed/EdFi/NuGet/EdFi.Suite3.RestApi.Databases/5.4.203/versions).
    If you are targeting ODS/API version 5.2, then download version 5.2.14406. If
    targeting version 5.3, then download 5.3.1146.
    * If you have `nuget.exe` you can download and extract files with the
