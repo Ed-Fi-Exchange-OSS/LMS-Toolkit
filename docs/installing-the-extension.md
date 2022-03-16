@@ -87,7 +87,7 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
 
 1. Copy [lmsx.ps1](../extension/lmsx.ps1) to your
    `Ed-Fi-ODS-Implementation/Plugin` directory.
-2. Open the copy of `lmsx.ps1` and uncomment the correct "PackageVersion" entry
+2. Open your copy of `lmsx.ps1` and uncomment the correct "PackageVersion" entry
    for your target ODS/API version.
 3. In your `Ed-Fi-ODS-Implementation/Application/EdFi.Ods.WebApi` directory, run
    the following commands (:exclamation: if you already have any dynamic
@@ -106,11 +106,17 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
     Initdev
     ```
 
+When you run the Web API, look at the base endpoint, which has metadata about
+your installation. Confirm that LMSX is listed in the data models. If not seen,
+please review the steps above. Particularly check that you selected the correct
+"PackageVersion" in step 2, matching the version of code that you are building
+(5.2.x or 5.3.x).
+
 ### Dynamic Plugin Into Runtime
 
 1. Download the correct version of the `EdFi.Suite3.RestApi.Databases` NuGet
    package from [Ed-Fi on Azure
-   Artifacts](https://dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_packaging?_a=package&feed=EdFi%40Release&package=EdFi.Suite3.RestApi.Databases&protocolType=NuGet&view=versions).
+   Artifacts](https://dev.azure.com/ed-fi-alliance/Ed-Fi-Alliance-OSS/_artifacts/feed/EdFi/NuGet/EdFi.Suite3.RestApi.Databases/5.4.203/versions).
    If you are targeting ODS/API version 5.2, then download version 5.2.14406. If
    targeting version 5.3, then download 5.3.1146.
    * If you have `nuget.exe` you can download and extract files with the
@@ -127,7 +133,11 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
 2. Locate the directory for your WebAPI website. Does it have a `Plugin`
    sub-directory? If not, create it. Copy the full exact path for use in the
    next step.
-3. In the new `EdFi.Suite3.RestApi.Databases` directory, edit
+3. Copy [lmsx.ps1](../extension/lmsx.ps1) to your
+   `Ed-Fi-ODS-Implementation/Plugin` directory.
+4. Open your copy of `lmsx.ps1` and uncomment the correct "PackageVersion" entry
+   for your target ODS/API version.
+5. In the new `EdFi.Suite3.RestApi.Databases` directory, edit
    `configuration.json` and add "lmsx" to the `Plugin.Scripts` array, as shown
    below. Paste the `Plugin` directory path into the `Folder` entry below:
 
@@ -142,10 +152,10 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
    step, then the plugin will not load when you run the application at the final
    step below.
 
-4. In that same file, adjust the database connection strings and database engine
+6. In that same file, adjust the database connection strings and database engine
    as appropriate for your installation. If you are not sure what they are, then
    look in the `appsettings.json` file in your WebAPI directory.
-5. Run the database deployment process in PowerShell while in the
+7. Run the database deployment process in PowerShell while in the
    `EdFi.Suite3.RestApi.Databases` directory:
 
    ```powershell
@@ -153,9 +163,18 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
    Initialize-DeploymentEnvironment
    ```
 
-6. Open the `appsettings.json` file in your WebAPI directory, and add an "lmsx"
+8. Open the `appsettings.json` file in your WebAPI directory, and add an "lmsx"
    entry under `Scripts`, just as done in step 3 above.
-7. Restart the web site in IIS.
+9. Restart the web site in IIS.
+
+## Client Authorization
+
+To access the LMSX resources, API Clients need to have the "LMS Vendor" or
+"Ed-Fi Sandbox" claimset that is created by the installation process. The "SIS
+Vendor" claimset, by default, is insufficient. To access the LMSX descriptors,
+the client will instead need the "Ed-Fi Sandbox" or the "Bootstrap Descriptors
+and EdOrgs" permission. See _Bulk-Loading Default Descriptors_ below for
+additional notes on how to create an API client key and secret.
 
 ## Loading Descriptors
 
@@ -172,12 +191,15 @@ This automated upload utilize the API Client Bulk Load utility from the
 [Ed-Fi-ODS](https://github.com/Ed-Fi-Alliance-OSS/Ed-Fi-ODS) repository.
 
 1. Acquire a key and secret for bulk upload:
-   1. If following the steps above:
+   1. Using Sandbox Admin:
       1. Open the `appsettings.development.json` file in Visual Studio, under
          the SandboxAdmin project
       1. Use the key and secret found there for either the minimal or populated template
-   1. If using something other than Sandbox mode, then use Admin App to create a
+   1. Using Admin App: If using something other than Sandbox mode, then use Admin App to create a
       new key and secret using the Sandbox or Descriptor Bootstrap claimset.
+   1. Direct database setup: see [How To: Configure
+      Key/Secret](https://techdocs.ed-fi.org/pages/viewpage.action?pageId=95260307);
+      the default uses claimset "SIS Vendor". Change this to "Ed-Fi Sandbox".
 1. Customize [LoadDescriptors.ps1](../extension/LoadDescriptors.ps1) by pasting your
    key and secret into it. * _caution: do not commit these changes to source control_
 1. Review other parameters in that script and adjust as necessary.

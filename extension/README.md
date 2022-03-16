@@ -21,7 +21,7 @@ problem and you need to try again, it will be `5.3.2`. That is fine. In Azure
 Artifacts, we will never label `5.3.1` as a release and eventually it will be
 purged by retention rules.
 
-### MetaEd Build
+### MetaEd Output
 
 This repository contains post-MetaEd `assemblyMetadata.json` and `Artifacts`
 corresponding to ODS/API version 5.3, which is for Data Standard 3.3.1-b. To use
@@ -29,7 +29,27 @@ the extension for a newer release, the [MetaEd files](EdFiLMSMetaEd) need to be
 modified and rebuilt and deployed into the project folder per the normal MetaEd
 extension building process.
 
-### Build Process
+### MetaEd Build Process
+
+If there are modifications to the MetaEd files, you can rebuild from source at
+the command line without starting Atom, using the following commands:
+
+```bash
+# Linux
+yarn prep:lnx
+yarn deploy
+yarn keep:lnx
+
+# Windows
+yarn prep:win
+yarn deploy
+yarn keep:win
+```
+
+These commands require that you have already taken step 1 in the .NET Build
+Process below: checking out the correct tag.
+
+### .NET Build Process
 
 1. Retrieve the `Ed-Fi-ODS` and `Ed-Fi-ODS-Implementation` repositories and
    checkout the desired tag or branch.
@@ -37,6 +57,8 @@ extension building process.
      Docs](https://techdocs.ed-fi.org) for information on getting started.
 2. Copy this repository's `EdFi.Ods.Extensions.LMSX` folder into
    `Ed-Fi-ODS-Implementation/Application`.
+   * When switching between ODS/API versions, it can be helpful to run `git clean -xdf`
+     before step 2.
 3. Using PowerShell, add the project to the Ed-Fi-ODS solution file and as a
    reference in the WebAPI project.
 
