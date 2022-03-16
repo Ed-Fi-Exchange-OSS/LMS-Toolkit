@@ -87,7 +87,7 @@ not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
 
 1. Copy [lmsx.ps1](../extension/lmsx.ps1) to your
    `Ed-Fi-ODS-Implementation/Plugin` directory.
-2. Open the copy of `lmsx.ps1` and uncomment the correct "PackageVersion" entry
+2. Open your copy of `lmsx.ps1` and uncomment the correct "PackageVersion" entry
    for your target ODS/API version.
 3. In your `Ed-Fi-ODS-Implementation/Application/EdFi.Ods.WebApi` directory, run
    the following commands (:exclamation: if you already have any dynamic
@@ -133,7 +133,11 @@ please review the steps above. Particularly check that you selected the correct
 2. Locate the directory for your WebAPI website. Does it have a `Plugin`
    sub-directory? If not, create it. Copy the full exact path for use in the
    next step.
-3. In the new `EdFi.Suite3.RestApi.Databases` directory, edit
+3. Copy [lmsx.ps1](../extension/lmsx.ps1) to your
+   `Ed-Fi-ODS-Implementation/Plugin` directory.
+4. Open your copy of `lmsx.ps1` and uncomment the correct "PackageVersion" entry
+   for your target ODS/API version.
+5. In the new `EdFi.Suite3.RestApi.Databases` directory, edit
    `configuration.json` and add "lmsx" to the `Plugin.Scripts` array, as shown
    below. Paste the `Plugin` directory path into the `Folder` entry below:
 
@@ -148,10 +152,10 @@ please review the steps above. Particularly check that you selected the correct
    step, then the plugin will not load when you run the application at the final
    step below.
 
-4. In that same file, adjust the database connection strings and database engine
+6. In that same file, adjust the database connection strings and database engine
    as appropriate for your installation. If you are not sure what they are, then
    look in the `appsettings.json` file in your WebAPI directory.
-5. Run the database deployment process in PowerShell while in the
+7. Run the database deployment process in PowerShell while in the
    `EdFi.Suite3.RestApi.Databases` directory:
 
    ```powershell
@@ -159,9 +163,9 @@ please review the steps above. Particularly check that you selected the correct
    Initialize-DeploymentEnvironment
    ```
 
-6. Open the `appsettings.json` file in your WebAPI directory, and add an "lmsx"
+8. Open the `appsettings.json` file in your WebAPI directory, and add an "lmsx"
    entry under `Scripts`, just as done in step 3 above.
-7. Restart the web site in IIS.
+9. Restart the web site in IIS.
 
 ## Client Authorization
 
