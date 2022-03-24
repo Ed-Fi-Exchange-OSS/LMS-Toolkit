@@ -1,5 +1,8 @@
 name: Scan Actions
-on: push
+on:
+  push:
+    branches:
+      - gh_actions_test
 jobs:
   action-allowedlist:
     runs-on: ubuntu-latest
