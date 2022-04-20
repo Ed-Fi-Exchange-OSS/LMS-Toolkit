@@ -7,16 +7,8 @@ from datetime import datetime
 
 import pandas as pd
 
-from . import constants
-
-
-def _get_date_formated(date) -> str:
-    if not isinstance(date, str) or date == "":
-        return ""
-    return datetime.strftime(
-        datetime.strptime(date, "%Y-%m-%dT%H:%M:%S%z"), "%Y/%m/%d %H:%M:%S"
-    )
-
+from edfi_canvas_extractor.mapping import constants
+from edfi_canvas_extractor.mapping.helpers import convert_to_standard_date_time_string
 
 def _get_status(row: pd.Series):
     if row["late"] == 'True':
@@ -83,7 +75,7 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame, section_id: str) -> pd.
         ]
     ].copy()
 
-    df["submitted_at"] = df["submitted_at"].apply(_get_date_formated)
+    convert_to_standard_date_time_string(df, "submitted_at")
 
     df.rename(
         columns={
@@ -96,9 +88,6 @@ def map_to_udm_submissions(submissions_df: pd.DataFrame, section_id: str) -> pd.
         inplace=True,
     )
 
-    df["SubmissionDateTime"] = pd.to_datetime(df["SubmissionDateTime"]).dt.strftime(
-        constants.DATE_FORMAT
-    )
     df["SourceSystem"] = constants.SOURCE_SYSTEM
     df["SubmissionStatus"] = df.apply(_get_status, axis=1)
     df["EarnedPoints"] = None

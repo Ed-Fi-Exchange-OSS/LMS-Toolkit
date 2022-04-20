@@ -6,6 +6,8 @@
 import pandas as pd
 from pandas import DataFrame
 
+from edfi_canvas_extractor.mapping.helpers import convert_to_standard_date_time_string
+
 from . import constants
 
 
@@ -76,10 +78,9 @@ def map_to_udm_system_activities(authentication_events: pd.DataFrame) -> pd.Data
     df["ActivityStatus"] = "active"
     df["ParentSourceSystemIdentifier"] = ""
     df["ActivityTimeInMinutes"] = ""
-    df["SourceCreateDate"] = df["ActivityDateTime"]
     df["SourceLastModifiedDate"] = ""
-    df["ActivityDateTime"] = pd.to_datetime(df["ActivityDateTime"]).dt.strftime(
-        constants.DATE_FORMAT
-    )
+
+    convert_to_standard_date_time_string(df, "ActivityDateTime")
+    df["SourceCreateDate"] = df["ActivityDateTime"]
 
     return df

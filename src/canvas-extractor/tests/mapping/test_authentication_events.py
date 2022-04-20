@@ -54,3 +54,47 @@ in#111#2021-01-20T21:12:16Z,2021-01-20T21:12:16Z,2021-01-20 21:12:16+00:00,login
 
         def it_should_have_LastModifiedDate(result):
             assert result["LastModifiedDate"].iloc[0] == "2021-01-25 09:24:05.978277"
+
+        def it_should_have_correct_ActivityDateTime(result: pd.DataFrame) -> None:
+            assert result["ActivityDateTime"].iloc[0] == "2021-01-20 21:12:16"
+
+    def describe_given_created_at_is_blank():
+
+        @pytest.fixture
+        def result() -> pd.DataFrame:
+
+            csv = """id,created_at,created_at_date,event_type,links,CreateDate,LastModifiedDate
+in#111#2021-01-20T21:12:16Z,,2021-01-20 21:12:16+00:00,login,"test",2021-01-25 09:24:05.978277,2021-01-25 09:24:05.978277"""
+
+            lines = csv.split("\n")
+            df = pd.DataFrame(
+                [x.split(",") for x in lines[1:]], columns=lines[0].split(",")
+            )
+
+            # Arrange
+            df = pd.DataFrame(df)
+
+            # Act
+            return map_to_udm_system_activities(df)
+
+        def it_should_have_correct_number_of_columns(result):
+            assert result.shape[1] == 12
+
+        def it_should_have_canvas_as_source_system(result):
+            assert result["SourceSystem"].iloc[0] == "Canvas"
+
+        def it_should_map_id_to_source_system_identifier(result):
+            assert result["SourceSystemIdentifier"].iloc[0] == "in#111#2021-01-20T21:12:16Z"
+
+        def it_should_map_id_to_user_source_system_identifier(result):
+            assert result["LMSUserSourceSystemIdentifier"].iloc[0] == "111"
+
+        def it_should_have_CreateDate(result):
+            assert result["CreateDate"].iloc[0] == "2021-01-25 09:24:05.978277"
+
+        def it_should_have_LastModifiedDate(result):
+            assert result["LastModifiedDate"].iloc[0] == "2021-01-25 09:24:05.978277"
+
+        def it_should_have_blank_ActivityDateTime(result: pd.DataFrame) -> None:
+            assert result["ActivityDateTime"].iloc[0] == ""
+

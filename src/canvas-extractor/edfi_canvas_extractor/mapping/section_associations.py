@@ -3,10 +3,10 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from datetime import datetime
 from pandas import DataFrame
 
-from .constants import SOURCE_SYSTEM
+from edfi_canvas_extractor.mapping.constants import SOURCE_SYSTEM
+from edfi_canvas_extractor.mapping.helpers import convert_to_standard_date_time_string
 
 
 def _get_enrollment_status(status: str) -> str:
@@ -17,14 +17,6 @@ def _get_enrollment_status(status: str) -> str:
     if status == "inactive":
         return "Archived"
     return "Archived"
-
-
-def _get_date_formated(date) -> str:
-    if not isinstance(date, str) or date == "":
-        return ""
-    return datetime.strftime(
-        datetime.strptime(date, "%Y-%m-%dT%H:%M:%S%z"), "%Y/%m/%d %H:%M:%S"
-    )
 
 
 def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
@@ -92,13 +84,8 @@ def map_to_udm_section_associations(enrollments_df: DataFrame) -> DataFrame:
         inplace=True,
     )
 
-    enrollments_df["SourceCreateDate"] = enrollments_df["SourceCreateDate"].apply(
-        _get_date_formated
-    )
-
-    enrollments_df["SourceLastModifiedDate"] = enrollments_df[
-        "SourceLastModifiedDate"
-    ].apply(_get_date_formated)
+    convert_to_standard_date_time_string(enrollments_df, "SourceCreateDate")
+    convert_to_standard_date_time_string(enrollments_df, "SourceLastModifiedDate")
 
     enrollments_df["EnrollmentStatus"] = enrollments_df["EnrollmentStatus"].apply(
         _get_enrollment_status
