@@ -3,12 +3,11 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from datetime import datetime
-
 import pandas as pd
 
 from edfi_canvas_extractor.mapping import constants
 from edfi_canvas_extractor.mapping.helpers import convert_to_standard_date_time_string
+
 
 def _get_status(row: pd.Series):
     if row["late"] == 'True':

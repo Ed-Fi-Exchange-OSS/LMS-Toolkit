@@ -97,4 +97,3 @@ in#111#2021-01-20T21:12:16Z,,2021-01-20 21:12:16+00:00,login,"test",2021-01-25 0
 
         def it_should_have_blank_ActivityDateTime(result: pd.DataFrame) -> None:
             assert result["ActivityDateTime"].iloc[0] == ""
-
