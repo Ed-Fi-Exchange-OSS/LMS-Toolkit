@@ -7,7 +7,7 @@ instead of running inside the notebook.
 
 Before running the notebook:
 
-* Be sure that you have Python 3.9+ and Poetry
+* Be sure that you have Python 3.9.x and Poetry
 * Run `poetry install` in this directory
 
 Each notebook has additional "getting started" instructions.
