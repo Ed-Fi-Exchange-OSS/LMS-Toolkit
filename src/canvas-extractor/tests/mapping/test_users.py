@@ -23,8 +23,8 @@ def describe_when_mapping_schoology_users_to_udm():
         def result():
             # Arrange
             users_csv = """id,name,created_at,sortable_name,short_name,sis_user_id,integration_id,sis_import_id,email,login_id,CreateDate,LastModifiedDate
-114,Kyle Hughes,2020-09-14T11:54:18-05:00,"Hughes Kyle",Kyle Hughes,604874,874,,Kyle.Hughes@studentgps.org,Kyle.Hughes@studentgps.org,45:38.5,45:38.5
-116,Larry Mahoney,2020-09-14T11:54:47-05:00,"Mahoney Larry",Larry Mahoney,604927,927,,Larry.Mahoney@studentgps.org,Larry.Mahoney@studentgps.org,45:38.5,45:38.5"""
+114,Kyle Hughes,  2020-09-14T11:54:01-05:00,"Hughes Kyle",Kyle Hughes,604874,874,,Kyle.Hughes@studentgps.org,Kyle.Hughes@studentgps.org,45:38.5,45:38.5
+116,Larry Mahoney,2021-03-10T14:19:17-06:00,"Mahoney Larry",Larry Mahoney,604927,927,,Larry.Mahoney@studentgps.org,Larry.Mahoney@studentgps.org,45:38.5,45:38.5"""
 
             lines = users_csv.split("\n")
             users_df = pd.DataFrame(

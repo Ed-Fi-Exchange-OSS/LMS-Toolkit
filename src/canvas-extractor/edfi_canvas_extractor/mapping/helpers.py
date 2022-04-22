@@ -13,7 +13,7 @@ def convert_to_standard_date_time_string(df: pd.DataFrame, column: str) -> None:
     # replacing any errors (na) with empty string.
 
     df[column] = pd.to_datetime(
-        df[column], infer_datetime_format=True, errors="coerce"
+        df[column], infer_datetime_format=True, errors="coerce", utc=True
     ).dt.strftime(constants.DATE_FORMAT)
 
     df.loc[df[column].isna(), column] = ""
