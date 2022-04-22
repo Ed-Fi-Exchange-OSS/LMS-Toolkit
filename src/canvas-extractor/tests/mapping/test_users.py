@@ -4,8 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 
+from typing import List
 import pandas as pd
+from pyparsing import col
 import pytest
+from sqlalchemy import column
 
 from edfi_canvas_extractor.mapping.users import map_to_udm_users
 
@@ -80,3 +83,35 @@ def describe_when_mapping_schoology_users_to_udm():
 
         def test_then_it_should_have_empty_SourceLastModifiedDate(result):
             assert result.at[0, "SourceLastModifiedDate"] == ""
+
+        def then_output_to_csv_has_blanks_not_NaT_for_SourceLastModifiedDate(result: pd.DataFrame, fs) -> None:
+
+            # Fake as Linux so that all slashes in these test are forward
+            fs.os = "linux"
+            fs.path_separator = "/"
+            fs.is_windows_fs = False
+            fs.is_macos = False
+
+            # Convert to CSV
+            FILE = "/file.csv"
+            result.to_csv(FILE, index=False)
+
+            # Open as plain text and do some simple parsing to get the
+            # SourceLastModifiedDate.
+            lines: List[str] = []
+            with open(FILE) as f:
+                lines = f.readlines()
+
+            lines = [line.replace("\n", "") for line in lines]
+
+            # Find where "SourceLastModifiedDate" ended up
+            column_names = lines[0].split(",")
+            assert "SourceLastModifiedDate" in column_names, lines[0]
+            position = column_names.index("SourceLastModifiedDate")
+
+            def __look_for_nat(line: str, line_number: int) -> None:
+                cells = line[line_number].split(",")
+                assert cells[position] == "", line_number
+
+            __look_for_nat(lines, 1)
+            __look_for_nat(lines, 2)
