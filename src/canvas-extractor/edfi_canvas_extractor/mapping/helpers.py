@@ -16,5 +16,4 @@ def convert_to_standard_date_time_string(df: pd.DataFrame, column: str) -> None:
         df[column], infer_datetime_format=True, errors="coerce", utc=True
     ).dt.strftime(constants.DATE_FORMAT)
 
-    df = df.astype({column: "str"})
     df.loc[df[column].isna(), column] = ""
