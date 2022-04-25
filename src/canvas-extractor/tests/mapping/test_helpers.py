@@ -11,7 +11,7 @@ from edfi_canvas_extractor.mapping.helpers import convert_to_standard_date_time_
 
 def describe_when_converting_datetime_to_standard_format() -> None:
     @pytest.mark.parametrize("input, expected", [
-        ("2013-01-01T00:00:00-06:00", "2013-01-01 00:00:00"),
+        ("2013-01-01T00:00:00-06:00", "2013-01-01 06:00:00"),
         ("2021-01-20T21:12:16Z", "2021-01-20 21:12:16"),
         ("I'm not a date", ""),
         ("", "")

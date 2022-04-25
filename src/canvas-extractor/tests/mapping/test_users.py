@@ -78,13 +78,15 @@ def describe_when_mapping_schoology_users_to_udm():
         def test_then_email_address_is_mapped(result):
             assert result.at[0, "EmailAddress"] == "Kyle.Hughes@studentgps.org"
 
-        def test_then_it_should_have_empty_SourceCreateDate(result):
-            assert result.at[0, "SourceCreateDate"] == "2020-09-14 11:54:18"
+        def test_then_it_should_have_SourceCreateDate(result):
+            assert result.at[0, "SourceCreateDate"] == "2020-09-14 16:54:01"
 
         def test_then_it_should_have_empty_SourceLastModifiedDate(result):
             assert result.at[0, "SourceLastModifiedDate"] == ""
 
-        def then_output_to_csv_has_blanks_not_NaT_for_SourceLastModifiedDate(result: pd.DataFrame, fs) -> None:
+        def then_output_to_csv_has_blanks_not_NaT_for_SourceLastModifiedDate(
+            result: pd.DataFrame, fs
+        ) -> None:
 
             # Fake as Linux so that all slashes in these test are forward
             fs.os = "linux"
