@@ -6,9 +6,7 @@
 
 from typing import List
 import pandas as pd
-from pyparsing import col
 import pytest
-from sqlalchemy import column
 
 from edfi_canvas_extractor.mapping.users import map_to_udm_users
 
