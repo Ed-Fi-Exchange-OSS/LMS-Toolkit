@@ -62,7 +62,7 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
         assert result["SourceLastModifiedDate"].iloc[0] is None
 
 
-def describe_when_mapping_submission_using_read_data_example():
+def describe_when_mapping_submission_using_real_data_example():
     @pytest.fixture
     def result() -> pd.DataFrame:
         # Arrange

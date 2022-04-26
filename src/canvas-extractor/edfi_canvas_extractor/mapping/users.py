@@ -3,10 +3,10 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from datetime import datetime
 from pandas import DataFrame
 
-from . import constants
+from edfi_canvas_extractor.mapping import constants
+from edfi_canvas_extractor.mapping.helpers import convert_to_standard_date_time_string
 
 
 def map_to_udm_users(users_df: DataFrame) -> DataFrame:
@@ -67,11 +67,7 @@ def map_to_udm_users(users_df: DataFrame) -> DataFrame:
         inplace=True,
     )
 
-    df["SourceCreateDate"] = df["SourceCreateDate"].apply(
-        lambda x: datetime.strftime(
-            datetime.strptime(x, "%Y-%m-%dT%H:%M:%S%z"), "%Y/%m/%d %H:%M:%S"
-        )
-    )
+    convert_to_standard_date_time_string(df, "SourceCreateDate")
     df["UserRole"] = constants.ROLES.STUDENT
 
     df["SourceLastModifiedDate"] = ""

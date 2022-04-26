@@ -53,3 +53,34 @@ def describe_when_mapping_Schoology_DataFrame_to_EdFi_DataFrame():
 
         def it_should_map_input_section_id_to_lms_section_source_system_identifier(result):
             assert result["LMSSectionSourceSystemIdentifier"].iloc[0] == "2"
+
+        def then_SourceCreateDate_is_set_correctly(result) -> None:
+            assert result["SourceCreateDate"].iloc[0] == "2020-08-31 16:59:00"
+
+        def then_SourceLastModifiedDate_is_set_correctly(result) -> None:
+            assert result["SourceLastModifiedDate"].iloc[0] == "2020-09-02 21:47:09"
+
+    def describe_given_source_dates_are_blank() -> None:
+        @pytest.fixture
+        def result() -> pd.DataFrame:
+
+            section_asociations_csv = """id,user_id,course_id,type,created_at,created_at_date,updated_at,updated_at_date,associated_user_id,start_at,end_at,course_section_id,root_account_id,limit_privileges_to_course_section,enrollment_state,role,role_id,last_activity_at,last_attended_at,total_activity_time,sis_import_id,grades,sis_account_id,sis_course_id,course_integration_id,sis_section_id,section_integration_id,sis_user_id,html_url,user,last_activity_at_date,CreateDate,LastModifiedDate
+4,5,2,StudentEnrollment,,2020-08-31 16:59:00+00:00,,2020-09-02 21:47:09+00:00,,,,2,1,False,active,StudentEnrollment,3,,,0,,grade,,,,,,,https://edfialliance.instructure.com/courses/2/users/5,user,,22:07.3,22:07.3
+106,113,104,StudentEnrollment,2020-09-14T17:06:21Z,2020-09-14 17:06:21+00:00,2020-09-14T17:18:34Z,2020-09-14 17:18:34+00:00,,,,103,1,False,active,StudentEnrollment,3,2020-09-14T17:37:57Z,,0,,grade,,ENG-1,,,,604863,https://edfialliance.instructure.com/courses/104/users/113,user,2020-09-14 17:37:57+00:00,22:07.3,22:07.3"""
+
+            lines = section_asociations_csv.split("\n")
+            section_associations = pd.DataFrame(
+                [x.split(",") for x in lines[1:]], columns=lines[0].split(",")
+            )
+
+            # Arrange
+            df = pd.DataFrame(section_associations)
+
+            # Act
+            return map_to_udm_section_associations(df)
+
+        def then_SourceCreateDate_is_blank_string(result) -> None:
+            assert result["SourceCreateDate"].iloc[0] == ""
+
+        def then_SourceLastModifiedDate_is_blank_string(result) -> None:
+            assert result["SourceLastModifiedDate"].iloc[0] == ""

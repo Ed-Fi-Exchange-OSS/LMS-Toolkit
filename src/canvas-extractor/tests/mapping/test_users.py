@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 
+from typing import List
 import pandas as pd
 import pytest
 
@@ -20,8 +21,8 @@ def describe_when_mapping_schoology_users_to_udm():
         def result():
             # Arrange
             users_csv = """id,name,created_at,sortable_name,short_name,sis_user_id,integration_id,sis_import_id,email,login_id,CreateDate,LastModifiedDate
-114,Kyle Hughes,2020-09-14T11:54:18-05:00,"Hughes Kyle",Kyle Hughes,604874,874,,Kyle.Hughes@studentgps.org,Kyle.Hughes@studentgps.org,45:38.5,45:38.5
-116,Larry Mahoney,2020-09-14T11:54:47-05:00,"Mahoney Larry",Larry Mahoney,604927,927,,Larry.Mahoney@studentgps.org,Larry.Mahoney@studentgps.org,45:38.5,45:38.5"""
+114,Kyle Hughes,  2020-09-14T11:54:01-05:00,"Hughes Kyle",Kyle Hughes,604874,874,,Kyle.Hughes@studentgps.org,Kyle.Hughes@studentgps.org,45:38.5,45:38.5
+116,Larry Mahoney,2021-03-10T14:19:17-06:00,"Mahoney Larry",Larry Mahoney,604927,927,,Larry.Mahoney@studentgps.org,Larry.Mahoney@studentgps.org,45:38.5,45:38.5"""
 
             lines = users_csv.split("\n")
             users_df = pd.DataFrame(
@@ -75,8 +76,42 @@ def describe_when_mapping_schoology_users_to_udm():
         def test_then_email_address_is_mapped(result):
             assert result.at[0, "EmailAddress"] == "Kyle.Hughes@studentgps.org"
 
-        def test_then_it_should_have_empty_SourceCreateDate(result):
-            assert result.at[0, "SourceCreateDate"] == "2020/09/14 11:54:18"
+        def test_then_it_should_have_SourceCreateDate(result):
+            assert result.at[0, "SourceCreateDate"] == "2020-09-14 16:54:01"
 
         def test_then_it_should_have_empty_SourceLastModifiedDate(result):
             assert result.at[0, "SourceLastModifiedDate"] == ""
+
+        def then_output_to_csv_has_blanks_not_NaT_for_SourceLastModifiedDate(
+            result: pd.DataFrame, fs
+        ) -> None:
+
+            # Fake as Linux so that all slashes in these test are forward
+            fs.os = "linux"
+            fs.path_separator = "/"
+            fs.is_windows_fs = False
+            fs.is_macos = False
+
+            # Convert to CSV
+            FILE = "/file.csv"
+            result.to_csv(FILE, index=False)
+
+            # Open as plain text and do some simple parsing to get the
+            # SourceLastModifiedDate.
+            lines: List[str] = []
+            with open(FILE) as f:
+                lines = f.readlines()
+
+            lines = [line.replace("\n", "") for line in lines]
+
+            # Find where "SourceLastModifiedDate" ended up
+            column_names = lines[0].split(",")
+            assert "SourceLastModifiedDate" in column_names, lines[0]
+            position = column_names.index("SourceLastModifiedDate")
+
+            def __look_for_nat(line: str, line_number: int) -> None:
+                cells = line[line_number].split(",")
+                assert cells[position] == "", line_number
+
+            __look_for_nat(lines, 1)
+            __look_for_nat(lines, 2)
