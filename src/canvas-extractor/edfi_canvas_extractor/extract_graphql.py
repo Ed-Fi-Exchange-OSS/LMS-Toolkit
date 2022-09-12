@@ -3,7 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-# from datetime import datetime
 import logging
 import sqlalchemy
 import sys
@@ -11,7 +10,6 @@ import sys
 from canvasapi import Canvas
 from canvasapi.account import Account
 from datetime import datetime
-# from pandas import DataFrame
 from typing import List, Dict, Tuple
 
 from edfi_canvas_extractor.config import get_canvas_api, get_sync_db_engine
@@ -24,7 +22,6 @@ from edfi_canvas_extractor.client_graphql import (
     extract_courses,
     extract_sections,
 )
-# from edfi_canvas_extractor.api.canvas_helper import to_df
 from edfi_canvas_extractor.helpers.arg_parser import MainArguments
 
 

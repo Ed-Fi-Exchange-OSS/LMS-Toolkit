@@ -26,9 +26,9 @@ class Singleton(object):
 
 class Extract(Singleton):
     courses: List
+    enrollments: List
     sections: List
     students: List
-    enrollments: List
 
     def __init__(self):
         self.data = None
@@ -112,27 +112,6 @@ class Extract(Singleton):
                     "created_at": section["createdAt"],
                     "updated_at": section["updatedAt"],
                     })
-
-            # enrollments = course["enrollmentsConnection"]["nodes"]
-            # for enrollment in enrollments:
-            #     if enrollment["type"] == "TeacherEnrollment":
-            #         continue
-
-            #     if enrollment["state"] not in ("active", "invited"):
-            #         continue
-
-            #     user = enrollment["user"]
-            #     self.students.append({
-            #             "id": user["_id"],
-            #             "sisId": user["sisId"],
-            #             "email": user["email"],
-            #             "name": user["name"],
-            #         })
-
-            #     self.enrollments.append({
-            #             "id": enrollment["_id"],
-            #             "user_id": user["_id"],
-            #         })
 
         if courses.get("pageInfo"):
             courses_page = courses["pageInfo"]
