@@ -5,10 +5,8 @@
 
 import json
 import logging
-import os
 import requests
 
-from dotenv import load_dotenv
 from typing import Dict, List
 
 from .schema import query_builder
@@ -18,43 +16,37 @@ from .utils import validate_date
 class Singleton(object):
     _instance = None
 
-    def __new__(class_, *args, **kwargs):
+    def __call__(class_, *args, **kwargs):
         if not isinstance(class_._instance, class_):
-            class_._instance = object.__new__(class_, *args, **kwargs)
+            class_._instance = object.__call__(class_, *args, **kwargs)
         return class_._instance
 
 
-class Extract(Singleton):
+class GraphQLExtractor(Singleton):
     courses: List
     sections: List
-    students: List
-    enrollments: List
 
     def __init__(self):
         self.data = None
         self.courses = list()
         self.sections = list()
-        self.students = list()
-        self.enrollments = list()
 
     def get_from_canvas(self, query: str) -> Dict:
         """
-        Fetch from GraphQL
+        Get GraphQL Query from Canvas
 
         Parameters
         ----------
-        query: string
+        query: str
+            query string for GraphQL
 
         Returns
         -------
         Dict JSON Object
         """
 
-        load_dotenv()
-        CANVAS_URL = os.getenv('CANVAS_BASE_URL')
-        CANVAS_TOKEN = os.getenv('CANVAS_ACCESS_TOKEN')
-        GRAPHQL_URL = f"{CANVAS_URL}/api/graphql"
-        GRAPHQL_AUTH = {'Authorization': f'Bearer {CANVAS_TOKEN}'}
+        GRAPHQL_URL = f"{self.base_url}/api/graphql"
+        GRAPHQL_AUTH = {'Authorization': f'Bearer {self.access_token}'}
 
         try:
             fetch = requests.post(
@@ -78,7 +70,7 @@ class Extract(Singleton):
 
     def extract(self, body) -> None:
         """
-        Extract the data
+        Extract data from GraphQL query in Canvas
 
         Parameters
         ----------
@@ -113,27 +105,6 @@ class Extract(Singleton):
                     "updated_at": section["updatedAt"],
                     })
 
-            # enrollments = course["enrollmentsConnection"]["nodes"]
-            # for enrollment in enrollments:
-            #     if enrollment["type"] == "TeacherEnrollment":
-            #         continue
-
-            #     if enrollment["state"] not in ("active", "invited"):
-            #         continue
-
-            #     user = enrollment["user"]
-            #     self.students.append({
-            #             "id": user["_id"],
-            #             "sisId": user["sisId"],
-            #             "email": user["email"],
-            #             "name": user["name"],
-            #         })
-
-            #     self.enrollments.append({
-            #             "id": enrollment["_id"],
-            #             "user_id": user["_id"],
-            #         })
-
         if courses.get("pageInfo"):
             courses_page = courses["pageInfo"]
             if courses_page["hasNextPage"]:
@@ -141,10 +112,40 @@ class Extract(Singleton):
                 query = query_builder(self.account, after)
                 self.get_from_canvas(query)
 
+    def set_credentials(self, base_url, access_token) -> None:
+        """
+        Set credentials to get from GraphQL
+
+        Parameters
+        ----------
+        args: MainArguments
+        """
+        self.base_url = base_url
+        self.access_token = access_token
+
     def set_account(self, account) -> None:
+        """
+        Set account number to get from GraphQL
+
+        Parameters
+        ----------
+        account: str 
+            an account number
+        """
         self.account = account
 
     def set_dates(self, start_date, end_date) -> None:
+        """
+        Set dates to filter courses fetched from
+        GraphQL query in Canvas
+
+        Parameters
+        ----------
+        start_date: str
+            a string with start date
+        end_date: str
+            a string with end date
+        """
         self.start = start_date
         self.end = end_date
 
@@ -160,13 +161,23 @@ class Extract(Singleton):
                 logging.error(e)
 
     def get_courses(self) -> List:
+        """
+        Returns a List of Courses
+
+        Returns
+        -------
+        List
+            a List of Courses
+        """
         return self.courses
 
     def get_sections(self) -> List:
-        return self.sections
+        """
+        Returns a sorted List of Sections
 
-    def get_enrollments(self) -> List:
-        return self.enrollments
-
-    def get_students(self) -> List:
-        return self.students
+        Returns
+        -------
+        List
+            a List of Sections
+        """
+        return sorted(self.sections, key=lambda x: x.id)

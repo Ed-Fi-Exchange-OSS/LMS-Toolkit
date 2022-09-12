@@ -3,6 +3,7 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+import logging
 import sqlalchemy
 
 from pandas import DataFrame
@@ -10,32 +11,31 @@ from typing import List, Tuple
 
 from canvasapi.course import Course
 from canvasapi.section import Section
-from edfi_canvas_extractor.graphql.extract import Extract
+
+from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
 from edfi_canvas_extractor.graphql import (
     courses as coursesGQL,
     sections as sectionsGQL,
 )
-
 from edfi_canvas_extractor.mapping import (
     sections as sectionsMap,
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 def extract_courses(
-    gql: Extract,
+    gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> Tuple[List[Course], DataFrame]:
     """
-    Gets all Canvas courses for the given date range, in the Ed-Fi UDM format.
+    Gets all Canvas courses in the Ed-Fi UDM format.
 
     Parameters
     ----------
-    canvas: Canvas
-        Canvas object.
-    start_date: str
-        Retrieve Courses starting on or after this date.
-    end_date:
-        Retrieve Courses ending on or before this date.
+    gql: GraphQLExtractor
+        Adapter for running GraphQL commands on Canvas.
     sync_db: sqlalchemy.engine.base.Engine
         Sync database connection.
 
@@ -51,7 +51,7 @@ def extract_courses(
 
 
 def extract_sections(
-    gql: Extract,
+    gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine
 ) -> Tuple[List[Section], DataFrame, List[str]]:
     """
@@ -59,6 +59,8 @@ def extract_sections(
 
     Parameters
     ----------
+    gql: GraphQLExtractor
+        Adapter for running GraphQL commands on Canvas.
     sync_db: sqlalchemy.engine.base.Engine
         Sync database connection.
 

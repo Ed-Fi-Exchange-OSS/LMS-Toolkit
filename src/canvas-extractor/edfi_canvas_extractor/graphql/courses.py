@@ -22,7 +22,7 @@ def courses_synced_as_df(
     courses: List[Course], sync_db: sqlalchemy.engine.base.Engine
 ) -> DataFrame:
     """
-    Using Course API data, return a Courses API DataFrame
+    Using Course data, return a Courses API DataFrame
 
     Parameters
     ----------
@@ -34,7 +34,7 @@ def courses_synced_as_df(
     Returns
     -------
     DataFrame
-        a Courses API DataFrame with the current and previously fetched data
+        a Courses DataFrame with the current and previously fetched data
     """
     courses_df: DataFrame = _sync_without_cleanup(to_df(courses), sync_db)
     cleanup_after_sync(COURSES_RESOURCE_NAME, sync_db)

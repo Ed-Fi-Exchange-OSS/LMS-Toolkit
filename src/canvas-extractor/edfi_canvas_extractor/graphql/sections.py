@@ -48,13 +48,13 @@ def _sync_without_cleanup(
     resource_df: DataFrame, sync_db: sqlalchemy.engine.base.Engine
 ) -> DataFrame:
     """
-    Take fetched API data and sync with database. Creates tables when necessary,
+    Take fetched data and sync with database. Creates tables when necessary,
     but ok if temporary tables are there to start. Doesn't delete temporary tables when finished.
 
     Parameters
     ----------
     resource_df: DataFrame
-        a Sections API DataFrame with the current fetched data which
+        a Sections DataFrame with the current fetched data which
         will be mutated, adding Hash and CreateDate/LastModifiedDate
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
