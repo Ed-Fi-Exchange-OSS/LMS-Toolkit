@@ -24,7 +24,7 @@ class Singleton(object):
         return class_._instance
 
 
-class Extract(Singleton):
+class GraphQLExtractor(Singleton):
     courses: List
     enrollments: List
     sections: List
@@ -39,11 +39,12 @@ class Extract(Singleton):
 
     def get_from_canvas(self, query: str) -> Dict:
         """
-        Fetch from GraphQL
+        Get GraphQL Query from Canvas
 
         Parameters
         ----------
-        query: string
+        query: str
+            query string for GraphQL
 
         Returns
         -------
@@ -78,7 +79,7 @@ class Extract(Singleton):
 
     def extract(self, body) -> None:
         """
-        Extract the data
+        Extract data from GraphQL query in Canvas
 
         Parameters
         ----------
@@ -121,9 +122,28 @@ class Extract(Singleton):
                 self.get_from_canvas(query)
 
     def set_account(self, account) -> None:
+        """
+        Set account number to get from GraphQL
+
+        Parameters
+        ----------
+        account: str 
+            an account number
+        """
         self.account = account
 
     def set_dates(self, start_date, end_date) -> None:
+        """
+        Set dates to filter courses fetched from
+        GraphQL query in Canvas
+
+        Parameters
+        ----------
+        start_date: str
+            a string with start date
+        end_date: str
+            a string with end date
+        """
         self.start = start_date
         self.end = end_date
 
@@ -139,13 +159,23 @@ class Extract(Singleton):
                 logging.error(e)
 
     def get_courses(self) -> List:
+        """
+        Returns a List of Courses
+
+        Returns
+        -------
+        List
+            a List of Courses
+        """
         return self.courses
 
     def get_sections(self) -> List:
-        return self.sections
+        """
+        Returns a sorted List of Sections
 
-    def get_enrollments(self) -> List:
-        return self.enrollments
-
-    def get_students(self) -> List:
-        return self.students
+        Returns
+        -------
+        List
+            a List of Sections
+        """
+        return sorted(self.sections, key=lambda x: x.id)

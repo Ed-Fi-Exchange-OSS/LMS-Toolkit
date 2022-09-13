@@ -20,10 +20,12 @@ class CanvasObject(object):
 
     def __init__(self, requester, attributes):
         """
-        :param requester: The requester to pass HTTP requests through.
-        :type requester: :class:`canvasapi.requester.Requester`
-        :param attributes: The JSON object to build this object with.
-        :type attributes: dict
+        Parameters
+        ----------
+        requester: class:`canvasapi.requester.Requester`
+            The requester to pass HTTP requests through.
+        attributes: dict
+            The JSON object to build this object with.
         """
         self._requester = requester
         self.set_attributes(attributes)
@@ -37,7 +39,7 @@ class CanvasObject(object):
                 if attr != "attributes"
             ]
         )  # noqa
-        return "{}({})".format(classname, attrs)
+        return f"{classname}({attrs})"
 
     def set_attributes(self, attributes):
         """
@@ -46,7 +48,7 @@ class CanvasObject(object):
         This method attempts to detect special types based on the field's content
         and will create an additional attribute of that type.
 
-        Consider a JSON response with the following fields::
+        Consider a JSON response with the following fields:
 
             {
                 "name": "New course name",
@@ -60,8 +62,10 @@ class CanvasObject(object):
         so two additional datetime attributes are created, `start_at_date`
         and `end_at_date`.
 
-        :param attributes: The JSON object to build this object with.
-        :type attributes: dict
+        Parameters
+        ----------
+        attributes: dict
+            The JSON object to build this object with.
         """
         for attribute, value in attributes.items():
             self.__setattr__(attribute, value)

@@ -5,8 +5,6 @@
 
 from datetime import datetime
 from dateutil import parser
-# from pandas import DataFrame
-# from typing import List
 
 
 def _format_date(date_string: str) -> object:
@@ -47,19 +45,19 @@ def _format_full_date(date_string: str) -> object:
 
 def validate_date(args_start, args_end, term_start, term_end) -> bool:
     """
-        Determine the courses between the range of
-        date from the arguments
+    Determine the courses between the range of
+    date from the arguments
 
-        Parameters
-        ----------
-        args_start: DateTime Object
-        args_end: DateTime Object
-        term_start: DateTime Object
-        term_end: DateTime Object
+    Parameters
+    ----------
+    args_start: DateTime Object
+    args_end: DateTime Object
+    term_start: DateTime Object
+    term_end: DateTime Object
 
-        Returns
-        -------
-        True/False bool
+    Returns
+    -------
+    True/False bool
     """
 
     args = list(map(_format_date, [args_start, args_end]))
