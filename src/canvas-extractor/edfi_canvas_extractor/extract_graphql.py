@@ -38,34 +38,6 @@ def _break_execution(failing_extraction: str) -> None:
 
 
 @catch_exceptions
-def _get_accounts(
-    arguments: MainArguments,
-    canvas: Canvas,
-    sync_db: sqlalchemy.engine.base.Engine
-) -> None:
-    accounts: List[Account] = canvas.get_accounts()
-
-    for account in accounts:
-        _id = getattr(account, "id")
-        gql = GraphQLExtractor()
-        gql.set_account(_id)
-        gql.set_dates(arguments.start_date, arguments.end_date)
-        gql.run()
-
-    succeeded: bool = True
-
-    succeeded = _get_courses(gql, sync_db)
-
-    if not succeeded:
-        _break_execution("Courses")
-
-    succeeded = _get_sections(arguments, gql, sync_db)
-
-    if not succeeded:
-        _break_execution("Sections")
-
-
-@catch_exceptions
 def _get_courses(
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine
@@ -98,6 +70,27 @@ def run(arguments: MainArguments) -> None:
         arguments.sync_database_directory
     )
     canvas: Canvas = get_canvas_api(arguments.base_url, arguments.access_token)
-    _get_accounts(arguments, canvas, sync_db)
+    # _get_accounts(arguments, canvas, sync_db)
+
+    accounts: List[Account] = canvas.get_accounts()
+
+    for account in accounts:
+        _id = getattr(account, "id")
+        gql = GraphQLExtractor()
+        gql.set_account(_id)
+        gql.set_dates(arguments.start_date, arguments.end_date)
+        gql.run()
+
+    succeeded: bool = True
+
+    succeeded = _get_courses(gql, sync_db)
+
+    if not succeeded:
+        _break_execution("Courses")
+
+    succeeded = _get_sections(arguments, gql, sync_db)
+
+    if not succeeded:
+        _break_execution("Sections")
 
     logger.info("Finishing Ed-Fi LMS Canvas Extractor")
