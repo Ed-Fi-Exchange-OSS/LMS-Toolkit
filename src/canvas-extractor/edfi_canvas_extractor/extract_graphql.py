@@ -70,13 +70,13 @@ def run(arguments: MainArguments) -> None:
         arguments.sync_database_directory
     )
     canvas: Canvas = get_canvas_api(arguments.base_url, arguments.access_token)
-    # _get_accounts(arguments, canvas, sync_db)
 
     accounts: List[Account] = canvas.get_accounts()
 
     for account in accounts:
         _id = getattr(account, "id")
         gql = GraphQLExtractor()
+        gql.set_credentials(arguments.base_url, arguments.access_token)
         gql.set_account(_id)
         gql.set_dates(arguments.start_date, arguments.end_date)
         gql.run()

@@ -5,10 +5,8 @@
 
 import json
 import logging
-import os
 import requests
 
-from dotenv import load_dotenv
 from typing import Dict, List
 
 from .schema import query_builder
@@ -18,9 +16,9 @@ from .utils import validate_date
 class Singleton(object):
     _instance = None
 
-    def __new__(class_, *args, **kwargs):
+    def __call__(class_, *args, **kwargs):
         if not isinstance(class_._instance, class_):
-            class_._instance = object.__new__(class_, *args, **kwargs)
+            class_._instance = object.__call__(class_, *args, **kwargs)
         return class_._instance
 
 
@@ -51,11 +49,8 @@ class GraphQLExtractor(Singleton):
         Dict JSON Object
         """
 
-        load_dotenv()
-        CANVAS_URL = os.getenv('CANVAS_BASE_URL')
-        CANVAS_TOKEN = os.getenv('CANVAS_ACCESS_TOKEN')
-        GRAPHQL_URL = f"{CANVAS_URL}/api/graphql"
-        GRAPHQL_AUTH = {'Authorization': f'Bearer {CANVAS_TOKEN}'}
+        GRAPHQL_URL = f"{self.base_url}/api/graphql"
+        GRAPHQL_AUTH = {'Authorization': f'Bearer {self.access_token}'}
 
         try:
             fetch = requests.post(
@@ -120,6 +115,17 @@ class GraphQLExtractor(Singleton):
                 after = courses_page["endCursor"]
                 query = query_builder(self.account, after)
                 self.get_from_canvas(query)
+
+    def set_credentials(self, base_url, access_token) -> None:
+        """
+        Set credentials to get from GraphQL
+
+        Parameters
+        ----------
+        args: MainArguments
+        """
+        self.base_url = base_url
+        self.access_token = access_token
 
     def set_account(self, account) -> None:
         """

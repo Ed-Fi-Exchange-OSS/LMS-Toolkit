@@ -34,8 +34,8 @@ def extract_courses(
 
     Parameters
     ----------
-    canvas: Canvas
-        Canvas object.
+    gql: GraphQLExtractor
+        Adapter for running GraphQL commands on Canvas.
     sync_db: sqlalchemy.engine.base.Engine
         Sync database connection.
 
@@ -59,6 +59,8 @@ def extract_sections(
 
     Parameters
     ----------
+    gql: GraphQLExtractor
+        Adapter for running GraphQL commands on Canvas.
     sync_db: sqlalchemy.engine.base.Engine
         Sync database connection.
 
