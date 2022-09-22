@@ -139,8 +139,8 @@ class GraphQLExtractor(object):
         Dict JSON Object
         """
 
-        GRAPHQL_URL = f"{self.url}/api/graphql"
-        GRAPHQL_AUTH = {'Authorization': f'Bearer {self.token}'}
+        GRAPHQL_URL = f"{self.base_url}/api/graphql"
+        GRAPHQL_AUTH = {'Authorization': f'Bearer {self.access_token}'}
 
         try:
             fetch = requests.post(
@@ -158,8 +158,11 @@ class GraphQLExtractor(object):
                 raise RuntimeError(str(body))
 
             return body
+
         except requests.exceptions.HTTPError as err:
-            logging.error(f"Getting data from Canvas: {err}")
+            logging.error(err)
+
+        return None
 
     def get_courses(self) -> List:
         """
