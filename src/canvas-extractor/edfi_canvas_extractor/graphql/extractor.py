@@ -50,7 +50,7 @@ class GraphQLExtractor(object):
             Secret to get access to Canvas
         """
         self.courses = list()
-        self.data = None
+        self.data = False
         self.enrollments = list()
         self.sections = list()
         self.students = list()
@@ -139,8 +139,8 @@ class GraphQLExtractor(object):
         Dict JSON Object
         """
 
-        GRAPHQL_URL = f"{self.base_url}/api/graphql"
-        GRAPHQL_AUTH = {'Authorization': f'Bearer {self.access_token}'}
+        GRAPHQL_URL = f"{self.url}/api/graphql"
+        GRAPHQL_AUTH = {'Authorization': f'Bearer {self.token}'}
 
         try:
             fetch = requests.post(
@@ -257,3 +257,4 @@ class GraphQLExtractor(object):
             if data:
                 self.extract(data)
                 self.data = True
+        return None
