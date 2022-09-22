@@ -7,7 +7,7 @@ import json
 import logging
 import requests
 
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from .canvas_helper import remove_duplicates
 from .schema import query_builder
@@ -125,7 +125,7 @@ class GraphQLExtractor(object):
                 query = query_builder(self.account, after)
                 self.get_from_canvas(query)
 
-    def get_from_canvas(self, query: str) -> Dict:
+    def get_from_canvas(self, query: str) -> Optional[List]:
         """
         Get GraphQL Query from Canvas
 
