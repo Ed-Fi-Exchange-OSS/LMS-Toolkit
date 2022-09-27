@@ -12,7 +12,7 @@ from typing import List, Tuple
 from canvasapi.course import Course
 from canvasapi.section import Section
 
-from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
+from edfi_canvas_extractor.graphql.extractor import Extract
 from edfi_canvas_extractor.graphql import (
     courses as coursesGQL,
     sections as sectionsGQL,
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 def extract_courses(
-    gql: GraphQLExtractor,
+    gql: Extract,
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> Tuple[List[Course], DataFrame]:
     """
@@ -51,7 +51,7 @@ def extract_courses(
 
 
 def extract_sections(
-    gql: GraphQLExtractor,
+    gql: Extract,
     sync_db: sqlalchemy.engine.base.Engine
 ) -> Tuple[List[Section], DataFrame, List[str]]:
     """

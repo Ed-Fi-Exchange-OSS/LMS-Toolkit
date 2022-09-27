@@ -13,7 +13,7 @@ from datetime import datetime
 from typing import List, Dict, Tuple
 
 from edfi_canvas_extractor.config import get_canvas_api, get_sync_db_engine
-from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
+from edfi_canvas_extractor.graphql.extractor import Extract
 from edfi_lms_extractor_lib.csv_generation.write import (
     write_sections,
 )
@@ -39,7 +39,7 @@ def _break_execution(failing_extraction: str) -> None:
 
 @catch_exceptions
 def _get_courses(
-    gql: GraphQLExtractor,
+    gql: Extract,
     sync_db: sqlalchemy.engine.base.Engine
 ) -> None:
     logger.info("Extracting Courses from Canvas")
@@ -54,7 +54,7 @@ def _get_courses(
 @catch_exceptions
 def _get_sections(
     arguments: MainArguments,
-    gql: GraphQLExtractor,
+    gql: Extract,
     sync_db: sqlalchemy.engine.base.Engine
 ) -> None:
     logger.info("Extracting Sections from Canvas")
@@ -75,7 +75,7 @@ def run(arguments: MainArguments) -> None:
 
     for account in accounts:
         _id = getattr(account, "id")
-        gql = GraphQLExtractor()
+        gql = Extract()
         gql.set_credentials(arguments.base_url, arguments.access_token)
         gql.set_account(_id)
         gql.set_dates(arguments.start_date, arguments.end_date)

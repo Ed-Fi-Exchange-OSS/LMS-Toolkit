@@ -7,7 +7,7 @@ import json
 import logging
 import requests
 
-from typing import Dict, List
+from typing import List
 
 from .schema import query_builder
 from .utils import validate_date
@@ -22,7 +22,7 @@ class Singleton(object):
         return class_._instance
 
 
-class GraphQLExtractor(Singleton):
+class Extract(Singleton):
     courses: List
     sections: List
 
@@ -31,7 +31,7 @@ class GraphQLExtractor(Singleton):
         self.courses = list()
         self.sections = list()
 
-    def get_from_canvas(self, query: str) -> Dict:
+    def get_from_canvas(self, query: str):
         """
         Get GraphQL Query from Canvas
 
@@ -67,6 +67,7 @@ class GraphQLExtractor(Singleton):
 
         except requests.exceptions.HTTPError as err:
             logging.error(err)
+
 
     def extract(self, body) -> None:
         """
