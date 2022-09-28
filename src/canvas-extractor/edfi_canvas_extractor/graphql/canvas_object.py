@@ -9,7 +9,7 @@ import pytz
 
 class CanvasObject(object):
     """
-    Base class for all classes representing objects returned by the API.
+    Base class for all classes representing objects returned by the APIs.
 
     This makes a call to :func:`canvasapi.canvas_object.CanvasObject.set_attributes`
     to dynamically construct this object's attributes with a JSON object.
