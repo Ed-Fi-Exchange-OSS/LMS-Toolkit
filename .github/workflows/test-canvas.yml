@@ -34,6 +34,12 @@ jobs:
               with:
                   python-version: "3.9.x"
 
+            - name: Install Poetry
+              uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
+              with:
+                  poetry-version: 1.1.7
+            - run: poetry --version
+
             - name: Get virtual env path
               id: venv-path
               run: |
