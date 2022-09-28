@@ -68,7 +68,6 @@ class Extract(Singleton):
         except requests.exceptions.HTTPError as err:
             logging.error(err)
 
-
     def extract(self, body) -> None:
         """
         Extract data from GraphQL query in Canvas
@@ -130,7 +129,7 @@ class Extract(Singleton):
 
         Parameters
         ----------
-        account: str 
+        account: str
             an account number
         """
         self.account = account
