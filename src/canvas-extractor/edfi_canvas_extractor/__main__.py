@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from errorhandler import ErrorHandler
 
 from edfi_canvas_extractor.helpers import arg_parser
-from edfi_canvas_extractor.extract_facade import run
+from edfi_canvas_extractor.extract_graphql import run
 
 
 def _load_configuration() -> arg_parser.MainArguments:
