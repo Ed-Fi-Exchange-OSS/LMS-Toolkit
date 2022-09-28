@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-canvas-extractor"
-version = "1.2.1"
+version = "2.0.0"
 homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 description = "Extract tool for retrieving student data from Canvas"
@@ -21,6 +21,7 @@ errorhandler = "^2.0.1"
 ConfigArgParse = "^1.2.3"
 edfi-lms-extractor-lib = "^1.1.0"
 edfi-lms-file-utils = "^1.0.0"
+arrow = "^1.2.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.3"
