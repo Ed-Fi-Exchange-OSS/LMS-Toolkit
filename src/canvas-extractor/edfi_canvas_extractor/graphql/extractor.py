@@ -4,33 +4,53 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import json
-import logging
 import requests
 
-from typing import List
+from typing import List, Optional
+from opnieuw import retry
 
+from edfi_canvas_extractor.config import RETRY_CONFIG
+
+from .canvas_helper import remove_duplicates
 from .schema import query_builder
 from .utils import validate_date
 
 
-class Singleton(object):
-    _instance = None
-
-    def __call__(class_, *args, **kwargs):
-        if not isinstance(class_._instance, class_):
-            class_._instance = object.__call__(class_, *args, **kwargs)
-        return class_._instance
-
-
-class Extract(Singleton):
+class GraphQLExtractor(object):
     courses: List
+    enrollments: List
     sections: List
+    students: List
 
-    def __init__(self):
-        self.data = None
+    def __init__(
+        self,
+        url: str,
+        token: str,
+        account: str,
+        start: Optional[str],
+        end: Optional[str]
+    ):
+        """
+        Initialize Adapter for GraphQL Extraction
+
+        Parameters
+        -----------
+        url: str
+            Base URL to connect to Canvas
+        token: str
+            Secret to get access to Canvas
+        """
         self.courses = list()
+        self.data = False
+        self.enrollments = list()
         self.sections = list()
+        self.students = list()
 
+        self.set_account(account)
+        self.set_credentials(url, token)
+        self.set_dates(start, end)
+
+    @retry(**RETRY_CONFIG)  # type: ignore
     def get_from_canvas(self, query: str):
         """
         Get GraphQL Query from Canvas
@@ -45,28 +65,22 @@ class Extract(Singleton):
         Dict JSON Object
         """
 
-        GRAPHQL_URL = f"{self.base_url}/api/graphql"
-        GRAPHQL_AUTH = {'Authorization': f'Bearer {self.access_token}'}
+        GRAPHQL_URL = f"{self.url}/api/graphql"
+        GRAPHQL_AUTH = {'Authorization': f'Bearer {self.token}'}
 
-        try:
-            fetch = requests.post(
-                GRAPHQL_URL,
-                headers=GRAPHQL_AUTH,
-                json={"query": query}
-                )
+        fetch = requests.post(
+            GRAPHQL_URL,
+            headers=GRAPHQL_AUTH,
+            json={"query": query}
+            )
+        if fetch.status_code != 200:
+            fetch.raise_for_status()
 
-            if fetch.status_code != 200:
-                fetch.raise_for_status()
+        body = json.loads(fetch.text)
 
-            body = json.loads(fetch.text)
-
-            if "errors" in body:
-                raise RuntimeError(str(body))
-
-            return body
-
-        except requests.exceptions.HTTPError as err:
-            logging.error(err)
+        if "errors" in body:
+            raise RuntimeError(str(body))
+        return body
 
     def extract(self, body) -> None:
         """
@@ -105,60 +119,34 @@ class Extract(Singleton):
                     "updated_at": section["updatedAt"],
                     })
 
+            enrollments = course["enrollmentsConnection"]
+            for enrollment in enrollments["nodes"]:
+                if enrollment["state"] in ["active", "invited"]:
+                    users = enrollment["user"]
+                    self.students.append({
+                        "id": users["_id"],
+                        "sis_user_id": users["sisId"],
+                        "created_at": users["createdAt"],
+                        "name": users["name"],
+                        "email": users["email"],
+                        "login_id": users["loginId"],
+                    })
+
+                    self.enrollments.append({
+                        "id": enrollment["_id"],
+                        "user_id": users["_id"],
+                        "course_section_id": enrollment["section"]["_id"],
+                        "enrollment_state": enrollment["state"],
+                        "created_at": enrollment["createdAt"],
+                        "updated_at": enrollment["updatedAt"],
+                        })
+
         if courses.get("pageInfo"):
             courses_page = courses["pageInfo"]
             if courses_page["hasNextPage"]:
                 after = courses_page["endCursor"]
                 query = query_builder(self.account, after)
                 self.get_from_canvas(query)
-
-    def set_credentials(self, base_url, access_token) -> None:
-        """
-        Set credentials to get from GraphQL
-
-        Parameters
-        ----------
-        args: MainArguments
-        """
-        self.base_url = base_url
-        self.access_token = access_token
-
-    def set_account(self, account) -> None:
-        """
-        Set account number to get from GraphQL
-
-        Parameters
-        ----------
-        account: str
-            an account number
-        """
-        self.account = account
-
-    def set_dates(self, start_date, end_date) -> None:
-        """
-        Set dates to filter courses fetched from
-        GraphQL query in Canvas
-
-        Parameters
-        ----------
-        start_date: str
-            a string with start date
-        end_date: str
-            a string with end date
-        """
-        self.start = start_date
-        self.end = end_date
-
-    def run(self) -> None:
-        if not self.data:
-            query = query_builder(self.account)
-
-            try:
-                data = self.get_from_canvas(query)
-                self.extract(data)
-                self.data = True
-            except Exception as e:
-                logging.error(e)
 
     def get_courses(self) -> List:
         """
@@ -171,6 +159,18 @@ class Extract(Singleton):
         """
         return self.courses
 
+    def get_enrollments(self) -> List:
+        """
+        Returns a sorted List of Enrollments
+
+        Returns
+        -------
+        List
+            a List of Enrollments
+        """
+        enrollments = self.enrollments
+        return sorted(enrollments, key=lambda x: x["course_section_id"])
+
     def get_sections(self) -> List:
         """
         Returns a sorted List of Sections
@@ -180,4 +180,65 @@ class Extract(Singleton):
         List
             a List of Sections
         """
-        return sorted(self.sections, key=lambda x: x.id)
+        sections = self.sections
+        return sorted(sections, key=lambda x: x["id"])
+
+    def get_students(self) -> List:
+        """
+        Returns a sorted List of Students
+
+        Returns
+        -------
+        List
+            a List of Students
+        """
+        students = remove_duplicates(self.students, "id")
+        return sorted(students, key=lambda x: x["id"])
+
+    def set_account(self, account) -> None:
+        """
+        Set account number to get from GraphQL
+
+        Parameters
+        ----------
+        account: str
+            an account number
+        """
+        self.account = account
+
+    def set_credentials(self, url: str, token: str) -> None:
+        """
+        Set credentials to get from GraphQL
+
+        Parameters
+        ----------
+        args: MainArguments
+        """
+        self.url = url
+        self.token = token
+
+    def set_dates(self, start, end) -> None:
+        """
+        Set dates to filter courses fetched from
+        GraphQL query in Canvas
+
+        Parameters
+        ----------
+        start: str
+            a string with start date
+        end: str
+            a string with end date
+        """
+        self.start = start
+        self.end = end
+
+    def run(self) -> None:
+        if not self.data:
+            query = query_builder(self.account)
+
+            data = self.get_from_canvas(query)
+
+            if data:
+                self.extract(data)
+                self.data = True
+        return None
