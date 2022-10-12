@@ -54,13 +54,20 @@ def query_builder(
                       enrollmentsConnection {{
                         nodes {{
                           _id
+                          createdAt
+                          updatedAt
                           state
                           type
+                          section {{
+                            _id
+                          }}
                           user {{
                               _id
+                              sisId
+                              createdAt
                               email
                               name
-                              sisId
+                              loginId
                           }}
                         }}
                       }}

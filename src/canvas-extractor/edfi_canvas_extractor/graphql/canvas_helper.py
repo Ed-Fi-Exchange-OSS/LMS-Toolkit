@@ -68,9 +68,9 @@ def remove_duplicates(list: List, identity_property: str) -> List:
     Parameters
     ----------
     list: List
-        a list of objects
+        a list of dicts
     identity_property: str
-        the name of the object property to use as the object identity
+        the name of the index to use as the object identity
 
     Returns
     -------
@@ -78,7 +78,7 @@ def remove_duplicates(list: List, identity_property: str) -> List:
         a list of objects with duplicates removed
     """
     unique_dict: Dict = dict()
-    for obj in list:
-        if getattr(obj, identity_property) not in unique_dict:
-            unique_dict[getattr(obj, identity_property)] = obj
+    for item in list:
+        if item[identity_property] not in unique_dict:
+            unique_dict[item[identity_property]] = item
     return [*unique_dict.values()]
