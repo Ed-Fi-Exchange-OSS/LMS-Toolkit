@@ -233,12 +233,12 @@ class GraphQLExtractor(object):
         self.end = end
 
     def run(self) -> None:
-        if not self.data:
+        if not self.has_data:
             query = query_builder(self.account)
 
             data = self.get_from_canvas(query)
 
             if data:
                 self.extract(data)
-                self.data = True
+                self.has_data = True
         return None
