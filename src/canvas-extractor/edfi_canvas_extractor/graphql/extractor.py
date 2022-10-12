@@ -41,7 +41,7 @@ class GraphQLExtractor(object):
             Secret to get access to Canvas
         """
         self.courses = list()
-        self.data = False
+        self.has_data = False
         self.enrollments = list()
         self.sections = list()
         self.students = list()
