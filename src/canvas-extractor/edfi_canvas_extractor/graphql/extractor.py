@@ -6,7 +6,7 @@
 import json
 import requests
 
-from typing import List, Optional
+from typing import Dict, List, Optional
 from opnieuw import retry
 
 from edfi_canvas_extractor.config import RETRY_CONFIG
@@ -17,6 +17,7 @@ from .utils import validate_date
 
 
 class GraphQLExtractor(object):
+    assignments: List
     courses: List
     enrollments: List
     sections: List
@@ -40,6 +41,7 @@ class GraphQLExtractor(object):
         token: str
             Secret to get access to Canvas
         """
+        self.assignments = list()
         self.courses = list()
         self.has_data = False
         self.enrollments = list()
@@ -114,6 +116,7 @@ class GraphQLExtractor(object):
                 self.sections.append({
                     "id": section["_id"],
                     "name": section["name"],
+                    "course_id": course["_id"],
                     "sis_section_id": section["sisId"],
                     "created_at": section["createdAt"],
                     "updated_at": section["updatedAt"],
@@ -141,12 +144,39 @@ class GraphQLExtractor(object):
                         "updated_at": enrollment["updatedAt"],
                         })
 
+            assignments = course["assignmentsConnection"]["nodes"]
+            for assignment in assignments:
+                self.assignments.append({
+                    "id": assignment["_id"],
+                    "name": assignment["name"],
+                    "description": assignment["description"],
+                    "created_at": assignment["createdAt"],
+                    "updated_at": assignment["updatedAt"],
+                    "lock_at": assignment["lockAt"],
+                    "unlock_at": assignment["unlockAt"],
+                    "due_at": assignment["dueAt"],
+                    "submission_types": assignment["submissionTypes"],
+                    "course_id": assignment["course"]["_id"],
+                    "points_possible": assignment["pointsPossible"],
+                })
+
         if courses.get("pageInfo"):
             courses_page = courses["pageInfo"]
             if courses_page["hasNextPage"]:
                 after = courses_page["endCursor"]
                 query = query_builder(self.account, after)
                 self.get_from_canvas(query)
+
+    def get_assignments(self) -> List[Dict[str, str]]:
+        """
+        Returns a sorted List of Assignments
+        Returns
+        -------
+        List[Dict[str, str]]
+            a List of Assignments
+        """
+        assignments = self.assignments
+        return sorted(assignments, key=lambda x: x["id"])
 
     def get_courses(self) -> List:
         """
