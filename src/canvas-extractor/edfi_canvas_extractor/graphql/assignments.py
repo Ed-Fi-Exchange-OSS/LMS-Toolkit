@@ -8,7 +8,6 @@ import logging
 from typing import List
 from pandas import DataFrame
 import sqlalchemy
-from opnieuw import retry
 
 from canvasapi.assignment import Assignment
 from edfi_lms_extractor_lib.api.resource_sync import (
