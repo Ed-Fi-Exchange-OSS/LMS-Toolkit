@@ -27,16 +27,16 @@ jobs:
             LOCK_FILE: src/canvas-extractor/poetry.lock
         steps:
             - name: Checkout code
-                uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b  # v3.0.2
+              uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b  # v3.0.2
 
             - name: Install Poetry
-                run: pipx install poetry
+              run: pipx install poetry
 
             - name: Install Python 3.9
-                uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6 # v3.1.2
-                with:
-                    python-version: "3.9"
-                    cache: "poetry"
+              uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6 # v3.1.2
+              with:
+                python-version: "3.9"
+                cache: "poetry"
 
             - name: Run CI Test Task
               run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
