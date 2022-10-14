@@ -263,6 +263,10 @@ class GraphQLExtractor(object):
         self.end = end
 
     def run(self) -> None:
+        """
+        Builds and executes a GraphQL query, storing the results in self for
+        further processing.
+        """
         if not self.has_data:
             query = query_builder(self.account)
 
