@@ -39,7 +39,10 @@ jobs:
                 cache: "poetry"
 
             - name: Run CI Test Task
-              run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
+              run: |
+                # Next line keeps poetry from trying to use the runner's default Python version
+                pushd ${{ env.SRC_DIR }} && poetry env use "3.9" && popd
+                python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
 
             - name: Archive code coverage results
               uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # "v3.1.0"
