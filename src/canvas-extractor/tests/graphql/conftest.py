@@ -3,7 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-import dotenv
 import json
 import pytest
 
@@ -12,20 +11,21 @@ from sqlalchemy import create_engine
 
 from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
 
-
+MOCK_CANVAS_BASE_URL = "https://example.com"
+MOCK_CANVAS_ACCESS_TOKEN = "1234567890"
 DB_FILE = "tests/graphql/test.db"
+START_DATE = "2021-01-01"
+END_DATE = "2030-01-01"
 
 
 @pytest.fixture
 def gql_run():
-    config = dotenv.dotenv_values()
-
     gql = GraphQLExtractor(
-        str(config["CANVAS_BASE_URL"]),
-        str(config["CANVAS_ACCESS_TOKEN"]),
+        MOCK_CANVAS_BASE_URL,
+        MOCK_CANVAS_ACCESS_TOKEN,
         "1",
-        config["START_DATE"],
-        config["END_DATE"],
+        START_DATE,
+        END_DATE,
         )
     gql.run()
     yield gql
@@ -33,14 +33,12 @@ def gql_run():
 
 @pytest.fixture
 def gql_no_run():
-    config = dotenv.dotenv_values()
-
     gql = GraphQLExtractor(
-        str(config["CANVAS_BASE_URL"]),
-        str(config["CANVAS_ACCESS_TOKEN"]),
+        MOCK_CANVAS_BASE_URL,
+        MOCK_CANVAS_ACCESS_TOKEN,
         "1",
-        config["START_DATE"],
-        config["END_DATE"],
+        START_DATE,
+        END_DATE,
         )
     yield gql
 
