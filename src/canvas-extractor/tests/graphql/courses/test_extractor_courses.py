@@ -7,30 +7,25 @@ from pandas import DataFrame
 from edfi_canvas_extractor.graphql.courses import courses_synced_as_df
 
 
-def test_courses(gql_no_run, api):
+def test_courses(gql):
     """
     Get from the sample data
     obtain the courses info
     Check and check the return type
     """
-    gql_no_run.extract(api)
-    courses = gql_no_run.get_courses()
-
-    assert api is not None
+    courses = gql.get_courses()
 
     assert courses is not None
     assert isinstance(courses, list)
 
 
-def test_courses_df(gql_no_run, api, test_db_fixture):
+def test_courses_df(gql, test_db_fixture):
     """
     Get from the sample data
     obtain the courses info
     Check the DataFrame
     """
-    gql_no_run.extract(api)
-    courses = gql_no_run.get_courses()
-
+    courses = gql.get_courses()
     courses_df = courses_synced_as_df(courses, test_db_fixture)
 
     assert courses_df is not None

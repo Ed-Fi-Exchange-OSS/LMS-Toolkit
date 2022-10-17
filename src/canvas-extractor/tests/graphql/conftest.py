@@ -18,8 +18,8 @@ START_DATE = "2021-01-01"
 END_DATE = "2030-01-01"
 
 
-@pytest.fixture
-def gql_run():
+@pytest.fixture(scope="session")
+def gql(api):
     gql = GraphQLExtractor(
         MOCK_CANVAS_BASE_URL,
         MOCK_CANVAS_ACCESS_TOKEN,
@@ -27,25 +27,13 @@ def gql_run():
         START_DATE,
         END_DATE,
         )
-    gql.run()
+    gql.extract(api)
     yield gql
 
 
-@pytest.fixture
-def gql_no_run():
-    gql = GraphQLExtractor(
-        MOCK_CANVAS_BASE_URL,
-        MOCK_CANVAS_ACCESS_TOKEN,
-        "1",
-        START_DATE,
-        END_DATE,
-        )
-    yield gql
-
-
-@pytest.fixture
+@pytest.fixture(scope="session")
 def api():
-    with open('tests/graphql/sample.json', mode='r') as f:
+    with open('tests/graphql/sample-data.json', mode='r') as f:
         data = json.loads(f.read())
 
     return data
