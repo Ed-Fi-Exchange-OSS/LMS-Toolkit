@@ -15,7 +15,7 @@ def test_students(gql_no_run, api):
     Check and check the return type
     """
     gql_no_run.extract(api)
-    students = gql_no_run.students
+    students = gql_no_run.get_students()
 
     assert api is not None
 
@@ -30,7 +30,7 @@ def test_students_df(gql_no_run, api, test_db_fixture):
     Check the DataFrame and columns
     """
     gql_no_run.extract(api)
-    students = gql_no_run.students
+    students = gql_no_run.get_students()
 
     students_df = students_synced_as_df(students, test_db_fixture)
 

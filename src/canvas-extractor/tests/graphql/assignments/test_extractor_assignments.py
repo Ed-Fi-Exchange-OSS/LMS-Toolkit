@@ -15,7 +15,7 @@ def test_assignments(gql_no_run, api):
     Check and check the return type
     """
     gql_no_run.extract(api)
-    assignments = gql_no_run.assignments
+    assignments = gql_no_run.get_assignments()
 
     assert api is not None
 
@@ -30,7 +30,7 @@ def test_assignments_df(gql_no_run, api, test_db_fixture):
     Check the DataFrame and columns
     """
     gql_no_run.extract(api)
-    assignments = gql_no_run.assignments
+    assignments = gql_no_run.get_assignments()
 
     assignments_df = assignments_synced_as_df(assignments, test_db_fixture)
 

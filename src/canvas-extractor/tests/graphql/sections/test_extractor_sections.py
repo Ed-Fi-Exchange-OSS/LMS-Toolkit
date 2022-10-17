@@ -15,7 +15,7 @@ def test_sections(gql_no_run, api):
     Check and check the return type
     """
     gql_no_run.extract(api)
-    sections = gql_no_run.sections
+    sections = gql_no_run.get_sections()
 
     assert api is not None
 
@@ -30,7 +30,7 @@ def test_sections_df(gql_no_run, api, test_db_fixture):
     Check the DataFrame and columns
     """
     gql_no_run.extract(api)
-    sections = gql_no_run.sections
+    sections = gql_no_run.get_sections()
 
     sections_df = sections_synced_as_df(sections, test_db_fixture)
 

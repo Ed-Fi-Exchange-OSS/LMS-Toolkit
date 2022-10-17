@@ -15,7 +15,7 @@ def test_enrollments(gql_no_run, api):
     Check and check the return type
     """
     gql_no_run.extract(api)
-    enrollments = gql_no_run.enrollments
+    enrollments = gql_no_run.get_enrollments()
 
     assert api is not None
 
@@ -30,7 +30,7 @@ def test_enrollments_df(gql_no_run, api, test_db_fixture):
     Check the DataFrame and columns
     """
     gql_no_run.extract(api)
-    enrollments = gql_no_run.enrollments
+    enrollments = gql_no_run.get_enrollments()
 
     enrollments_df = enrollments_synced_as_df(enrollments, test_db_fixture)
 

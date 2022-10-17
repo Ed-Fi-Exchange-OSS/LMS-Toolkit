@@ -137,24 +137,32 @@ def _write_sections_associations(arguments: MainArguments) -> None:
     )
 
 
+@catch_exceptions
 def _get_assignments(
-    arguments: MainArguments,
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> bool:
     logger.info("Extracting Assignments from Canvas")
-    (sections, _, all_section_ids) = results_store["sections"]
+    (sections, _, _) = results_store["sections"]
     sections_df = to_df(sections)
     (assignments, udm_assignments_df) = extract_assignments(
         sections_df, gql, sync_db
     )
-    logger.info("Writing LMS UDM Assignments to CSV files")
-    write_assignments(
-        udm_assignments_df, all_section_ids, datetime.now(), arguments.output_directory
-    )
     results_store["assignments"] = (assignments, udm_assignments_df)
 
     return True
+
+
+@catch_exceptions
+def _write_assignments(
+    arguments: MainArguments,
+) -> None:
+    logger.info("Writing LMS UDM Assignments to CSV files")
+    (_, _, all_section_ids) = results_store["sections"]
+    (_, udm_assignments_df) = results_store["assignments"]
+    write_assignments(
+        udm_assignments_df, all_section_ids, datetime.now(), arguments.output_directory
+    )
 
 
 def run(arguments: MainArguments) -> None:
@@ -201,7 +209,8 @@ def run(arguments: MainArguments) -> None:
         _write_sections_associations(arguments)
 
         if arguments.extract_assignments:
-            succeeded = _get_assignments(arguments, gql, sync_db)
+            succeeded = _get_assignments(gql, sync_db)
+            _write_assignments(arguments)
 
     _write_sections(arguments)
     _write_students(arguments)
