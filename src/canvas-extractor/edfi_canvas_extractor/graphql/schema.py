@@ -81,6 +81,25 @@ def query_builder(
                           finalScore
                         }}
                       }}
+                      assignmentsConnection {{
+                        nodes {{
+                          _id
+                          name
+                          description
+                          createdAt
+                          updatedAt
+                          lockAt
+                          unlockAt
+                          dueAt
+                          submissionTypes
+                          course {{
+                            _id
+                            createdAt
+                            updatedAt
+                          }}
+                          pointsPossible
+                        }}
+                      }}
                     }}
                     sectionsConnection {{
                       nodes {{
