@@ -16,18 +16,21 @@ from canvasapi.account import Account
 from edfi_canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
 from edfi_lms_extractor_lib.csv_generation.write import (
+    write_assignments,
     write_sections,
     write_section_associations,
     write_users,
 )
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from edfi_canvas_extractor.client_graphql import (
+    extract_assignments,
     extract_courses,
     extract_enrollments,
     extract_sections,
     extract_students,
 )
 from edfi_canvas_extractor.helpers.arg_parser import MainArguments
+from edfi_canvas_extractor.graphql.canvas_helper import to_df
 
 
 logger = logging.getLogger(__name__)
@@ -46,7 +49,7 @@ def _break_execution(failing_extraction: str) -> None:
 def _get_courses(
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine
-) -> None:
+) -> bool:
     logger.info("Extracting Courses from Canvas")
 
     (courses, courses_df) = extract_courses(
@@ -55,12 +58,14 @@ def _get_courses(
 
     results_store["courses"] = (courses, courses_df)
 
+    return True
+
 
 @catch_exceptions
 def _get_sections(
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine
-) -> None:
+) -> bool:
     logger.info("Extracting Sections from Canvas")
     sections, udm_sections_df, all_section_ids = extract_sections(gql, sync_db)
 
@@ -74,6 +79,8 @@ def _get_sections(
         all_section_ids_temp.extend(all_section_ids)
 
         results_store["sections"] = (sections_temp, udm_sections_df_temp, all_section_ids_temp)
+
+    return True
 
 
 @catch_exceptions
@@ -90,10 +97,12 @@ def _write_sections(
 def _get_students(
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine
-) -> None:
+) -> bool:
     logger.info("Extracting Students from Canvas")
     (students, udm_students_df) = extract_students(gql, sync_db)
     results_store["students"] = (students, udm_students_df)
+
+    return True
 
 
 @catch_exceptions
@@ -108,11 +117,13 @@ def _write_students(arguments: MainArguments) -> None:
 def _get_enrollments(
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine
-) -> None:
+) -> bool:
     logger.info("Extracting Enrollments from Canvas")
     (_, _, all_section_ids) = results_store["sections"]
     (enrollments, udm_enrollments) = extract_enrollments(gql, all_section_ids, sync_db)
     results_store["enrollments"] = (enrollments, udm_enrollments)
+
+    return True
 
 
 @catch_exceptions
@@ -123,6 +134,34 @@ def _write_sections_associations(arguments: MainArguments) -> None:
     logger.info("Writing LMS UDM UserSectionAssociations to CSV files")
     write_section_associations(
         udm_enrollments, all_section_ids, datetime.now(), arguments.output_directory
+    )
+
+
+@catch_exceptions
+def _get_assignments(
+    gql: GraphQLExtractor,
+    sync_db: sqlalchemy.engine.base.Engine,
+) -> bool:
+    logger.info("Extracting Assignments from Canvas")
+    (sections, _, _) = results_store["sections"]
+    sections_df = to_df(sections)
+    (assignments, udm_assignments_df) = extract_assignments(
+        sections_df, gql, sync_db
+    )
+    results_store["assignments"] = (assignments, udm_assignments_df)
+
+    return True
+
+
+@catch_exceptions
+def _write_assignments(
+    arguments: MainArguments,
+) -> None:
+    logger.info("Writing LMS UDM Assignments to CSV files")
+    (_, _, all_section_ids) = results_store["sections"]
+    (_, udm_assignments_df) = results_store["assignments"]
+    write_assignments(
+        udm_assignments_df, all_section_ids, datetime.now(), arguments.output_directory
     )
 
 
@@ -168,6 +207,10 @@ def run(arguments: MainArguments) -> None:
             _break_execution("Enrollments")
 
         _write_sections_associations(arguments)
+
+        if arguments.extract_assignments:
+            succeeded = _get_assignments(gql, sync_db)
+            _write_assignments(arguments)
 
     _write_sections(arguments)
     _write_students(arguments)

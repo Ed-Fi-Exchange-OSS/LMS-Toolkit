@@ -16,12 +16,14 @@ from canvasapi.user import User
 
 from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
 from edfi_canvas_extractor.graphql import (
+    assignments as assignmentsGQL,
     courses as coursesGQL,
     enrollments as enrollmentsGQL,
     sections as sectionsGQL,
     students as studentsGQL,
 )
 from edfi_canvas_extractor.mapping import (
+    assignments as assignmentsMap,
     sections as sectionsMap,
     section_associations as section_associationsMap,
     users as usersMap,
@@ -157,3 +159,37 @@ def extract_enrollments(
         udm_enrollments[str(section)] = enrollments_df
 
     return (enrollments, udm_enrollments)
+
+
+def extract_assignments(
+    sections_df: DataFrame,
+    gql: GraphQLExtractor,
+    sync_db: sqlalchemy.engine.base.Engine,
+) -> Tuple[List[Dict[str, str]], Dict[str, DataFrame]]:
+    """
+    Gets all Canvas assignments, in the Ed-Fi UDM format.
+    Parameters
+    ----------
+    sections_df: DataFrame
+        A DataFrame of Canvas Section objects.
+    gql: GraphQLExtractor
+        Adapter for running GraphQL commands on Canvas.
+    sync_db: sqlalchemy.engine.base.Engine
+        Sync database connection.
+    Returns
+    -------
+    Tuple[List[Dict[str, str]], DataFrame]
+        A tuple with the list of Canvas Assignment objects and the udm_assignments dataframe.
+    """
+    assignments: List[Dict[str, str]] = gql.get_assignments()
+    if len(list(assignments)) < 1:
+        logger.info("Skipping assignments - No data returned by API")
+        return ([], {})
+    assignments_df: DataFrame = assignmentsGQL.assignments_synced_as_df(
+        assignments, sync_db
+    )
+    udm_assignments_dfs: Dict[str, DataFrame] = assignmentsMap.map_to_udm_assignments(
+        assignments_df, sections_df
+    )
+
+    return (assignments, udm_assignments_dfs)

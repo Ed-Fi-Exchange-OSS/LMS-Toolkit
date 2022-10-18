@@ -71,6 +71,25 @@ def query_builder(
                           }}
                         }}
                       }}
+                      assignmentsConnection {{
+                        nodes {{
+                          _id
+                          name
+                          description
+                          createdAt
+                          updatedAt
+                          lockAt
+                          unlockAt
+                          dueAt
+                          submissionTypes
+                          course {{
+                            _id
+                            createdAt
+                            updatedAt
+                          }}
+                          pointsPossible
+                        }}
+                      }}
                     }}
                   }}
                 }}
