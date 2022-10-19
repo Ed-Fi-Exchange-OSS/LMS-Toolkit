@@ -21,6 +21,7 @@ class GraphQLExtractor(object):
     courses: List
     enrollments: List
     sections: List
+    submissions: List
     students: List
 
     def __init__(
@@ -46,6 +47,7 @@ class GraphQLExtractor(object):
         self.has_data = False
         self.enrollments = list()
         self.sections = list()
+        self.submissions = list()
         self.students = list()
 
         self.set_account(account)
@@ -212,6 +214,17 @@ class GraphQLExtractor(object):
         """
         sections = self.sections
         return sorted(sections, key=lambda x: x["id"])
+
+    def get_submissions(self) -> List:
+        """
+        Returns a sorted List of Submissions
+        Returns
+        -------
+        List
+            a List of Submissions
+        """
+        submissions = self.submissions
+        return sorted(submissions, key=lambda x: x["id"])
 
     def get_students(self) -> List:
         """

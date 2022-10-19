@@ -19,6 +19,7 @@ from edfi_lms_extractor_lib.csv_generation.write import (
     write_assignments,
     write_sections,
     write_section_associations,
+    write_assignment_submissions,
     write_users,
 )
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
@@ -27,6 +28,7 @@ from edfi_canvas_extractor.client_graphql import (
     extract_courses,
     extract_enrollments,
     extract_sections,
+    extract_submissions,
     extract_students,
 )
 from edfi_canvas_extractor.helpers.arg_parser import MainArguments
@@ -165,6 +167,22 @@ def _write_assignments(
     )
 
 
+@catch_exceptions
+def _get_submissions(
+    arguments: MainArguments,
+    gql: GraphQLExtractor,
+    sync_db: sqlalchemy.engine.base.Engine,
+) -> None:
+    logger.info("Extracting Submissions from Canvas")
+    (sections, _, _) = results_store["sections"]
+    logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
+    write_assignment_submissions(
+        extract_submissions(sections, gql, sync_db),
+        datetime.now(),
+        arguments.output_directory,
+    )
+
+
 def run(arguments: MainArguments) -> None:
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine(
@@ -211,6 +229,8 @@ def run(arguments: MainArguments) -> None:
         if arguments.extract_assignments:
             succeeded = _get_assignments(gql, sync_db)
             _write_assignments(arguments)
+            if succeeded:
+                _get_submissions(arguments, gql, sync_db)
 
     _write_sections(arguments)
     _write_students(arguments)

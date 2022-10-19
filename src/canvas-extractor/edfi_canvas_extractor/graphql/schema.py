@@ -90,6 +90,21 @@ def query_builder(
                           pointsPossible
                         }}
                       }}
+                      submissionsConnection {{
+                        nodes {{
+                            _id
+                            late
+                            missing
+                            submittedAt
+                            grade
+                            createdAt
+                            updatedAt
+                            gradedAt
+                            assignment {{
+                                _id
+                            }}
+                        }}
+                      }}
                     }}
                   }}
                 }}
