@@ -9,8 +9,6 @@ import sqlalchemy
 from pandas import DataFrame
 from typing import Dict, List, Tuple
 
-from canvasapi.submission import Submission
-
 from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
 from edfi_canvas_extractor.graphql import (
     assignments as assignmentsGQL,
@@ -170,7 +168,7 @@ def extract_assignments(
     Parameters
     ----------
     sections_df: DataFrame
-        A DataFrame of Canvas Section objects.
+        A DataFrame of Section dictionaries.
     gql: GraphQLExtractor
         Adapter for running GraphQL commands on Canvas.
     sync_db: sqlalchemy.engine.base.Engine
@@ -203,8 +201,8 @@ def extract_submissions(
     Gets all Canvas submissions for sections, in the Ed-Fi UDM format.
     Parameters
     ----------
-    sections: List[Section]
-        A List of Canvas Section objects.
+    sections: List[Dict[str, str]]
+        A List of Section dictionaries.
     sync_db: sqlalchemy.engine.base.Engine
         Sync database connection.
     Returns
@@ -215,7 +213,7 @@ def extract_submissions(
     """
     export: Dict[Tuple[str, str], DataFrame] = {}
     for section in sections:
-        submissions: List[Submission] = gql.get_submissions()
+        submissions: List[Dict[str, str]] = gql.get_submissions()
         if len(list(submissions)) < 1:
             logger.info(
                 "Skipping submissions for section id %s - No data returned by API",
@@ -237,5 +235,6 @@ def extract_submissions(
             assignment_source_system_identifier = f"{section_id}-{str(assignment_id)}"
             submissions_df["assignment_id"] = assignment_source_system_identifier
             submissions_df = submissionsMap.map_to_udm_submissions(submissions_df, section_id)
-            export[(section_id, f"{assignment_source_system_identifier}")] = submissions_df
+            # export[(section_id, f"{assignment_source_system_identifier}")] = submissions_df
+            export[(section_id, f"{assignment_source_system_identifier}"), submissions_df]
     return export

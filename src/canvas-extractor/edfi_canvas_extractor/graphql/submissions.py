@@ -4,12 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import List
+from typing import Dict, List
 
 from pandas import DataFrame
 import sqlalchemy
 
-from canvasapi.submission import Submission
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
@@ -23,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def submissions_synced_as_df(
-    submissions: List[Submission],
+    submissions: List[Dict[str, str]],
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> DataFrame:
     """
@@ -32,7 +31,7 @@ def submissions_synced_as_df(
 
     Parameters
     ----------
-    submissions: List[Submission]
+    submissions: List[Dict[str, str]]
         a list of Canvas Submissions objects
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
