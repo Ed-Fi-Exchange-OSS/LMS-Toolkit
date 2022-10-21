@@ -20,8 +20,8 @@ from edfi_canvas_extractor.graphql.sections import sections_synced_as_df
 from edfi_canvas_extractor.graphql.students import students_synced_as_df
 
 
-CANVAS_BASE_URL = os.environ['POETRY_CANVAS_BASE_URL']
-CANVAS_ACCESS_TOKEN = os.environ['POETRY_CANVAS_ACCESS_TOKEN']
+CANVAS_BASE_URL = os.environ['CANVAS_BASE_URL']
+CANVAS_ACCESS_TOKEN = os.environ['CANVAS_ACCESS_TOKEN']
 START_DATE = "2021-01-01"
 END_DATE = "2030-01-01"
 DB_FILE = "tests/graphql/test.db"
