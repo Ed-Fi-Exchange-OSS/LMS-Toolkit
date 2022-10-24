@@ -8,7 +8,6 @@ import sqlalchemy
 import sys
 
 from datetime import datetime
-from pandas import DataFrame
 from typing import Dict, Tuple
 
 from canvasapi import Canvas
@@ -38,7 +37,6 @@ from edfi_canvas_extractor.graphql.canvas_helper import to_df
 
 logger = logging.getLogger(__name__)
 results_store: Dict[str, Tuple] = {}
-result_store: Dict[Tuple[str, str], DataFrame] = {}
 
 
 def _break_execution(failing_extraction: str) -> None:
@@ -170,37 +168,16 @@ def _write_assignments(
 
 
 @catch_exceptions
-# def _get_submissions(
-#     arguments: MainArguments,
-#     gql: GraphQLExtractor,
-#     sync_db: sqlalchemy.engine.base.Engine,
-# ) -> None:
-#     logger.info("Extracting Submissions from Canvas")
-#     (sections, _, _) = results_store["sections"]
-#     logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
-#     write_assignment_submissions(
-#         extract_submissions(sections, gql, sync_db),
-#         datetime.now(),
-#         arguments.output_directory,
-#     )
-
-@catch_exceptions
 def _get_submissions(
+    arguments: MainArguments,
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> None:
     logger.info("Extracting Submissions from Canvas")
     (sections, _, _) = results_store["sections"]
-    result_store = (extract_submissions(sections, gql, sync_db))
-
-@catch_exceptions
-def _write_submissions(
-    arguments: MainArguments,
-):
     logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
-    submissions = result_store
     write_assignment_submissions(
-        submissions,
+        extract_submissions(sections, gql, sync_db),
         datetime.now(),
         arguments.output_directory,
     )
@@ -253,9 +230,7 @@ def run(arguments: MainArguments) -> None:
             succeeded = _get_assignments(gql, sync_db)
             _write_assignments(arguments)
             if succeeded:
-                # _get_submissions(arguments, gql, sync_db)
-                _get_submissions(gql, sync_db)
-                _write_submissions(arguments)
+                _get_submissions(arguments, gql, sync_db)
 
     _write_sections(arguments)
     _write_students(arguments)

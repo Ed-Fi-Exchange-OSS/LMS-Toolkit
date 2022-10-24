@@ -158,9 +158,24 @@ class GraphQLExtractor(object):
                     "unlock_at": assignment["unlockAt"],
                     "due_at": assignment["dueAt"],
                     "submission_types": assignment["submissionTypes"],
-                    "course_id": assignment["course"]["_id"],
+                    "course_id": course["_id"],
                     "points_possible": assignment["pointsPossible"],
                 })
+
+                if assignment['submissionsConnection']['nodes']:
+                    for submission in assignment['submissionsConnection']['nodes']:
+                        self.submissions.append({
+                            "id": submission['_id'],
+                            "late": submission['late'],
+                            "missing": submission['missing'],
+                            "submitted_at": submission['submittedAt'],
+                            "grade": submission['grade'],
+                            "created_at": submission['createdAt'],
+                            "updated_at": submission['updatedAt'],
+                            "graded_at": submission['gradedAt'],
+                            "assignment_id": assignment['_id'],
+                            "user_id": submission['user']['_id'],
+                        })
 
         if courses.get("pageInfo"):
             courses_page = courses["pageInfo"]
