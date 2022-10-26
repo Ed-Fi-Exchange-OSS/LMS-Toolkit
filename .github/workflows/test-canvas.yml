@@ -39,6 +39,9 @@ jobs:
                 cache: "poetry"
 
             - name: Run CI Test Task
+              env:
+                CANVAS_BASE_URL: ${{ secrets.CANVAS_BASE_URL}}
+                CANVAS_ACCESS_TOKEN: ${{ secrets.CANVAS_ACCESS_TOKEN}}
               run: |
                 # Next line keeps poetry from trying to use the runner's default Python version
                 pushd ${{ env.SRC_DIR }} && poetry env use "3.9" && popd

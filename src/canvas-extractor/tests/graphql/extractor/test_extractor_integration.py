@@ -20,15 +20,13 @@ from edfi_canvas_extractor.graphql.sections import sections_synced_as_df
 from edfi_canvas_extractor.graphql.students import students_synced_as_df
 
 
-CANVAS_BASE_URL = os.environ['CANVAS_BASE_URL']
-CANVAS_ACCESS_TOKEN = os.environ['CANVAS_ACCESS_TOKEN']
-START_DATE = "2021-01-01"
-END_DATE = "2030-01-01"
-DB_FILE = "tests/graphql/test.db"
-
-
 @pytest.fixture(scope="class")
 def gql_class():
+    CANVAS_BASE_URL = os.environ['CANVAS_BASE_URL']
+    CANVAS_ACCESS_TOKEN = os.environ['CANVAS_ACCESS_TOKEN']
+    START_DATE = "2021-01-01"
+    END_DATE = "2030-01-01"
+
     gql = GraphQLExtractor(
         CANVAS_BASE_URL,
         CANVAS_ACCESS_TOKEN,
@@ -50,11 +48,13 @@ def graphql_class(gql_class):
 
 @pytest.fixture(scope="class")
 def test_db_fixture():
+    DB_FILE = "tests/graphql/test.db"
     Path(DB_FILE).unlink(missing_ok=True)
     yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
     # Path(DB_FILE).unlink(missing_ok=True)
 
 
+@pytest.mark.skip
 class TestExtractorIntegration:
 
     def test_extractor_request(self, gql_class):
