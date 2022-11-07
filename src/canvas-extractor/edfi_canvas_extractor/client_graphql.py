@@ -193,10 +193,10 @@ def extract_assignments(
 
 
 def extract_submissions(
-    sections: List[Dict[str, str]],
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine,
-) -> Dict[Tuple[str, str], DataFrame]:
+) -> None:
+    # ) -> Dict[Tuple[str, str], DataFrame]:
     """
     Gets all Canvas submissions for sections, in the Ed-Fi UDM format.
     Parameters
@@ -212,14 +212,12 @@ def extract_submissions(
         as value.
     """
     export: Dict[Tuple[str, str], DataFrame] = {}
-    for section in sections:
-        submissions: List[Dict[str, str]] = gql.get_submissions()
-        if len(list(submissions)) < 1:
-            logger.info(
-                "Skipping submissions for section id %s - No data returned by API",
-                section["id"],
-            )
-            continue
+    submissions: List[Dict[str, str]] = gql.get_submissions()
+    if len(list(submissions)) < 1:
+        logger.info(
+            "Skipping submissions for section id %s - No data returned by API",
+        )
+    else:
         submissions_for_section_df: DataFrame = submissionsGQL.submissions_synced_as_df(
             submissions, sync_db
         )
@@ -231,9 +229,57 @@ def extract_submissions(
         }
 
         for assignment_id, submissions_df in submissions_dfs_by_assignment_id.items():
-            section_id = str(section['id'])
+            section_id = str(submissions_df.iloc[0]['section_id'])
             assignment_source_system_identifier = f"{section_id}-{str(assignment_id)}"
             submissions_df["assignment_id"] = assignment_source_system_identifier
             submissions_df = submissionsMap.map_to_udm_submissions(submissions_df, section_id)
             export[(section_id, f"{assignment_source_system_identifier}")] = submissions_df
-    return export
+        return export  # type: ignore
+
+
+# def extract_submissions(
+#     sections: List[Dict[str, str]],
+#     gql: GraphQLExtractor,
+#     sync_db: sqlalchemy.engine.base.Engine,
+# ) -> Dict[Tuple[str, str], DataFrame]:
+#     """
+#     Gets all Canvas submissions for sections, in the Ed-Fi UDM format.
+#     Parameters
+#     ----------
+#     sections: List[Dict[str, str]]
+#         A List of Section dictionaries.
+#     sync_db: sqlalchemy.engine.base.Engine
+#         Sync database connection.
+#     Returns
+#     -------
+#     Dict[Tuple[str, str], DataFrame]
+#         A dict with (section_id, assignment_id) as key and udm_submissions
+#         as value.
+#     """
+#     export: Dict[Tuple[str, str], DataFrame] = {}
+#     for section in sections:
+#         submissions: List[Dict[str, str]] = gql.get_submissions()
+#         if len(list(submissions)) < 1:
+#             logger.info(
+#                 "Skipping submissions for section id %s - No data returned by API",
+#                 section["id"],
+#             )
+#             continue
+#         submissions_for_section_df: DataFrame = submissionsGQL.submissions_synced_as_df(
+#             submissions, sync_db
+#         )
+#         submissions_dfs_by_assignment_id = {
+#             assignment_id: submissions_for_section_df.loc[submissions_df]
+#             for assignment_id, submissions_df in submissions_for_section_df.groupby(
+#                 # "section_id"
+#                 "assignment_id"
+#             ).groups.items()
+#         }
+
+#         for assignment_id, submissions_df in submissions_dfs_by_assignment_id.items():
+#             section_id = str(section['id'])
+#             assignment_source_system_identifier = f"{section_id}-{str(assignment_id)}"
+#             submissions_df["assignment_id"] = assignment_source_system_identifier
+#             submissions_df = submissionsMap.map_to_udm_submissions(submissions_df, section_id)
+#             export[(section_id, f"{assignment_source_system_identifier}")] = submissions_df
+#     return export

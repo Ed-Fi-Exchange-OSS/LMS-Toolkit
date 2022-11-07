@@ -146,26 +146,34 @@ class GraphQLExtractor(object):
                         "updated_at": enrollment["updatedAt"],
                         })
 
-            assignments = course["assignmentsConnection"]["nodes"]
-            for assignment in assignments:
-                self.assignments.append({
-                    "id": assignment["_id"],
-                    "name": assignment["name"],
-                    "description": assignment["description"],
-                    "created_at": assignment["createdAt"],
-                    "updated_at": assignment["updatedAt"],
-                    "lock_at": assignment["lockAt"],
-                    "unlock_at": assignment["unlockAt"],
-                    "due_at": assignment["dueAt"],
-                    "submission_types": assignment["submissionTypes"],
-                    "course_id": course["_id"],
-                    "points_possible": assignment["pointsPossible"],
-                })
+            if len(course["assignmentsConnection"]["nodes"]) > 1:
+                assignments = course["assignmentsConnection"]["nodes"]
+                for assignment in assignments:
+                    self.assignments.append({
+                        "id": assignment["_id"],
+                        "name": assignment["name"],
+                        "description": assignment["description"],
+                        "created_at": assignment["createdAt"],
+                        "updated_at": assignment["updatedAt"],
+                        "lock_at": assignment["lockAt"],
+                        "unlock_at": assignment["unlockAt"],
+                        "due_at": assignment["dueAt"],
+                        "submission_types": assignment["submissionTypes"],
+                        "course_id": course["_id"],
+                        "points_possible": assignment["pointsPossible"],
+                    })
 
-                if assignment['submissionsConnection']['nodes']:
-                    for submission in assignment['submissionsConnection']['nodes']:
+            submissions = course['submissionsConnection']['nodes']
+            if submissions:
+                for submission in submissions:
+                    if sections:
+                        section_id = sections[-1]['_id']
                         self.submissions.append({
+                            "course_id": course['_id'],
+                            "section_id": section_id,
+                            "assignment_id": submission['assignment']["_id"],
                             "id": submission['_id'],
+                            "user_id": submission['user']['_id'],
                             "late": submission['late'],
                             "missing": submission['missing'],
                             "submitted_at": submission['submittedAt'],
@@ -173,16 +181,14 @@ class GraphQLExtractor(object):
                             "created_at": submission['createdAt'],
                             "updated_at": submission['updatedAt'],
                             "graded_at": submission['gradedAt'],
-                            "assignment_id": assignment['_id'],
-                            "user_id": submission['user']['_id'],
-                        })
+                            })
 
-        if courses.get("pageInfo"):
-            courses_page = courses["pageInfo"]
-            if courses_page["hasNextPage"]:
-                after = courses_page["endCursor"]
-                query = query_builder(self.account, after)
-                self.get_from_canvas(query)
+            if courses.get("pageInfo"):
+                courses_page = courses["pageInfo"]
+                if courses_page["hasNextPage"]:
+                    after = courses_page["endCursor"]
+                    query = query_builder(self.account, after)
+                    self.get_from_canvas(query)
 
     def get_assignments(self) -> List[Dict[str, str]]:
         """
@@ -239,7 +245,7 @@ class GraphQLExtractor(object):
             a List of Submissions
         """
         submissions = self.submissions
-        return sorted(submissions, key=lambda x: x["id"])
+        return sorted(submissions, key=lambda x: x["section_id"])
 
     def get_students(self) -> List:
         """

@@ -43,33 +43,18 @@ def query_builder(
                     name
                     state
                     assignmentsConnection {{
-                        nodes {{
-                            _id
-                            name
-                            description
-                            createdAt
-                            updatedAt
-                            lockAt
-                            unlockAt
-                            dueAt
-                            submissionTypes
-                            pointsPossible
-                            submissionsConnection {{
-                                nodes {{
-                                  _id
-                                  late
-                                  missing
-                                  submittedAt
-                                  grade
-                                  createdAt
-                                  updatedAt
-                                  gradedAt
-                                  user {{
-                                    _id
-                                  }}
-                                }}
-                            }}
-                        }}
+                      nodes {{
+                        _id
+                        name
+                        description
+                        createdAt
+                        updatedAt
+                        lockAt
+                        unlockAt
+                        dueAt
+                        submissionTypes
+                        pointsPossible
+                      }}
                     }}
                     enrollmentsConnection {{
                       nodes {{
@@ -99,6 +84,24 @@ def query_builder(
                         createdAt
                         updatedAt
                       }}
+                    }}
+                    submissionsConnection {{
+                        nodes {{
+                            _id
+                            late
+                            missing
+                            submittedAt
+                            grade
+                            createdAt
+                            updatedAt
+                            gradedAt
+                            user {{
+                                _id
+                            }}
+                            assignment {{
+                                _id
+                            }}
+                        }}
                     }}
                   }}
                 }}

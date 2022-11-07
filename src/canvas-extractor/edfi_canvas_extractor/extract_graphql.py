@@ -174,10 +174,9 @@ def _get_submissions(
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> None:
     logger.info("Extracting Submissions from Canvas")
-    (sections, _, _) = results_store["sections"]
     logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
     write_assignment_submissions(
-        extract_submissions(sections, gql, sync_db),
+        extract_submissions(gql, sync_db),  # type: ignore
         datetime.now(),
         arguments.output_directory,
     )
