@@ -172,14 +172,18 @@ def _get_submissions(
     arguments: MainArguments,
     gql: GraphQLExtractor,
     sync_db: sqlalchemy.engine.base.Engine,
-) -> None:
+) -> bool:
     logger.info("Extracting Submissions from Canvas")
     logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
-    write_assignment_submissions(
-        extract_submissions(gql, sync_db),  # type: ignore
-        datetime.now(),
-        arguments.output_directory,
-    )
+    submissions = extract_submissions(gql, sync_db)
+    if submissions:
+        write_assignment_submissions(
+            submissions,
+            datetime.now(),
+            arguments.output_directory,
+        )
+
+    return True
 
 
 def run(arguments: MainArguments) -> None:

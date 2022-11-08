@@ -142,6 +142,7 @@ class GraphQLExtractor(object):
                         "user_id": users["_id"],
                         "course_section_id": enrollment["section"]["_id"],
                         "enrollment_state": enrollment["state"],
+                        "type": enrollment["type"],
                         "created_at": enrollment["createdAt"],
                         "updated_at": enrollment["updatedAt"],
                         })
