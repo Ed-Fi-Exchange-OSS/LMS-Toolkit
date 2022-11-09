@@ -135,14 +135,26 @@ class GraphQLExtractor(object):
                         "login_id": users["loginId"],
                     })
 
-                    self.enrollments.append({
+                    enrollment_dict = {
                         "id": enrollment["_id"],
                         "user_id": users["_id"],
                         "course_section_id": enrollment["section"]["_id"],
                         "enrollment_state": enrollment["state"],
+                        "type": enrollment["type"],
                         "created_at": enrollment["createdAt"],
                         "updated_at": enrollment["updatedAt"],
-                        })
+                    }
+
+                    if enrollment.get("grades"):
+                        grades = {
+                            "final_score": enrollment["grades"]["finalScore"],
+                            "final_grade": enrollment["grades"]["finalGrade"],
+                            "current_score": enrollment["grades"]["currentScore"],
+                            "current_grade": enrollment["grades"]["currentGrade"],
+                        }
+                        enrollment_dict["grades"] = grades
+
+                    self.enrollments.append(enrollment_dict)
 
             assignments = course["assignmentsConnection"]["nodes"]
             for assignment in assignments:

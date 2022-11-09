@@ -69,6 +69,12 @@ def query_builder(
                               name
                               loginId
                           }}
+                          grades {{
+                            finalGrade
+                            currentGrade
+                            currentScore
+                            finalScore
+                          }}
                         }}
                       }}
                       assignmentsConnection {{

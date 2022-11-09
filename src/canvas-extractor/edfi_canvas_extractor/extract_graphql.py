@@ -4,11 +4,12 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
+from pandas import DataFrame
 import sqlalchemy
 import sys
 
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, cast
 
 from canvasapi import Canvas
 from canvasapi.account import Account
@@ -17,6 +18,7 @@ from edfi_canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
 from edfi_lms_extractor_lib.csv_generation.write import (
     write_assignments,
+    write_grades,
     write_sections,
     write_section_associations,
     write_users,
@@ -24,6 +26,7 @@ from edfi_lms_extractor_lib.csv_generation.write import (
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
 from edfi_canvas_extractor.client_graphql import (
     extract_assignments,
+    extract_grades,
     extract_courses,
     extract_enrollments,
     extract_sections,
@@ -165,6 +168,20 @@ def _write_assignments(
     )
 
 
+@catch_exceptions
+def _get_grades(arguments: MainArguments) -> None:
+    logger.info("Extracting Grades from Canvas API")
+    (enrollments, udm_enrollments) = results_store["enrollments"]
+    (sections, _, all_section_ids) = results_store["sections"]
+    udm_grades: Dict[str, DataFrame] = extract_grades(
+        enrollments, cast(Dict[str, DataFrame], udm_enrollments), sections
+    )
+    logger.info("Writing LMS UDM Grades to CSV files")
+    write_grades(
+        udm_grades, all_section_ids, datetime.now(), arguments.output_directory
+    )
+
+
 def run(arguments: MainArguments) -> None:
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine(
@@ -211,6 +228,11 @@ def run(arguments: MainArguments) -> None:
         if arguments.extract_assignments:
             succeeded = _get_assignments(gql, sync_db)
             _write_assignments(arguments)
+
+        if arguments.extract_grades:  # Grades are not supported by all the extractors
+            _get_grades(
+                arguments,
+            )  # Grades don't need sync process because they are part of enrollments
 
     _write_sections(arguments)
     _write_students(arguments)
