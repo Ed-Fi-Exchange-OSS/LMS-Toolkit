@@ -147,7 +147,7 @@ class GraphQLExtractor(object):
                         "updated_at": enrollment["updatedAt"],
                         })
 
-            if len(course["assignmentsConnection"]["nodes"]) > 1:
+            if course.get("assignmentsConnection", {}).get("nodes"):
                 assignments = course["assignmentsConnection"]["nodes"]
                 for assignment in assignments:
                     self.assignments.append({
@@ -164,24 +164,24 @@ class GraphQLExtractor(object):
                         "points_possible": assignment["pointsPossible"],
                     })
 
-            submissions = course['submissionsConnection']['nodes']
-            if submissions:
+            if course.get("submissionsConnection", {}).get("nodes"):
+                submissions = course["submissionsConnection"]["nodes"]
                 for submission in submissions:
                     if sections:
-                        section_id = sections[-1]['_id']
+                        section_id = sections[-1]["_id"]
                         self.submissions.append({
-                            "course_id": course['_id'],
+                            "course_id": course["_id"],
                             "section_id": section_id,
-                            "assignment_id": submission['assignment']["_id"],
-                            "id": submission['_id'],
-                            "user_id": submission['user']['_id'],
-                            "late": submission['late'],
-                            "missing": submission['missing'],
-                            "submitted_at": submission['submittedAt'],
-                            "grade": submission['grade'],
-                            "created_at": submission['createdAt'],
-                            "updated_at": submission['updatedAt'],
-                            "graded_at": submission['gradedAt'],
+                            "assignment_id": submission["assignment"]["_id"],
+                            "id": submission["_id"],
+                            "user_id": submission["user"]["_id"],
+                            "late": submission["late"],
+                            "missing": submission["missing"],
+                            "submitted_at": submission["submittedAt"],
+                            "grade": submission["grade"],
+                            "created_at": submission["createdAt"],
+                            "updated_at": submission["updatedAt"],
+                            "graded_at": submission["gradedAt"],
                             })
 
             if courses.get("pageInfo"):
