@@ -5,11 +5,10 @@
 
 import logging
 
-from typing import List
+from typing import Dict, List
 from pandas import DataFrame
 import sqlalchemy
 
-from canvasapi.assignment import Assignment
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
@@ -22,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 def assignments_synced_as_df(
-    assignments: List[Assignment],
+    assignments: List[Dict[str, str]],
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> DataFrame:
     """

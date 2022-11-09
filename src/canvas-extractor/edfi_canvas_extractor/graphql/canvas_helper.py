@@ -4,44 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 from typing import Dict, List
-from edfi_canvas_extractor.graphql.canvas_object import CanvasObject
 from pandas import DataFrame
-
-
-def _to_dict(canvas_object: CanvasObject):
-    """
-    Converts a canvas object to a dict containing only the data values
-
-    Parameters
-    ----------
-    canvas_object: CanvasObject
-        a CanvasObject
-
-    Returns
-    -------
-    Dict
-        a Dict containing only the data value
-    """
-    dictionary = vars(canvas_object).copy()
-    del dictionary["_requester"]
-    return dictionary
-
-
-def _to_dicts(canvas_objects: List[CanvasObject]) -> List[Dict]:
-    """
-    Converts a list of canvas objects to a list of dicts
-
-    Parameters
-    ----------
-    canvas_objects: List[CanvasObject]
-        a list of CanvasObjects
-
-    Returns
-    -------
-    List[Dict]
-        a list of Dicts
-    """
-    return list(map(_to_dict, canvas_objects))
 
 
 def to_df(canvas_objects: List) -> DataFrame:

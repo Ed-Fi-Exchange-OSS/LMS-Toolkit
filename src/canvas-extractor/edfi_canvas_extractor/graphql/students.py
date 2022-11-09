@@ -4,12 +4,11 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
-from typing import List
-
-from pandas import DataFrame
 import sqlalchemy
 
-from canvasapi.user import User
+
+from typing import Dict, List
+from pandas import DataFrame
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
@@ -23,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def students_synced_as_df(
-    students: List[User],
+    students: List[Dict[str, str]],
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> DataFrame:
     """
@@ -33,7 +32,7 @@ def students_synced_as_df(
 
     Parameters
     ----------
-    students: List[User]
+    students: List[Dict[str, str]]
         a list of Canvas Users objects
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections

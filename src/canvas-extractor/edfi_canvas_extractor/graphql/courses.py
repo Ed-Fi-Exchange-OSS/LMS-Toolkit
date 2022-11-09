@@ -3,12 +3,11 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import List
+from typing import Dict, List
 
 from pandas import DataFrame
 import sqlalchemy
 
-from canvasapi.course import Course
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
@@ -19,14 +18,14 @@ COURSES_RESOURCE_NAME = "Courses"
 
 
 def courses_synced_as_df(
-    courses: List[Course], sync_db: sqlalchemy.engine.base.Engine
+    courses: List[Dict[str, str]], sync_db: sqlalchemy.engine.base.Engine
 ) -> DataFrame:
     """
     Using Course data, return a Courses API DataFrame
 
     Parameters
     ----------
-    courses: List[Course]
+    courses: List[Dict[str, str]]
         a list of Canvas Course SDK objects
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections
