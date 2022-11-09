@@ -3,7 +3,6 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-import json
 import logging
 import sqlalchemy
 
@@ -238,7 +237,6 @@ def extract_grades(
             if enrollment["type"] == "StudentEnrollment"
             and enrollment["course_section_id"] == section["id"]
         ]:
-            logging.info(json.dumps(enrollment, indent=2))
             grade: dict = enrollment["grades"]
             current_udm_enrollment = [
                 first_enrollment
