@@ -3,11 +3,10 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
-from typing import List
+from typing import Dict, List
 from pandas import DataFrame
 import sqlalchemy
 
-from canvasapi.section import Section
 from edfi_lms_extractor_lib.api.resource_sync import (
     cleanup_after_sync,
     sync_to_db_without_cleanup,
@@ -18,7 +17,7 @@ SECTIONS_RESOURCE_NAME = "Sections"
 
 
 def sections_synced_as_df(
-    sections: List[Section],
+    sections: List[Dict[str, str]],
     sync_db: sqlalchemy.engine.base.Engine,
 ) -> DataFrame:
     """
@@ -27,7 +26,7 @@ def sections_synced_as_df(
 
     Parameters
     ----------
-    sections: List[Section]
+    sections: List[Dict[str, str]]
         a list of Canvas Sections objects
     sync_db: sqlalchemy.engine.base.Engine
         an Engine instance for creating database connections

@@ -8,10 +8,10 @@ import sqlalchemy
 import sys
 
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 from canvasapi import Canvas
-from canvasapi.account import Account
+from canvasapi.paginated_list import PaginatedList
 
 from edfi_canvas_extractor.config import get_canvas_api, get_sync_db_engine
 from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
@@ -19,6 +19,7 @@ from edfi_lms_extractor_lib.csv_generation.write import (
     write_assignments,
     write_sections,
     write_section_associations,
+    write_assignment_submissions,
     write_users,
 )
 from edfi_lms_extractor_lib.helpers.decorators import catch_exceptions
@@ -27,6 +28,7 @@ from edfi_canvas_extractor.client_graphql import (
     extract_courses,
     extract_enrollments,
     extract_sections,
+    extract_submissions,
     extract_students,
 )
 from edfi_canvas_extractor.helpers.arg_parser import MainArguments
@@ -165,6 +167,25 @@ def _write_assignments(
     )
 
 
+@catch_exceptions
+def _get_submissions(
+    arguments: MainArguments,
+    gql: GraphQLExtractor,
+    sync_db: sqlalchemy.engine.base.Engine,
+) -> bool:
+    logger.info("Extracting Submissions from Canvas")
+    logger.info("Writing LMS UDM AssignmentSubmissions to CSV files")
+    submissions = extract_submissions(gql, sync_db)
+    if submissions:
+        write_assignment_submissions(
+            submissions,
+            datetime.now(),
+            arguments.output_directory,
+        )
+
+    return True
+
+
 def run(arguments: MainArguments) -> None:
     logger.info("Starting Ed-Fi LMS Canvas Extractor")
     sync_db: sqlalchemy.engine.base.Engine = get_sync_db_engine(
@@ -172,7 +193,7 @@ def run(arguments: MainArguments) -> None:
     )
     canvas: Canvas = get_canvas_api(arguments.base_url, arguments.access_token)
 
-    accounts: List[Account] = canvas.get_accounts()
+    accounts: PaginatedList = canvas.get_accounts()
 
     for account in accounts:
         _id = getattr(account, "id")
@@ -211,6 +232,8 @@ def run(arguments: MainArguments) -> None:
         if arguments.extract_assignments:
             succeeded = _get_assignments(gql, sync_db)
             _write_assignments(arguments)
+            if succeeded:
+                _get_submissions(arguments, gql, sync_db)
 
     _write_sections(arguments)
     _write_students(arguments)

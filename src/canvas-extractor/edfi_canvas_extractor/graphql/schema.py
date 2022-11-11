@@ -27,80 +27,93 @@ def query_builder(
         a query with parameters to get from GraphQL
     """
     ACCOUNT_ID = account_id
-    PAGE_SIZE = 10
+    PAGE_SIZE = 5
 
     query = f"""
       query {{
         account(id: {ACCOUNT_ID}) {{
-            coursesConnection(first: {PAGE_SIZE}, after: "{after_cursor}") {{
+          coursesConnection(first: {PAGE_SIZE}, after: "{after_cursor}") {{
             nodes {{
-                term {{
-                  startAt
-                  endAt
-                  coursesConnection {{
-                    nodes {{
-                      _id
-                      name
-                      state
-                      sectionsConnection {{
-                          nodes {{
+              term {{
+                startAt
+                endAt
+                coursesConnection {{
+                  nodes {{
+                    _id
+                    name
+                    state
+                    assignmentsConnection {{
+                      nodes {{
+                        _id
+                        name
+                        description
+                        createdAt
+                        updatedAt
+                        lockAt
+                        unlockAt
+                        dueAt
+                        submissionTypes
+                        pointsPossible
+                      }}
+                    }}
+                    enrollmentsConnection {{
+                      nodes {{
+                        _id
+                        createdAt
+                        updatedAt
+                        state
+                        type
+                        section {{
                           _id
-                          sisId
-                          name
-                          createdAt
-                          updatedAt
+                        }}
+                        user {{
+                            _id
+                            sisId
+                            createdAt
+                            email
+                            name
+                            loginId
                         }}
                       }}
-                      enrollmentsConnection {{
-                        nodes {{
-                          _id
-                          createdAt
-                          updatedAt
-                          state
-                          type
-                          section {{
-                            _id
-                          }}
-                          user {{
-                              _id
-                              sisId
-                              createdAt
-                              email
-                              name
-                              loginId
-                          }}
-                        }}
+                    }}
+                    sectionsConnection {{
+                      nodes {{
+                        _id
+                        sisId
+                        name
+                        createdAt
+                        updatedAt
                       }}
-                      assignmentsConnection {{
+                    }}
+                    submissionsConnection {{
                         nodes {{
-                          _id
-                          name
-                          description
-                          createdAt
-                          updatedAt
-                          lockAt
-                          unlockAt
-                          dueAt
-                          submissionTypes
-                          course {{
                             _id
+                            late
+                            missing
+                            submittedAt
+                            grade
                             createdAt
                             updatedAt
-                          }}
-                          pointsPossible
+                            gradedAt
+                            user {{
+                                _id
+                            }}
+                            assignment {{
+                                _id
+                            }}
                         }}
-                      }}
                     }}
                   }}
                 }}
               }}
-              pageInfo {{
-                hasNextPage
-                endCursor
-              }}
+            }}
+            pageInfo {{
+              hasNextPage
+              endCursor
             }}
           }}
         }}
+      }}
     """
 
     return query

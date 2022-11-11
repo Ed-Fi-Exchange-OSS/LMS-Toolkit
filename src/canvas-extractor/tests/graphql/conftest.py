@@ -20,6 +20,13 @@ END_DATE = "2030-01-01"
 
 @pytest.fixture(scope="session")
 def gql(api):
+    '''
+    Returns the GraphQLExtractor object with the sample data.
+
+    Parameters
+    -----------
+    api String with the query
+    '''
     gql = GraphQLExtractor(
         MOCK_CANVAS_BASE_URL,
         MOCK_CANVAS_ACCESS_TOKEN,
@@ -33,6 +40,9 @@ def gql(api):
 
 @pytest.fixture(scope="session")
 def api():
+    '''
+    Returns the data converted from json file
+    '''
     with open('tests/graphql/sample-data.json', mode='r') as f:
         data = json.loads(f.read())
 
