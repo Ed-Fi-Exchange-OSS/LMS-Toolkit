@@ -51,12 +51,12 @@ jobs:
           path: ${{ env.SRC_DIR }}/htmlcov/
 
       - name: Test
-        run: pytest --junitxml=tests/reports/reports.xml
+        run: poetry run pytest --junitxml=tests/reports/reports.xml
 
       - name: Test Report
         uses: dorny/test-reporter@c9b3d0e2bd2a4e96aaf424dbaa31c46b42318226
-        if: success() || failure()    # run this step even if previous step failed
+        if: success() || failure()
         with:
-          name: PyTests            # Name of the check run which will be created
-          path: tests/reports/reports.xml    # Path to test results
-          reporter: jest-junit        # Format of test results
+          name: PyTests
+          path: tests/reports/reports.xml
+          reporter: jest-junit
