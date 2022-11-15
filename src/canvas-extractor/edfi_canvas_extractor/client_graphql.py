@@ -20,6 +20,7 @@ from edfi_canvas_extractor.graphql import (
 )
 from edfi_canvas_extractor.mapping import (
     assignments as assignmentsMap,
+    grades as gradesMap,
     sections as sectionsMap,
     section_associations as section_associationsMap,
     submissions as submissionsMap,
@@ -234,3 +235,63 @@ def extract_submissions(
             submissions_df = submissionsMap.map_to_udm_submissions(submissions_df, section_id)
             export[(section_id, f"{assignment_source_system_identifier}")] = submissions_df
     return (export)
+
+
+def extract_grades(
+    enrollments: List[Dict[str, str]],
+    udm_enrollments: Dict[str, DataFrame],
+    sections: List[Dict[str, str]],
+) -> Dict[str, DataFrame]:
+    """
+    Gets all Canvas grades, in the Ed-Fi UDM format.
+    Parameters
+    ----------
+    enrollments: List[Dict[str, str]]
+        A list of Canvas Enrollment.
+    udm_enrollments: Dict[str, DataFrame]
+        A dict of udm enrollments with section_id as the key and DataFrame as value.
+    sections: List[Dict[str, str]]
+        A list of Canvas Section.
+    Returns
+    -------
+    Dict[str, DataFrame]
+        A dict with section_id as key and UDM Grades DataFrame as value.
+    """
+    output: Dict[str, DataFrame] = {}
+
+    for section in sections:
+        current_grades: List[dict] = []
+        section_id: str = str(section["id"])
+        if section_id not in udm_enrollments:
+            logger.info(
+                "Skipping enrollments for section id %s - None found", section_id
+            )
+            continue
+        udm_enrollments_list: List[dict] = udm_enrollments[section_id].to_dict(
+            "records"
+        )
+        for enrollment in [
+            enrollment
+            for enrollment in enrollments
+            if enrollment["type"] == "StudentEnrollment"
+            and enrollment["course_section_id"] == section["id"]
+        ]:
+            grade: dict = enrollment["grades"]  # type: ignore
+            current_udm_enrollment = [
+                first_enrollment
+                for first_enrollment in udm_enrollments_list
+                if first_enrollment["SourceSystemIdentifier"] == str(enrollment["id"])
+            ][0]
+            enrollment_id = enrollment["id"]
+            grade["SourceSystemIdentifier"] = f"g#{enrollment_id}"
+            grade["LMSUserLMSSectionAssociationSourceSystemIdentifier"] = str(
+                enrollment_id
+            )
+            grade["LMSSectionIdentifier"] = section_id
+            grade["CreateDate"] = current_udm_enrollment["CreateDate"]
+            grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
+            current_grades.append(grade)
+
+        output[section_id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
+
+    return output
