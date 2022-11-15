@@ -8,25 +8,25 @@ from pandas import DataFrame
 from edfi_canvas_extractor.graphql.enrollments import enrollments_synced_as_df
 
 
-def test_enrollments(gql):
+def test_gql_enrollments_not_empty(mock_gql):
     """
     Get from the sample data
     obtain the enrollments info
     Check and check the return type
     """
-    enrollments = gql.get_enrollments()
+    enrollments = mock_gql.get_enrollments()
 
     assert enrollments is not None
     assert isinstance(enrollments, list)
 
 
-def test_enrollments_df(gql, test_db_fixture):
+def test_gql_enrollments_df_structure(mock_gql, test_db_fixture):
     """
     Get from the sample data
     obtain the enrollments info
     Check the DataFrame and columns
     """
-    enrollments = gql.get_enrollments()
+    enrollments = mock_gql.get_enrollments()
     enrollments_df = enrollments_synced_as_df(enrollments, test_db_fixture)
 
     assert enrollments_df is not None

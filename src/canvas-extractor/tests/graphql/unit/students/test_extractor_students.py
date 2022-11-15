@@ -8,25 +8,25 @@ from pandas import DataFrame
 from edfi_canvas_extractor.graphql.students import students_synced_as_df
 
 
-def test_students(gql):
+def test_gql_students_not_empty(mock_gql):
     """
     Get from the sample data
     obtain the students info
     Check and check the return type
     """
-    students = gql.get_students()
+    students = mock_gql.get_students()
 
     assert students is not None
     assert isinstance(students, list)
 
 
-def test_students_df(gql, test_db_fixture):
+def test_gql_students_df_structure(mock_gql, test_db_fixture):
     """
     Get from the sample data
     obtain the students info
     Check the DataFrame and columns
     """
-    students = gql.get_students()
+    students = mock_gql.get_students()
     students_df = students_synced_as_df(students, test_db_fixture)
 
     assert students_df is not None
