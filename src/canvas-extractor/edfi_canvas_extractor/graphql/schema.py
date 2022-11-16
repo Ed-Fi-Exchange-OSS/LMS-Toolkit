@@ -27,7 +27,7 @@ def query_builder(
         a query with parameters to get from GraphQL
     """
     ACCOUNT_ID = account_id
-    PAGE_SIZE = 5
+    PAGE_SIZE = 1
 
     query = f"""
       query {{
