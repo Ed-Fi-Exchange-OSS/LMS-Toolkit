@@ -20,6 +20,9 @@ START_DATE = "2021-01-01"
 END_DATE = "2030-01-01"
 
 
+load_dotenv()
+
+
 @pytest.fixture(scope="session")
 def read_data():
     '''
@@ -69,11 +72,6 @@ def gql():
     gql.run()
 
     yield gql
-
-
-@pytest.fixture(autouse=True, scope="class")
-def load_env():
-    load_dotenv()
 
 
 @pytest.fixture
