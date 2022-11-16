@@ -8,25 +8,25 @@ from pandas import DataFrame
 from edfi_canvas_extractor.graphql.submissions import submissions_synced_as_df
 
 
-def test_submissions(gql):
+def test_gql_submissions_not_empty(mock_gql):
     """
     Get from the sample data
     obtain the submissions info
     Check and check the return type
     """
-    submissions = gql.get_submissions()
+    submissions = mock_gql.get_submissions()
 
     assert submissions is not None
     assert isinstance(submissions, list)
 
 
-def test_submissions_df(gql, test_db_fixture):
+def test_submissions_df_structure(mock_gql, test_db_fixture):
     """
     Get from the sample data
     obtain the submissions info
     Check the DataFrame and columns
     """
-    submissions = gql.get_submissions()
+    submissions = mock_gql.get_submissions()
 
     if submissions:
         submissions_df = submissions_synced_as_df(submissions, test_db_fixture)

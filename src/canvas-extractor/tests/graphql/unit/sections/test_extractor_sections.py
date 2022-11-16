@@ -8,25 +8,25 @@ from pandas import DataFrame
 from edfi_canvas_extractor.graphql.sections import sections_synced_as_df
 
 
-def test_sections(gql, api):
+def test_gql_sections_not_empty(mock_gql):
     """
     Get from the sample data
     obtain the sections info
     Check and check the return type
     """
-    sections = gql.get_sections()
+    sections = mock_gql.get_sections()
 
     assert sections is not None
     assert isinstance(sections, list)
 
 
-def test_sections_df(gql, test_db_fixture):
+def test_gql_sections_df_structure(mock_gql, test_db_fixture):
     """
     Get from the sample data
     obtain the sections info
     Check the DataFrame and columns
     """
-    sections = gql.get_sections()
+    sections = mock_gql.get_sections()
     sections_df = sections_synced_as_df(sections, test_db_fixture)
 
     assert sections_df is not None
