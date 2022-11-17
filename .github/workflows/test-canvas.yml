@@ -20,8 +20,6 @@ on:
 jobs:
   test-canvas-extractor:
     name: Canvas Extractor - Test
-    runs-on: ubuntu-20.04
-
     uses: ./.github/workflows/reusable-test.yml
     with:
       project: canvas-extractor
