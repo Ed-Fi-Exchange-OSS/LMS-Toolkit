@@ -9,6 +9,8 @@ on:
     paths:
       - 'src/canvas-extractor/**'
       - '!src/canvas-extractor/**/*.md'
+    branches:
+      - main
   workflow_dispatch:
   push:
     branches:
