@@ -10,6 +10,9 @@ on:
       - 'src/canvas-extractor/**'
       - '!src/canvas-extractor/**/*.md'
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   test-canvas-extractor:
