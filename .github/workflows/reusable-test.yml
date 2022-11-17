@@ -84,5 +84,4 @@ jobs:
         uses: github/codeql-action/analyze@8aff97f12c99086bdb92ff62ae06dbbcdf07941b # codeql-bundle-20221105
         with:
           category: "/language:python"
-          paths:
-            - ${{ env.SRC_DIR }}
+          paths: ${{ env.SRC_DIR }}
