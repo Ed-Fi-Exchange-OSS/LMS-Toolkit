@@ -78,10 +78,11 @@ jobs:
         uses: github/codeql-action/init@8aff97f12c99086bdb92ff62ae06dbbcdf07941b # codeql-bundle-20221105
         with:
           languages: python
-          source-root: ${{ env.SRC_DIR }}
+          paths: ${{ env.SRC_DIR }}
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@8aff97f12c99086bdb92ff62ae06dbbcdf07941b # codeql-bundle-20221105
         with:
           category: "/language:python"
-          source-root: ${{ env.SRC_DIR }}
+          paths:
+            - ${{ env.SRC_DIR }}
