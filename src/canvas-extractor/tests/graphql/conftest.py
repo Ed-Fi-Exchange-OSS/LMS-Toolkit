@@ -23,7 +23,7 @@ END_DATE = "2030-01-01"
 load_dotenv()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def read_data():
     '''
     Returns the data converted from json file
@@ -34,7 +34,7 @@ def read_data():
     return data
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def mock_gql(read_data):
     '''
     Returns the GraphQLExtractor object with the sample data.
