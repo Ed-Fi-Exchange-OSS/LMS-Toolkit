@@ -22,6 +22,6 @@ jobs:
     name: Canvas Extractor - Test
     runs-on: ubuntu-20.04
 
-    uses: Ed-Fi-Closed/MetaEd-js/.github/workflows/reusable-publish.yml
+    uses: ./.github/workflows/reusable-test.yml
     with:
       project: canvas-extractor
