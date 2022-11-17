@@ -57,7 +57,7 @@ jobs:
         run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
 
       - name: Archive code coverage results
-        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8  # v3.1.0
         with:
           name: code-coverage-report
           path: ${{ env.SRC_DIR }}/htmlcov/
