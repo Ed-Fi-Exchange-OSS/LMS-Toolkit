@@ -5,7 +5,7 @@
 
 # This action should be used by other actions, to reduce duplication of code
 
-name: Reusable Build and Test
+name: __Reusable Build and Test
 on:
   workflow_call:
     inputs:
