@@ -59,29 +59,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
 
-      # See if this will work out of the box
-
-      # - name: Install Poetry
-      #   run: pipx install poetry
-
-      # - name: Install Python 3.9
-      #   uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6 # v3.1.2
-      #   with:
-      #     python-version: "3.9.x"
-      #     cache: "poetry"
-
-      # - name: Install dependencies
-      #   run: poetry env use "3.9" && poetry install
-      #   working-directory: ${{ env.SRC_DIR }}
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@8aff97f12c99086bdb92ff62ae06dbbcdf07941b # codeql-bundle-20221105
         with:
           languages: python
-          paths: ${{ env.SRC_DIR }}
+          source-root: ${{ env.SRC_DIR }}
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@8aff97f12c99086bdb92ff62ae06dbbcdf07941b # codeql-bundle-20221105
         with:
           category: "/language:python"
-          paths: ${{ env.SRC_DIR }}
