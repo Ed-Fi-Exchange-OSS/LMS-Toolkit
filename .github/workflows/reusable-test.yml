@@ -19,6 +19,7 @@ jobs:
     name: Run  unit, style, and type checks
     runs-on: ubuntu-20.04
     env:
+      PACKAGE_NAME: ${{ inputs.project }}
       SRC_DIR: src/${{ inputs.project }}
 
     steps:
