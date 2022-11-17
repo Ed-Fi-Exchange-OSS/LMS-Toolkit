@@ -16,7 +16,7 @@ on:
 
 jobs:
   lint-test:
-    name: Run  unit, style, and type checks
+    name: Run unit, style, and type checks
     runs-on: ubuntu-20.04
     env:
       PACKAGE_NAME: ${{ inputs.project }}
@@ -24,13 +24,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b  # v3.0.2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
 
       - name: Install Poetry
         run: pipx install poetry
 
       - name: Install Python 3.9
-        uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6  # v3.1.2
+        uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6 # v3.1.2
         with:
           python-version: "3.9.x"
           cache: "poetry"
@@ -48,3 +48,39 @@ jobs:
           name: code-coverage-report
           path: ${{ env.SRC_DIR }}/htmlcov/
 
+  codeql:
+    name: Run CodeQL
+    env:
+      PACKAGE_NAME: ${{ inputs.project }}
+      SRC_DIR: src/${{ inputs.project }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+
+      # See if this will work out of the box
+
+      # - name: Install Poetry
+      #   run: pipx install poetry
+
+      # - name: Install Python 3.9
+      #   uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6 # v3.1.2
+      #   with:
+      #     python-version: "3.9.x"
+      #     cache: "poetry"
+
+      # - name: Install dependencies
+      #   run: poetry env use "3.9" && poetry install
+      #   working-directory: ${{ env.SRC_DIR }}
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
+        with:
+          languages: python
+          source-root: ${{ env.SRC_DIR }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@1fae5bf71b0ecdc7d0a2ef0d0c28409d99693966 # v2.9.2
+        with:
+          category: "/language:python"
+          source-root: ${{ env.SRC_DIR }}
