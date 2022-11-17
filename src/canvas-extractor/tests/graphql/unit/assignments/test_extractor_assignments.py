@@ -8,25 +8,25 @@ from pandas import DataFrame
 from edfi_canvas_extractor.graphql.assignments import assignments_synced_as_df
 
 
-def test_assignments(gql):
+def test_gql_assignments_not_empty(mock_gql):
     """
     Get from the sample data
     obtain the assignments info
     Check and check the return type
     """
-    assignments = gql.get_assignments()
+    assignments = mock_gql.get_assignments()
 
     assert assignments is not None
     assert isinstance(assignments, list)
 
 
-def test_assignments_df(gql, test_db_fixture):
+def test_gql_assignments_df_structure(mock_gql, test_db_fixture):
     """
     Get from the sample data
     obtain the assignments info
     Check the DataFrame and columns
     """
-    assignments = gql.get_assignments()
+    assignments = mock_gql.get_assignments()
     assignments_df = assignments_synced_as_df(assignments, test_db_fixture)
 
     assert assignments_df is not None
