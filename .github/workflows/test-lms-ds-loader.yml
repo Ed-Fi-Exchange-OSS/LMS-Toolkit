@@ -15,6 +15,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src/lms-ds-loader/**'
+      - '!src/lms-ds-loader/**/*.md'
 
 jobs:
   test-lms-ds-loader:

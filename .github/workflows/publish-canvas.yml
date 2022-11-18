@@ -5,7 +5,7 @@
 
 name: Canvas Extractor - Publish
 on:
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   publish-canvas-extractor:

@@ -15,6 +15,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src/google-classroom-extractor/**'
+      - '!src/google-classroom-extractor/**/*.md'
 
 jobs:
   test-google-classroom-extractor:

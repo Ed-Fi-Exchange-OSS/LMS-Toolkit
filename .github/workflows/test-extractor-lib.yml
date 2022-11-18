@@ -15,6 +15,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src/extractor-lib/**'
+      - '!src/extractor-lib/**/*.md'
 
 jobs:
   test-extractor-lib:
