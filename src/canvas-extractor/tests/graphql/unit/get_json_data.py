@@ -5,21 +5,23 @@
 
 import json
 import logging
+import os
 
 from os.path import exists
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 from edfi_canvas_extractor.graphql.extractor import GraphQLExtractor
 from edfi_canvas_extractor.graphql.schema import query_builder
 
 
-def get_json_data():
-    config = dotenv_values()
+load_dotenv()
 
-    CANVAS_BASE_URL = str(config['CANVAS_BASE_URL'])
-    CANVAS_ACCESS_TOKEN = str(config['CANVAS_ACCESS_TOKEN'])
-    START_DATE = config['START_DATE']
-    END_DATE = config['END_DATE']
+
+def get_json_data():
+    CANVAS_BASE_URL = os.environ['CANVAS_BASE_URL']
+    CANVAS_ACCESS_TOKEN = os.environ['CANVAS_ACCESS_TOKEN']
+    START_DATE = "2021-01-01"
+    END_DATE = "2030-01-01"
 
     query = query_builder(1)
 
@@ -37,7 +39,7 @@ def get_json_data():
 
 
 def write_json_file(body: str) -> None:
-    PATH = "sample-data.json"
+    PATH = "tests/graphql/unit/sample-data.json"
 
     if exists(PATH):
         logging.info("File exists!")
