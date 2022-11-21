@@ -1,0 +1,88 @@
+# SPDX-License-Identifier: Apache-2.0
+# Licensed to the Ed-Fi Alliance under one or more agreements.
+# The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
+# See the LICENSE and NOTICES files in the project root for more information.
+
+# This action should be used by other actions, to reduce duplication of code
+
+name: __Reusable Build and Test
+on:
+  workflow_call:
+    inputs:
+      project:
+        description: The project from /src to build
+        required: true
+        type: string
+
+jobs:
+  lint-test:
+    name: Run unit, style, and type checks
+    runs-on: ubuntu-20.04
+    env:
+      PACKAGE_NAME: ${{ inputs.project }}
+      SRC_DIR: src/${{ inputs.project }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install Python 3.9
+        uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6 # v3.1.2
+        with:
+          python-version: "3.9.x"
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: poetry env use "3.9" && poetry install
+        working-directory: ${{ env.SRC_DIR }}
+
+      - name: Run CI Test Task
+        run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8  # v3.1.0
+        with:
+          name: code-coverage-report
+          path: ${{ env.SRC_DIR }}/htmlcov/
+
+  codeql:
+    name: Run CodeQL
+    runs-on: ubuntu-20.04
+    env:
+      PACKAGE_NAME: ${{ inputs.project }}
+      SRC_DIR: src/${{ inputs.project }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # v3.0.2
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install Python 3.9
+        uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6 # v3.1.2
+        with:
+          python-version: "3.9.x"
+          cache: "poetry"
+
+      - name: Install dependencies
+        run: poetry env use "3.9" && poetry install
+        working-directory: ${{ env.SRC_DIR }}
+
+      - name: Prep Python version for CodeQL
+        run: echo "CODEQL_PYTHON=$(which python)" >> $GITHUB_ENV
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@8aff97f12c99086bdb92ff62ae06dbbcdf07941b # codeql-bundle-20221105
+        with:
+          languages: python
+          source-root: ${{ env.SRC_DIR }}
+          setup-python-dependencies: false
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@8aff97f12c99086bdb92ff62ae06dbbcdf07941b # codeql-bundle-20221105
+        with:
+          category: "/language:python"
