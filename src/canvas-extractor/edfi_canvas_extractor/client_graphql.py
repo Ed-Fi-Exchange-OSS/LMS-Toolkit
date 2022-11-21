@@ -76,7 +76,7 @@ def extract_sections(
         A tuple with the list of Canvas Section objects, the udm_sections dataframe,
         and a list of all section ids as strings.
     """
-    sections: List[Dict[str, str]] = gql.sections
+    sections: List[Dict[str, str]] = gql.get_sections()
     sections_df: DataFrame = sectionsGQL.sections_synced_as_df(sections, sync_db)
     udm_sections_df: DataFrame = sectionsMap.map_to_udm_sections(sections_df)
     section_ids = udm_sections_df["SourceSystemIdentifier"].astype("string").tolist()
@@ -290,7 +290,14 @@ def extract_grades(
             grade["LMSSectionIdentifier"] = section_id
             grade["CreateDate"] = current_udm_enrollment["CreateDate"]
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
-            current_grades.append(grade)
+
+            duplicated = False
+            for grades in current_grades:
+                if grades.get('SourceSystemIdentifier') == f"g#{enrollment_id}":
+                    duplicated = True
+
+            if not duplicated:
+                current_grades.append(grade)
 
         output[section_id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
 
