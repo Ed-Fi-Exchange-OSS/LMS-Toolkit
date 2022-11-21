@@ -21,7 +21,7 @@ on:
 
 jobs:
   test-google-classroom-extractor:
-    name: Canvas Extractor - Test
+    name: GC Extractor - Test
     uses: ./.github/workflows/reusable-test.yml
     with:
       project: google-classroom-extractor

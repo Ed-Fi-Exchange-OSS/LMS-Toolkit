@@ -21,7 +21,7 @@ on:
 
 jobs:
   test-schoology-extractor:
-    name: Canvas Extractor - Test
+    name: Schoology Extractor - Test
     uses: ./.github/workflows/reusable-test.yml
     with:
       project: schoology-extractor

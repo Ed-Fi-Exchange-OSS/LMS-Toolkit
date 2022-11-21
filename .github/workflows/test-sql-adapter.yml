@@ -21,7 +21,7 @@ on:
 
 jobs:
   test-sql-adapter:
-    name: Canvas Extractor - Test
+    name: SQL Adapter Library - Test
     uses: ./.github/workflows/reusable-test.yml
     with:
       project: sql-adapter

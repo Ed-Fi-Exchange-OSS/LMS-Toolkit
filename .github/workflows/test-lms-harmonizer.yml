@@ -21,7 +21,7 @@ on:
 
 jobs:
   test-lms-harmonizer:
-    name: Canvas Extractor - Test
+    name: LMS Harmonizer - Test
     uses: ./.github/workflows/reusable-test.yml
     with:
       project: lms-harmonizer

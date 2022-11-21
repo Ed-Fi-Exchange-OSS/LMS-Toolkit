@@ -21,7 +21,7 @@ on:
 
 jobs:
   test-file-utils:
-    name: Canvas Extractor - Test
+    name: File Utilities Library - Test
     uses: ./.github/workflows/reusable-test.yml
     with:
       project: file-utils

@@ -21,7 +21,7 @@ on:
 
 jobs:
   test-lms-ds-loader:
-    name: Canvas Extractor - Test
+    name: LMS Data Store Loader - Test
     uses: ./.github/workflows/reusable-test.yml
     with:
       project: lms-ds-loader
