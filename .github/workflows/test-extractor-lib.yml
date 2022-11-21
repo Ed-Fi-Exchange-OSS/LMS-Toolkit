@@ -9,55 +9,19 @@ on:
     paths:
       - 'src/extractor-lib/**'
       - '!src/extractor-lib/**/*.md'
-  push:
-    paths:
-      - 'src/extractor-lib/**'
-      - '!src/extractor-lib/**/*.md'
     branches:
       - main
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/extractor-lib/**'
+      - '!src/extractor-lib/**/*.md'
 
 jobs:
   test-extractor-lib:
-    name: Run unit, style, and type checks
-    runs-on: ubuntu-20.04
-    env:
-        PACKAGE_NAME: extractor-lib
-        SRC_DIR: src/extractor-lib
-        LOCK_FILE: src/extractor-lib/poetry.lock
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
-
-      - name: Install Python 3.9
-        uses: actions/setup-python@3105fb18c05ddd93efea5f9e0bef7a03a6e9e7df
-        with:
-          python-version: '3.9.x'
-
-      - name: Install Poetry
-        uses: Gr1N/setup-poetry@462ac83c852d49e282a1233c4c24c5411696e7c7
-
-      - name: Get virtual env path
-        id: venv-path
-        run: |
-            poetry env use python
-            echo "::set-output name=dir::$(poetry env info -p)"
-        working-directory: ${{ env.SRC_DIR }}
-
-      - name: Setup Dependency Caching
-        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
-        id: cache-venv
-        with:
-          path: ${{ steps.venv-path.outputs.dir }}
-          key: ${{ runner.os }}-poetry-${{ hashFiles(env.LOCK_FILE) }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-
-      - name: Run CI Test Task
-        run: python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
-
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571
-        with:
-          name: code-coverage-report
-          path: ${{ env.SRC_DIR }}/htmlcov/
+    name: Extractor Library - Test
+    uses: ./.github/workflows/reusable-test.yml
+    with:
+      project: extractor-lib

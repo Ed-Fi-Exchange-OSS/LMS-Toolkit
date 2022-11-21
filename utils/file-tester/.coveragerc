@@ -1,7 +1,0 @@
-[run]
-branch = True
-source = lms_file_tester
-omit = lms_file_tester/__main__.py
-
-[report]
-
