@@ -8,6 +8,7 @@ import pytest
 from edfi_canvas_extractor.graphql.utils import validate_date
 
 
+@pytest.mark.unit
 def test_validate_date():
     with pytest.raises(TypeError):
         validate_date("2021-01-01", "2030-01-01", None, None)

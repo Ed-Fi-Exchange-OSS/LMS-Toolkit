@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import logging
+import pytest
 
 from pandas import DataFrame
 from typing import cast, Dict
@@ -18,6 +19,7 @@ from edfi_canvas_extractor.extract_graphql import (
 )
 
 
+@pytest.mark.unit
 def test_gql_grades_not_empty(
     mock_gql,
     test_db_fixture

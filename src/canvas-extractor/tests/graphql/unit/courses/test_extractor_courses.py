@@ -3,10 +3,13 @@
 # The Ed-Fi Alliance licenses this file to you under the Apache License, Version 2.0.
 # See the LICENSE and NOTICES files in the project root for more information.
 
+import pytest
+
 from pandas import DataFrame
 from edfi_canvas_extractor.graphql.courses import courses_synced_as_df
 
 
+@pytest.mark.unit
 def test_gql_courses_not_empty(mock_gql):
     """
     Get from the sample data
@@ -19,6 +22,7 @@ def test_gql_courses_not_empty(mock_gql):
     assert isinstance(courses, list)
 
 
+@pytest.mark.unit
 def test_gql_courses_df_structure(mock_gql, test_db_fixture):
     """
     Get from the sample data

@@ -28,6 +28,7 @@ def graphql(request, gql):
     request.cls.graphql_extractor = gql
 
 
+@pytest.mark.integration
 @pytest.mark.usefixtures("graphql")
 class TestExtractorIntegration:
 
