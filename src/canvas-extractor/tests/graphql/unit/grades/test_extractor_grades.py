@@ -5,7 +5,6 @@
 
 import logging
 import pytest
-import pytest
 
 from pandas import DataFrame
 from typing import cast, Dict, List
@@ -20,7 +19,7 @@ from edfi_canvas_extractor.extract_graphql import (
 )
 
 
-@pytest.mark.skip
+@pytest.mark.unit
 def test_gql_grades_not_empty(
     mock_gql,
     test_db_fixture
@@ -43,6 +42,7 @@ def test_gql_grades_not_empty(
     assert udm_grades is not None
 
 
+@pytest.mark.unit
 def test_gql_grades_duplicates(
     mock_gql,
     test_db_fixture
