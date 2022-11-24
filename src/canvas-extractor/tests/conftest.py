@@ -85,9 +85,9 @@ def pytest_configure(config):
     # register your new marker to avoid warnings
     config.addinivalue_line(
         "markers",
-        "unit: mark a test as a unit testing.",
+        "unit: mark a test as a unit test.",
     )
     config.addinivalue_line(
         "markers",
-        "integration: mark a test as a integration testing.",
+        "integration: mark a test as a integration test.",
     )
