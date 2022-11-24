@@ -47,16 +47,14 @@ def test_gql_grades_duplicates(
     mock_gql,
     test_db_fixture
 ):
-    sections = _get_sections(mock_gql, test_db_fixture)
-    # assert sections is not None
+    # Calling this functions stores in result_store
+    _get_sections(mock_gql, test_db_fixture)
+    _get_enrollments(mock_gql, test_db_fixture)
 
-    enrollments = _get_enrollments(mock_gql, test_db_fixture)
-    # assert enrollments is not None
+    (enrollments, udm_enrollments) = results_store["enrollments"]
+    (sections, _, _) = results_store["sections"]
 
     logging.info("Extracting Grades from Canvas API")
-    (enrollments, udm_enrollments) = results_store["enrollments"]
-    (sections, _, all_section_ids) = results_store["sections"]
-
     for section in sections:
         current_grades: List[dict] = []
         section_id: str = str(section["id"])
@@ -90,10 +88,7 @@ def test_gql_grades_duplicates(
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
 
             for grades in current_grades:
-                if grades.get('SourceSystemIdentifier') == f"g#{enrollment_id}":
-                    continue
+                expected = f"g#{enrollment_id}"
+                assert expected not in grades
 
             current_grades.append(grade)
-
-        # output[section_id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
-        # logging.info(DataFrame(current_grades))
