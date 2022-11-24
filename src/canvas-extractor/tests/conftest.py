@@ -79,3 +79,15 @@ def test_db_fixture():
     Path(DB_FILE).unlink(missing_ok=True)
     yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
     # Path(DB_FILE).unlink(missing_ok=True)
+
+
+def pytest_configure(config):
+    # register your new marker to avoid warnings
+    config.addinivalue_line(
+        "markers",
+        "unit: mark a test as a unit test.",
+    )
+    config.addinivalue_line(
+        "markers",
+        "integration: mark a test as a integration test.",
+    )
