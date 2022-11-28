@@ -5,12 +5,12 @@
   "repository": "https://github.com/Ed-Fi-Alliance-OSS/LMS-Toolkit",
   "license": "Apache-2.0",
   "dependencies": {
-    "atom-metaed": "3.1.0"
+    "atom-metaed": "3.1.1-dev.2"
   },
   "scripts": {
     "prep:lnx": "cp -r ./EdFi.Ods.Extensions.LMSX ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX",
     "prep:win": "powershell Copy-Item -Path EdFi.Ods.Extensions.LMSX -Destination ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX -Force -Recurse",
-    "deploy": "node ./node_modules/@edfi/metaed-odsapi-deploy/dist/index.js --source ./node_modules/@edfi/ed-fi-model-3.3b --source ./EdFiLMSMetaEd --target ../../ --defaultPluginTechVersion 5.3.0",
+    "deploy": "node ./node_modules/@edfi/metaed-odsapi-deploy/dist/index.js --source ./node_modules/@edfi/ed-fi-model-4.0 --source ./EdFiLMSMetaEd --target ../../ --defaultPluginTechVersion 7.0.0",
     "keep:lnx": "cp -r ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX/* EdFi.Ods.Extensions.LMSX",
     "keep:win": "powershell Copy-Item -Path ../../Ed-Fi-ODS-Implementation/Application/EdFi.Ods.Extensions.LMSX -Destination EdFi.Ods.Extensions.LMSX -Force -Recurse"
   }

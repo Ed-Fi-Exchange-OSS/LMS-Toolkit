@@ -95,6 +95,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@edfi/ed-fi-model-4.0@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@edfi/ed-fi-model-4.0@npm:3.0.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fed-fi-model-4.0%2F-%2F%40edfi%2Fed-fi-model-4.0-3.0.0.tgz"
+  checksum: f98f9374f90547b24ac83156a4323b24096b7d81d6e8b956f9e8b185c8ae0bb670f8a68862846926856adffbd85d25870ddc556e52a3058d1aa5e0a1c18c9094
+  languageName: node
+  linkType: hard
+
 "@edfi/ed-fi-model-4.0a@npm:3.0.3":
   version: 3.0.3
   resolution: "@edfi/ed-fi-model-4.0a@npm:3.0.3::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fed-fi-model-4.0a%2F-%2F%40edfi%2Fed-fi-model-4.0a-3.0.3.tgz"
@@ -102,22 +109,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@edfi/metaed-console@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-console@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-console%2F-%2F%40edfi%2Fmetaed-console-3.1.0.tgz"
+"@edfi/metaed-console@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-console@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-console%2F-%2F%40edfi%2Fmetaed-console-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
     chalk: ^4.1.2
     semver: ^5.7.1
-    winston: 3.7.2
-    yargs: ^17.3.1
-  checksum: 4332034da2d532af66d3e9bf846a2ee2a3549bec451c07502c6d3f4c456f19368c02297fe16934d9efb687e2a66e0f76d847135020fa91e8c59174a355a4bf4a
+    winston: 3.8.2
+    yargs: ^17.6.0
+  checksum: b987cdb411c5a420378c556dc4eb6d2946473eba4fcf5583db35d27f3b9acfad91ecf6d3abfd14523c79ca634e56311a528e238f4ed88cb53fc2bcba5a13f7ce
   languageName: node
   linkType: hard
 
-"@edfi/metaed-core@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-core@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-core%2F-%2F%40edfi%2Fmetaed-core-3.1.0.tgz"
+"@edfi/metaed-core@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-core@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-core%2F-%2F%40edfi%2Fmetaed-core-3.1.1-dev.2.tgz"
   dependencies:
     ajv: ^6.12.6
     antlr4: 4.6.1-patched.0
@@ -130,303 +137,312 @@ __metadata:
     joi: 12.0.0
     klaw-sync: ^3.0.2
     ramda: ^0.28.0
-    semver: ^7.3.5
+    semver: ^7.3.8
     sugar: ^2.0.6
     topo: 2.0.2
-    winston: 3.7.2
-  checksum: ab6c9172d35f5e5a208891e5e3de83914e5bb90a6b8f183b47137605eb627618347f5c5d85ba005074ed148f034ffdd4a9a8277e8de10e3af81448228a48c7f9
+    winston: 3.8.2
+  checksum: 6e9ad0a9410b5e3e885e26f515994254cc4114eb42a614037687269905a758f3811e605b88d46caafb9cb919d478590619757a8910ff241f50326f13de41c57f
   languageName: node
   linkType: hard
 
-"@edfi/metaed-odsapi-deploy@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-odsapi-deploy@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-odsapi-deploy%2F-%2F%40edfi%2Fmetaed-odsapi-deploy-3.1.0.tgz"
+"@edfi/metaed-odsapi-deploy@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-odsapi-deploy@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-odsapi-deploy%2F-%2F%40edfi%2Fmetaed-odsapi-deploy-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
     chalk: ^4.1.2
     fs-extra: ^5.0.0
     ramda: ^0.28.0
     semver: ^5.7.1
     sugar: ^2.0.6
     touch: ^3.1.0
-    winston: 3.7.2
-    yargs: 17.3.1
-  checksum: 41567a167f8787376b54a1abaaa8b279405a758119fb385b9a87e6adcb722be1bb311fcfde71946654c24d8b5fbfbbd6aa72de4b70992f960ed37614bb58fbb7
+    winston: 3.8.2
+    yargs: 17.6.0
+  checksum: 48de35a68d280624893fde059398fa94008b5e68d5c8a0ef3f51714b6702320c00c84c222e6e606d113929077f01fa146d7666bd363b4c2e7f0a4ff7e2d1671b
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-handbook@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-handbook@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-handbook%2F-%2F%40edfi%2Fmetaed-plugin-edfi-handbook-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-handbook@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-handbook@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-handbook%2F-%2F%40edfi%2Fmetaed-plugin-edfi-handbook-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     handlebars: ^4.7.7
-    js-beautify: ^1.14.0
+    js-beautify: ^1.14.7
     ramda: ^0.28.0
     sort-array: ^2.0.0
-    winston: 3.7.2
-    xlsx: 0.18.0
-  checksum: ce68a6a4fdbcfc1e9ed1c9a73502b559ac034b626eb61c6fe1532543009227bd35578ca6d073a6043266f152b87aaac12aa2e9d024fd89060b14593063adfd6e
+    winston: 3.8.2
+    xlsx: 0.18.5
+  checksum: ac7f12cf315b292c72aec9a00854d171e61888edea2d627bc19e492bb800c17dd1f15fa828c1f98eeb4ec00b4e6a87cd8cab71898a3fe63bef0244285bede0f1
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-interchange-brief@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-interchange-brief@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-interchange-brief%2F-%2F%40edfi%2Fmetaed-plugin-edfi-interchange-brief-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-interchange-brief@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-interchange-brief@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-interchange-brief%2F-%2F%40edfi%2Fmetaed-plugin-edfi-interchange-brief-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-xsd": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-xsd": 3.1.1-dev.2
+    "@xmldom/xmldom": 0.7.6
     handlebars: ^4.7.7
-    marked: ">=4.0.10"
+    marked: ^4.1.1
     node-horseman: ^3.3.0
     phantomjs-prebuilt: ^2.1.16
     ramda: ^0.28.0
     sugar: ^2.0.6
-  checksum: 4529f58e76333ded68a8cd325c1d03ac4e87c6612cbea679eac6c4656bfc7ac3c5ea8b97e9ac10098633a7c14af595347b570de90b08b51a1a92a82ef6cd6037
+  checksum: f3eafbd17c067da07a03a3bc056c955bc08364bbdbeb54440eb309ac3a5374b932e27ca7d65659476208c46497542e7baa17b6cb5c008fb0f89836d33da76df2
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-ods-changequery-postgresql@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-changequery-postgresql@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-postgresql%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-postgresql-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-changequery-postgresql@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-changequery-postgresql@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-postgresql%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-postgresql-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-changequery": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-postgresql": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-changequery": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-postgresql": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     handlebars: ^4.7.7
     hash.js: ^1.1.7
     ramda: ^0.28.0
-    winston: 3.7.2
-  checksum: 997fd475e9efe98ed739d916e731057fb2c9f98a0461ea00dff973aefd4ff2ff660ed4929ca29792f670dde5b1b287f08d8482606754ee0effdbdce2082e183f
+    winston: 3.8.2
+  checksum: 4c16ae8e5f23a6677d8a0687d2810a715a196553f9ccd2ac2040fb668774112e8abb68604b547f62b9984fef617df4b631c9b024571a50533d1959d1c651fff8
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-ods-changequery-sqlserver@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-changequery-sqlserver@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-sqlserver%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-sqlserver-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-changequery-sqlserver@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-changequery-sqlserver@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-sqlserver%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-sqlserver-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-changequery": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-changequery": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     handlebars: ^4.7.7
     ramda: ^0.28.0
-    winston: 3.7.2
-  checksum: 2a45431259f72fd4e416b09e49e28c370b3202ea436ee9d235b8ce15b9647cfafda596541da673876e206bba18d83946464de09575f42c0ef4425d058c228666
+    winston: 3.8.2
+  checksum: 9238c32c75724cee14b4db7a121fd78984b91d74249f1f59996dfd376149cc40ed5397239a6095344ec6675c8aad252540255655bd0bccdf9226322ccf83eac9
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-ods-changequery@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-changequery@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-changequery@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-changequery@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-changequery-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     handlebars: ^4.7.7
     ramda: ^0.28.0
-    winston: 3.7.2
-  checksum: c8ec33c9b7f17970792a9d63e23e593f86b99ee93c112ddc901e47644eb1cd06e5d18f496d8e7a9a2b64ca0d79570bf30b75a23222e4256b3287ea3ba4de8a25
+    winston: 3.8.2
+  checksum: 7aa24eb9b6928d941988ef635a2c0ad210fbcbdd21156cb8c42316c5dff968ed42676e433ab2425a0298c959bae6326562f46625bddcd0f71c81b860fce706ef
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-ods-postgresql@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-postgresql@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-postgresql%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-postgresql-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-postgresql@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-postgresql@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-postgresql%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-postgresql-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     deep-freeze: ^0.0.1
     handlebars: ^4.7.7
     hash.js: ^1.1.7
-    pg: ^8.7.1
+    pg: ^8.8.0
     ramda: ^0.28.0
     sugar: ^2.0.6
-    winston: 3.7.2
-  checksum: e6becc06dd1f6adebe8a7a22f7189c7a530fe78bc3dec20e322d31508f9f31b158573e1945a61e3d72cd139fd9a7e894d075d6372cbfe3ef008becbf8e629d7b
+    winston: 3.8.2
+  checksum: 7abd7f27262eb93ed00df83c0989af1db4bb50832944c3f20efb36edaca1913593a483e30739d9395ec1db89105f72de84e040fb52ff4cec0bbf8a6b35548856
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-ods-recordownership-postgresql@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-recordownership-postgresql@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-postgresql%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-postgresql-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-recordownership-postgresql@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-recordownership-postgresql@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-postgresql%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-postgresql-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-recordownership": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-recordownership": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     handlebars: ^4.7.7
-  checksum: 0a7b78425eeec7b96f09d73f1752c055a96599263640758fb2d107871c8b94d381a8e1783414ad7ab6dfdf10f7386d951ee004cd04c0cf7a211583f42457f2d0
+  checksum: a0204f393fbc19b2e8166d9e2015d378efc4f45e910ec3d2bb137f2d033079d01fc5711b4808869d9f77c604ebdd97c367b26ef70207bff510d4b7fdf6c12cfd
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-ods-recordownership-sqlserver@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-recordownership-sqlserver@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-sqlserver%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-sqlserver-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-recordownership-sqlserver@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-recordownership-sqlserver@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-sqlserver%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-sqlserver-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-recordownership": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-recordownership": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     handlebars: ^4.7.7
-  checksum: 9670f4bb5e3bf8a81ec299e106acaa6095eca8879a3dbf2300c0e67d8aa12a6dd40abe0d1f6c9bd297dbbf33dc5a9e7ec07a753e02b7fa80c57471cb9d4f4255
+  checksum: 20d64fe8393c2261b5a1ec0bfa1ad0c146fa529e23e9219c96bc419d24a55570e7897259de6e058cecfdf3aab5fbef19d91093e868baad13c743f74704d748d1
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-ods-recordownership@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-recordownership@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-recordownership@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-recordownership@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-recordownership-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
-  checksum: 2488c80f13e98029cf198b647315708fec1eece86ad0a5cae0e21be84bbb8a283843c09a8a47516fcc7daac01879059adffd0e5f58d1cabb28c87c45b6a0fd36
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
+  checksum: e99cd817d04b6b05252f19c6f37d3cf6ae803900d8401e4d402730f6a075af7280381ed72531b95791e8f60a26721c1998a5f8ffa5795f02c8d4e181f86babed
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-ods-relational@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-relational@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-relational%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-relational-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-relational@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-relational@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-relational%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-relational-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
-    deep-freeze: ^0.0.1
-    handlebars: ^4.7.7
-    hash.js: ^1.1.7
-    ramda: ^0.28.0
-    sugar: ^2.0.6
-    winston: 3.7.2
-  checksum: 07eb42dd909e808e7945e81122a9ce3fa2403be3a147210f1b1acae4bdcd2818ce2ca2ea2ade6d7ee26f26f4a8503adccf9b109e8024f36d4a76fba56015d089
-  languageName: node
-  linkType: hard
-
-"@edfi/metaed-plugin-edfi-ods-sqlserver@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-ods-sqlserver@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-sqlserver%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-sqlserver-3.1.0.tgz"
-  dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     deep-freeze: ^0.0.1
     handlebars: ^4.7.7
     hash.js: ^1.1.7
     ramda: ^0.28.0
     sugar: ^2.0.6
-    winston: 3.7.2
-  checksum: 450ed2fee853fc41cfe3e6aeb31eb9c06c6d1e982a7e31493f05a5c03edd974d2ae7e38547a798a597df3b199dc4921a45db96a015f3326336c051ada7048fa7
+    winston: 3.8.2
+  checksum: 290a5521559165bd47ec81d75ee03be255268079749827c3b198749cc69616370a78fd73cb8070446e974dab300a2cbccb82821c52a9470140afec93646d3cb3
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-odsapi@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-odsapi@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-odsapi%2F-%2F%40edfi%2Fmetaed-plugin-edfi-odsapi-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-ods-sqlserver@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-ods-sqlserver@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-ods-sqlserver%2F-%2F%40edfi%2Fmetaed-plugin-edfi-ods-sqlserver-3.1.1-dev.2.tgz"
+  dependencies:
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
+    deep-freeze: ^0.0.1
+    handlebars: ^4.7.7
+    hash.js: ^1.1.7
+    ramda: ^0.28.0
+    sugar: ^2.0.6
+    winston: 3.8.2
+  checksum: 8a472d7c76ae1b97a7d79ae1e80a8b2178dae7175d3ae2e7f3717e72bcfb3db3d47f56ae67b095401938984d00adfe7b8e5ea75d1a91e3e1bac2e04d110eaca7
+  languageName: node
+  linkType: hard
+
+"@edfi/metaed-plugin-edfi-odsapi@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-odsapi@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-odsapi%2F-%2F%40edfi%2Fmetaed-plugin-edfi-odsapi-3.1.1-dev.2.tgz"
   dependencies:
     "@dagrejs/graphlib": ^2.1.4
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
-    "@edfi/metaed-plugin-edfi-xsd": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-xsd": 3.1.1-dev.2
     deep-freeze: ^0.0.1
     handlebars: ^4.7.7
     ramda: ^0.28.0
     semver: ^5.7.1
     sugar: ^2.0.6
-    winston: 3.7.2
-  checksum: f4312310a3081c77c4c80d59397bc76a9872b03417388777efe1c018365eb7c15a4e619e81a7ef8a16cdc9bfaeac4ea456a76bca0384f4e217b45069d61ff875
+    winston: 3.8.2
+  checksum: ac89da9af0f73988e69f0efec09b83d3cdd40228dd9dc6636e4a1b7dca8dcc105791c8e374e03bf7f8bc03ab167a2e0e5bdbd389d92af8f45afef3b1c822a098
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-sql-dictionary@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-sql-dictionary@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-sql-dictionary%2F-%2F%40edfi%2Fmetaed-plugin-edfi-sql-dictionary-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-sql-dictionary@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-sql-dictionary@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-sql-dictionary%2F-%2F%40edfi%2Fmetaed-plugin-edfi-sql-dictionary-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
     handlebars: ^4.7.7
-    winston: 3.7.2
-    xlsx: 0.18.0
-  checksum: 076b15c546b11471c0fe1563f82ec500580dde88ad392c00f1283ec28a8117650b82bea2310f9d75c001a75e734002dced6756fdbda9d2e4353df9b7ab761060
+    winston: 3.8.2
+    xlsx: 0.18.5
+  checksum: 4f675d839b31390fc1109fd615433f4b1b4c33f1e9333674b80b204914fa15bd57049900ddf8c3196b4fb861b5cc047ac3d5d1c47f1bb7f74aa827cb25c680c0
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-unified-advanced@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-unified-advanced@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-unified-advanced%2F-%2F%40edfi%2Fmetaed-plugin-edfi-unified-advanced-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-unified-advanced@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-unified-advanced@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-unified-advanced%2F-%2F%40edfi%2Fmetaed-plugin-edfi-unified-advanced-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
     ramda: ^0.28.0
-  checksum: 709f987d451ee64197ff19663706d6eb33479124490ecda01024e9444609f5f3d4e91ea11f07bd05e916e95087b1af8cb4697fcf4b3a3a633a65785851e6e68c
+  checksum: ddfa2e9273a9b81b9356a735c2c873a6be22268e64f5d38d6d2680775ac3b3a9b5d713c4fe733c320aca319daa7219c60050db9b5daafa0dabff1fd942ccc807
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-unified@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-unified@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-unified%2F-%2F%40edfi%2Fmetaed-plugin-edfi-unified-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-unified@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-unified@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-unified%2F-%2F%40edfi%2Fmetaed-plugin-edfi-unified-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
     ramda: ^0.28.0
-    winston: 3.7.2
-  checksum: 41a81b7e2dae51e8dfa8affcc0f4c0b020d3fae8ba9020ba5375890ea6360426f8735921f8424633bb96b010ee49ef6f8199e9bb3b7e61d055469a9b8a00212d
+    winston: 3.8.2
+  checksum: d5122dcebaebbfc5539e8bd63c2d9da1f17e3bcd6dcf67291d58a15c5d30aa7be96673a14e3a4ba11d8ad01a1ab212ac93d9c7456322f8b753d9be38aed03de3
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-xml-dictionary@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-xml-dictionary@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-xml-dictionary%2F-%2F%40edfi%2Fmetaed-plugin-edfi-xml-dictionary-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-xml-dictionary@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-xml-dictionary@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-xml-dictionary%2F-%2F%40edfi%2Fmetaed-plugin-edfi-xml-dictionary-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
-    "@edfi/metaed-plugin-edfi-xsd": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-xsd": 3.1.1-dev.2
+    "@xmldom/xmldom": 0.7.6
     handlebars: ^4.7.7
-    js-beautify: ^1.14.0
-    winston: 3.7.2
-    xlsx: ^0.18.0
-    xmldom: ^0.6.0
-  checksum: 8693055e7853518fb7b6c02707a69602e5cee6085076edfdf232e2e83e50eda0c13b905f727967478db69762e2fe2a5a3cba0c79b68542abd7aab39f615c58eb
+    js-beautify: ^1.14.7
+    winston: 3.8.2
+    xlsx: ^0.18.5
+  checksum: ca864811ed3bba7614606656fb074b1ea374e99449d6a98d3df31a4a7987bb694e96e2bfb02c7799bdf2e0cc8ebc1ae73567d7873cc4cb8ede85ddc9b00a551f
   languageName: node
   linkType: hard
 
-"@edfi/metaed-plugin-edfi-xsd@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@edfi/metaed-plugin-edfi-xsd@npm:3.1.0::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-xsd%2F-%2F%40edfi%2Fmetaed-plugin-edfi-xsd-3.1.0.tgz"
+"@edfi/metaed-plugin-edfi-xsd@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "@edfi/metaed-plugin-edfi-xsd@npm:3.1.1-dev.2::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40edfi%2Fmetaed-plugin-edfi-xsd%2F-%2F%40edfi%2Fmetaed-plugin-edfi-xsd-3.1.1-dev.2.tgz"
   dependencies:
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
+    "@xmldom/xmldom": 0.7.6
     deep-freeze: ^0.0.1
     handlebars: ^4.7.7
-    js-beautify: ^1.14.0
+    js-beautify: ^1.14.7
     ramda: ^0.28.0
     semver: ^5.7.1
     sugar: ^2.0.6
-    winston: 3.7.2
+    winston: 3.8.2
     xml-js: ^1.6.11
-  checksum: 4631b01571c3914631c16157efacb7f86e5a81fae6edc975a962112c6723f15d8895cef76519509899373696a00db226168fbb71785c4210c963fec329c55599
+  checksum: de3b76aa3053c51717f06f164230f7a5a2f22a2415cbebf69e505f66832bc29af949d38f59c28670a2cf5b402159aa4715bec41d6a20de4797fcf2096635078b
   languageName: node
   linkType: hard
 
-"abbrev@npm:1":
+"@xmldom/xmldom@npm:0.7.6":
+  version: 0.7.6
+  resolution: "@xmldom/xmldom@npm:0.7.6::__archiveUrl=https%3A%2F%2Fwww.myget.org%2FF%2Fed-fi%2Fnpm%2F%40xmldom%2Fxmldom%2F-%2F%40xmldom%2Fxmldom-0.7.6.tgz"
+  checksum: 3c31dcd909aaefd65090033bd45e0aca42d636a9ae43c7313f4be87de570d046abba28362810d63c0718d6f08a9ce5f8da27b87437afc24d2290b6d4e75a6eee
+  languageName: node
+  linkType: hard
+
+"abbrev@npm:1, abbrev@npm:^1.0.0":
   version: 1.1.1
   resolution: "abbrev@npm:1.1.1"
   checksum: a4a97ec07d7ea112c517036882b2ac22f3109b7b19077dc656316d07d308438aac28e4d9746dc4d84bf6b1e75b4a7b0a5f3cb30592419f128ca9a8cee3bcfa17
@@ -461,12 +477,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-html@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "ansi-html@npm:0.0.7"
+"ansi-html@npm:0.0.8":
+  version: 0.0.8
+  resolution: "ansi-html@npm:0.0.8"
   bin:
-    ansi-html: ./bin/ansi-html
-  checksum: 9b839ce99650b4c2d83621d67d68622d27e7948b54f7a4386f2218a3997ee4e684e5a6e8d290880c3f3260e8d90c2613c59c7028f04992ad5c8d99d3a0fcc02c
+    ansi-html: bin/ansi-html
+  checksum: aee57b90d7c0b2e661446b7c3cacc70511518ea434aaf299280ab3aa943757fd101ef5e7351850c64f55b8a3692b6df32b965f2645435a83cf4a82cbceb8b69e
   languageName: node
   linkType: hard
 
@@ -550,9 +566,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atom-metaed@npm:3.1.0":
-  version: 3.1.0
-  resolution: "atom-metaed@npm:3.1.0"
+"atom-metaed@npm:3.1.1-dev.2":
+  version: 3.1.1-dev.2
+  resolution: "atom-metaed@npm:3.1.1-dev.2"
   dependencies:
     "@edfi/ed-fi-model-2.0": 3.0.1
     "@edfi/ed-fi-model-2.2": 3.0.1
@@ -563,29 +579,30 @@ __metadata:
     "@edfi/ed-fi-model-3.2c": 3.0.1
     "@edfi/ed-fi-model-3.3a": 3.0.1
     "@edfi/ed-fi-model-3.3b": 3.0.1
+    "@edfi/ed-fi-model-4.0": 3.0.0
     "@edfi/ed-fi-model-4.0a": 3.0.3
-    "@edfi/metaed-console": 3.1.0
-    "@edfi/metaed-core": 3.1.0
-    "@edfi/metaed-odsapi-deploy": 3.1.0
-    "@edfi/metaed-plugin-edfi-handbook": 3.1.0
-    "@edfi/metaed-plugin-edfi-interchange-brief": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-changequery": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-changequery-postgresql": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-changequery-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-postgresql": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-recordownership": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-recordownership-postgresql": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-recordownership-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.0
-    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.0
-    "@edfi/metaed-plugin-edfi-odsapi": 3.1.0
-    "@edfi/metaed-plugin-edfi-sql-dictionary": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified": 3.1.0
-    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.0
-    "@edfi/metaed-plugin-edfi-xml-dictionary": 3.1.0
-    "@edfi/metaed-plugin-edfi-xsd": 3.1.0
+    "@edfi/metaed-console": 3.1.1-dev.2
+    "@edfi/metaed-core": 3.1.1-dev.2
+    "@edfi/metaed-odsapi-deploy": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-handbook": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-interchange-brief": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-changequery": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-changequery-postgresql": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-changequery-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-postgresql": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-recordownership": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-recordownership-postgresql": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-recordownership-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-relational": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-ods-sqlserver": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-odsapi": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-sql-dictionary": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-unified-advanced": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-xml-dictionary": 3.1.1-dev.2
+    "@edfi/metaed-plugin-edfi-xsd": 3.1.1-dev.2
     adm-zip: ^0.5.9
-    ansi-html: ^0.0.7
+    ansi-html: 0.0.8
     atom-message-panel: ^1.3.1
     atom-package-deps: ^4.6.2
     atom-space-pen-views: 2.2.0
@@ -601,8 +618,8 @@ __metadata:
     stream-splitter: 0.3.2
     tmp-promise: ^1.1.0
     uuid: 3.4.0
-    winston: 3.7.2
-  checksum: d5c174d05408c893d89f1936b763f8c908fd56f43d41ee4e28ffbc1768933ae402f332d57758cf57270ce466b8c09babf7d90b926d2e73eac05bc5737d517110
+    winston: 3.8.2
+  checksum: ac2ee98e45e17fb14c1f483b82e415ac7097f912e5cef4d5bc48ca40f366026c67b7489f34578b3f42918661f22ddba05dacd6baf52863a615a6ad12eabaed9b
   languageName: node
   linkType: hard
 
@@ -692,6 +709,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"brace-expansion@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "brace-expansion@npm:2.0.1"
+  dependencies:
+    balanced-match: ^1.0.0
+  checksum: a61e7cd2e8a8505e9f0036b3b6108ba5e926b4b55089eeb5550cd04a471fe216c96d4fe7e4c7f995c728c554ae20ddfc4244cad10aef255e72b62930afd233d1
+  languageName: node
+  linkType: hard
+
 "buffer-crc32@npm:~0.2.3":
   version: 0.2.13
   resolution: "buffer-crc32@npm:0.2.13"
@@ -752,7 +778,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cfb@npm:^1.1.4, cfb@npm:~1.2.1":
+"cfb@npm:~1.2.1":
   version: 1.2.1
   resolution: "cfb@npm:1.2.1"
   dependencies:
@@ -781,6 +807,17 @@ __metadata:
     strip-ansi: ^6.0.0
     wrap-ansi: ^7.0.0
   checksum: ce2e8f578a4813806788ac399b9e866297740eecd4ad1823c27fd344d78b22c5f8597d548adbcc46f0573e43e21e751f39446c5a5e804a12aace402b7a315d7f
+  languageName: node
+  linkType: hard
+
+"cliui@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "cliui@npm:8.0.1"
+  dependencies:
+    string-width: ^4.2.0
+    strip-ansi: ^6.0.1
+    wrap-ansi: ^7.0.0
+  checksum: 79648b3b0045f2e285b76fb2e24e207c6db44323581e421c3acbd0e86454cba1b37aea976ab50195a49e7384b871e6dfb2247ad7dec53c02454ac6497394cb56
   languageName: node
   linkType: hard
 
@@ -895,7 +932,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"config-chain@npm:^1.1.12":
+"config-chain@npm:^1.1.13":
   version: 1.1.13
   resolution: "config-chain@npm:1.1.13"
   dependencies:
@@ -1400,6 +1437,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"glob@npm:^8.0.3":
+  version: 8.0.3
+  resolution: "glob@npm:8.0.3"
+  dependencies:
+    fs.realpath: ^1.0.0
+    inflight: ^1.0.4
+    inherits: 2
+    minimatch: ^5.0.1
+    once: ^1.3.0
+  checksum: 50bcdea19d8e79d8de5f460b1939ffc2b3299eac28deb502093fdca22a78efebc03e66bf54f0abc3d3d07d8134d19a32850288b7440d77e072aa55f9d33b18c5
+  languageName: node
+  linkType: hard
+
 "graceful-fs@npm:^4.1.11, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.1.9":
   version: 4.2.9
   resolution: "graceful-fs@npm:4.2.9"
@@ -1648,19 +1698,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-beautify@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "js-beautify@npm:1.14.0"
+"js-beautify@npm:^1.14.7":
+  version: 1.14.7
+  resolution: "js-beautify@npm:1.14.7"
   dependencies:
-    config-chain: ^1.1.12
+    config-chain: ^1.1.13
     editorconfig: ^0.15.3
-    glob: ^7.1.3
-    nopt: ^5.0.0
+    glob: ^8.0.3
+    nopt: ^6.0.0
   bin:
     css-beautify: js/bin/css-beautify.js
     html-beautify: js/bin/html-beautify.js
     js-beautify: js/bin/js-beautify.js
-  checksum: 86a32c61364f9266d070b0a3b56c451b09d418d26030216ffdcb770b5bd06184c00ac9eb53ccf7765503bb74022a9e177b72bc043b9e6b8a8f22ca8569c3aef6
+  checksum: 1950d0d3f05f8ad06b73eb77b9aac602d00b24eab7d8a6d8ea0b1841ab9c730acecd5a6f3926e360dce7a2583481bc77caf6d024490a58fa9897cbbbdfc35984
   languageName: node
   linkType: hard
 
@@ -1798,7 +1848,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "lmsx-extension-builder@workspace:."
   dependencies:
-    atom-metaed: 3.1.0
+    atom-metaed: 3.1.1-dev.2
   languageName: unknown
   linkType: soft
 
@@ -1854,12 +1904,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:>=4.0.10":
-  version: 4.0.12
-  resolution: "marked@npm:4.0.12"
+"marked@npm:^4.1.1":
+  version: 4.2.3
+  resolution: "marked@npm:4.2.3"
   bin:
     marked: bin/marked.js
-  checksum: 7575117f85a8986652f3ac8b8a7b95056c4c5fce01a1fc76dc4c7960412cb4c9bd9da8133487159b6b3ff84f52b543dfe9a36f826a5f358892b5ec4b6824f192
+  checksum: 21b9f6cc4e7695b5e1f251b7b6c98fdc29c25f7ee6c8f4d5c51654856ea36d6222e9a5a227a9b89ccba717dcf7a722022f099aa0dc7caad8e041c996906c23d0
   languageName: node
   linkType: hard
 
@@ -1892,6 +1942,15 @@ __metadata:
   dependencies:
     brace-expansion: ^1.1.7
   checksum: c154e566406683e7bcb746e000b84d74465b3a832c45d59912b9b55cd50dee66e5c4b1e5566dba26154040e51672f9aa450a9aef0c97cfc7336b78b7afb9540a
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:^5.0.1":
+  version: 5.1.0
+  resolution: "minimatch@npm:5.1.0"
+  dependencies:
+    brace-expansion: ^2.0.1
+  checksum: 15ce53d31a06361e8b7a629501b5c75491bc2b59712d53e802b1987121d91b433d73fcc5be92974fde66b2b51d8fb28d75a9ae900d249feb792bb1ba2a4f0a90
   languageName: node
   linkType: hard
 
@@ -1999,14 +2058,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nopt@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "nopt@npm:5.0.0"
+"nopt@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "nopt@npm:6.0.0"
   dependencies:
-    abbrev: 1
+    abbrev: ^1.0.0
   bin:
     nopt: bin/nopt.js
-  checksum: d35fdec187269503843924e0114c0c6533fb54bbf1620d0f28b4b60ba01712d6687f62565c55cc20a504eff0fbe5c63e22340c3fad549ad40469ffb611b04f2f
+  checksum: 82149371f8be0c4b9ec2f863cc6509a7fd0fa729929c009f3a58e4eb0c9e4cae9920e8f1f8eb46e7d032fec8fb01bede7f0f41a67eb3553b7b8e14fa53de1dac
   languageName: node
   linkType: hard
 
@@ -2144,7 +2203,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg@npm:^8.7.1":
+"pg@npm:^8.8.0":
   version: 8.8.0
   resolution: "pg@npm:8.8.0"
   dependencies:
@@ -2497,14 +2556,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5":
-  version: 7.3.5
-  resolution: "semver@npm:7.3.5"
+"semver@npm:^7.3.8":
+  version: 7.3.8
+  resolution: "semver@npm:7.3.8"
   dependencies:
     lru-cache: ^6.0.0
   bin:
     semver: bin/semver.js
-  checksum: 5eafe6102bea2a7439897c1856362e31cc348ccf96efd455c8b5bc2c61e6f7e7b8250dc26b8828c1d76a56f818a7ee907a36ae9fb37a599d3d24609207001d60
+  checksum: ba9c7cbbf2b7884696523450a61fee1a09930d888b7a8d7579025ad93d459b2d1949ee5bbfeb188b2be5f4ac163544c5e98491ad6152df34154feebc2cc337c1
   languageName: node
   linkType: hard
 
@@ -2929,10 +2988,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"winston@npm:3.7.2":
-  version: 3.7.2
-  resolution: "winston@npm:3.7.2"
+"winston@npm:3.8.2":
+  version: 3.8.2
+  resolution: "winston@npm:3.8.2"
   dependencies:
+    "@colors/colors": 1.5.0
     "@dabh/diagnostics": ^2.0.2
     async: ^3.2.3
     is-stream: ^2.0.0
@@ -2943,7 +3003,7 @@ __metadata:
     stack-trace: 0.0.x
     triple-beam: ^1.3.0
     winston-transport: ^4.5.0
-  checksum: f1f1a860d2fa228b50880b20aaa6cc121085907791fe0d814ff9c062640f6b65da321726322094e7667eb63088b3bb67e7b4e219d998f29efcc6f583185a1cd3
+  checksum: f7b901798b92ab9e93c850110bf6e98500e9a0e762b62dab410cf928b2a4145533dfa6d3d2b24f7bf0dc94b53808d5bd28aaaeff9a4b43b89ea4c798cce308ea
   languageName: node
   linkType: hard
 
@@ -2986,26 +3046,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xlsx@npm:0.18.0":
-  version: 0.18.0
-  resolution: "xlsx@npm:0.18.0"
-  dependencies:
-    adler-32: ~1.3.0
-    cfb: ^1.1.4
-    codepage: ~1.15.0
-    crc-32: ~1.2.1
-    ssf: ~0.11.2
-    wmf: ~1.0.1
-    word: ~0.3.0
-  bin:
-    xlsx: bin/xlsx.njs
-  checksum: c529acfb00e039f4376f5cdabdde2457b861be1f277f6af0ce28bc6e51ccac4fabe28aaa8da49ea3c3331491b2afbf587dff30068889220cd52aa8db3888d22c
-  languageName: node
-  linkType: hard
-
-"xlsx@npm:^0.18.0":
-  version: 0.18.3
-  resolution: "xlsx@npm:0.18.3"
+"xlsx@npm:0.18.5, xlsx@npm:^0.18.5":
+  version: 0.18.5
+  resolution: "xlsx@npm:0.18.5"
   dependencies:
     adler-32: ~1.3.0
     cfb: ~1.2.1
@@ -3016,7 +3059,7 @@ __metadata:
     word: ~0.3.0
   bin:
     xlsx: bin/xlsx.njs
-  checksum: 4e407a3ca94002d929fb184972da5ae135e05e5ed3f9b6e334d12d59d2ac44777267a4a4c37363e4bafe2ac401337dee41dac708b139faa8fb7aeeed336d47e7
+  checksum: c5774d3c6abdf2db24f33a7b786e305255dac0e41a4e6bf6167c3f8517bfb5bfcb98e8207c39d5105f8304aa7416758da0400a993fb79aaf8e2ea4cfa8801f2e
   languageName: node
   linkType: hard
 
@@ -3028,13 +3071,6 @@ __metadata:
   bin:
     xml-js: ./bin/cli.js
   checksum: 24a55479919413687105fc2d8ab05e613ebedb1c1bc12258a108e07cff5ef793779297db854800a4edf0281303ebd1f177bc4a588442f5344e62b3dddda26c2b
-  languageName: node
-  linkType: hard
-
-"xmldom@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "xmldom@npm:0.6.0"
-  checksum: 710f64f5b2ba8ac1cbcf62c2e35b095a2f9ccbd596062efe037a5ca85d3ee077b691c4d74952ff476e4bab0dd82727604262899f25dddbb02f89ddeea4cca7f9
   languageName: node
   linkType: hard
 
@@ -3080,18 +3116,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:17.3.1, yargs@npm:^17.3.1":
-  version: 17.3.1
-  resolution: "yargs@npm:17.3.1"
+"yargs-parser@npm:^21.1.1":
+  version: 21.1.1
+  resolution: "yargs-parser@npm:21.1.1"
+  checksum: ed2d96a616a9e3e1cc7d204c62ecc61f7aaab633dcbfab2c6df50f7f87b393993fe6640d017759fe112d0cb1e0119f2b4150a87305cc873fd90831c6a58ccf1c
+  languageName: node
+  linkType: hard
+
+"yargs@npm:17.6.0":
+  version: 17.6.0
+  resolution: "yargs@npm:17.6.0"
   dependencies:
-    cliui: ^7.0.2
+    cliui: ^8.0.1
     escalade: ^3.1.1
     get-caller-file: ^2.0.5
     require-directory: ^2.1.1
     string-width: ^4.2.3
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
-  checksum: 64fc2e32c56739f1d14d2d24acd17a6944c3c8e3e3558f09fc1953ac112e868cc16013d282886b9d5be22187f8b9ed4f60741a6b1011f595ce2718805a656852
+  checksum: 604bdb4a6395a870540d2f3fea083c8e28441f12da8fd05b172b1e68480f00ed73d76be4a05fac19de9bf55ec7729b41e81cf555cccaed700aa192e4fff64872
   languageName: node
   linkType: hard
 
@@ -3107,6 +3150,21 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.6.0":
+  version: 17.6.2
+  resolution: "yargs@npm:17.6.2"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.1.1
+  checksum: 47da1b0d854fa16d45a3ded57b716b013b2179022352a5f7467409da5a04a1eef5b3b3d97a2dfc13e8bbe5f2ffc0afe3bc6a4a72f8254e60f5a4bd7947138643
   languageName: node
   linkType: hard
 
