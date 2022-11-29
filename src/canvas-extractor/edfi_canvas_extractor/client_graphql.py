@@ -134,17 +134,14 @@ def extract_enrollments(
 
     for section in sections:
         local_enrollments = [
-            enrollment for enrollment in enrollments if enrollment["course_section_id"] == section
-        ]
-        filtered_enrollments = [
             enrollment
-            for enrollment in local_enrollments
-            if enrollment["enrollment_state"] == "active"
-            ]
-        if len(list(filtered_enrollments)) < 1:
+            for enrollment in enrollments
+            if enrollment["course_section_id"] == section
+            and enrollment["enrollment_state"] == "active"
+        ]
+        if len(list(local_enrollments)) < 1:
             logger.info(
-                "There are no active section associations for section id %s.",
-                section,
+                f"There are no active section associations for section id {section}."
             )
             continue
         enrollments_df: DataFrame = enrollmentsGQL.enrollments_synced_as_df(
@@ -153,7 +150,6 @@ def extract_enrollments(
         enrollments_df = section_associationsMap.map_to_udm_section_associations(
             enrollments_df
         )
-        enrollments = enrollments + filtered_enrollments
         udm_enrollments[str(section)] = enrollments_df
 
     return (enrollments, udm_enrollments)
@@ -264,7 +260,7 @@ def extract_grades(
         section_id: str = str(section["id"])
         if section_id not in udm_enrollments:
             logger.info(
-                "Skipping enrollments for section id %s - None found", section_id
+                f"Skipping enrollments for section id {section_id} - None found"
             )
             continue
         udm_enrollments_list: List[dict] = udm_enrollments[section_id].to_dict(
@@ -291,13 +287,7 @@ def extract_grades(
             grade["CreateDate"] = current_udm_enrollment["CreateDate"]
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
 
-            duplicated = False
-            for grades in current_grades:
-                if grades.get('SourceSystemIdentifier') == f"g#{enrollment_id}":
-                    duplicated = True
-
-            if not duplicated:
-                current_grades.append(grade)
+            current_grades.append(grade)
 
         output[section_id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
 
