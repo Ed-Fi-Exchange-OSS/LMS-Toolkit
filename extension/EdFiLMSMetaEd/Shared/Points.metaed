@@ -5,3 +5,5 @@
 
 Shared Integer Points
     documentation "The points associated with a submission for an assignment."
+    min value 1
+    max value 100
