@@ -23,7 +23,7 @@ END_DATE = "2030-01-01"
 load_dotenv()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def read_data():
     '''
     Returns the data converted from json file
@@ -34,7 +34,7 @@ def read_data():
     return data
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def mock_gql(read_data):
     '''
     Returns the GraphQLExtractor object with the sample data.
@@ -74,7 +74,7 @@ def gql():
     yield gql
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def test_db_fixture():
     Path(DB_FILE).unlink(missing_ok=True)
     yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
