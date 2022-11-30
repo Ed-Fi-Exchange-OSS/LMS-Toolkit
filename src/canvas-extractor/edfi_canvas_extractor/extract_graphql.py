@@ -21,6 +21,7 @@ from edfi_lms_extractor_lib.csv_generation.write import (
     write_assignment_submissions,
     write_grades,
     write_sections,
+    write_section_activities,
     write_section_associations,
     write_users,
 )
@@ -96,6 +97,17 @@ def _write_sections(
 
     logger.info("Writing LMS UDM Sections to CSV file")
     write_sections(udm_sections_df, datetime.now(), arguments.output_directory)
+
+
+@catch_exceptions
+def _get_section_activities(
+    arguments: MainArguments,
+) -> None:
+    (_, _, all_section_ids) = results_store["sections"]
+    logger.info("Writing empty LMS UDM SectionActivities to CSV files")
+    write_section_activities(
+        dict(), all_section_ids, datetime.now(), arguments.output_directory
+    )
 
 
 @catch_exceptions
@@ -251,6 +263,11 @@ def run(arguments: MainArguments) -> None:
             _write_assignments(arguments)
             if succeeded:
                 _get_submissions(arguments, gql, sync_db)
+
+        if arguments.extract_activities:
+            _get_section_activities(
+                arguments,
+            )
 
         if arguments.extract_grades:  # Grades are not supported by all the extractors
             _get_grades(
