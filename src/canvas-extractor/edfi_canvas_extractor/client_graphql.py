@@ -286,7 +286,6 @@ def extract_grades(
             grade["LMSSectionIdentifier"] = section_id
             grade["CreateDate"] = current_udm_enrollment["CreateDate"]
             grade["LastModifiedDate"] = current_udm_enrollment["LastModifiedDate"]
-
             current_grades.append(grade)
 
         output[section_id] = gradesMap.map_to_udm_grades(DataFrame(current_grades))
