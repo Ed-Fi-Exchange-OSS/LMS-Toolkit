@@ -5,47 +5,23 @@
 
 name: Canvas Extractor - Test
 on:
-    pull_request:
-        paths:
-            - "src/canvas-extractor/**"
-            - "!src/canvas-extractor/**/*.md"
-    push:
-        paths:
-            - "src/canvas-extractor/**"
-            - "!src/canvas-extractor/**/*.md"
-        branches:
-            - main
-    workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/canvas-extractor/**'
+      - '!src/canvas-extractor/**/*.md'
+    branches:
+      - main
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/canvas-extractor/**'
+      - '!src/canvas-extractor/**/*.md'
 
 jobs:
-    test-canvas-extractor:
-        name: Run unit, style, and type checks
-        runs-on: ubuntu-20.04
-        env:
-            PACKAGE_NAME: canvas-extractor
-            SRC_DIR: src/canvas-extractor
-            LOCK_FILE: src/canvas-extractor/poetry.lock
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b  # v3.0.2
-
-            - name: Install Poetry
-              run: pipx install poetry
-
-            - name: Install Python 3.9
-              uses: actions/setup-python@98f2ad02fd48d057ee3b4d4f66525b231c3e52b6 # v3.1.2
-              with:
-                python-version: "3.9"
-                cache: "poetry"
-
-            - name: Run CI Test Task
-              run: |
-                # Next line keeps poetry from trying to use the runner's default Python version
-                pushd ${{ env.SRC_DIR }} && poetry env use "3.9" && popd
-                python ./eng/build.py ci:test ${{ env.PACKAGE_NAME }}
-
-            - name: Archive code coverage results
-              uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # "v3.1.0"
-              with:
-                  name: code-coverage-report
-                  path: ${{ env.SRC_DIR }}/htmlcov/
+  test-canvas-extractor:
+    name: Canvas Extractor - Test
+    uses: ./.github/workflows/reusable-test.yml
+    with:
+      project: canvas-extractor
