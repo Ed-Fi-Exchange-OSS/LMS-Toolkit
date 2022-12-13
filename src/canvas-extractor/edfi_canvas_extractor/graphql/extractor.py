@@ -213,17 +213,6 @@ class GraphQLExtractor(object):
         assignments = self.assignments
         return sorted(assignments, key=lambda x: x["id"])
 
-    def get_assignments(self) -> List[Dict[str, str]]:
-        """
-        Returns a sorted List of Assignments
-        Returns
-        -------
-        List[Dict[str, str]]
-            a List of Assignments
-        """
-        assignments = self.assignments
-        return sorted(assignments, key=lambda x: x["id"])
-
     def get_courses(self) -> List:
         """
         Returns a List of Courses

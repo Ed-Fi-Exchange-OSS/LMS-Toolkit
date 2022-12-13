@@ -39,7 +39,7 @@ def api():
     return data
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def test_db_fixture():
     Path(DB_FILE).unlink(missing_ok=True)
     yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
