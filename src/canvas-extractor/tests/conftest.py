@@ -7,7 +7,6 @@ import json
 import os
 import pytest
 
-from dotenv import load_dotenv
 from pathlib import Path
 from sqlalchemy import create_engine
 
@@ -18,9 +17,6 @@ MOCK_CANVAS_ACCESS_TOKEN = "1234567890"
 DB_FILE = "tests/graphql/unit/test.db"
 START_DATE = "2021-01-01"
 END_DATE = "2030-01-01"
-
-
-load_dotenv()
 
 
 @pytest.fixture(scope="session")
@@ -77,7 +73,8 @@ def gql():
 @pytest.fixture(scope="session")
 def test_db_fixture():
     Path(DB_FILE).unlink(missing_ok=True)
-    yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
+    captureSqlAlchemyLogs = (os.getenv('LOG_LEVEL') or '').lower() == "debug"
+    yield create_engine(f"sqlite:///{DB_FILE}", echo=captureSqlAlchemyLogs)
     # Path(DB_FILE).unlink(missing_ok=True)
 
 
