@@ -54,6 +54,11 @@ def query_builder(
                         dueAt
                         submissionTypes
                         pointsPossible
+                        course {{
+                            _id
+                            createdAt
+                            updatedAt
+                          }}
                       }}
                     }}
                     enrollmentsConnection {{
