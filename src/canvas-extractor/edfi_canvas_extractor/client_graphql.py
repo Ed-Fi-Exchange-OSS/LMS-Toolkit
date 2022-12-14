@@ -272,12 +272,21 @@ def extract_grades(
             if enrollment["type"] == "StudentEnrollment"
             and enrollment["course_section_id"] == section["id"]
         ]:
-            grade: dict = enrollment["grades"]  # type: ignore
-            current_udm_enrollment = [
+            if "grades" not in enrollment.keys():
+                continue
+
+            find_enrollment_for_id = [
                 first_enrollment
                 for first_enrollment in udm_enrollments_list
                 if first_enrollment["SourceSystemIdentifier"] == str(enrollment["id"])
-            ][0]
+            ]
+
+            if len(find_enrollment_for_id) == 0:
+                continue
+
+            current_udm_enrollment = find_enrollment_for_id[0]
+
+            grade: dict = enrollment["grades"]  # type: ignore
             enrollment_id = enrollment["id"]
             grade["SourceSystemIdentifier"] = f"g#{enrollment_id}"
             grade["LMSUserLMSSectionAssociationSourceSystemIdentifier"] = str(

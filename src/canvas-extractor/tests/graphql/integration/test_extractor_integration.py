@@ -32,9 +32,6 @@ def graphql(request, gql):
 @pytest.mark.usefixtures("graphql")
 class TestExtractorIntegration:
 
-    def test_gql_data_fetched(self):
-        assert self.graphql_extractor.has_data is True  # type: ignore
-
     def test_gql_courses_not_empty(self):
         """
         Get from the sample data

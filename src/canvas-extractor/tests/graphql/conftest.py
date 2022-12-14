@@ -4,6 +4,7 @@
 # See the LICENSE and NOTICES files in the project root for more information.
 
 import json
+import os
 import pytest
 
 from pathlib import Path
@@ -42,5 +43,6 @@ def api():
 @pytest.fixture(scope="session")
 def test_db_fixture():
     Path(DB_FILE).unlink(missing_ok=True)
-    yield create_engine(f"sqlite:///{DB_FILE}", echo=True)
+    captureSqlAlchemyLogs = (os.getenv('LOG_LEVEL') or '').lower() == "debug"
+    yield create_engine(f"sqlite:///{DB_FILE}", echo=captureSqlAlchemyLogs)
     # Path(DB_FILE).unlink(missing_ok=True)

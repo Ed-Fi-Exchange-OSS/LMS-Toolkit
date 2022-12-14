@@ -30,9 +30,9 @@ def query_builder(
     PAGE_SIZE = 1
 
     query = f"""
-      query {{
-        account(id: {ACCOUNT_ID}) {{
-          coursesConnection(first: {PAGE_SIZE}, after: "{after_cursor}") {{
+       {{
+          account(id: {ACCOUNT_ID}) {{
+            coursesConnection(first: {PAGE_SIZE}, after: "{after_cursor}") {{
             nodes {{
               term {{
                 startAt
@@ -81,25 +81,6 @@ def query_builder(
                           finalScore
                         }}
                       }}
-                      assignmentsConnection {{
-                        nodes {{
-                          _id
-                          name
-                          description
-                          createdAt
-                          updatedAt
-                          lockAt
-                          unlockAt
-                          dueAt
-                          submissionTypes
-                          course {{
-                            _id
-                            createdAt
-                            updatedAt
-                          }}
-                          pointsPossible
-                        }}
-                      }}
                     }}
                     sectionsConnection {{
                       nodes {{
@@ -111,22 +92,31 @@ def query_builder(
                       }}
                     }}
                     submissionsConnection {{
-                        nodes {{
-                            _id
-                            late
-                            missing
-                            submittedAt
-                            grade
-                            createdAt
-                            updatedAt
-                            gradedAt
-                            user {{
-                                _id
-                            }}
-                            assignment {{
-                                _id
-                            }}
+                      nodes {{
+                        _id
+                        late
+                        missing
+                        submittedAt
+                        grade
+                        createdAt
+                        updatedAt
+                        gradedAt
+                        user {{
+                          _id
                         }}
+                        assignment {{
+                          _id
+                          name
+                          description
+                          createdAt
+                          updatedAt
+                          lockAt
+                          unlockAt
+                          dueAt
+                          submissionTypes
+                          pointsPossible
+                        }}
+                      }}
                     }}
                   }}
                 }}
