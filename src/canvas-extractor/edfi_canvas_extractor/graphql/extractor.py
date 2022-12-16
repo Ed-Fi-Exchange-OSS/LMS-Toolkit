@@ -248,36 +248,57 @@ class GraphQLExtractor(object):
                     if course.get("enrollmentsConnection", {}).get("nodes"):
                         _enrollment_user_ids = [
                             _enrollment["user"]["_id"]
-                            for _enrollment in course.get("enrollmentsConnection", {}).get("nodes")
-                            if _enrollment["type"] not in ["TeacherEnrollment"]
+                            for _enrollment
+                            in course.get("enrollmentsConnection", {}).get("nodes")
                             if _enrollment["section"]["_id"] == _section_id
+                            if _enrollment["type"] not in ["TeacherEnrollment"]
                             ]
-
-                        if course.get("submissionsConnection", {}).get("nodes"):
-                            _no_submissions = [
-                                (_submission["assignment"]["_id"], _submission["user"]["_id"])
-                                for _submission in course.get("submissionsConnection", {}).get("nodes")
-                                if _submission["user"]["_id"] not in _enrollment_user_ids
+                        logging.debug("Enrollments of the section")
+                        logging.debug(json.dumps(_enrollments, indent=2))
+                        for _enrollment in _enrollments:
+                            logging.debug(f"Enrollment > {_enrollment}")
+                            _submission = [
+                                _submission
+                                for _submission
+                                in course.get("submissionsConnection", {}).get("nodes")
+                                if _submission["user"]["_id"] == _enrollment
+                                if _submission["assignment"]["_id"] == assignment_id
                                 ]
-
-                            for _no_submission in _no_submissions:
-                                # Create submission
+                            if _submission:
+                                logging.debug(f"There is for {_enrollment} in assigment {assignment_id}")
+                                submission = _submission[0]
                                 _new_submission = {
-                                    "_id": f"{_section_id}#{_no_submission[0]}#{_no_submission[1]}",
-                                    "late": False,
-                                    "missing": True,
-                                    "submittedAt": None,
-                                    "grade": None,
-                                    "createdAt": None,
-                                    "updatedAt": None,
-                                    "gradedAt": None,
-                                    "user": {
-                                        "_id": _no_submission[1]
-                                        },
+                                    "course_id": course["_id"],
+                                    "section_id": _section_id,
+                                    "assignment_id": submission["assignment"]["_id"],
+                                    "id": submission["_id"],
+                                    "user_id": submission["user"]["_id"],
+                                    "late": submission["late"],
+                                    "missing": submission["missing"],
+                                    "submitted_at": submission["submittedAt"],
+                                    "grade": submission["grade"],
+                                    "created_at": submission["createdAt"],
+                                    "updated_at": submission["updatedAt"],
+                                    "graded_at": submission["gradedAt"],
                                     }
-                                output = json.dumps(_new_submission, indent=2)
-                                logging.info(f"No submission - {output}")
                                 self.submissions.append(_new_submission)
+                            else:
+                                logging.debug(f"There is NO for {_enrollment} in assignment {assignment_id}")
+                                _no_submission = {
+                                    "course_id": course["_id"],
+                                    "section_id": _section_id,
+                                    "assignment_id": assignment_id,
+                                    "id": f"{_section_id}#{assignment_id}#{_enrollment}",
+                                    "user_id": _enrollment,
+                                    "late": "",
+                                    "missing": True,
+                                    "submitted_at": "",
+                                    "grade": "",
+                                    "created_at": "",
+                                    "updated_at": "",
+                                    "graded_at": "",
+                                }
+                                self.submissions.append(_no_submission)
 
             if courses.get("pageInfo"):
                 courses_page = courses["pageInfo"]
