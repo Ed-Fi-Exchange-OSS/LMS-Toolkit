@@ -127,8 +127,9 @@ class GraphQLExtractor(object):
 
             enrollments = course["enrollmentsConnection"]
             for enrollment in enrollments["nodes"]:
-                if enrollment["state"] in ["active", "invited"]:
+                if enrollment["state"] in ["active", "invited"] and enrollment["type"] == "StudentEnrollment":
                     users = enrollment["user"]
+
                     self.students.append({
                         "id": users["_id"],
                         "sis_user_id": users["sisId"],
