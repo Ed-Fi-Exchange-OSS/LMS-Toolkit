@@ -251,44 +251,6 @@ class GraphQLExtractor(object):
                                 }
                                 self.submissions.append(_no_submission)
 
-            # If there are sections
-            if course.get("sectionsConnection", {}).get("nodes"):
-                _sections_ids = [_section["_id"] for _section in course["sectionsConnection"]["nodes"]]
-                for _section_id in _sections_ids:
-                    if course.get("enrollmentsConnection", {}).get("nodes"):
-                        _enrollment_user_ids = [
-                            _enrollment["user"]["_id"]
-                            for _enrollment in course.get("enrollmentsConnection", {}).get("nodes")
-                            if _enrollment["type"] not in ["TeacherEnrollment"]
-                            if _enrollment["section"]["_id"] == _section_id
-                            ]
-
-                        if course.get("submissionsConnection", {}).get("nodes"):
-                            _no_submissions = [
-                                (_submission["assignment"]["_id"], _submission["user"]["_id"])
-                                for _submission in course.get("submissionsConnection", {}).get("nodes")
-                                if _submission["user"]["_id"] not in _enrollment_user_ids
-                                ]
-
-                            for _no_submission in _no_submissions:
-                                # Create submission
-                                _new_submission = {
-                                    "_id": f"{_section_id}#{_no_submission[0]}#{_no_submission[1]}",
-                                    "late": False,
-                                    "missing": True,
-                                    "submittedAt": None,
-                                    "grade": None,
-                                    "createdAt": None,
-                                    "updatedAt": None,
-                                    "gradedAt": None,
-                                    "user": {
-                                        "_id": _no_submission[1]
-                                        },
-                                    }
-                                output = json.dumps(_new_submission, indent=2)
-                                logging.info(f"No submission - {output}")
-                                self.submissions.append(_new_submission)
-
             if courses.get("pageInfo"):
                 courses_page = courses["pageInfo"]
                 if courses_page["hasNextPage"]:
