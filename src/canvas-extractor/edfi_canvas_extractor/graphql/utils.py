@@ -29,7 +29,7 @@ def _format_date(date_string: str) -> datetime:
         return datetime.combine(date_object, time(0, tzinfo=TZ))
 
 
-def _format_full_date(date_string: str) -> datetime:
+def format_full_date(date_string: str) -> datetime:
     """
         Convert string to date object from isoformats
 
@@ -44,6 +44,8 @@ def _format_full_date(date_string: str) -> datetime:
     if isinstance(date_string, str):
         TZ = tz.tzutc()
         return parser.isoparse(date_string).replace(tzinfo=TZ)
+
+    return date_string
 
 
 def validate_date(
@@ -70,8 +72,8 @@ def validate_date(
 
     args_start_: datetime = _format_date(args_start)
     args_end_: datetime = _format_date(args_end)
-    term_start_: datetime = _format_full_date(term_start)
-    term_end_: datetime = _format_full_date(term_end)
+    term_start_: datetime = format_full_date(term_start)
+    term_end_: datetime = format_full_date(term_end)
 
     if (term_start_ >= args_start_) and (term_end_ <= args_end_):
         return True
