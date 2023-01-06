@@ -127,6 +127,7 @@ class GraphQLExtractor(object):
                     })
 
             enrollments = course["enrollmentsConnection"]
+            student_associations = list()
             for enrollment in enrollments["nodes"]:
                 if enrollment["state"] in ["active", "invited"] and enrollment["type"] == "StudentEnrollment":
                     users = enrollment["user"]
@@ -159,8 +160,10 @@ class GraphQLExtractor(object):
                         }
                         enrollment_dict["grades"] = grades
 
+                    student_associations.append(enrollment_dict)
                     self.enrollments.append(enrollment_dict)
 
+            assignments = list()
             if course.get("assignmentsConnection", {}).get("nodes"):
                 assignments = course["assignmentsConnection"]["nodes"]
                 for assignment in assignments:
@@ -197,7 +200,7 @@ class GraphQLExtractor(object):
 
                         logging.debug(f"Assignment > {assignment_id}")
                         # Get the enrollments in the section
-                        _enrollments = [
+                        _enrolled_users = [
                             _enrollment["user"]["_id"]
                             for _enrollment
                             in course.get("enrollmentsConnection", {}).get("nodes")
@@ -205,8 +208,8 @@ class GraphQLExtractor(object):
                             if _enrollment["type"] not in ["TeacherEnrollment"]
                             ]
                         logging.debug("Enrollments of the section")
-                        logging.debug(json.dumps(_enrollments, indent=2))
-                        for _enrollment in _enrollments:
+                        logging.debug(json.dumps(_enrolled_users, indent=2))
+                        for _enrollment in _enrolled_users:
                             logging.debug(f"Enrollment > {_enrollment}")
                             _submission = [
                                 _submission
@@ -234,7 +237,7 @@ class GraphQLExtractor(object):
                                     }
                                 self.submissions.append(_new_submission)
                             else:
-                                logging.debug(f"There is no submission for {_enrollment} in assignment {assignment_id}")
+                                logging.debug(f"There are no submissions for {_enrollment} in assignment {assignment_id}")
                                 _no_submission = {
                                     "course_id": course["_id"],
                                     "section_id": _section_id,
@@ -250,6 +253,37 @@ class GraphQLExtractor(object):
                                     "graded_at": None,
                                 }
                                 self.submissions.append(_no_submission)
+            else:
+                for _assignment in assignments:
+                    assignment_id = _assignment["_id"]
+                    logging.debug(f"There are no submissions for assignment {assignment_id}")
+
+                    is_past_due = False
+                    now = datetime.now(timezone.utc)
+
+                    if _assignment["dueAt"] is not None:
+                        due_date = format_full_date(_assignment["dueAt"])
+                        is_past_due = (due_date - now).days <= 0
+
+                    for _enrolled in student_associations:
+                        _section_id = _enrolled["course_section_id"]
+                        _user_id = _enrolled["user_id"]
+
+                        _no_submission = {
+                            "course_id": course["_id"],
+                            "section_id": _section_id ,
+                            "assignment_id": assignment_id,
+                            "id": f"{_section_id}#{assignment_id}#{_user_id}",
+                            "user_id": _user_id,
+                            "late": False,
+                            "missing": is_past_due,
+                            "submitted_at": None,
+                            "grade": None,
+                            "created_at": None,
+                            "updated_at": None,
+                            "graded_at": None,
+                        }
+                        self.submissions.append(_no_submission)
 
             if courses.get("pageInfo"):
                 courses_page = courses["pageInfo"]
