@@ -6,6 +6,7 @@
 import json
 import logging
 import requests
+from datetime import datetime, timezone
 
 from typing import Dict, List, Optional
 from opnieuw import retry
@@ -14,7 +15,7 @@ from edfi_canvas_extractor.config import RETRY_CONFIG
 
 from .canvas_helper import remove_duplicates
 from .schema import query_builder
-from .utils import validate_date
+from .utils import validate_date, format_full_date
 
 
 class GraphQLExtractor(object):
@@ -186,6 +187,14 @@ class GraphQLExtractor(object):
                     # Get the assignments
                     for _assignment in course.get("assignmentsConnection", {}).get("nodes"):
                         assignment_id = _assignment["_id"]
+
+                        is_past_due = False
+                        now = datetime.now(timezone.utc)
+
+                        if _assignment["dueAt"] is not None:
+                            due_date = format_full_date(_assignment["dueAt"])
+                            is_past_due = (due_date - now).days <= 0
+
                         logging.debug(f"Assignment > {assignment_id}")
                         # Get the enrollments in the section
                         _enrollments = [
@@ -207,7 +216,7 @@ class GraphQLExtractor(object):
                                 if _submission["assignment"]["_id"] == assignment_id
                                 ]
                             if _submission:
-                                logging.debug(f"There is for {_enrollment} in assigment {assignment_id}")
+                                logging.debug(f"There is a submission for {_enrollment} in assignment {assignment_id}")
                                 submission = _submission[0]
                                 _new_submission = {
                                     "course_id": course["_id"],
@@ -225,20 +234,20 @@ class GraphQLExtractor(object):
                                     }
                                 self.submissions.append(_new_submission)
                             else:
-                                logging.debug(f"There is NO for {_enrollment} in assignment {assignment_id}")
+                                logging.debug(f"There is no submission for {_enrollment} in assignment {assignment_id}")
                                 _no_submission = {
                                     "course_id": course["_id"],
                                     "section_id": _section_id,
                                     "assignment_id": assignment_id,
                                     "id": f"{_section_id}#{assignment_id}#{_enrollment}",
                                     "user_id": _enrollment,
-                                    "late": "",
-                                    "missing": True,
-                                    "submitted_at": "",
-                                    "grade": "",
-                                    "created_at": "",
-                                    "updated_at": "",
-                                    "graded_at": "",
+                                    "late": False,
+                                    "missing": is_past_due,
+                                    "submitted_at": None,
+                                    "grade": None,
+                                    "created_at": None,
+                                    "updated_at": None,
+                                    "graded_at": None,
                                 }
                                 self.submissions.append(_no_submission)
 
