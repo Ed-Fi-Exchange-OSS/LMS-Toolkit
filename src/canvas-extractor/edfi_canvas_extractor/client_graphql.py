@@ -137,7 +137,7 @@ def extract_enrollments(
             enrollment
             for enrollment in enrollments
             if enrollment["course_section_id"] == section
-            and enrollment["enrollment_state"] == "active"
+            and enrollment["enrollment_state"] in ["active", "invited"]
         ]
         if len(list(local_enrollments)) < 1:
             logger.info(
