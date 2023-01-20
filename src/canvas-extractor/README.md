@@ -70,8 +70,8 @@ Supported parameters:
 | Log level** | no (default: INFO) | `-l` or `--log-level` | LOG_LEVEL |
 | Feature*** | no (default: core, not removable) | `-f` or `--feature` | FEATURE |
 
-\* _Start Date_ and _End Date_ are used in pulling course and system activity
-data and would typically span a semester or equivalent school calendar timespan.
+\* _Start Date_ and _End Date_ are used in pulling course data and would
+typically span a semester or equivalent school calendar timespan.
 
 \** Valid values for the optional _log level_:
 
@@ -86,16 +86,13 @@ Sections, and Section Associations, which are considered the core feature. Other
 features (can combine two or more):
 
 * assignments (Enables the extraction of assignments and submissions)
-* activities (Enables the extraction of section activities and system
-  activities) - **EXPERIMENTAL**, subject to breaking changes
 * grades (Enables the extraction of grades) - **EXPERIMENTAL**, subject to
   breaking changes
 
 When setting features via `.env` file or through environment variable, combine
-features by using a bracketed comma-separate list, e.g. `FEATURE=[activities,
-attendance, assignments, grades]`. To combine features at the command line,
-simply list them together: `--feature activities, attendance, assignments,
-grades`.
+features by using a bracketed comma-separate list, e.g. `FEATURE=[assignments,
+grades]`. To combine features at the command line, simply list them together:
+`--feature assignments, grades`.
 
 ### Output
 
