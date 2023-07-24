@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import List
 from pathlib import Path
 import pytest
-from pandas import read_sql_query, DataFrame, concat
+from pandas import read_sql_query, DataFrame
 from sqlalchemy import create_engine
 from edfi_lms_extractor_lib.api.resource_sync import (
     SYNC_COLUMNS_SQL,
