@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-sql-adapter"
-version = "1.0.1"
+version = "1.0.2"
 description = "Lightweight wrapper to facilitate connections to SQL databases"
 authors = ["Ed-Fi Alliance, LLC, and contributors"]
 license = "Apache-2.0"
@@ -13,7 +13,7 @@ include = ["edfi_sql_adapter/py.typed"]
 python = "^3.9"
 pyodbc = "^4.0.30"
 psycopg2 = "^2.8.6"
-SQLAlchemy = "1.3.23"
+SQLAlchemy = "~1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"

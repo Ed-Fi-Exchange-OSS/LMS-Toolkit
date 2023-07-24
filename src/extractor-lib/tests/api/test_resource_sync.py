@@ -118,7 +118,7 @@ def describe_when_testing_sync_with_new_and_missing_and_updated_rows():
 
         # Duplicating a course to verify that duplicates will not be inserted
         dupe = courses_sync_df.iloc[0].copy()
-        courses_sync_df = courses_sync_df.append(dupe)
+        courses_sync_df.loc[len(courses_sync_df.index)] = dupe
 
         # act
         sync_to_db_without_cleanup(
