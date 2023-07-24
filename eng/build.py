@@ -101,6 +101,10 @@ def _run_tests(exit_immediately: bool = True):
             "run",
             "pytest",
             "tests",
+            "-p",
+            # There are some deprecation warnings that are safe to ignore during
+            # test automation.
+            "no:warnings"
         ],
         exit_immediately,
     )
