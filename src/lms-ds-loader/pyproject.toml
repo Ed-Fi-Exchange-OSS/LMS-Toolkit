@@ -23,7 +23,6 @@ edfi-lms-file-utils = "^1.0.0"
 edfi-sql-adapter = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "6.2.3"
 black = "^20.8b1"
 flake8 = "3.9.0"
 pytest-mock = "^3.3.1"
@@ -31,9 +30,12 @@ pyfakefs = "^4.5.0"
 coverage = "^5.3"
 twine = "^3.3.0"
 mypy = "^0.812"
-pytest-describe = "^1.0.0"
 sqlalchemy-stubs = "^0.4"
 SQLAlchemy-Utils = "^0.38.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest-describe = "^2.1.0"
+pytest = "^7.2.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
