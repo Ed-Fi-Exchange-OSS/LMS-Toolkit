@@ -59,7 +59,7 @@ yaml = ["PyYAML"]
 name = "exceptiongroup"
 version = "1.1.2"
 description = "Backport of PEP 654 (exception groups)"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -80,14 +80,6 @@ pycodestyle = ">=2.7.0,<2.8.0"
 pyflakes = ">=2.3.0,<2.4.0"
 
 [[package]]
-name = "glob2"
-version = "0.7"
-description = "Version of the glob module that can capture patterns and supports recursive wildcards"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "greenlet"
 version = "2.0.2"
 description = "Lightweight in-process concurrent programming"
@@ -103,7 +95,7 @@ test = ["objgraph", "psutil"]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -125,7 +117,7 @@ source = ["Cython (>=0.29.35)"]
 name = "mako"
 version = "1.2.4"
 description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -141,7 +133,7 @@ testing = ["pytest"]
 name = "markupsafe"
 version = "2.1.3"
 description = "Safely add untrusted strings to HTML/XML markup."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -173,7 +165,7 @@ python-versions = ">=3.9"
 name = "packaging"
 version = "23.1"
 description = "Core utilities for Python packages"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -201,7 +193,7 @@ test = ["hypothesis (>=5.5.3)", "pytest (>=6.0)", "pytest-xdist (>=1.31)"]
 name = "parse"
 version = "1.19.1"
 description = "parse() is the opposite of format()"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -209,7 +201,7 @@ python-versions = "*"
 name = "parse-type"
 version = "0.6.2"
 description = "Simplifies to build parse types based on the parse module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*"
 
@@ -246,21 +238,13 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-
 name = "pluggy"
 version = "1.2.0"
 description = "plugin and hook calling mechanisms for python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
 [package.extras]
 dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
-
-[[package]]
-name = "py"
-version = "1.11.0"
-description = "library with cross-python path, ini-parsing, io, code, log facilities"
-category = "main"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pycodestyle"
@@ -290,7 +274,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 name = "pytest"
 version = "7.4.0"
 description = "pytest: simple powerful testing with Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 
@@ -307,19 +291,18 @@ testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "no
 
 [[package]]
 name = "pytest-bdd"
-version = "4.1.0"
+version = "6.1.1"
 description = "BDD for pytest"
-category = "main"
+category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
-glob2 = "*"
 Mako = "*"
 parse = "*"
 parse-type = "*"
-py = "*"
-pytest = ">=4.3"
+pytest = ">=6.2.0"
+typing-extensions = "*"
 
 [[package]]
 name = "python-dateutil"
@@ -398,7 +381,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "a5c65ec80cdd183bf6d084b753016f415c1d23a69840bb89fcd1abf7cfa6de8d"
+content-hash = "745f515dd73de9e045943a6bb04fe28ae0018fff790577c34c49b9065c51183c"
 
 [metadata.files]
 black = [
@@ -424,9 +407,6 @@ exceptiongroup = [
 flake8 = [
     {file = "flake8-3.9.2-py2.py3-none-any.whl", hash = "sha256:bf8fd333346d844f616e8d47905ef3a3384edae6b4e9beb0c5101e25e3110907"},
     {file = "flake8-3.9.2.tar.gz", hash = "sha256:07528381786f2a6237b061f6e96610a4167b226cb926e2aa2b6b1d78057c576b"},
-]
-glob2 = [
-    {file = "glob2-0.7.tar.gz", hash = "sha256:85c3dbd07c8aa26d63d7aacee34fa86e9a91a3873bc30bf62ec46e531f92ab8c"},
 ]
 greenlet = [
     {file = "greenlet-2.0.2-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:bdfea8c661e80d3c1c99ad7c3ff74e6e87184895bbaca6ee8cc61209f8b9b85d"},
@@ -732,10 +712,6 @@ pluggy = [
     {file = "pluggy-1.2.0-py3-none-any.whl", hash = "sha256:c2fd55a7d7a3863cba1a013e4e2414658b1d07b6bc57b3919e0c63c9abb99849"},
     {file = "pluggy-1.2.0.tar.gz", hash = "sha256:d12f0c4b579b15f5e054301bb226ee85eeeba08ffec228092f8defbaa3a4c4b3"},
 ]
-py = [
-    {file = "py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378"},
-    {file = "py-1.11.0.tar.gz", hash = "sha256:51c75c4126074b472f746a24399ad32f6053d1b34b68d2fa41e558e6f4a98719"},
-]
 pycodestyle = [
     {file = "pycodestyle-2.7.0-py2.py3-none-any.whl", hash = "sha256:514f76d918fcc0b55c6680472f0a37970994e07bbb80725808c17089be302068"},
     {file = "pycodestyle-2.7.0.tar.gz", hash = "sha256:c389c1d06bf7904078ca03399a4816f974a1d590090fecea0c63ec26ebaf1cef"},
@@ -786,8 +762,8 @@ pytest = [
     {file = "pytest-7.4.0.tar.gz", hash = "sha256:b4bf8c45bd59934ed84001ad51e11b4ee40d40a1229d2c79f9c592b0a3f6bd8a"},
 ]
 pytest-bdd = [
-    {file = "pytest-bdd-4.1.0.tar.gz", hash = "sha256:304cd2b09923b838d0c2f08331d1f4236a14ef3594efa94e3bdae0f384d3fa5d"},
-    {file = "pytest_bdd-4.1.0-py3-none-any.whl", hash = "sha256:7c5221680cec9a97630e1fae6132f4a97c2f86a90914206ee06a55ae1a409fe5"},
+    {file = "pytest_bdd-6.1.1-py3-none-any.whl", hash = "sha256:57eba5878d77036f356a85fb1d108cb061d8af4fb4d032b1a424fa9abe9e498b"},
+    {file = "pytest_bdd-6.1.1.tar.gz", hash = "sha256:138af3592bcce5d4684b0d690777cf199b39ce45d423ca28086047ffe6111010"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
