@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notebooks"
-version = "1.0.1"
+version = "1.0.2"
 description = "Jupyter notebooks for analysis / visualization of LMS data"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
