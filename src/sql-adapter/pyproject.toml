@@ -19,7 +19,7 @@ SQLAlchemy = "~1"
 flake8 = "^3.9.2"
 coverage = "^5.5"
 mypy = "^0.902"
-black = "^21.6b0"
+black = "^24.3"
 twine = "^3.4.1"
 
 [tool.poetry.group.dev.dependencies]
