@@ -21,7 +21,7 @@ edfi-sql-adapter = "^1.0.0"
 sqlparse = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
-black = "^21.5b2"
+black = "^24.3"
 flake8 = "^3.9.2"
 coverage = "^5.5"
 mypy = "^0.812"

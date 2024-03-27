@@ -25,7 +25,7 @@ edfi-lms-file-utils = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"
-black = "^20.8b1"
+black = "^24.3"
 rope = "^0.17.0"
 flake8 = "^3.9.0"
 pytest-mock = "^3.3.1"
