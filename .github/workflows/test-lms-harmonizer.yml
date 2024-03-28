@@ -19,6 +19,8 @@ on:
       - 'src/lms-harmonizer/**'
       - '!src/lms-harmonizer/**/*.md'
 
+permissions: read-all
+
 jobs:
   test-lms-harmonizer:
     name: LMS Harmonizer - Test

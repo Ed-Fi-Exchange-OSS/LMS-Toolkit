@@ -19,6 +19,8 @@ on:
       - 'src/schoology-extractor/**'
       - '!src/schoology-extractor/**/*.md'
 
+permissions: read-all
+
 jobs:
   test-schoology-extractor:
     name: Schoology Extractor - Test

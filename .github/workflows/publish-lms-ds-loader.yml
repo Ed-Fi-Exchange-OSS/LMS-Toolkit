@@ -7,6 +7,8 @@ name: LMS Data Store Loader - Publish
 on:
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   publish-lms-ds-loader:
     name: LMS Data Store Loader - Publish

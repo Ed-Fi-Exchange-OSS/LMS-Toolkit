@@ -7,6 +7,8 @@ name: SQL Adapter Library - Publish
 on:
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   publish-sql-adapter-lib:
     name: SQL Adapter Library - Publish

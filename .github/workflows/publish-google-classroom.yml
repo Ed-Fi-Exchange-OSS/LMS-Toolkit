@@ -8,6 +8,8 @@ name: GC Extractor - Publish
 on:
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   publish-google-classroom-extractor:
     name: GC Extractor - Publish

@@ -7,6 +7,8 @@ name: Extractor Library - Publish
 on:
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   publish-extractor-lib:
     name: Extractor Library - Publish

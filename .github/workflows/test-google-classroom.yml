@@ -19,6 +19,8 @@ on:
       - 'src/google-classroom-extractor/**'
       - '!src/google-classroom-extractor/**/*.md'
 
+permissions: read-all
+
 jobs:
   test-google-classroom-extractor:
     name: GC Extractor - Test
