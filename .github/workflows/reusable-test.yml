@@ -14,6 +14,8 @@ on:
         required: true
         type: string
 
+permissions: read-all
+
 jobs:
   lint-test:
     name: Run unit, style, and type checks
@@ -54,6 +56,8 @@ jobs:
     env:
       PACKAGE_NAME: ${{ inputs.project }}
       SRC_DIR: src/${{ inputs.project }}
+    permissions:
+      security-events: write
 
     steps:
       - name: Checkout code

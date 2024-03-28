@@ -19,6 +19,8 @@ on:
       - 'src/sql-adapter/**'
       - '!src/sql-adapter/**/*.md'
 
+permissions: read-all
+
 jobs:
   test-sql-adapter:
     name: SQL Adapter Library - Test

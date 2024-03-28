@@ -26,6 +26,8 @@ on:
       - main
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   integration-test-mssql-lms-harmonizer:
     name: Run SQL Server integration tests

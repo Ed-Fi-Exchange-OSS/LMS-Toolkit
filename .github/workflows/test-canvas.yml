@@ -19,6 +19,8 @@ on:
       - 'src/canvas-extractor/**'
       - '!src/canvas-extractor/**/*.md'
 
+permissions: read-all
+
 jobs:
   test-canvas-extractor:
     name: Canvas Extractor - Test

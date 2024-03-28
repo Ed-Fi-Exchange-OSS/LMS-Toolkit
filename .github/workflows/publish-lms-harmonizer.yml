@@ -8,6 +8,8 @@ name: LMS Harmonizer - Publish
 on:
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   publish-lms-harmonizer:
     name: LMS Harmonizer - Publish

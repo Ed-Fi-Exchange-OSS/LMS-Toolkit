@@ -7,6 +7,8 @@ name: Schoology Extractor - Publish
 on:
   workflow_dispatch:
 
+permissions: read-all
+
 jobs:
   publish-schoology-extractor:
     name: Schoology Extractor - Publish

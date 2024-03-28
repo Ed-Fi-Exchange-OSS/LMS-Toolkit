@@ -19,6 +19,8 @@ on:
       - 'src/extractor-lib/**'
       - '!src/extractor-lib/**/*.md'
 
+permissions: read-all
+
 jobs:
   test-extractor-lib:
     name: Extractor Library - Test
