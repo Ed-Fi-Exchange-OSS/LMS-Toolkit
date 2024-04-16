@@ -16,7 +16,7 @@ SQLAlchemy = "~1"
 xxhash = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
-black = "^24.3"
+black = "^24.4"
 flake8 = "^3.8.3"
 coverage = "^5.3"
 mypy = "^0.782"
