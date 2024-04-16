@@ -27,5 +27,6 @@ jobs:
     uses: ./.github/workflows/reusable-test.yml
     permissions:
       security-events: write
+      read-all
     with:
       project: lms-harmonizer
