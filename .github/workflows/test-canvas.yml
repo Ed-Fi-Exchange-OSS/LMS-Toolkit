@@ -25,5 +25,7 @@ jobs:
   test-canvas-extractor:
     name: Canvas Extractor - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
     with:
       project: canvas-extractor

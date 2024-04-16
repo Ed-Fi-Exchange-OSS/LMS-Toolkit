@@ -25,5 +25,7 @@ jobs:
   test-file-utils:
     name: File Utilities Library - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
     with:
       project: file-utils

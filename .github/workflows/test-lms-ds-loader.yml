@@ -25,5 +25,7 @@ jobs:
   test-lms-ds-loader:
     name: LMS Data Store Loader - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
     with:
       project: lms-ds-loader

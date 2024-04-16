@@ -25,5 +25,7 @@ jobs:
   test-schoology-extractor:
     name: Schoology Extractor - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
     with:
       project: schoology-extractor
