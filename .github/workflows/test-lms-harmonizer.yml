@@ -25,5 +25,7 @@ jobs:
   test-lms-harmonizer:
     name: LMS Harmonizer - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
     with:
       project: lms-harmonizer

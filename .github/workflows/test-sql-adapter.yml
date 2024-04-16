@@ -25,5 +25,7 @@ jobs:
   test-sql-adapter:
     name: SQL Adapter Library - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
     with:
       project: sql-adapter

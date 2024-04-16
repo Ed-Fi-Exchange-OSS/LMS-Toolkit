@@ -25,5 +25,7 @@ jobs:
   test-extractor-lib:
     name: Extractor Library - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
     with:
       project: extractor-lib

@@ -25,5 +25,7 @@ jobs:
   test-google-classroom-extractor:
     name: GC Extractor - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
     with:
       project: google-classroom-extractor
