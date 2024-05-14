@@ -7,7 +7,7 @@ version: 2
 updates:
   - package-ecosystem: pip
     directory: src/canvas-extractor
-    target-branch: dependabot-updates
+    target-branch: main
     versioning-strategy: auto
     schedule:
       interval: monthly
