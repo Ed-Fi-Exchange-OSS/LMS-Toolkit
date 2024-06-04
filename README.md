@@ -2,6 +2,8 @@
 
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit)
 
+placeholder for azure badge
+
 The LMS Toolkit helps school districts unlock, transform and simplify, and use
 instructional system data.
 
