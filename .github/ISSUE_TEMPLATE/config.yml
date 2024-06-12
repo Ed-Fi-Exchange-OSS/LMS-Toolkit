@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ed-Fi Community Support
+    url: https://success.ed-fi.org
+    about: Please ask and answer questions here.
+  - name: Repository Vulnerability Reporting
+    url: https://bounty.github.com/
+    about: https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit/security
