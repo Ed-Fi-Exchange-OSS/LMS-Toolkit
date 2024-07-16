@@ -873,13 +873,13 @@ files = [
 
 [[package]]
 name = "opnieuw"
-version = "1.2.1"
+version = "3.0.0"
 description = "Retries for humans"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "opnieuw-1.2.1-py3-none-any.whl", hash = "sha256:aad699a7675706c2e3ad671dbdc658fd12b6937774b655356953f80609ecfa36"},
-    {file = "opnieuw-1.2.1.tar.gz", hash = "sha256:55d3d917864659a15a3000985da1c02c6691b11aabc31cdfe764c7b737a350bd"},
+    {file = "opnieuw-3.0.0-py3-none-any.whl", hash = "sha256:5b3d01831cc9afe8ceb5d5d67803450fd0c751105bdcbf215ec5efc21db2b239"},
+    {file = "opnieuw-3.0.0.tar.gz", hash = "sha256:071852cfe02c2fb954df3c3db482f647e3f192d6fc346dbf50a3ed103253f90a"},
 ]
 
 [package.dependencies]
@@ -1702,4 +1702,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a16332bbad1e949324d3402ad02b8cc714e7a574110d1656876eb02348157430"
+content-hash = "19e939067b734c7d4e88431278eb7c6b3592b731a125bbed35233e6b12df293f"
