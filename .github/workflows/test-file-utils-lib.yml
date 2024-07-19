@@ -25,5 +25,20 @@ jobs:
   test-file-utils:
     name: File Utilities Library - Test
     uses: ./.github/workflows/reusable-test.yml
+    permissions:
+      security-events: write
+      actions: read
+      attestations: read
+      checks: read
+      contents: read
+      deployments: read
+      discussions: read
+      issues: read
+      packages: read
+      pages: read
+      pull-requests: read
+      repository-projects: read
+      statuses: read
+      id-token: read
     with:
       project: file-utils
