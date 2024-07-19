@@ -19,13 +19,12 @@ on:
       - 'src/file-utils/**'
       - '!src/file-utils/**/*.md'
 
-permissions: read-all
-
 jobs:
   test-file-utils:
     name: File Utilities Library - Test
     uses: ./.github/workflows/reusable-test.yml
     permissions:
+      id-token: read
       security-events: write
       actions: read
       attestations: read
