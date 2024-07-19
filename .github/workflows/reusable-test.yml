@@ -14,7 +14,14 @@ on:
         required: true
         type: string
 
-permissions: read-all
+permissions:
+  security-events: write
+  actions: read
+  attestations: read
+  checks: read
+  contents: read
+  pull-requests: read
+  statuses: read
 
 jobs:
   lint-test:
