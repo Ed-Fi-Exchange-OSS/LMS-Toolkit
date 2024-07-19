@@ -307,7 +307,7 @@ def _get_data_for_section(
         sa = callback(base_directory, section_id, nrows)
 
         if not sa.empty:
-            df = df.append(sa)
+            df = pd.concat([df, sa])
 
     return df
 
@@ -604,7 +604,7 @@ def get_all_submissions(
         s = get_submissions(base_directory, section_id, assignment_id, nrows)
 
         if not s.empty:
-            df = df.append(s)
+            df = pd.concat([df, s])
 
     return df
 
