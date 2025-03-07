@@ -23,6 +23,7 @@ errorhandler = "^2.0.1"
 ConfigArgParse = "^1.2.3"
 edfi-lms-extractor-lib = "^1.1.6"
 edfi-lms-file-utils = "^1.0.6"
+cryptography = "^43.0.3"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"
