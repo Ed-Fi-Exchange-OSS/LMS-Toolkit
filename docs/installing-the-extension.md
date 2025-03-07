@@ -14,7 +14,7 @@ Data Store Loader](../src/lms-ds-loader) directly into the `edfilms.Assignment`
 and associated extension tables.
 
 For more information about the extension data model, please see [LMS
-Extension](https://techdocs.ed-fi.org/display/EFTD/LMS+Extension) in Tech Docs.
+Extension](https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-fi-lms-toolkit/lmsx-extension-to-the-ed-fi-odsapi) in Tech Docs.
 
 ## Deployment Process
 
@@ -56,8 +56,8 @@ documented the extra commands that would be required to bypass PowerShell.
 ### Direct Source Code Integration into ODS/API
 
 These instructions assume you have already [gotten
-started](https://techdocs.ed-fi.org/display/ODSAPIS3V520/Getting+Started) with
-the Ed-Fi ODS/API Suite 3, Version 5.2*, and they assume that the LMS Toolkit
+started](https://docs.ed-fi.org/reference/ods-api/5.4/) with
+the Ed-Fi ODS/API Suite 3, Version 5.x*, and they assume that the LMS Toolkit
 repository exists in the same parent directory as `Ed-Fi-ODS` and
 `Ed-Fi-ODS-Implementation`. (* be sure to use the code from the v5.2 release,
 not from the `main` branch: run `git checkout v5.2` in both `Ed-Fi-ODS` and
@@ -198,7 +198,7 @@ This automated upload utilize the API Client Bulk Load utility from the
    1. Using Admin App: If using something other than Sandbox mode, then use Admin App to create a
       new key and secret using the Sandbox or Descriptor Bootstrap claimset.
    1. Direct database setup: see [How To: Configure
-      Key/Secret](https://techdocs.ed-fi.org/pages/viewpage.action?pageId=95260307);
+      Key/Secret](https://docs.ed-fi.org/reference/ods-api/how-to-guides/how-to-configure-key-secret);
       the default uses claimset "SIS Vendor". Change this to "Ed-Fi Sandbox".
 1. Customize [LoadDescriptors.ps1](../extension/LoadDescriptors.ps1) by pasting your
    key and secret into it. * _caution: do not commit these changes to source control_

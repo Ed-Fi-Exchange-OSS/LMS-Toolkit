@@ -8,7 +8,7 @@ records across LMS and SIS systems: how do we determine that two data records
 from these two disparate systems refer to the same real-world entity?
 
 Given the LMS use cases as of this writing (see [LMS
-Toolkit#UseCases](https://techdocs.ed-fi.org/display/EXCHANGE/Ed-Fi+LMS+Toolkit)),
+Toolkit#UseCases](https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-fi-lms-toolkit)),
 it is assumed that there are 2 main elements that need to be joined from LMS
 data back to SIS entities:
 

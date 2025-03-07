@@ -98,7 +98,7 @@ grades]`. To combine features at the command line, simply list them together:
 
 CSV files in the data(or the specified output) directory with the [LMS Unifying
 Data
-Model](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Unifying+Data+Model)
+Model](https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-fi-lms-toolkit/lms-unifying-data-model)
 format.
 
 ### Logging and Exit Codes

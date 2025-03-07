@@ -5,7 +5,7 @@ description = "Ed-Fi LMS Toolkit Harmonizer"
 authors = ["Ed-Fi Alliance, LLC and contributors"]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
+homepage = "https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-fi-lms-toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 
 [tool.poetry.dependencies]

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "edfi-lms-file-utils"
-version = "1.0.3"
-homepage = "https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit"
+version = "1.0.4"
+homepage = "https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-fi-lms-toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 description = "Utilities to facilitate use of the filesystem created by Ed-Fi LMS Extractors"
 readme = "readme.md"
@@ -11,12 +11,12 @@ include = ["edfi_lms_file_utils/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-numpy = "2.0.0"
+numpy = "^1"
 pandas = "^2.2.2"
 
 [tool.poetry.dev-dependencies]
 black = "^24.4"
-mypy = "^0.790"
+mypy = "^1"
 flake8 = "^3.8.4"
 pyfakefs = "^5.6.0"
 coverage = "^5.3"
@@ -28,6 +28,7 @@ freezegun = "^1.1.0"
 [tool.poetry.group.dev.dependencies]
 pytest-describe = "^2.1.0"
 pytest = "^7.2.0"
+cryptography = "^43.0.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
