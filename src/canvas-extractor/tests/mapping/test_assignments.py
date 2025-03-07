@@ -230,6 +230,7 @@ def describe_when_a_single_assignment_with_unique_fields_is_mapped():
 
     def it_should_have_correct_shape(assignment_dfs: Dict[str, DataFrame]) -> None:
         assert len(assignment_dfs) == 1
+        # assignment_df: DataFrame = assignment_dfs[(SECTION_ID,)]
         assignment_df: DataFrame = assignment_dfs[SECTION_ID]
         row_count, column_count = assignment_df.shape
         assert row_count == 1

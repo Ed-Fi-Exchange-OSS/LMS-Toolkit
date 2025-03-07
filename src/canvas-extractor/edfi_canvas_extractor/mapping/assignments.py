@@ -125,9 +125,5 @@ def map_to_udm_assignments(
     assignments_df = assignments_df.drop_duplicates()
 
     # group by section id as a Dict of DataFrames
-    result: Dict[str, DataFrame] = cast(
-        Dict[str, DataFrame],
-        dict(tuple(assignments_df.groupby(["LMSSectionSourceSystemIdentifier"]))),
-    )
-
-    return result
+    d = dict(tuple(assignments_df.groupby(["LMSSectionSourceSystemIdentifier"])))
+    return {k[0]: v for k, v in d.items()}

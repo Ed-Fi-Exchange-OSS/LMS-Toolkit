@@ -57,17 +57,17 @@ def setup_fake_reports_api(endpoint_suffix: str, response_json: str) -> Resource
         "tests/api/fake-service-account.json", scopes=[], subject="x@example.com"
     )
     pook.get(
-        "http://www.googleapis.com:443/discovery/v1/apis/admin/reports_v1/rest",
+        "https://www.googleapis.com/discovery/v1/apis/admin/reports_v1/rest",
         response_json=fake_discovery_endpoint_json,
         reply=200,
     )
     pook.post(
-        "http://oauth2.googleapis.com:443/token",
+        "https://oauth2.googleapis.com/token",
         response_json='{"access_token": "fake"}',
         reply=200,
     )
     pook.get(
-        f"http://www.googleapis.com:443/admin/reports/v1/{endpoint_suffix}",
+        f"https://www.googleapis.com/admin/reports/v1/{endpoint_suffix}",
         response_json=response_json,
         reply=200,
     )

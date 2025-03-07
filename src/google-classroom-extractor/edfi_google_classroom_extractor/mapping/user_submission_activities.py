@@ -134,7 +134,7 @@ def submissions_to_user_submission_activities_dfs(
         grade_history_df["ActivityType"] = ACTIVITY_TYPE_GRADE
 
         # combine with stateHistory
-        user_submission_df = user_submission_df.append(grade_history_df)
+        user_submission_df = concat([grade_history_df, user_submission_df])
 
     # teacher actions can show up on student histories and vice-versa
     user_submission_df.drop_duplicates(subset=["SourceSystemIdentifier"], inplace=True)
@@ -147,8 +147,7 @@ def submissions_to_user_submission_activities_dfs(
     user_submission_df["SourceLastModifiedDate"] = ""  # No modified date available from API
 
     # group by section id as a Dict of DataFrames
-    result: Dict[str, DataFrame] = dict(
+    d = dict(
         tuple(user_submission_df.groupby(["LMSSectionIdentifier"]))
     )
-
-    return result
+    return {k[0]: v for k, v in d.items()}
