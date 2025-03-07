@@ -8,7 +8,7 @@ instructional system data.
 The Toolkit's initial use cases focus on student assignment completion /
 delinquency, and on general student activity and "presence" in instructional
 systems. You can read more about this on [Ed-Fi Tech
-Docs](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Toolkit).
+Docs](https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-fi-lms-toolkit).
 
 ## Getting Started
 
@@ -28,7 +28,7 @@ The Toolkit consists of extractors and loaders:
 
 * **LMS Extractors**: utilities that extracts data from important K12 instructional
   systems and merges that data into a common format ([LMS Unifying Data
-  Model](https://techdocs.ed-fi.org/display/EDFITOOLS/LMS+Unifying+Data+Model)),
+  Model](https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-fi-lms-toolkit/lms-unifying-data-model)),
   as CSV files. Extractors are available for the following platforms:
   * [Canvas](src/canvas-extractor)
   * [Google Classroom](src/google-classroom-extractor)
@@ -67,7 +67,7 @@ Jupyter notebook.
 * [File Tester](utils/file-tester): a script for validating the directory
   structure, columns, and some formatting details for files created by the
   extractor utilities.
-* [Ed-Fi Tracker: LMS Toolkit](https://tracker.ed-fi.org/browse/LMS): issue tracking.
+* Jira: `LMS Toolkit`: issue tracking.
 * The [experimental](experimental) directory contains proof of concept code used
   to help develop the extractors. These projects have been kept for historical
   access by the core development team, and are unlikely to be of interest to

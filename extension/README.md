@@ -53,8 +53,7 @@ Process below: checking out the correct tag.
 
 1. Retrieve the `Ed-Fi-ODS` and `Ed-Fi-ODS-Implementation` repositories and
    checkout the desired tag or branch.
-   * New to the Ed-Fi ODS/API build process? See [Tech
-     Docs](https://techdocs.ed-fi.org) for information on getting started.
+   * New to the Ed-Fi ODS/API build process? See [Ed-Fi Docs](https://docs.ed-fi.org/reference/ods-api/5.4/) for information on getting started.
 2. Copy this repository's `EdFi.Ods.Extensions.LMSX` folder into
    `Ed-Fi-ODS-Implementation/Application`.
    * When switching between ODS/API versions, it can be helpful to run `git clean -xdf`

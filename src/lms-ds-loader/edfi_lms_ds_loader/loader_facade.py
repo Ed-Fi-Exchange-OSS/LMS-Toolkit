@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 # TODO: consider refactoring for transaction management, so that operations can
 # be rolled back. SQL Alchemy transactions can be used with DataFrame, so this
-# should be feasible. https://tracker.ed-fi.org/browse/LMS-244
+# should be feasible. LMS-244
 
 
 @lru_cache()
