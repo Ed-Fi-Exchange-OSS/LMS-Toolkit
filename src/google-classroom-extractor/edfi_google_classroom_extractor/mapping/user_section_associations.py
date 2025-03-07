@@ -134,7 +134,7 @@ def students_and_teachers_to_user_section_associations_dfs(
     )
 
     # group by section id as a Dict of DataFrames
-    d = dict(
+    result: Dict[str, DataFrame] = dict(
         tuple(
             user_section_associations_df.groupby(
                 [
@@ -143,4 +143,4 @@ def students_and_teachers_to_user_section_associations_dfs(
             )
         )
     )
-    return {k[0]: v for k, v in d.items()}
+    return result

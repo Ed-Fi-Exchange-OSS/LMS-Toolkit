@@ -62,7 +62,7 @@ def setup_fake_reports_api(endpoint_suffix: str, response_json: str) -> Resource
         reply=200,
     )
     pook.post(
-        "https://oauth2.googleapis.com/token",
+        "https://oauth2.googleapis.com:/token",
         response_json='{"access_token": "fake"}',
         reply=200,
     )
@@ -106,18 +106,18 @@ def setup_fake_classroom_api(suffix_response_pairs: List[Tuple[str, str]]) -> Re
         "tests/api/fake-service-account.json", scopes=[], subject="x@example.com"
     )
     pook.get(
-        "http://www.googleapis.com:443/discovery/v1/apis/classroom/v1/rest",
+        "https://www.googleapis.com/discovery/v1/apis/classroom/v1/rest",
         response_json=fake_discovery_endpoint_json,
         reply=200,
     )
     pook.post(
-        "http://oauth2.googleapis.com:443/token",
+        "https://oauth2.googleapis.com:/token",
         response_json='{"access_token": "fake"}',
         reply=200,
     )
     for suffix, response in suffix_response_pairs:
         pook.get(
-            f"http://classroom.googleapis.com:443/v1/{suffix}",
+            f"https://classroom.googleapis.com/v1/{suffix}",
             response_json=response,
             reply=200,
         )

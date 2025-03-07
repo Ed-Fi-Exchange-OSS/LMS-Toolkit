@@ -147,7 +147,7 @@ def submissions_to_user_submission_activities_dfs(
     user_submission_df["SourceLastModifiedDate"] = ""  # No modified date available from API
 
     # group by section id as a Dict of DataFrames
-    d = dict(
+    result: Dict[str, DataFrame] = dict(
         tuple(user_submission_df.groupby(["LMSSectionIdentifier"]))
     )
-    return {k[0]: v for k, v in d.items()}
+    return result

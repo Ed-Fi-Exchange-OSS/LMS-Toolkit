@@ -116,7 +116,8 @@ def coursework_to_assignments_dfs(
     assignments_df["EndDateTime"] = ""  # No EndDateTime available from API
 
     # group by section id as a Dict of DataFrames
-    d = dict(
+    result: Dict[str, DataFrame] = dict(
         tuple(assignments_df.groupby(["LMSSectionSourceSystemIdentifier"]))
     )
-    return {k[0]: v for k, v in d.items()}
+
+    return result
