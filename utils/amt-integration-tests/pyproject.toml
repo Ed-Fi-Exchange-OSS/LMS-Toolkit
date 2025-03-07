@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "amt-integration-tests"
-version = "0.1.0"
+version = "0.1.1"
 description = "Integration testing for the Student Engagement views in the Analytics Middle Tier"
 authors = ["Ed-Fi Alliance, LLC, and contributors."]
 license = "Apache-2.0"
