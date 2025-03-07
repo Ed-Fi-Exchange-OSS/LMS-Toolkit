@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "edfi-lms-extractor-lib"
-version = "1.1.5"
+version = "1.1.6"
 homepage = "https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-fi-lms-toolkit"
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 description = "Shared functions library for Ed-Fi LMS Extractor projects"
@@ -11,7 +11,7 @@ include = ["edfi_lms_extractor_lib/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-pandas = ">=2.0.0,<2.2.0"
+pandas = "<2.0.0"
 SQLAlchemy = "^1"
 xxhash = "^2.0.0"
 numpy = "^1"
