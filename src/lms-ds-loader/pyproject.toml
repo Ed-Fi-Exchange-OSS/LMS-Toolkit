@@ -9,7 +9,8 @@ homepage = "https://docs.ed-fi.org/getting-started/edfi-exchange/technology/ed-f
 repository = "https://github.com/Ed-Fi-Exchange-OSS/LMS-Toolkit"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">3.9.1,<4.0.0"
+cryptography = "^44.0.1"
 pyodbc = "^4.0.30"
 sqlalchemy = "1.3.23"
 pandas = "<2.0.0"
