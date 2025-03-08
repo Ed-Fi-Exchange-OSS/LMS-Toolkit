@@ -135,7 +135,7 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
 
     def it_should_map_state_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]
-        state_row = submissions_df.to_dict(orient="records")[0]
+        state_row = submissions_df.to_dict(orient="records")[1]
 
         assert state_row["ActivityDateTime"] == STATE_TIMESTAMP
         assert state_row["ActivityStatus"] == STATE
@@ -153,7 +153,7 @@ def describe_when_a_state_and_a_grade_submission_is_mapped():
 
     def it_should_map_grade_fields_correctly(assignment_submissions_dicts):
         submissions_df: DataFrame = assignment_submissions_dicts[COURSE_ID]
-        grade_row = submissions_df.to_dict(orient="records")[1]
+        grade_row = submissions_df.to_dict(orient="records")[0]
 
         assert grade_row["ActivityDateTime"] == GRADE_TIMESTAMP
         assert grade_row["ActivityStatus"] == GRADE_CHANGE_TYPE

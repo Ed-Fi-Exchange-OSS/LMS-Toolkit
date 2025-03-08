@@ -134,7 +134,7 @@ def submissions_to_user_submission_activities_dfs(
         grade_history_df["ActivityType"] = ACTIVITY_TYPE_GRADE
 
         # combine with stateHistory
-        user_submission_df = user_submission_df.append(grade_history_df)
+        user_submission_df = concat([grade_history_df, user_submission_df])
 
     # teacher actions can show up on student histories and vice-versa
     user_submission_df.drop_duplicates(subset=["SourceSystemIdentifier"], inplace=True)
@@ -150,5 +150,4 @@ def submissions_to_user_submission_activities_dfs(
     result: Dict[str, DataFrame] = dict(
         tuple(user_submission_df.groupby(["LMSSectionIdentifier"]))
     )
-
     return result

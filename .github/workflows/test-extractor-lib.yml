@@ -19,13 +19,17 @@ on:
       - 'src/extractor-lib/**'
       - '!src/extractor-lib/**/*.md'
 
-permissions: read-all
-
 jobs:
   test-extractor-lib:
     name: Extractor Library - Test
     uses: ./.github/workflows/reusable-test.yml
     permissions:
       security-events: write
+      actions: read
+      attestations: read
+      checks: read
+      contents: read
+      pull-requests: read
+      statuses: read
     with:
       project: extractor-lib

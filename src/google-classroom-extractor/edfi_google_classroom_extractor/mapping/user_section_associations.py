@@ -143,5 +143,4 @@ def students_and_teachers_to_user_section_associations_dfs(
             )
         )
     )
-
     return result

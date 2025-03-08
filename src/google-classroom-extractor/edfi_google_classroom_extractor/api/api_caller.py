@@ -13,7 +13,7 @@ from opnieuw import retry
 from tail_recursive import tail_recursive
 from googleapiclient.errors import Error as GoogleApiError
 
-ResourceType = namedtuple("ValidSdkFunction", ["courses", "userUsageReport"])
+ResourceType = namedtuple("ResourceType", ["courses", "userUsageReport"])
 
 MAX_TOTAL_CALLS = int(os.getenv("REQUEST_RETRY_COUNT") or 4)
 RETRY_WINDOW_AFTER_FIRST_CALL_IN_SECONDS = int(

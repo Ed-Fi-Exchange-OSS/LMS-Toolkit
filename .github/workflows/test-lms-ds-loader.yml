@@ -19,13 +19,17 @@ on:
       - 'src/lms-ds-loader/**'
       - '!src/lms-ds-loader/**/*.md'
 
-permissions: read-all
-
 jobs:
   test-lms-ds-loader:
     name: LMS Data Store Loader - Test
     uses: ./.github/workflows/reusable-test.yml
     permissions:
       security-events: write
+      actions: read
+      attestations: read
+      checks: read
+      contents: read
+      pull-requests: read
+      statuses: read
     with:
       project: lms-ds-loader
