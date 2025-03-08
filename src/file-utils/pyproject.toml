@@ -11,11 +11,11 @@ include = ["edfi_lms_file_utils/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-numpy = "^1"
+numpy = ">=1,<3"
 pandas = "<2.0.0"
 
 [tool.poetry.dev-dependencies]
-black = "^24.4"
+black = "^25.1"
 mypy = "^1"
 flake8 = "^3.8.4"
 pyfakefs = "^5.6.0"
